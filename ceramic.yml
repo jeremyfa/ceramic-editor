@@ -1,0 +1,11 @@
+app:
+    package: mycompany.Editor
+    name: Editor
+    displayName: Editor
+    author: My Company
+    version: '1.0'
+
+    defines:
+        - editor
+
+    libs: []
