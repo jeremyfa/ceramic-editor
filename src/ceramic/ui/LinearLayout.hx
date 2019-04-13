@@ -362,7 +362,7 @@ class LinearLayout extends View {
                         numChildren++;
 
                         if (!ViewSize.isFill(view.viewHeight)) {
-                            //view.computeSize(paddedWidth, paddedHeight, ViewLayoutMask.FLEXIBLE_HEIGHT, true);
+                            view.computeSize(paddedWidth, paddedHeight, ViewLayoutMask.FLEXIBLE_HEIGHT, true);
                             view.x = paddingLeft;
                             view.size(
                                 Math.min(paddedWidth, view.computedWidth),
@@ -385,7 +385,7 @@ class LinearLayout extends View {
                 for (i in 0...subviews.length) {
                     var view = subviews.unsafeGet(i);
                     if (view.active && ViewSize.isFill(view.viewHeight)) {
-                        //view.computeSize(paddedWidth, paddedHeight, ViewLayoutMask.FIXED, true);
+                        view.computeSize(paddedWidth, fillHeight, ViewLayoutMask.FIXED, true);
                         view.pos(paddingLeft, 0);
                         view.size(paddedWidth, fillHeight);
                     }
@@ -461,7 +461,7 @@ class LinearLayout extends View {
                         numChildren++;
 
                         if (!ViewSize.isFill(view.viewWidth)) {
-                            //view.computeSize(paddedWidth, paddedHeight, ViewLayoutMask.FLEXIBLE_WIDTH, true);
+                            view.computeSize(paddedWidth, paddedHeight, ViewLayoutMask.FLEXIBLE_WIDTH, true);
                             view.y = paddingTop;
                             view.size(
                                 view.computedWidth,
@@ -483,7 +483,7 @@ class LinearLayout extends View {
                 var fillWidth = leftWidth / numFill;
                 for (view in subviews) {
                     if (view.active && ViewSize.isFill(view.viewWidth)) {
-                        //view.computeSize(paddedWidth, paddedHeight, ViewLayoutMask.FIXED, true);
+                        view.computeSize(fillWidth, paddedHeight, ViewLayoutMask.FIXED, true);
                         view.pos(0, paddingTop);
                         view.size(fillWidth, paddedHeight);
                     }

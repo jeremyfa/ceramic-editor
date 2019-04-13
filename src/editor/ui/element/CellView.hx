@@ -10,6 +10,8 @@ class CellView extends LinearLayout implements Observable {
 
     @observe public var subTitle:String = null;
 
+    @observe public var itemIndex:Int = -1;
+
 /// Internal
 
     var titleTextView:TextView;
@@ -24,15 +26,22 @@ class CellView extends LinearLayout implements Observable {
 
         direction = VERTICAL;
         align = CENTER;
+        padding(0, 8);
+        borderBottomSize = 1;
+        itemSpacing = 1;
+        borderPosition = INSIDE;
         
         titleTextView = new TextView();
         titleTextView.align = LEFT;
         titleTextView.pointSize = 10;
+        titleTextView.viewSize(fill(), auto());
         add(titleTextView);
         
         subTitleTextView = new TextView();
         subTitleTextView.align = LEFT;
         subTitleTextView.pointSize = 9;
+        subTitleTextView.viewSize(fill(), auto());
+        subTitleTextView.text.component('italicText', new ItalicText());
         add(subTitleTextView);
 
         autorun(updateTitle);
@@ -60,7 +69,7 @@ class CellView extends LinearLayout implements Observable {
     function updateSubTitle() {
 
         var subTitle = this.subTitle;
-        if (title != null) {
+        if (subTitle != null) {
             subTitleTextView.content = subTitle;
             subTitleTextView.active = true;
         }
@@ -78,6 +87,8 @@ class CellView extends LinearLayout implements Observable {
 
         subTitleTextView.textColor = theme.darkTextColor;
         subTitleTextView.font = theme.mediumFont;
+
+        borderBottomColor = theme.mediumBorderColor;
 
     } //updateStyle
 
