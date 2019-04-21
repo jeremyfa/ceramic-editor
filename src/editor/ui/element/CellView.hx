@@ -18,6 +18,8 @@ class CellView extends LinearLayout implements Observable {
 
     var subTitleTextView:TextView;
 
+    @observe var hover:Bool = false;
+
 /// Lifecycle
 
     public function new() {
@@ -30,6 +32,7 @@ class CellView extends LinearLayout implements Observable {
         borderBottomSize = 1;
         itemSpacing = 1;
         borderPosition = INSIDE;
+        transparent = false;
         
         titleTextView = new TextView();
         titleTextView.align = LEFT;
@@ -47,6 +50,9 @@ class CellView extends LinearLayout implements Observable {
         autorun(updateTitle);
         autorun(updateSubTitle);
         autorun(updateStyle);
+
+        onPointerOver(this, function(_) hover = true);
+        onPointerOut(this, function(_) hover = false);
 
     } //new
 
@@ -82,7 +88,22 @@ class CellView extends LinearLayout implements Observable {
 
     function updateStyle() {
 
-        titleTextView.textColor = theme.textColor;
+        if (selected) {
+            borderLeftColor = theme.selectionBorderColor;
+            borderLeftSize = 2;
+            color = theme.lightBackgroundColor;
+        }
+        else {
+            borderLeftSize = 0;
+
+            if (hover) {
+                color = theme.lightBackgroundColor;
+            } else {
+                color = theme.mediumBackgroundColor;
+            }
+        }
+
+        titleTextView.textColor = theme.lightTextColor;
         titleTextView.font = theme.mediumFont;
 
         subTitleTextView.textColor = theme.darkTextColor;

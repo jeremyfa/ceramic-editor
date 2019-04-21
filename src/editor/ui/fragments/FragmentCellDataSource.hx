@@ -1,6 +1,6 @@
 package editor.ui.fragments;
 
-class FragmentCellDataSource implements CollectionViewDataSource {
+class FragmentCellDataSource implements CollectionViewDataSource implements Observable {
 
     public var width:Float = 0;
 
@@ -11,7 +11,7 @@ class FragmentCellDataSource implements CollectionViewDataSource {
     /** Get the number of elements. */
     public function collectionViewSize():Int {
 
-        return 10; // TODO
+        return model.project.fragments.length;
 
     } //collectionViewSize
 
@@ -55,12 +55,21 @@ class FragmentCellDataSource implements CollectionViewDataSource {
 
         cell.autorun(function() {
 
-            cell.title = 'Fragment ' + cell.itemIndex;
+            var fragment = model.project.fragments[cell.itemIndex];
+
+            cell.title = fragment.name;
             cell.subTitle = 'default';
+            cell.selected = (cell.itemIndex == model.project.selectedFragmentIndex);
 
         });
 
-        // Click
+        var click = new Click();
+        cell.component('click', click);
+        click.onClick(cell, function() {
+
+            model.project.selectedFragmentIndex = cell.itemIndex;
+
+        });
 
     } //bindCellView
 

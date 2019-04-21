@@ -10,6 +10,10 @@ class TabView extends TextView implements Observable {
 
     @observe public var selected:Bool = false;
 
+/// Internal
+
+    @observe var hover:Bool = false;
+
 /// Lifecycle
 
     public function new() {
@@ -23,6 +27,9 @@ class TabView extends TextView implements Observable {
 
         autorun(updateStyle);
         autorun(updateText);
+
+        onPointerOver(this, function(_) hover = true);
+        onPointerOut(this, function(_) hover = false);
 
     } //new
 
@@ -40,11 +47,17 @@ class TabView extends TextView implements Observable {
         if (selected) {
             borderColor = theme.darkBorderColor;
             color = theme.lightBackgroundColor;
-            textColor = theme.textColor;
+            textColor = theme.lightTextColor;
         } else {
             borderColor = theme.darkBorderColor;
-            color = theme.darkBackgroundColor;
-            textColor = theme.darkTextColor;
+            if (hover) {
+                color = theme.mediumBackgroundColor;
+                textColor = theme.mediumTextColor;
+            }
+            else {
+                color = theme.darkBackgroundColor;
+                textColor = theme.darkTextColor;
+            }
         }
 
         borderLeftSize = index == 0 ? 0 : 1;

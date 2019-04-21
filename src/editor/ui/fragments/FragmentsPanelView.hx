@@ -8,6 +8,10 @@ class FragmentsPanelView extends LinearLayout implements Observable {
 
     var allFragmentsCollectionView:CollectionView;
 
+    var allFragmentsBottomBorderView:View;
+
+    var selectedFragmentTitle:SectionTitleView;
+
 /// Lifecycle
 
     public function new() {
@@ -15,6 +19,7 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         super();
 
         initAllFragmentsSection();
+        initSelectedFragmentSection();
         initAddFragmentButton();
 
         autorun(updateStyle);
@@ -31,12 +36,37 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         allFragmentsCollectionView.viewSize(fill(), percent(25));
         allFragmentsCollectionView.transparent = true;
         allFragmentsCollectionView.contentView.transparent = true;
-        allFragmentsCollectionView.borderBottomSize = 1;
+        allFragmentsCollectionView.contentView.borderTopSize = 1;
+        allFragmentsCollectionView.contentView.borderPosition = OUTSIDE;
         allFragmentsCollectionView.dataSource = new FragmentCellDataSource();
         allFragmentsCollectionView.clip = allFragmentsCollectionView;
+        allFragmentsCollectionView.scroller.pointerEventsOutsideBounds = false;
         add(allFragmentsCollectionView);
 
+        allFragmentsBottomBorderView = new View();
+        allFragmentsBottomBorderView.viewSize(fill(), 0);
+        allFragmentsBottomBorderView.borderPosition = OUTSIDE;
+        allFragmentsBottomBorderView.borderTopSize = 1;
+        add(allFragmentsBottomBorderView);
+
+        var prevLength = 0;
+        autorun(function() {
+            var length = model.project.fragments.length;
+            if (length != prevLength) {
+                prevLength = length;
+                allFragmentsCollectionView.reloadData();
+            }
+        });
+
     } //initAllFragmentsSection
+
+    function initSelectedFragmentSection() {
+
+        selectedFragmentTitle = new SectionTitleView();
+        selectedFragmentTitle.content = 'Selected fragment';
+        add(selectedFragmentTitle);
+
+    } //initSelectedFragmentSection
 
     function initAddFragmentButton() {
 
@@ -59,7 +89,8 @@ class FragmentsPanelView extends LinearLayout implements Observable {
 
     function updateStyle() {
 
-        allFragmentsCollectionView.borderBottomColor = theme.mediumBorderColor;
+        allFragmentsCollectionView.contentView.borderTopColor = theme.mediumBorderColor;
+        allFragmentsBottomBorderView.borderTopColor = theme.mediumBorderColor;
 
     } //updateStyle
 

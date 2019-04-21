@@ -4,7 +4,9 @@ class EditorTheme extends Model {
 
 /// Text colors
 
-    @observe public var textColor:Color = 0xF3F3F3;
+    @observe public var lightTextColor:Color = 0xF3F3F3;
+
+    @observe public var mediumTextColor:Color = 0xCCCCCC;
 
     @observe public var darkTextColor:Color = 0x888888;
 
@@ -31,6 +33,10 @@ class EditorTheme extends Model {
     @observe public var darkBackgroundColor:Color = 0x424242;
 
     @observe public var darkerBackgroundColor:Color = 0x282828;
+
+/// Selection
+
+    @observe public var selectionBorderColor:Color = Color.RED;
 
     public function new() {
 

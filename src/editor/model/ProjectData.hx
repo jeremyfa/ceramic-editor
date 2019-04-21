@@ -6,9 +6,9 @@ class ProjectData extends Model {
 
     @serialize public var title:String = 'New Project';
 
-    @serialize public var fragments:Array<EditorFragmentData> = [];
+    @serialize public var fragments:ImmutableArray<EditorFragmentData> = [];
 
-    @serialize public var assets:Array<EditorAsset> = [];
+    @serialize public var assets:ImmutableArray<EditorAsset> = [];
 
 /// UI info
 
@@ -27,6 +27,16 @@ class ProjectData extends Model {
     public function new() {
 
         super();
+
+        // Dummy fragments
+        var fragments = [];
+        for (i in 0...10) {
+            var fragment = new EditorFragmentData();
+            fragment.fragmentId = 'FRAGMENT_$i';
+            fragment.name = 'Fragment $i';
+            fragments.push(fragment);
+        }
+        this.fragments = cast fragments;
 
     } //new
 
