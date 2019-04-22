@@ -163,7 +163,8 @@ class EditText extends Component implements TextInputDelegate {
         var backgroundTop:Float = -1;
         var backgroundRight:Float = -1;
         var backgroundBottom:Float = -1;
-        var pad = Math.round(entity.pointSize * 0.2);
+        var backgroundPad = Math.round(entity.pointSize * 0.1);
+        var cursorPad = Math.round(entity.pointSize * 0.2);
         var selectionHeight = Math.ceil(entity.pointSize * 1.1);
         var cursorWidth:Float = 1;
         var cursorHeight:Float = Math.ceil(entity.pointSize);
@@ -185,8 +186,8 @@ class EditText extends Component implements TextInputDelegate {
                     bg.color = theme.focusedFieldSelectionColor;
                 });
             }
-            bg.pos(backgroundLeft - pad, backgroundTop - pad);
-            bg.size(backgroundRight + pad * 2 - backgroundLeft, backgroundBottom + pad * 2 - backgroundTop);
+            bg.pos(backgroundLeft - backgroundPad, backgroundTop - backgroundPad);
+            bg.size(backgroundRight + backgroundPad * 2 - backgroundLeft, backgroundBottom + backgroundPad * 2 - backgroundTop);
 
         } //addSelectionBackground
 
@@ -219,19 +220,19 @@ class EditText extends Component implements TextInputDelegate {
 
                 if (selectionEnd > selectionStart) {
                     if (backgroundCurrentLine == -1) {
-                        if (index >= selectionStart) {
+                        if (index >= selectionStart && index <= selectionEnd) {
                             backgroundCurrentLine = line;
                             backgroundLeft = glyphQuad.glyphX;
                             backgroundRight = 0;
                             backgroundTop = glyphQuad.glyphY;
-                            backgroundBottom = glyphQuad.glyphX + selectionHeight;
+                            backgroundBottom = glyphQuad.glyphY + selectionHeight;
                         }
                     }
                     if (backgroundCurrentLine != -1) {
                         if (line > backgroundCurrentLine || index >= selectionEnd) {
                             addSelectionBackground();
                             backgroundCurrentLine = -1;
-                            if (index >= selectionStart) {
+                            if (index >= selectionStart && index < selectionEnd) {
                                 backgroundCurrentLine = line;
                                 backgroundLeft = glyphQuad.glyphX;
                                 backgroundRight = 0;
@@ -257,11 +258,11 @@ class EditText extends Component implements TextInputDelegate {
                     createTextCursorIfNeeded();
                     textCursor.pos(
                         glyphQuad.glyphX + glyphQuad.glyphAdvance,
-                        glyphQuad.glyphY - pad * 0.5
+                        glyphQuad.glyphY - cursorPad * 0.5
                     );
                     textCursor.size(
                         cursorWidth,
-                        cursorHeight + pad * 2
+                        cursorHeight + cursorPad * 2
                     );
                     break;
                 }
@@ -269,11 +270,11 @@ class EditText extends Component implements TextInputDelegate {
                     createTextCursorIfNeeded();
                     textCursor.pos(
                         glyphQuad.glyphX,
-                        glyphQuad.glyphY - pad * 0.5
+                        glyphQuad.glyphY - cursorPad * 0.5
                     );
                     textCursor.size(
                         cursorWidth,
-                        cursorHeight + pad * 2
+                        cursorHeight + cursorPad * 2
                     );
                     break;
                 }
@@ -281,11 +282,11 @@ class EditText extends Component implements TextInputDelegate {
                     createTextCursorIfNeeded();
                     textCursor.pos(
                         glyphQuad.glyphX + glyphQuad.glyphAdvance,
-                        glyphQuad.glyphY - pad * 0.5
+                        glyphQuad.glyphY - cursorPad * 0.5
                     );
                     textCursor.size(
                         cursorWidth,
-                        cursorHeight + pad * 2
+                        cursorHeight + cursorPad * 2
                     );
                 }
             }
