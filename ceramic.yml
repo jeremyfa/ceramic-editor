@@ -7,5 +7,7 @@ app:
 
     defines:
         - editor
+        - snow_web_use_electron_fs
+        - snow_web_use_electron_pngjs
 
     libs: []

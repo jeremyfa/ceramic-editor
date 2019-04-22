@@ -4,13 +4,7 @@ class FragmentsPanelView extends LinearLayout implements Observable {
 
 /// Internal properties
 
-    var allFragmentsTitle:SectionTitleView;
-
-    var allFragmentsCollectionView:CollectionView;
-
-    var allFragmentsBottomBorderView:View;
-
-    var selectedFragmentTitle:SectionTitleView;
+    var allFragmentsCollectionView:CellCollectionView;
 
 /// Lifecycle
 
@@ -22,39 +16,32 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         initSelectedFragmentSection();
         initAddFragmentButton();
 
-        autorun(updateStyle);
-
     } //new
 
     function initAllFragmentsSection() {
 
-        allFragmentsTitle = new SectionTitleView();
-        allFragmentsTitle.content = 'All fragments';
-        add(allFragmentsTitle);
+        var title = new SectionTitleView();
+        title.content = 'All fragments';
+        add(title);
 
-        allFragmentsCollectionView = new CollectionView();
-        allFragmentsCollectionView.viewSize(fill(), percent(25));
-        allFragmentsCollectionView.transparent = true;
-        allFragmentsCollectionView.contentView.transparent = true;
-        allFragmentsCollectionView.contentView.borderTopSize = 1;
-        allFragmentsCollectionView.contentView.borderPosition = OUTSIDE;
-        allFragmentsCollectionView.dataSource = new FragmentCellDataSource();
-        allFragmentsCollectionView.clip = allFragmentsCollectionView;
-        allFragmentsCollectionView.scroller.pointerEventsOutsideBounds = false;
-        add(allFragmentsCollectionView);
+        var dataSource = new FragmentCellDataSource();
 
-        allFragmentsBottomBorderView = new View();
-        allFragmentsBottomBorderView.viewSize(fill(), 0);
-        allFragmentsBottomBorderView.borderPosition = OUTSIDE;
-        allFragmentsBottomBorderView.borderTopSize = 1;
-        add(allFragmentsBottomBorderView);
+        var collectionView = new CellCollectionView();
+        collectionView.viewSize(fill(), percent(25));
+        collectionView.transparent = true;
+        collectionView.dataSource = dataSource;
+        add(collectionView);
+
+        onLayout(this, function() {
+            dataSource.width = width;
+        });
 
         var prevLength = 0;
         autorun(function() {
             var length = model.project.fragments.length;
             if (length != prevLength) {
                 prevLength = length;
-                allFragmentsCollectionView.reloadData();
+                collectionView.reloadData();
             }
         });
 
@@ -62,9 +49,32 @@ class FragmentsPanelView extends LinearLayout implements Observable {
 
     function initSelectedFragmentSection() {
 
-        selectedFragmentTitle = new SectionTitleView();
-        selectedFragmentTitle.content = 'Selected fragment';
-        add(selectedFragmentTitle);
+        var title = new SectionTitleView();
+        title.content = 'Selected fragment';
+        add(title);
+
+        var form = new FormLayout();
+        add(form);
+
+        var item = new LabeledFieldView(new TextFieldView());
+        item.label = 'Name';
+        item.field.updateTextValue = function(textValue:String) {
+            var fragment = model.project.selectedFragment;
+            if (fragment == null) return;
+            fragment.name = textValue;
+        };
+        autorun(function() {
+            var fragment = model.project.selectedFragment;
+            if (fragment == null) return;
+            item.field.textValue = fragment.name;
+        });
+        form.add(item);
+
+        autorun(function() {
+            var active = model.project.selectedFragment != null;
+            title.active = active;
+            form.active = active;
+        });
 
     } //initSelectedFragmentSection
 
@@ -73,25 +83,5 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         // TODO
 
     } //initAddFragmentButton
-
-/// Layout
-
-    override function layout() {
-
-        super.layout();
-
-        var dataSource:FragmentCellDataSource = cast allFragmentsCollectionView.dataSource;
-        dataSource.width = width;
-
-    } //layout
-
-/// Internal
-
-    function updateStyle() {
-
-        allFragmentsCollectionView.contentView.borderTopColor = theme.mediumBorderColor;
-        allFragmentsBottomBorderView.borderTopColor = theme.mediumBorderColor;
-
-    } //updateStyle
 
 } //FragmentsPanelView

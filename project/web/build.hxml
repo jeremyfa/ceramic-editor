@@ -14,6 +14,7 @@
 -D actuate
 -D polyline
 -D bind
+-D earcut
 -D snow
 -D linc_openal
 -D linc_timestamp
@@ -30,6 +31,7 @@
 -cp /Users/jeremyfa/Developer/ceramic/runtime/src
 -cp /Users/jeremyfa/Developer/ceramic/plugins/luxe/runtime/src
 -cp /Users/jeremyfa/Developer/ceramic-editor/src
+-lib earcut
 -lib bind
 -lib polyline
 -lib actuate
@@ -57,7 +59,7 @@
 -resource phoenix/defaults/shaders/frag.bitmapfont.gl3.glsl@default.frag.bitmapfont.gl3.glsl
 -resource luxe/defaults/fonts/default.png@default.png
 -resource luxe/defaults/fonts/default.fnt@default.fnt
--D app_info="{\"package\":\"mycompany.Editor\",\"name\":\"Editor\",\"displayName\":\"Editor\",\"author\":\"My Company\",\"version\":\"1.0\",\"defines\":{\"backend\":\"luxe\",\"luxe\":\"backend\",\"assets_path\":\"/Users/jeremyfa/Developer/ceramic-editor/assets\",\"ceramic_assets_path\":\"/Users/jeremyfa/Developer/ceramic/tools/assets\",\"HXCPP_STACK_LINE\":true,\"HXCPP_STACK_TRACE\":true,\"actuate_manual_update\":true,\"actuate_manual_time\":true,\"variant\":\"standard\",\"standard\":\"variant\",\"ceramic_plugins_assets_paths\":\"\\\"[\\\\\\\"/Users/jeremyfa/Developer/ceramic/plugins/spine/assets\\\\\\\"]\\\"\",\"HXCPP_CHECK_POINTER\":true,\"safeMode\":true,\"absolute-path\":true,\"target\":\"web\",\"web\":true,\"target_path\":\"/Users/jeremyfa/Developer/ceramic-editor/out/luxe/web\",\"target_assets_path\":\"/Users/jeremyfa/Developer/ceramic-editor/out/luxe/web/assets\",\"editor\":true},\"libs\":[{\"unifill\":\"0.4.1\"},\"actuate\",\"polyline\",\"bind\"],\"paths\":[\"/Users/jeremyfa/Developer/ceramic/plugins/http/runtime/src\"],\"editable\":[\"ceramic.Fragment\",\"ceramic.Quad\",\"ceramic.Text\"],\"icon\":\"resources/AppIcon.png\",\"screen\":{\"width\":320,\"height\":568,\"orientation\":\"portrait\"},\"lowercaseName\":\"editor\",\"packagePath\":\"mycompany/Editor\",\"path\":\"/Users/jeremyfa/Developer/ceramic-editor/ceramic.yml\",\"hxml\":\"\"}"
+-D app_info="{\"package\":\"mycompany.Editor\",\"name\":\"Editor\",\"displayName\":\"Editor\",\"author\":\"My Company\",\"version\":\"1.0\",\"defines\":{\"backend\":\"luxe\",\"luxe\":\"backend\",\"assets_path\":\"/Users/jeremyfa/Developer/ceramic-editor/assets\",\"ceramic_assets_path\":\"/Users/jeremyfa/Developer/ceramic/tools/assets\",\"HXCPP_STACK_LINE\":true,\"HXCPP_STACK_TRACE\":true,\"actuate_manual_update\":true,\"actuate_manual_time\":true,\"variant\":\"standard\",\"standard\":\"variant\",\"ceramic_plugins_assets_paths\":\"\\\"[\\\\\\\"/Users/jeremyfa/Developer/ceramic/plugins/spine/assets\\\\\\\"]\\\"\",\"HXCPP_CHECK_POINTER\":true,\"safeMode\":true,\"absolute-path\":true,\"target\":\"web\",\"web\":true,\"target_path\":\"/Users/jeremyfa/Developer/ceramic-editor/out/luxe/web\",\"target_assets_path\":\"/Users/jeremyfa/Developer/ceramic-editor/out/luxe/web/assets\",\"editor\":true,\"snow_web_use_electron_fs\":true,\"snow_web_use_electron_pngjs\":true},\"libs\":[{\"unifill\":\"0.4.1\"},\"actuate\",\"polyline\",\"bind\",\"earcut\"],\"paths\":[\"/Users/jeremyfa/Developer/ceramic/plugins/http/runtime/src\"],\"editable\":[\"ceramic.Fragment\",\"ceramic.Quad\",\"ceramic.Text\"],\"icon\":\"resources/AppIcon.png\",\"screen\":{\"width\":320,\"height\":568,\"orientation\":\"portrait\"},\"lowercaseName\":\"editor\",\"packagePath\":\"mycompany/Editor\",\"path\":\"/Users/jeremyfa/Developer/ceramic-editor/ceramic.yml\",\"hxml\":\"\"}"
 --macro ceramic.macros.MacroCache.init()
 -D backend=luxe
 -D luxe=backend
@@ -78,6 +80,8 @@
 -D target_path=/Users/jeremyfa/Developer/ceramic-editor/out/luxe/web
 -D target_assets_path=/Users/jeremyfa/Developer/ceramic-editor/out/luxe/web/assets
 -D editor
+-D snow_web_use_electron_fs
+-D snow_web_use_electron_pngjs
 -D luxe_noprofile
 -D luxe_no_main
 -D no_debug_console

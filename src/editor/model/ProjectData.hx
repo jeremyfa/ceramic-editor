@@ -33,7 +33,7 @@ class ProjectData extends Model {
         for (i in 0...10) {
             var fragment = new EditorFragmentData();
             fragment.fragmentId = 'FRAGMENT_$i';
-            fragment.name = 'Fragment $i';
+            fragment.name = 'Fragment $i\nIl était une fois\nla vie';
             fragments.push(fragment);
         }
         this.fragments = cast fragments;

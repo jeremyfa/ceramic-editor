@@ -12,15 +12,19 @@ class EditorTheme extends Model {
 
 /// Text fonts
 
-    @observe public var mediumFont:BitmapFont = editor.assets.font(Fonts.ROBOTO_MEDIUM_20);
+    public var mediumFont(get,never):BitmapFont;
+    function get_mediumFont():BitmapFont return editor.assets.font(Fonts.ROBOTO_MEDIUM_20);
 
-    @observe public var boldFont:BitmapFont = editor.assets.font(Fonts.ROBOTO_BOLD_20);
+    public var boldFont(get,never):BitmapFont;
+    function get_boldFont():BitmapFont return editor.assets.font(Fonts.ROBOTO_BOLD_20);
 
 /// Borders colors
 
-    @observe public var darkBorderColor:Color = 0x383838;
+    @observe public var lightBorderColor:Color = 0x636363;
 
     @observe public var mediumBorderColor:Color = 0x464646;
+
+    @observe public var darkBorderColor:Color = 0x383838;
 
 /// Backgrounds colors
 
@@ -37,6 +41,12 @@ class EditorTheme extends Model {
 /// Selection
 
     @observe public var selectionBorderColor:Color = Color.RED;
+
+/// Field
+
+    @observe public var focusedFieldSelectionColor:Color = 0x3073C6;
+
+    @observe public var focusedFieldBorderColor:Color = 0x4392E0;
 
     public function new() {
 
