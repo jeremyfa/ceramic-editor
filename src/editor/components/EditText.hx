@@ -320,31 +320,20 @@ class EditText extends Component implements TextInputDelegate {
 
     function indexForPosInLine(text:String, targetLine:Int, posInLine:Int):Int {
 
-        var index = 0;
-        var len = text.uLength();
-        var currentLine = 0;
-        var charsBeforeLine = 0;
+        var glyphQuads = entity.glyphQuads;
+        if (glyphQuads.length == 0) return 0;
 
-        while (index < len) {
-            var char = text.uCharAt(index);
-            if (targetLine == currentLine) {
-                var relativePosition = index - charsBeforeLine;
-                if (relativePosition >= posInLine || (relativePosition > 0 && char == "\n")) {
-                    break;
-                }
+        for (i in 0...glyphQuads.length) {
+            var glyphQuad = glyphQuads.unsafeGet(i);
+            if (glyphQuad.line == targetLine && glyphQuad.posInLine >= posInLine) {
+                return glyphQuad.index + posInLine - glyphQuad.posInLine;
             }
-            else {
-                if (char == "\n") {
-                    currentLine++;
-                    if (targetLine == currentLine) {
-                        charsBeforeLine = index + 1;
-                    }
-                }
+            else if (glyphQuad.line > targetLine) {
+                return glyphQuad.index - glyphQuad.posInLine - (glyphQuad.line - targetLine);
             }
-            index++;
         }
 
-        return index;
+        return text.uLength();
 
     } //indexForPosInLine
 
@@ -410,7 +399,9 @@ class EditText extends Component implements TextInputDelegate {
 
 /// TextInput delegate
 
-    public function textInputClosestPositionInLine(text:String, fromPosition:Int, fromLine:Int, toLine:Int):Int {
+    public function textInputClosestPositionInLine(fromPosition:Int, fromLine:Int, toLine:Int):Int {
+
+        var text = app.textInput.text;
 
         var indexFromLine = indexForPosInLine(text, fromLine, fromPosition);
         var xPosition = xPositionAtIndex(indexFromLine);
@@ -418,5 +409,67 @@ class EditText extends Component implements TextInputDelegate {
         return posInLineForX(toLine, xPosition);
 
     } //textInputClosestPositionInLine
+
+    public function textInputNumberOfLines():Int {
+
+        var glyphQuads = entity.glyphQuads;
+        if (glyphQuads.length == 0) return 1;
+
+        return glyphQuads[glyphQuads.length - 1].line + 1;
+
+    } //textInputNumberOfLines
+
+    public function textInputIndexForPosInLine(lineNumber:Int, lineOffset:Int):Int {
+
+        var text = app.textInput.text;
+
+        return indexForPosInLine(text, lineNumber, lineOffset);
+
+    } //textInputIndexForPosInLine
+
+    public function textInputLineForIndex(index:Int):Int {
+
+        var glyphQuads = entity.glyphQuads;
+        if (glyphQuads.length == 0) return 0;
+
+        for (i in 0...glyphQuads.length) {
+            var glyphQuad = glyphQuads.unsafeGet(i);
+            if (glyphQuad.index >= index) {
+                if (glyphQuad.posInLine > index - glyphQuad.index) {
+                    var currentLineIndex = glyphQuad.index - glyphQuad.posInLine;
+                    var line = glyphQuad.line;
+                    while (currentLineIndex > index) {
+                        currentLineIndex--;
+                        line--;
+                    }
+                    return line;
+                }
+                else {
+                    return glyphQuad.line;
+                }
+            }
+        }
+
+        return glyphQuads[glyphQuads.length-1].line;
+
+    } //textInputLineForIndex
+
+    public function textInputPosInLineForIndex(index:Int):Int {
+
+        var glyphQuads = entity.glyphQuads;
+        if (glyphQuads.length == 0) return 0;
+
+        for (i in 0...glyphQuads.length) {
+            var glyphQuad = glyphQuads.unsafeGet(i);
+            if (glyphQuad.index >= index) {
+                var pos = glyphQuad.posInLine + index - glyphQuad.index;
+                if (pos < 0) return 0;
+                return pos;
+            }
+        }
+
+        return 0;
+
+    } //textInputPosInLineForIndex
 
 } //EditText
