@@ -14,6 +14,8 @@ class EditText extends Component implements TextInputDelegate {
 
     @event function update(content:String);
 
+    @event function stop();
+
 /// Public properties
 
     public var entity:Text;
@@ -48,7 +50,7 @@ class EditText extends Component implements TextInputDelegate {
 
 /// Public API
 
-    public function startInput(content:String, selectionStart:Int = -1, selectionEnd:Int = -1):Void {
+    public function startInput(content:String, multiline:Bool, selectionStart:Int = -1, selectionEnd:Int = -1):Void {
 
         success('START INPUT $content');
 
@@ -67,6 +69,7 @@ class EditText extends Component implements TextInputDelegate {
         var screenBottom = _point.y;
 
         app.textInput.onUpdate(this, updateFromTextInput);
+        app.textInput.onStop(this, handleStop);
         app.textInput.onSelection(this, updateFromSelection);
 
         inputActive = true;
@@ -77,7 +80,7 @@ class EditText extends Component implements TextInputDelegate {
             screenTop,
             screenRight - screenLeft,
             screenBottom - screenTop,
-            true,
+            multiline,
             selectionStart,
             selectionEnd,
             true,
@@ -93,14 +96,23 @@ class EditText extends Component implements TextInputDelegate {
         inputActive = false;
 
         app.textInput.offUpdate(updateFromTextInput);
+        app.textInput.offStop(handleStop);
         app.textInput.offSelection(updateFromSelection);
         app.textInput.stop();
 
         updateSelectionUI();
 
+        emitStop();
+
     } //stopInput
 
 /// Internal
+
+    function handleStop():Void {
+
+        stopInput();
+
+    } //handleStop
 
     function updateCursorVisibility(delta:Float):Void {
 

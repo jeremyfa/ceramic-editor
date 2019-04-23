@@ -15,6 +15,8 @@ class TextFieldView extends FieldView implements Observable {
 
 /// Public properties
 
+    public var multiline:Bool = false;
+
     @observe public var textValue:String = '';
 
 /// Internal properties
@@ -44,6 +46,7 @@ class TextFieldView extends FieldView implements Observable {
         editText = new EditText();
         textView.text.component('editText', editText);
         editText.onUpdate(this, updateFromEditText);
+        editText.onStop(this, handleStopEditText);
 
         autorun(updateStyle);
         autorun(updateFromTextValue);
@@ -85,7 +88,7 @@ class TextFieldView extends FieldView implements Observable {
             app.onceImmediate(function() {
                 // This way of calling will ensure any previous text input
                 // can be stopped before we start this new one
-                editText.startInput(textValue, 0, textValue.uLength());
+                editText.startInput(textValue, multiline, 0, textValue.uLength());
             });
 
         }
@@ -105,6 +108,15 @@ class TextFieldView extends FieldView implements Observable {
         updateTextValue(text);
 
     } //updateFromEditText
+
+    function handleStopEditText() {
+
+        // Release focus when stopping edition
+        if (focused) {
+            screen.focusedVisual = null;
+        }
+
+    } //handleStopEditText
 
     function updateStyle() {
         
