@@ -1,5 +1,8 @@
 package editor.ui.element;
 
+using StringTools;
+using unifill.Unifill;
+
 class CellView extends LinearLayout implements Observable {
 
 /// Public properties
@@ -62,6 +65,10 @@ class CellView extends LinearLayout implements Observable {
 
         var title = this.title;
         if (title != null) {
+            title = title.trim().replace("\n", ' ');
+            if (title.uLength() > 20) {
+                title = title.uSubstr(0, 20) + '...'; // TODO at textview level
+            }
             titleTextView.content = title;
             titleTextView.active = true;
         }
