@@ -2,6 +2,7 @@ package editor.components;
 
 using ceramic.Extensions;
 using unifill.Unifill;
+using StringTools;
 
 class EditText extends Component implements TextInputDelegate {
 
@@ -169,6 +170,7 @@ class EditText extends Component implements TextInputDelegate {
         var cursorWidth:Float = 1;
         var cursorHeight:Float = Math.ceil(entity.pointSize);
         var computedLineHeight = entity.lineHeight * entity.font.lineHeight * entity.pointSize / entity.font.pointSize;
+        var lineBreakWidth:Float = entity.pointSize * 0.4;
 
         var hasCharsSelection = selectionEnd > selectionStart;
 
@@ -187,8 +189,14 @@ class EditText extends Component implements TextInputDelegate {
                     bg.color = theme.focusedFieldSelectionColor;
                 });
             }
-            bg.pos(backgroundLeft - backgroundPad, backgroundTop - backgroundPad);
-            bg.size(backgroundRight + backgroundPad * 2 - backgroundLeft, backgroundBottom + backgroundPad * 2 - backgroundTop);
+            if (backgroundLeft == 0) {
+                bg.pos(backgroundLeft - backgroundPad, backgroundTop - backgroundPad);
+                bg.size(backgroundRight + backgroundPad - backgroundLeft, backgroundBottom + backgroundPad * 2 - backgroundTop);
+            } 
+            else {
+                bg.pos(backgroundLeft, backgroundTop - backgroundPad);
+                bg.size(backgroundRight - backgroundLeft, backgroundBottom + backgroundPad * 2 - backgroundTop);
+            }
 
         } //addSelectionBackground
 
@@ -221,22 +229,53 @@ class EditText extends Component implements TextInputDelegate {
 
                 if (selectionEnd > selectionStart) {
                     if (backgroundCurrentLine == -1) {
-                        if (index >= selectionStart && index <= selectionEnd) {
-                            backgroundCurrentLine = line;
-                            backgroundLeft = glyphQuad.glyphX;
-                            backgroundRight = 0;
-                            backgroundTop = glyphQuad.glyphY;
-                            backgroundBottom = glyphQuad.glyphY + selectionHeight;
+                        if (index >= selectionStart) {
+                            if (i > 0 && index > selectionStart && glyphQuad.posInLine == 0) {
+                                // Selected a line break
+                                var prevGlyphQuad = glyphQuads[i - 1];
+                                var startLine = textInputLineForIndex(selectionStart);
+                                var endLine = textInputLineForIndex(selectionEnd);
+                                var matchedLine = glyphQuad.line;
+                                if (endLine > startLine && startLine == prevGlyphQuad.line) {
+                                    // Selection begins with a line break
+                                    backgroundCurrentLine = line - 1;
+                                    backgroundLeft = prevGlyphQuad.glyphX + prevGlyphQuad.glyphAdvance;
+                                    backgroundRight = prevGlyphQuad.glyphX + prevGlyphQuad.glyphAdvance + lineBreakWidth;
+                                    backgroundTop = prevGlyphQuad.glyphY;
+                                    backgroundBottom = prevGlyphQuad.glyphY + selectionHeight;
+                                    addSelectionBackground();
+                                }
+                                backgroundCurrentLine = -1;
+                                if (index >= selectionStart && index < selectionEnd) {
+                                    backgroundCurrentLine = line;
+                                    backgroundLeft = glyphQuad.glyphX;
+                                    backgroundRight = 0;
+                                    backgroundTop = glyphQuad.glyphY;
+                                    backgroundBottom = glyphQuad.glyphY + selectionHeight;
+                                }
+                            }
+                            else if (index <= selectionEnd) {
+                                backgroundCurrentLine = line;
+                                backgroundLeft = glyphQuad.glyphX;
+                                backgroundRight = glyphQuad.glyphX + glyphQuad.glyphAdvance;
+                                backgroundTop = glyphQuad.glyphY;
+                                backgroundBottom = glyphQuad.glyphY + selectionHeight;
+                            }
                         }
                     }
                     if (backgroundCurrentLine != -1) {
                         if (line > backgroundCurrentLine || index >= selectionEnd) {
+                            if (i > 0 && glyphQuad.posInLine == 0 && selectionEnd - 1 > glyphQuads[i-1].index) {
+                                // Line break inside selection
+                                var prevGlyphQuad = glyphQuads[i - 1];
+                                backgroundRight = prevGlyphQuad.glyphX + prevGlyphQuad.glyphAdvance + lineBreakWidth;
+                            }
                             addSelectionBackground();
                             backgroundCurrentLine = -1;
                             if (index >= selectionStart && index < selectionEnd) {
                                 backgroundCurrentLine = line;
                                 backgroundLeft = glyphQuad.glyphX;
-                                backgroundRight = 0;
+                                backgroundRight = glyphQuad.glyphX + glyphQuad.glyphAdvance;
                                 backgroundTop = glyphQuad.glyphY;
                                 backgroundBottom = glyphQuad.glyphY + selectionHeight;
                             }
