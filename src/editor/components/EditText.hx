@@ -168,6 +168,7 @@ class EditText extends Component implements TextInputDelegate {
         var selectionHeight = Math.ceil(entity.pointSize * 1.1);
         var cursorWidth:Float = 1;
         var cursorHeight:Float = Math.ceil(entity.pointSize);
+        var computedLineHeight = entity.lineHeight * entity.font.lineHeight * entity.pointSize / entity.font.pointSize;
 
         var hasCharsSelection = selectionEnd > selectionStart;
 
@@ -276,6 +277,15 @@ class EditText extends Component implements TextInputDelegate {
                         cursorWidth,
                         cursorHeight + cursorPad * 2
                     );
+                    var glyphLine = glyphQuad.line;
+                    var realLine = textInputLineForIndex(selectionStart);
+                    while (realLine < glyphLine) {
+                        textCursor.pos(
+                            0,
+                            textCursor.y - computedLineHeight
+                        );
+                        glyphLine--;
+                    }
                     break;
                 }
                 else if (i == glyphQuads.length - 1) {
@@ -463,8 +473,22 @@ class EditText extends Component implements TextInputDelegate {
             var glyphQuad = glyphQuads.unsafeGet(i);
             if (glyphQuad.index >= index) {
                 var pos = glyphQuad.posInLine + index - glyphQuad.index;
-                if (pos < 0) return 0;
-                return pos;
+                if (pos < 0) {
+                    var targetLine = textInputLineForIndex(index);
+                    var j = i - 1;
+                    while (j >= 0) {
+                        var glyphQuadBefore = glyphQuads.unsafeGet(j);
+                        if (glyphQuadBefore.line == targetLine) {
+                            pos = glyphQuadBefore.posInLine + index - glyphQuadBefore.index;
+                            return pos;
+                        }
+                        else if (glyphQuadBefore.line < targetLine) {
+                            return 0;
+                        }
+                        j--;
+                    }
+                }
+                return pos >= 0 ? pos : 0;
             }
         }
 
