@@ -38,6 +38,7 @@ class TextFieldView extends FieldView implements Observable {
         textView.viewSize(fill(), auto());
         textView.align = LEFT;
         textView.pointSize = 9;
+        textView.text.maxLineDiff = -1;
         add(textView);
 
         editText = new EditText();
