@@ -10,7 +10,7 @@ class SelectText extends Component implements Observable {
 
 /// Events
 
-    @event function selection(selectionStart:Int, selectionEnd:Int);
+    @event function selection(selectionStart:Int, selectionEnd:Int, inverted:Bool);
 
 /// Public properties
 
@@ -23,6 +23,8 @@ class SelectText extends Component implements Observable {
     @observe public var selectionStart:Int = -1;
 
     @observe public var selectionEnd:Int = -1;
+
+    @observe public var invertedSelection:Bool = false;
 
 /// Internal properties
 
@@ -64,10 +66,11 @@ class SelectText extends Component implements Observable {
         
         var selectionStart = this.selectionStart;
         var selectionEnd = this.selectionEnd;
+        var invertedSelection = this.invertedSelection;
 
         unobserve();
 
-        emitSelection(selectionStart, selectionEnd);
+        emitSelection(selectionStart, selectionEnd, invertedSelection);
         resetCursorVisibility();
         updateSelectionGraphics();
 
@@ -339,18 +342,22 @@ class SelectText extends Component implements Observable {
     function handleAllowSelectingFromPointerChange(_, _) {
 
         entity.offPointerDown(handlePointerDown);
+        entity.offPointerUp(handlePointerUp);
 
         if (allowSelectingFromPointer) {
             entity.onPointerDown(this, handlePointerDown);
+            entity.onPointerUp(this, handlePointerUp);
+        }
+        else {
+            screen.offPointerMove(handlePointerMove);
         }
 
     } //handleAllowSelectingFromPointerChange
 
-    function handlePointerDown(info:TouchInfo):Void {
+/// Selecting from pointer
 
-        var x = screen.pointerX;
-        var y = screen.pointerY;
-        
+    function indexFromScreenPosition(x, y):Int {
+
         entity.screenToVisual(x, y, _point);
 
         x = _point.x;
@@ -359,13 +366,68 @@ class SelectText extends Component implements Observable {
         var line = entity.lineForYPosition(y);
         var posInLine = entity.posInLineForX(line, x);
 
-        var cursorPosition = entity.indexForPosInLine(line, posInLine);
+        return entity.indexForPosInLine(line, posInLine);
+
+    } //indexFromScreenPosition
+
+    function handlePointerDown(info:TouchInfo):Void {
+
+        var x = screen.pointerX;
+        var y = screen.pointerY;
+        
+        var cursorPosition = indexFromScreenPosition(x, y);
         
         selectionStart = cursorPosition;
         selectionEnd = cursorPosition;
+        invertedSelection = false;
 
         resetCursorVisibility();
 
+        screen.onPointerMove(this, handlePointerMove);
+
     } //handlePointerDown
+
+    function handlePointerMove(info:TouchInfo):Void {
+
+        updateSelectionFromMovingPointer(screen.pointerX, screen.pointerY);
+
+    } //handlePointerMove
+
+    function handlePointerUp(info:TouchInfo):Void {
+
+        screen.offPointerMove(handlePointerMove);
+
+        updateSelectionFromMovingPointer(screen.pointerX, screen.pointerY);
+
+    } //handlePointerUp
+
+    function updateSelectionFromMovingPointer(x:Float, y:Float):Void {
+
+        var index = indexFromScreenPosition(x, y);
+
+        if (invertedSelection) {
+            if (index >= selectionEnd) {
+                invertedSelection = false;
+                selectionStart = selectionEnd;
+                selectionEnd = index;
+            }
+            else {
+                selectionStart = index;
+            }
+        }
+        else {
+            if (index < selectionStart) {
+                invertedSelection = true;
+                selectionEnd = selectionStart;
+                selectionStart = index;
+            }
+            else {
+                selectionEnd = index;
+            }
+        }
+
+        resetCursorVisibility();
+
+    } //updateSelectionFromMovingPointer
 
 } //SelectText

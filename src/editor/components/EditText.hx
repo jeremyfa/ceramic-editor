@@ -134,9 +134,9 @@ class EditText extends Component implements TextInputDelegate {
 
     } //updateFromTextInput
 
-    function updateFromSelection(selectionStart:Int, selectionEnd:Int):Void {
+    function updateFromSelection(selectionStart:Int, selectionEnd:Int, inverted:Bool):Void {
 
-        app.textInput.updateSelection(selectionStart, selectionEnd);
+        app.textInput.updateSelection(selectionStart, selectionEnd, inverted);
 
     } //updateFromSelection
 
