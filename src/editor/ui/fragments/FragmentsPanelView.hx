@@ -58,6 +58,7 @@ class FragmentsPanelView extends LinearLayout implements Observable {
 
         var item = new LabeledFieldView(new TextFieldView());
         item.label = 'Name';
+        item.field.multiline = true;
         item.field.updateTextValue = function(textValue:String) {
             var fragment = model.project.selectedFragment;
             if (fragment == null) return;

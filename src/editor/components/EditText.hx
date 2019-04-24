@@ -72,6 +72,8 @@ class EditText extends Component implements TextInputDelegate {
         app.textInput.onStop(this, handleStop);
         app.textInput.onSelection(this, updateFromSelection);
 
+        entity.onPointerDown(this, handlePointerDown);
+
         inputActive = true;
 
         app.textInput.start(
@@ -95,9 +97,12 @@ class EditText extends Component implements TextInputDelegate {
 
         inputActive = false;
 
+        entity.offPointerDown(handlePointerDown);
+
         app.textInput.offUpdate(updateFromTextInput);
         app.textInput.offStop(handleStop);
         app.textInput.offSelection(updateFromSelection);
+
         app.textInput.stop();
 
         updateSelectionUI();
@@ -113,6 +118,26 @@ class EditText extends Component implements TextInputDelegate {
         stopInput();
 
     } //handleStop
+
+    function handlePointerDown(info:TouchInfo):Void {
+
+        var x = screen.pointerX;
+        var y = screen.pointerY;
+        
+        entity.screenToVisual(x, y, _point);
+
+        x = _point.x;
+        y = _point.y;
+
+        var line = entity.lineForYPosition(y);
+        var posInLine = entity.posInLineForX(line, x);
+
+        var cursorPosition = entity.indexForPosInLine(line, posInLine);
+        
+        app.textInput.updateSelection(cursorPosition, cursorPosition);
+        resetCursorVisibility();
+
+    } //handlePointerDown
 
     function updateCursorVisibility(delta:Float):Void {
 
@@ -245,8 +270,8 @@ class EditText extends Component implements TextInputDelegate {
                             if (i > 0 && index > selectionStart && glyphQuad.posInLine == 0) {
                                 // Selected a line break
                                 var prevGlyphQuad = glyphQuads[i - 1];
-                                var startLine = textInputLineForIndex(selectionStart);
-                                var endLine = textInputLineForIndex(selectionEnd);
+                                var startLine = entity.lineForIndex(selectionStart);
+                                var endLine = entity.lineForIndex(selectionEnd);
                                 var matchedLine = glyphQuad.line;
                                 if (endLine > startLine && startLine == prevGlyphQuad.line) {
                                     // Selection begins with a line break
@@ -329,7 +354,7 @@ class EditText extends Component implements TextInputDelegate {
                         cursorHeight + cursorPad * 2
                     );
                     var glyphLine = glyphQuad.line;
-                    var realLine = textInputLineForIndex(selectionStart);
+                    var realLine = entity.lineForIndex(selectionStart);
                     while (realLine < glyphLine) {
                         textCursor.pos(
                             0,
@@ -379,95 +404,14 @@ class EditText extends Component implements TextInputDelegate {
 
     } //clearSelectionUI
 
-    function indexForPosInLine(text:String, targetLine:Int, posInLine:Int):Int {
-
-        var glyphQuads = entity.glyphQuads;
-        if (glyphQuads.length == 0) return 0;
-
-        for (i in 0...glyphQuads.length) {
-            var glyphQuad = glyphQuads.unsafeGet(i);
-            if (glyphQuad.line == targetLine && glyphQuad.posInLine >= posInLine) {
-                return glyphQuad.index + posInLine - glyphQuad.posInLine;
-            }
-            else if (glyphQuad.line > targetLine) {
-                return glyphQuad.index - glyphQuad.posInLine - (glyphQuad.line - targetLine);
-            }
-        }
-
-        return text.uLength();
-
-    } //indexForPosInLine
-
-    function xPositionAtIndex(index:Int):Float {
-
-        var glyphQuads = entity.glyphQuads;
-
-        if (glyphQuads.length == 0) return 0;
-
-        for (i in 0...glyphQuads.length) {
-            var glyphQuad = glyphQuads.unsafeGet(i);
-            if (glyphQuad.index >= index) {
-                if (glyphQuad.glyphX == 0 && glyphQuad.index > index) {
-                    if (i >= 1) {
-                        var glyphQuadBefore = glyphQuads[i-1];
-                        return glyphQuadBefore.glyphX + glyphQuadBefore.glyphAdvance;
-                    }
-                    else {
-                        return 0;
-                    }
-                }
-                else {
-                    return glyphQuad.glyphX;
-                }
-            }
-        }
-
-        var lastGlyphQuad = glyphQuads[glyphQuads.length-1];
-        return lastGlyphQuad.glyphX + lastGlyphQuad.glyphAdvance;
-
-        return 0;
-
-    } //xPositionAtIndex
-
-    function posInLineForX(targetLine:Int, x:Float):Int {
-
-        var glyphQuads = entity.glyphQuads;
-        var pos:Int = 0;
-
-        if (glyphQuads.length == 0 || x == 0) return pos;
-
-        for (i in 0...glyphQuads.length) {
-            var glyphQuad = glyphQuads.unsafeGet(i);
-            if (glyphQuad.line == targetLine) {
-                if (glyphQuad.glyphX >= x) return pos;
-                else if (glyphQuad.glyphX + glyphQuad.glyphAdvance >= x) {
-                    var distanceAfter = glyphQuad.glyphX + glyphQuad.glyphAdvance - x;
-                    var distanceBefore = x - glyphQuad.glyphX;
-                    if (distanceBefore <= distanceAfter) {
-                        return pos;
-                    }
-                }
-                pos++;
-            }
-            else if (glyphQuad.line > targetLine) {
-                break;
-            }
-        }
-
-        return pos;
-
-    } //posInLineForX
-
 /// TextInput delegate
 
     public function textInputClosestPositionInLine(fromPosition:Int, fromLine:Int, toLine:Int):Int {
 
-        var text = app.textInput.text;
+        var indexFromLine = entity.indexForPosInLine(fromLine, fromPosition);
+        var xPosition = entity.xPositionAtIndex(indexFromLine);
 
-        var indexFromLine = indexForPosInLine(text, fromLine, fromPosition);
-        var xPosition = xPositionAtIndex(indexFromLine);
-
-        return posInLineForX(toLine, xPosition);
+        return entity.posInLineForX(toLine, xPosition);
 
     } //textInputClosestPositionInLine
 
@@ -482,68 +426,19 @@ class EditText extends Component implements TextInputDelegate {
 
     public function textInputIndexForPosInLine(lineNumber:Int, lineOffset:Int):Int {
 
-        var text = app.textInput.text;
-
-        return indexForPosInLine(text, lineNumber, lineOffset);
+        return entity.indexForPosInLine(lineNumber, lineOffset);
 
     } //textInputIndexForPosInLine
 
     public function textInputLineForIndex(index:Int):Int {
 
-        var glyphQuads = entity.glyphQuads;
-        if (glyphQuads.length == 0) return 0;
-
-        for (i in 0...glyphQuads.length) {
-            var glyphQuad = glyphQuads.unsafeGet(i);
-            if (glyphQuad.index >= index) {
-                if (glyphQuad.posInLine > index - glyphQuad.index) {
-                    var currentLineIndex = glyphQuad.index - glyphQuad.posInLine;
-                    var line = glyphQuad.line;
-                    while (currentLineIndex > index) {
-                        currentLineIndex--;
-                        line--;
-                    }
-                    return line;
-                }
-                else {
-                    return glyphQuad.line;
-                }
-            }
-        }
-
-        return glyphQuads[glyphQuads.length-1].line;
+        return entity.lineForIndex(index);
 
     } //textInputLineForIndex
 
     public function textInputPosInLineForIndex(index:Int):Int {
 
-        var glyphQuads = entity.glyphQuads;
-        if (glyphQuads.length == 0) return 0;
-
-        for (i in 0...glyphQuads.length) {
-            var glyphQuad = glyphQuads.unsafeGet(i);
-            if (glyphQuad.index >= index) {
-                var pos = glyphQuad.posInLine + index - glyphQuad.index;
-                if (pos < 0) {
-                    var targetLine = textInputLineForIndex(index);
-                    var j = i - 1;
-                    while (j >= 0) {
-                        var glyphQuadBefore = glyphQuads.unsafeGet(j);
-                        if (glyphQuadBefore.line == targetLine) {
-                            pos = glyphQuadBefore.posInLine + index - glyphQuadBefore.index;
-                            return pos;
-                        }
-                        else if (glyphQuadBefore.line < targetLine) {
-                            return 0;
-                        }
-                        j--;
-                    }
-                }
-                return pos >= 0 ? pos : 0;
-            }
-        }
-
-        return 0;
+        return entity.posInLineForIndex(index);
 
     } //textInputPosInLineForIndex
 

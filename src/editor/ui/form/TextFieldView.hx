@@ -67,9 +67,9 @@ class TextFieldView extends FieldView implements Observable {
     function updateFromTextValue() {
 
         var displayedText = textValue;
-        if (displayedText == '' || displayedText.endsWith("\n")) {
+        /*if (displayedText == '' || displayedText.endsWith("\n")) {
             displayedText += ' ';
-        }
+        }*/
 
         textView.content = displayedText;
 
