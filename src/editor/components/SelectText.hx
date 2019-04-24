@@ -1,6 +1,8 @@
 package editor.components;
 
 using ceramic.Extensions;
+using unifill.Unifill;
+using StringTools;
 
 class SelectText extends Component implements Observable {
 
@@ -28,6 +30,10 @@ class SelectText extends Component implements Observable {
 
 /// Internal properties
 
+    var doubleClick:DoubleClick = null;
+
+    var didDoubleClick:Bool = false;
+
     var selectionBackgrounds:Array<Quad> = [];
 
     var willUpdateSelection:Bool = false;
@@ -35,6 +41,8 @@ class SelectText extends Component implements Observable {
     var textCursor:Quad = null;
 
     var textCursorToggleVisibilityTime:Float = 1.0;
+
+    var pointerIsDown:Bool = false;
 
 /// Lifecycle
 
@@ -322,6 +330,11 @@ class SelectText extends Component implements Observable {
             return;
         }
 
+        if (pointerIsDown) {
+            resetCursorVisibility();
+            return;
+        }
+
         textCursorToggleVisibilityTime -= delta;
         while (textCursorToggleVisibilityTime <= 0) {
             textCursorToggleVisibilityTime += 0.5;
@@ -343,12 +356,21 @@ class SelectText extends Component implements Observable {
 
         entity.offPointerDown(handlePointerDown);
         entity.offPointerUp(handlePointerUp);
+        if (doubleClick != null) {
+            entity.removeComponent('doubleClick');
+            doubleClick.destroy();
+            doubleClick = null;
+        }
 
         if (allowSelectingFromPointer) {
             entity.onPointerDown(this, handlePointerDown);
             entity.onPointerUp(this, handlePointerUp);
+            doubleClick = new DoubleClick();
+            doubleClick.onDoubleClick(handleDoubleClick);
+            entity.component('doubleClick', doubleClick);
         }
         else {
+            pointerIsDown = false;
             screen.offPointerMove(handlePointerMove);
         }
 
@@ -383,6 +405,7 @@ class SelectText extends Component implements Observable {
 
         resetCursorVisibility();
 
+        pointerIsDown = true;
         screen.onPointerMove(this, handlePointerMove);
 
     } //handlePointerDown
@@ -395,9 +418,15 @@ class SelectText extends Component implements Observable {
 
     function handlePointerUp(info:TouchInfo):Void {
 
+        pointerIsDown = false;
         screen.offPointerMove(handlePointerMove);
 
-        updateSelectionFromMovingPointer(screen.pointerX, screen.pointerY);
+        if (didDoubleClick) {
+            didDoubleClick = false;
+        }
+        else {
+            updateSelectionFromMovingPointer(screen.pointerX, screen.pointerY);
+        }
 
     } //handlePointerUp
 
@@ -429,5 +458,45 @@ class SelectText extends Component implements Observable {
         resetCursorVisibility();
 
     } //updateSelectionFromMovingPointer
+
+    function handleDoubleClick():Void {
+
+        didDoubleClick = true;
+
+        var index = indexFromScreenPosition(screen.pointerX, screen.pointerY);
+
+        var text = entity.content;
+        var len = text.uLength();
+
+        var start = index;
+        var c:String = null;
+        var didSelectBefore = false;
+        while (start > 0) {
+            c = text.uCharAt(start - 1);
+            if (c.trim() == '') break;
+            didSelectBefore = true;
+            start--;
+        }
+        
+        var end = didSelectBefore ? index : index + 1;
+        c = text.uCharAt(index);
+        if (c == null || c.trim() == '') {
+            // Nothing to do
+        }
+        else {
+            while (end < len) {
+                c = text.uCharAt(end);
+                if (c.trim() == '') break;
+                end++;
+            }
+        }
+
+        if (end > len) end = len;
+
+        invertedSelection = false;
+        selectionStart = start;
+        selectionEnd = end;
+
+    } //handleDoubleClick
 
 } //SelectText
