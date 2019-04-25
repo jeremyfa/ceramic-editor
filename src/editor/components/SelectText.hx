@@ -18,6 +18,9 @@ class SelectText extends Component implements Observable {
 
     public var entity:Text;
 
+    /** Optional container on which pointer events are bound */
+    @observe public var container:Visual = null;
+
     @observe public var allowSelectingFromPointer:Bool = false;
 
     @observe public var showCursor:Bool = false;
@@ -29,6 +32,8 @@ class SelectText extends Component implements Observable {
     @observe public var invertedSelection:Bool = false;
 
 /// Internal properties
+
+    var boundContainer:Visual = null;
 
     var doubleClick:DoubleClick = null;
 
@@ -59,9 +64,8 @@ class SelectText extends Component implements Observable {
         app.onUpdate(this, updateCursorVisibility);
         onShowCursorChange(this, handleShowCursorChange);
 
-        onAllowSelectingFromPointerChange(this, handleAllowSelectingFromPointerChange);
-
         autorun(updateFromSelection);
+        autorun(updatePointerEventBindings);
 
         onSelectionStartChange(this, function(_, _) { updateSelectionGraphics(); });
         onSelectionEndChange(this, function(_, _) { updateSelectionGraphics(); });
@@ -352,31 +356,49 @@ class SelectText extends Component implements Observable {
 
     } //resetCursorVisibility
 
-    function handleAllowSelectingFromPointerChange(_, _) {
+/// Selecting from pointer
 
-        entity.offPointerDown(handlePointerDown);
-        entity.offPointerUp(handlePointerUp);
+    function updatePointerEventBindings() {
+
+        var container = this.container;
+        var allowSelectingFromPointer = this.allowSelectingFromPointer;
+
+        unobserve();
+
+        if (boundContainer != null) {
+            boundContainer.offPointerDown(handlePointerDown);
+            boundContainer.offPointerUp(handlePointerUp);
+            boundContainer = null;
+        }
+        else {
+            entity.offPointerDown(handlePointerDown);
+            entity.offPointerUp(handlePointerUp);
+        }
+
         if (doubleClick != null) {
-            entity.removeComponent('doubleClick');
             doubleClick.destroy();
             doubleClick = null;
         }
 
         if (allowSelectingFromPointer) {
-            entity.onPointerDown(this, handlePointerDown);
-            entity.onPointerUp(this, handlePointerUp);
+            var toBind:Visual = entity;
+            if (container != null) {
+                toBind = container;
+            }
+            toBind.onPointerDown(this, handlePointerDown);
+            toBind.onPointerUp(this, handlePointerUp);
             doubleClick = new DoubleClick();
             doubleClick.onDoubleClick(handleDoubleClick);
-            entity.component('doubleClick', doubleClick);
+            toBind.component('doubleClick', doubleClick);
         }
         else {
             pointerIsDown = false;
             screen.offPointerMove(handlePointerMove);
         }
 
-    } //handleAllowSelectingFromPointerChange
+        reobserve();
 
-/// Selecting from pointer
+    } //updatePointerEventBindings
 
     function indexFromScreenPosition(x, y):Int {
 
@@ -418,14 +440,17 @@ class SelectText extends Component implements Observable {
 
     function handlePointerUp(info:TouchInfo):Void {
 
-        pointerIsDown = false;
         screen.offPointerMove(handlePointerMove);
 
-        if (didDoubleClick) {
-            didDoubleClick = false;
-        }
-        else {
-            updateSelectionFromMovingPointer(screen.pointerX, screen.pointerY);
+        if (pointerIsDown) {
+            pointerIsDown = false;
+
+            if (didDoubleClick) {
+                didDoubleClick = false;
+            }
+            else {
+                updateSelectionFromMovingPointer(screen.pointerX, screen.pointerY);
+            }
         }
 
     } //handlePointerUp
@@ -477,7 +502,7 @@ class SelectText extends Component implements Observable {
             didSelectBefore = true;
             start--;
         }
-        
+
         var end = didSelectBefore ? index : index + 1;
         c = text.uCharAt(index);
         if (c == null || c.trim() == '') {

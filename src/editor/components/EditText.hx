@@ -20,7 +20,23 @@ class EditText extends Component implements TextInputDelegate {
 
     public var entity:Text;
 
+    public var multiline:Bool = false;
+
+    /** Optional container on which pointer events are bound */
+    public var container(default,set):Visual = null;
+    function set_container(container:Visual):Visual {
+        if (this.container == container) return container;
+        this.container = container;
+        if (selectText != null) {
+            selectText.container = container;
+        }
+        if (entity != null) bindPointerEvents();
+        return container;
+    }
+
 /// Internal properties
+
+    var boundContainer:Visual = null;
 
     var selectText:SelectText = null;
 
@@ -51,15 +67,20 @@ class EditText extends Component implements TextInputDelegate {
             entity.component('selectText', selectText);
         }
 
+        selectText.container = container;
         selectText.onSelection(this, updateFromSelection);
+
+        bindPointerEvents();
+
+        app.onUpdate(this, handleAppUpdate);
         
     } //init
 
 /// Public API
 
-    public function startInput(content:String, multiline:Bool, selectionStart:Int = -1, selectionEnd:Int = -1):Void {
+    public function startInput(selectionStart:Int = -1, selectionEnd:Int = -1):Void {
 
-        success('START INPUT $content');
+        var content = entity.content;
 
         var x = entity.x;
         var y = entity.y;
@@ -130,6 +151,10 @@ class EditText extends Component implements TextInputDelegate {
 
     function updateFromTextInput(text:String):Void {
 
+        // Update text content ourself
+        entity.content = text;
+
+        // But allow external code to put another processed value if needed
         emitUpdate(text);
 
     } //updateFromTextInput
@@ -184,5 +209,49 @@ class EditText extends Component implements TextInputDelegate {
         return entity.posInLineForIndex(index);
 
     } //textInputPosInLineForIndex
+
+/// Pointer events and focus
+
+    function bindPointerEvents() {
+
+        if (boundContainer != null) {
+            boundContainer.offPointerDown(handlePointerDown);
+            boundContainer = null;
+        }
+        else {
+            entity.offPointerDown(handlePointerDown);
+        }
+
+        if (container != null) {
+            container.onPointerDown(this, handlePointerDown);
+            boundContainer = container;
+        }
+        else {
+            entity.onPointerDown(this.handlePointerDown);
+        }
+
+    } //bindPointerEvents
+
+    function handlePointerDown(info:TouchInfo) {
+
+        if (!inputActive) {
+            screen.focusedVisual = entity;
+            app.onceImmediate(function() {
+                // This way of calling will ensure any previous text input
+                // can be stopped before we start this new one
+                startInput(0, entity.content.uLength());
+            });
+        }
+
+    } //handlePointerDown
+
+    function handleAppUpdate(delta:Float) {
+
+        // Check focus
+        if (inputActive && screen.focusedVisual != entity && (container == null || screen.focusedVisual != container)) {
+            stopInput();
+        }
+
+    } //handleAppUpdate
 
 } //EditText
