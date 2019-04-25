@@ -78,6 +78,7 @@ class DoubleClick extends Component {
         if (Math.abs(screen.pointerX - pointerStartX) > threshold || Math.abs(screen.pointerY - pointerStartY) > threshold) {
             screen.offPointerMove(handlePointerMove);
             pressed = false;
+            firstClickTime = -1;
         }
 
     } //handlePointerMove
