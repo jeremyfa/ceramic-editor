@@ -46,6 +46,7 @@ class CellView extends LinearLayout implements Observable {
         subTitleTextView = new TextView();
         subTitleTextView.align = LEFT;
         subTitleTextView.pointSize = 9;
+        subTitleTextView.paddingLeft = 1;
         subTitleTextView.viewSize(fill(), auto());
         subTitleTextView.text.component('italicText', new ItalicText());
         add(subTitleTextView);

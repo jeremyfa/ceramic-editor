@@ -1,5 +1,7 @@
 package editor.ui.fragments;
 
+using StringTools;
+
 class FragmentsPanelView extends LinearLayout implements Observable {
 
 /// Internal properties
@@ -76,22 +78,24 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             var item = new LabeledFieldView(new TextFieldView());
             item.label = 'Width';
             item.field.updateTextValue = function(textValue:String) {
-                var fragment = model.project.selectedFragment;
-                if (fragment == null) return;
-                var intValue = Std.parseInt(textValue);
-                    trace('CHECK $intValue');
-                if (intValue != null && !Math.isNaN(intValue) && Math.isFinite(intValue)) {
-                    trace('SET $intValue');
-                    fragment.width = intValue;
-                    item.field.invalidateTextValue();
+                if (textValue.trim() != '') {
+                    var fragment = model.project.selectedFragment;
+                    if (fragment == null) return;
+                    var intValue = Std.parseInt(textValue);
+                    if (intValue != null && !Math.isNaN(intValue) && Math.isFinite(intValue)) {
+                        fragment.width = intValue;
+                        item.field.textValue = '' + fragment.width;
+                    }
                 }
                 else {
-                    trace('NO SET');
+                    item.field.textValue = '';
                 }
+                item.field.invalidateTextValue();
             };
             autorun(function() {
                 var fragment = model.project.selectedFragment;
                 if (fragment == null) return;
+                var focused = item.field.focused;
                 item.field.textValue = '' + fragment.width;
             });
             form.add(item);

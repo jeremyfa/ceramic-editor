@@ -36,7 +36,7 @@ class TextFieldView extends FieldView implements Observable {
 
         error(' --- NEW TextFieldView ---');
 
-        padding(6, 6);
+        padding(6, 6, 5, 6);
         borderSize = 1;
         borderPosition = INSIDE;
         transparent = false;
@@ -44,7 +44,7 @@ class TextFieldView extends FieldView implements Observable {
         textView = new TextView();
         textView.viewSize(fill(), auto());
         textView.align = LEFT;
-        textView.pointSize = 9;
+        textView.pointSize = 10;
         textView.text.maxLineDiff = -1;
         add(textView);
 
@@ -72,9 +72,7 @@ class TextFieldView extends FieldView implements Observable {
     function updateFromTextValue() {
 
         var displayedText = textValue;
-        /*if (displayedText == '' || displayedText.endsWith("\n")) {
-            displayedText += ' ';
-        }*/
+        editText.updateText(displayedText);
 
         textView.content = displayedText;
 

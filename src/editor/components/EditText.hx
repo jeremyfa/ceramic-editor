@@ -144,7 +144,6 @@ class EditText extends Component implements TextInputDelegate {
         app.textInput.offSelection(updateFromInputSelection);
 
         if (_activeEditTextInput == this) {
-            trace('-- do stop text input');
             app.textInput.stop();
             _activeEditTextInput = null;
         }
@@ -157,6 +156,14 @@ class EditText extends Component implements TextInputDelegate {
         emitStop();
 
     } //stopInput
+
+    public function updateText(text:String):Void {
+
+        if (!inputActive) return;
+
+        app.textInput.text = text;
+
+    } //updateText
 
 /// Internal
 
