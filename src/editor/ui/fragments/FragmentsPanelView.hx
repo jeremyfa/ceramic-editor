@@ -56,20 +56,46 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         var form = new FormLayout();
         add(form);
 
-        var item = new LabeledFieldView(new TextFieldView());
-        item.label = 'Name';
-        item.field.multiline = true;
-        item.field.updateTextValue = function(textValue:String) {
-            var fragment = model.project.selectedFragment;
-            if (fragment == null) return;
-            fragment.name = textValue;
-        };
-        autorun(function() {
-            var fragment = model.project.selectedFragment;
-            if (fragment == null) return;
-            item.field.textValue = fragment.name;
-        });
-        form.add(item);
+        (function() {
+            var item = new LabeledFieldView(new TextFieldView());
+            item.label = 'Name';
+            item.field.updateTextValue = function(textValue:String) {
+                var fragment = model.project.selectedFragment;
+                if (fragment == null) return;
+                fragment.name = textValue;
+            };
+            autorun(function() {
+                var fragment = model.project.selectedFragment;
+                if (fragment == null) return;
+                item.field.textValue = fragment.name;
+            });
+            form.add(item);
+        })();
+
+        (function() {
+            var item = new LabeledFieldView(new TextFieldView());
+            item.label = 'Width';
+            item.field.updateTextValue = function(textValue:String) {
+                var fragment = model.project.selectedFragment;
+                if (fragment == null) return;
+                var intValue = Std.parseInt(textValue);
+                    trace('CHECK $intValue');
+                if (intValue != null && !Math.isNaN(intValue) && Math.isFinite(intValue)) {
+                    trace('SET $intValue');
+                    fragment.width = intValue;
+                    item.field.invalidateTextValue();
+                }
+                else {
+                    trace('NO SET');
+                }
+            };
+            autorun(function() {
+                var fragment = model.project.selectedFragment;
+                if (fragment == null) return;
+                item.field.textValue = '' + fragment.width;
+            });
+            form.add(item);
+        })();
 
         autorun(function() {
             var active = model.project.selectedFragment != null;

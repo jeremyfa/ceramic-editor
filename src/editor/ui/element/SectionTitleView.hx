@@ -25,7 +25,7 @@ class SectionTitleView extends TextView implements Observable {
 
         color = theme.lightBackgroundColor;
         borderBottomColor = theme.mediumBorderColor;
-        font = theme.boldFont;
+        font = theme.boldFont10;
 
     } //updateStyle
 

@@ -63,7 +63,7 @@ class TabView extends TextView implements Observable {
         borderLeftSize = index == 0 ? 0 : 1;
         borderTopSize = 1;
         borderRightSize = 1;
-        font = theme.boldFont;
+        font = theme.boldFont20;
 
     } //updateStyle
 

@@ -15,7 +15,12 @@ class TextFieldView extends FieldView implements Observable {
 
 /// Public properties
 
-    public var multiline:Bool = false;
+    public var multiline(default,set):Bool = false;
+    function set_multiline(multiline:Bool):Bool {
+        this.multiline = multiline;
+        editText.multiline = multiline;
+        return multiline;
+    }
 
     @observe public var textValue:String = '';
 
@@ -44,13 +49,13 @@ class TextFieldView extends FieldView implements Observable {
         add(textView);
 
         editText = new EditText();
+        editText.container = this;
         textView.text.component('editText', editText);
         editText.onUpdate(this, updateFromEditText);
         editText.onStop(this, handleStopEditText);
 
         autorun(updateStyle);
         autorun(updateFromTextValue);
-        autorun(updateFromFocused);
 
     } //new
 
@@ -75,34 +80,6 @@ class TextFieldView extends FieldView implements Observable {
 
     } //updateFromTextValue
 
-    function updateFromFocused() {
-        
-        var focused = this.focused;
-
-        unobserve();
-
-        if (focused) {
-
-            warning('focused: true');
-
-            app.onceImmediate(function() {
-                // This way of calling will ensure any previous text input
-                // can be stopped before we start this new one
-                editText.startInput(textValue, multiline, 0, textValue.uLength());
-            });
-
-        }
-        else {
-
-            warning('focused: false');
-
-            editText.stopInput();
-        }
-
-        reobserve();
-
-    } //updateFromFocused
-
     function updateFromEditText(text:String) {
 
         updateTextValue(text);
@@ -121,6 +98,8 @@ class TextFieldView extends FieldView implements Observable {
     function updateStyle() {
         
         color = theme.darkBackgroundColor;
+
+        textView.font = theme.mediumFont10;
 
         if (focused) {
             borderColor = theme.focusedFieldBorderColor;

@@ -52,6 +52,12 @@ class Editor extends Entity {
 
         app.onceReady(loadAssets);
 
+        var keyBindings = new KeyBindings();
+        keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_C)], function() {
+            // CMD/CTRL + C
+            trace('---- COPY ----');
+        });
+
     } //new
 
     function loadAssets() {

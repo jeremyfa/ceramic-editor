@@ -49,6 +49,10 @@ class SelectText extends Component implements Observable {
 
     var pointerIsDown:Bool = false;
 
+    var leftCtrlDown:Bool = false;
+
+    var rightCtrlDown:Bool = false;
+
 /// Lifecycle
 
     public function new() {
@@ -69,6 +73,8 @@ class SelectText extends Component implements Observable {
 
         onSelectionStartChange(this, function(_, _) { updateSelectionGraphics(); });
         onSelectionEndChange(this, function(_, _) { updateSelectionGraphics(); });
+
+        bindKeyboardEvents();
         
     } //init
 
@@ -523,5 +529,78 @@ class SelectText extends Component implements Observable {
         selectionEnd = end;
 
     } //handleDoubleClick
+
+/// Keyboard
+
+    function bindKeyboardEvents():Void {
+
+        app.onKeyDown(this, handleKeyDown);
+        app.onKeyUp(this, handleKeyUp);
+
+    } //bindKeyboardEvents
+
+    function handleKeyDown(key:Key):Void {
+
+        // TODO move this into some standard keyboard shortcuts utility
+/*
+        #if mac
+        if (key.scanCode == ScanCode.LMETA) {
+            leftCtrlDown = true;
+        }
+        else if (key.scanCode == ScanCode.RMETA) {
+            rightCtrlDown = true;
+        }
+        #else
+        if (key.scanCode == ScanCode.LCTRL) {
+            leftCtrlDown = true;
+        }
+        else if (key.scanCode == ScanCode.RCTRL) {
+            rightCtrlDown = true;
+        }
+        #end
+
+        if (leftCtrlDown || rightCtrlDown) {
+            if (key.keyCode == KeyCode.KEY_C) {
+                var start = selectionStart;
+                var end = selectionEnd;
+                if (start < 0) start = 0;
+                if (end < start) end = start;
+                var text = entity.content.uSubstring(start, end);
+                trace('COPY: ' + text);
+                app.backend.clipboard.setText(text);
+            }
+            else if (key.keyCode == KeyCode.KEY_V) {
+                trace('PASTE');
+            }
+            else if (key.keyCode == KeyCode.KEY_X) {
+                trace('CUT');
+            }
+            else if (key.keyCode == KeyCode.KEY_Z) {
+                // TODO If shift pressed
+                trace('UNDO');
+            }
+        }
+*/
+    } //handleKeyDown
+
+    function handleKeyUp(key:Key):Void {
+/*
+        #if mac
+        if (key.scanCode == ScanCode.LMETA) {
+            leftCtrlDown = false;
+        }
+        else if (key.scanCode == ScanCode.RMETA) {
+            rightCtrlDown = false;
+        }
+        #else
+        if (key.scanCode == ScanCode.LCTRL) {
+            leftCtrlDown = false;
+        }
+        else if (key.scanCode == ScanCode.RCTRL) {
+            rightCtrlDown = false;
+        }
+        #end
+*/
+    } //handleKeyUp
 
 } //SelectText

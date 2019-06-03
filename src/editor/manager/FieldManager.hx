@@ -14,11 +14,15 @@ class FieldManager extends Entity implements Observable implements Lazy {
 
     public function new() {
 
-        app.onUpdate(this, updateFocusedField);
+        app.onUpdate(this, function(_) {
+            updateFocusedField();
+        });
 
     } //new
 
-    function updateFocusedField(delta:Float):Void {
+    public function updateFocusedField():Void {
+
+        unobserve();
 
         var focusedVisual = screen.focusedVisual;
         var focusedField:FieldView = null;
@@ -33,6 +37,8 @@ class FieldManager extends Entity implements Observable implements Lazy {
         }
 
         this.focusedField = focusedField;
+
+        reobserve();
 
     } //updateFocusedField
 

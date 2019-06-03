@@ -6,6 +6,7 @@ class FieldView extends LinearLayout {
 
     public var focused(get,never):Bool;
     inline function get_focused():Bool {
+        FieldManager.manager.updateFocusedField();
         return FieldManager.manager.focusedField == this;
     }
 

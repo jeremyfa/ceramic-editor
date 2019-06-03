@@ -13,7 +13,7 @@ class EditorData extends Model {
         super();
 
         //this.loadSaved('editor');
-        this.autoSave('editor');
+        this.autoSaveAsKey('editor');
 
     } //new
 

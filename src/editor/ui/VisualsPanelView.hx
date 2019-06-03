@@ -37,7 +37,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
                 title.autorun(function() {
                     title.color = theme.lightBackgroundColor;
                     title.borderBottomColor = theme.darkBackgroundColor;
-                    title.font = theme.boldFont;
+                    title.font = theme.boldFont10;
                 });
 
             }

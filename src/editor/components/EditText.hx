@@ -10,6 +10,8 @@ class EditText extends Component implements TextInputDelegate {
 
     static var _point = new Point();
 
+    static var _activeEditTextInput:EditText = null;
+
 /// Events
 
     @event function update(content:String);
@@ -56,6 +58,8 @@ class EditText extends Component implements TextInputDelegate {
 
         super();
 
+        id = Utils.uniqueId();
+
     } //new
 
     override function init() {
@@ -79,6 +83,17 @@ class EditText extends Component implements TextInputDelegate {
 /// Public API
 
     public function startInput(selectionStart:Int = -1, selectionEnd:Int = -1):Void {
+
+        if (_activeEditTextInput != null) {
+            _activeEditTextInput.stopInput();
+            _activeEditTextInput = null;
+            app.onceImmediate(function() {
+                startInput(selectionStart, selectionEnd);
+            });
+            return;
+        }
+
+        _activeEditTextInput = this;
 
         var content = entity.content;
 
@@ -122,15 +137,17 @@ class EditText extends Component implements TextInputDelegate {
 
     public function stopInput():Void {
 
-        error('STOP INPUT');
-
         inputActive = false;
 
         app.textInput.offUpdate(updateFromTextInput);
         app.textInput.offStop(handleStop);
         app.textInput.offSelection(updateFromInputSelection);
 
-        app.textInput.stop();
+        if (_activeEditTextInput == this) {
+            trace('-- do stop text input');
+            app.textInput.stop();
+            _activeEditTextInput = null;
+        }
 
         selectText.showCursor = false;
         selectText.allowSelectingFromPointer = false;
@@ -234,8 +251,8 @@ class EditText extends Component implements TextInputDelegate {
 
     function handlePointerDown(info:TouchInfo) {
 
+        screen.focusedVisual = entity;
         if (!inputActive) {
-            screen.focusedVisual = entity;
             app.onceImmediate(function() {
                 // This way of calling will ensure any previous text input
                 // can be stopped before we start this new one

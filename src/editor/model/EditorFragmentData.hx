@@ -6,6 +6,10 @@ class EditorFragmentData extends Model {
 
     @serialize public var name:String;
 
+    @serialize public var width:Int;
+
+    @serialize public var height:Int;
+
     public function new() {
 
         super();
