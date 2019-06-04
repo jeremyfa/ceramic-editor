@@ -41,8 +41,6 @@ class TextFieldView extends FieldView implements Observable {
 
         super();
 
-        error(' --- NEW TextFieldView ---');
-
         padding(6, 6, 5, 6);
         borderSize = 1;
         borderPosition = INSIDE;

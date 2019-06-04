@@ -75,6 +75,7 @@ class EditText extends Component implements TextInputDelegate {
         selectText.onSelection(this, updateFromSelection);
 
         bindPointerEvents();
+        bindKeyBindings();
 
         app.onUpdate(this, handleAppUpdate);
         
@@ -277,5 +278,48 @@ class EditText extends Component implements TextInputDelegate {
         }
 
     } //handleAppUpdate
+
+/// Key bindings
+
+    function bindKeyBindings() {
+
+        var keyBindings = new KeyBindings();
+
+        keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_V)], function() {
+            // CMD/CTRL + C
+            if (screen.focusedVisual != entity) return;
+            var pasteText = app.backend.clipboard.getText();
+            if (pasteText == null) pasteText = '';
+            if (!multiline) pasteText = pasteText.replace("\n", ' ');
+            pasteText.replace("\r", '');
+            var newText = entity.content.uSubstring(0, selectText.selectionStart) + pasteText + entity.content.uSubstring(selectText.selectionEnd);
+            selectText.selectionStart += pasteText.uLength();
+            selectText.selectionEnd = selectText.selectionStart;
+
+            // Update text content
+            entity.content = newText;
+            emitUpdate(newText);
+        });
+
+        keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_X)], function() {
+            // CMD/CTRL + X
+            if (screen.focusedVisual != entity || selectText.selectionEnd - selectText.selectionStart <= 0) return;
+            var selectedText = entity.content.uSubstring(selectText.selectionStart, selectText.selectionEnd);
+            app.backend.clipboard.setText(selectedText);
+
+            var newText = entity.content.uSubstring(0, selectText.selectionStart) + entity.content.uSubstring(selectText.selectionEnd);
+            selectText.selectionEnd = selectText.selectionStart;
+
+            // Update text content
+            entity.content = newText;
+            emitUpdate(newText);
+        });
+
+        onDestroy(keyBindings, function() {
+            keyBindings.destroy();
+            keyBindings = null;
+        });
+
+    } //bindKeyBindings
 
 } //EditText
