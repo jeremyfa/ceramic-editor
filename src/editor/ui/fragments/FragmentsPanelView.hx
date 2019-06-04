@@ -112,7 +112,11 @@ class FragmentsPanelView extends LinearLayout implements Observable {
 
     function initAddFragmentButton() {
 
-        // TODO
+        var separator = new SectionSeparatorView();
+        add(separator);
+
+        var container = new PaddedLayout();
+        add(container);
 
     } //initAddFragmentButton
 
