@@ -9,7 +9,7 @@ class FormLayout extends LinearLayout {
         super();
 
         direction = VERTICAL;
-        itemSpacing = 10;
+        itemSpacing = 4;
         transparent = false;
 
         padding(10, 10);

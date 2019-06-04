@@ -61,15 +61,13 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         (function() {
             var item = new LabeledFieldView(new TextFieldView());
             item.label = 'Name';
-            item.field.updateTextValue = function(textValue:String) {
+            item.field.setValue = function(field, value) {
                 var fragment = model.project.selectedFragment;
-                if (fragment == null) return;
-                fragment.name = textValue;
+                if (fragment != null) fragment.name = value;
             };
             autorun(function() {
                 var fragment = model.project.selectedFragment;
-                if (fragment == null) return;
-                item.field.textValue = fragment.name;
+                if (fragment != null) item.field.textValue = fragment.name;
             });
             form.add(item);
         })();
@@ -77,26 +75,29 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         (function() {
             var item = new LabeledFieldView(new TextFieldView());
             item.label = 'Width';
-            item.field.updateTextValue = function(textValue:String) {
-                if (textValue.trim() != '') {
-                    var fragment = model.project.selectedFragment;
-                    if (fragment == null) return;
-                    var intValue = Std.parseInt(textValue);
-                    if (intValue != null && !Math.isNaN(intValue) && Math.isFinite(intValue)) {
-                        fragment.width = intValue;
-                        item.field.textValue = '' + fragment.width;
-                    }
-                }
-                else {
-                    item.field.textValue = '';
-                }
-                item.field.invalidateTextValue();
+            item.field.setTextValue = SanitizeTextField.setTextValueToInt;
+            item.field.setValue = function(field, value) {
+                var fragment = model.project.selectedFragment;
+                if (fragment != null) fragment.width = value;
             };
             autorun(function() {
                 var fragment = model.project.selectedFragment;
-                if (fragment == null) return;
-                var focused = item.field.focused;
-                item.field.textValue = '' + fragment.width;
+                if (fragment != null) item.field.textValue = '' + fragment.width;
+            });
+            form.add(item);
+        })();
+
+        (function() {
+            var item = new LabeledFieldView(new TextFieldView());
+            item.label = 'Height';
+            item.field.setTextValue = SanitizeTextField.setTextValueToInt;
+            item.field.setValue = function(field, value) {
+                var fragment = model.project.selectedFragment;
+                if (fragment != null) fragment.height = value;
+            };
+            autorun(function() {
+                var fragment = model.project.selectedFragment;
+                if (fragment != null) item.field.textValue = '' + fragment.height;
             });
             form.add(item);
         })();

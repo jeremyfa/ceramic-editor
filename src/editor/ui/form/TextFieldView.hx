@@ -7,11 +7,18 @@ class TextFieldView extends FieldView implements Observable {
 
 /// Hooks
 
-    public dynamic function updateTextValue(textValue:String):Void {
+    public dynamic function setTextValue(field:TextFieldView, textValue:String):Void {
 
         this.textValue = textValue;
+        setValue(field, textValue);
 
-    } //updateTextValue
+    } //setTextValue
+
+    public dynamic function setValue(field:TextFieldView, value:Dynamic):Void {
+
+        // Default implementation does nothing
+
+    } //setValue
 
 /// Public properties
 
@@ -80,7 +87,7 @@ class TextFieldView extends FieldView implements Observable {
 
     function updateFromEditText(text:String) {
 
-        updateTextValue(text);
+        setTextValue(this, text);
 
     } //updateFromEditText
 
