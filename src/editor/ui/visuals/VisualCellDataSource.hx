@@ -1,6 +1,6 @@
-package editor.ui.fragments;
+package editor.ui.visuals;
 
-class FragmentCellDataSource implements CollectionViewDataSource implements Observable {
+class VisualCellDataSource implements CollectionViewDataSource implements Observable {
 
     public var width:Float = 0;
 

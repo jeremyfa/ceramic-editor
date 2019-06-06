@@ -8,7 +8,10 @@ class SectionSeparatorView extends View {
 
         super();
 
-        viewSize(fill(), 1);
+        viewSize(fill(), 0);
+
+        borderTopSize = 1;
+        borderPosition = OUTSIDE;
 
         autorun(updateStyle);
 
@@ -18,7 +21,7 @@ class SectionSeparatorView extends View {
 
     function updateStyle() {
 
-        color = theme.mediumBorderColor;
+        borderColor = theme.mediumBorderColor;
 
     } //updateStyle
 

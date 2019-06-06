@@ -23,6 +23,16 @@ class FieldView extends LinearLayout {
 
     } //new
 
+/// Public API
+
+    public function focus():Void {
+
+        screen.focusedVisual = this;
+
+    } //focus
+
+/// Internal
+
     function bindPointerEvents() {
 
         // To make it focusable

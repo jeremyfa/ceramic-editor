@@ -29,7 +29,7 @@ class ProjectData extends Model {
         super();
 
         // Dummy fragments
-        var fragments = [];
+        /*var fragments = [];
         for (i in 0...10) {
             var fragment = new EditorFragmentData();
             fragment.fragmentId = 'FRAGMENT_$i';
@@ -38,8 +38,45 @@ class ProjectData extends Model {
             fragment.height = 600;
             fragments.push(fragment);
         }
-        this.fragments = cast fragments;
+        this.fragments = cast fragments;*/
 
     } //new
+
+/// Public API
+
+    public function fragmentById(fragmentId:String):EditorFragmentData {
+
+        for (i in 0...fragments.length) {
+            var fragment = fragments[i];
+            if (fragment.fragmentId == fragmentId) return fragment;
+        }
+
+        return null;
+
+    } //fragmentById
+
+    public function addFragment():EditorFragmentData {
+
+        // Compute fragment id
+        var i = 0;
+        while (fragmentById('FRAGMENT_$i') != null) {
+            i++;
+        }
+
+        // Create and add fragment data
+        //
+        var fragment = new EditorFragmentData();
+        fragment.fragmentId = 'FRAGMENT_$i';
+        fragment.name = 'Fragment $i';
+        fragment.width = 800;
+        fragment.height = 600;
+
+        var fragments = [].concat(this.fragments.mutable);
+        fragments.push(fragment);
+        this.fragments = cast fragments;
+
+        return fragment;
+
+    } //addFragment
 
 } //ProjectData

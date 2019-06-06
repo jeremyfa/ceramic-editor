@@ -1,6 +1,8 @@
 package editor.ui.element;
 
-class CellCollectionView extends CollectionView {
+class CellCollectionView extends CollectionView implements Observable {
+
+    @observe public var scrolling(default,null):Bool = false;
 
     public function new() {
 
@@ -20,7 +22,15 @@ class CellCollectionView extends CollectionView {
 
         autorun(updateStyle);
 
+        app.onUpdate(this, updateScrollingFlag);
+
     } //new
+
+    function updateScrollingFlag(delta:Float) {
+
+        scrolling = (scroller.status != IDLE);
+        
+    } //updateScrollingFlag
 
     override function layout() {
 

@@ -15,6 +15,8 @@ class CellView extends LinearLayout implements Observable {
 
     @observe public var itemIndex:Int = -1;
 
+    @observe public var collectionView:CellCollectionView = null;
+
 /// Internal
 
     var titleTextView:TextView;
@@ -22,6 +24,8 @@ class CellView extends LinearLayout implements Observable {
     var subTitleTextView:TextView;
 
     @observe var hover:Bool = false;
+
+    @observe var appliedHoverItemIndex:Int = -1;
 
 /// Lifecycle
 
@@ -104,10 +108,22 @@ class CellView extends LinearLayout implements Observable {
         else {
             borderLeftSize = 0;
 
-            if (hover) {
-                color = theme.lightBackgroundColor;
-            } else {
-                color = theme.mediumBackgroundColor;
+            if (collectionView == null || !collectionView.scrolling) {
+                if (hover) {
+                    appliedHoverItemIndex = itemIndex;
+                    color = theme.lightBackgroundColor;
+                } else {
+                    appliedHoverItemIndex = -1;
+                    color = theme.mediumBackgroundColor;
+                }
+            }
+            else {
+                if (appliedHoverItemIndex != -1 && appliedHoverItemIndex == itemIndex) {
+                    color = theme.lightBackgroundColor;
+                }
+                else {
+                    color = theme.mediumBackgroundColor;
+                }
             }
         }
 

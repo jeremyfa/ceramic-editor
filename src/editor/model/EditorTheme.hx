@@ -54,6 +54,14 @@ class EditorTheme extends Model {
 
     @observe public var focusedFieldBorderColor:Color = 0x4392E0;
 
+/// Button
+
+    @observe public var buttonBackgroundColor:Color = 0x515151;
+
+    @observe public var buttonOverBackgroundColor:Color = 0x5A5A5A;
+
+    @observe public var buttonPressedBackgroundColor:Color = 0x4798EB;
+
     public function new() {
 
         super();

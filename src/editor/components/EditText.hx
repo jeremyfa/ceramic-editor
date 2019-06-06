@@ -166,6 +166,19 @@ class EditText extends Component implements TextInputDelegate {
 
     } //updateText
 
+    public function focus() {
+
+        screen.focusedVisual = entity;
+        if (!inputActive) {
+            app.onceImmediate(function() {
+                // This way of calling will ensure any previous text input
+                // can be stopped before we start this new one
+                startInput(0, entity.content.uLength());
+            });
+        }
+
+    } //focus
+
 /// Internal
 
     function handleStop():Void {
@@ -259,14 +272,7 @@ class EditText extends Component implements TextInputDelegate {
 
     function handlePointerDown(info:TouchInfo) {
 
-        screen.focusedVisual = entity;
-        if (!inputActive) {
-            app.onceImmediate(function() {
-                // This way of calling will ensure any previous text input
-                // can be stopped before we start this new one
-                startInput(0, entity.content.uLength());
-            });
-        }
+        focus();
 
     } //handlePointerDown
 

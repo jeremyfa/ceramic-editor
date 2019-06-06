@@ -42,9 +42,28 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         autorun(function() {
             var length = model.project.fragments.length;
             if (length != prevLength) {
+                var scrollToBottom = prevLength > 0 && length > prevLength;
+
                 prevLength = length;
                 collectionView.reloadData();
+
+                if (scrollToBottom) {
+                    collectionView.layoutDirty = true;
+                    collectionView.onceLayout(this, function() {
+                        collectionView.scroller.scrollTo(
+                            collectionView.scroller.scrollX,
+                            collectionView.scroller.content.height - collectionView.scroller.height
+                        );
+                        collectionView.scroller.scrollToBounds();
+                    });
+                }
             }
+        });
+
+        autorun(function() {
+            var active = model.project.fragments.length > 0;
+            title.active = active;
+            collectionView.active = active;
         });
 
     } //initAllFragmentsSection
@@ -117,6 +136,17 @@ class FragmentsPanelView extends LinearLayout implements Observable {
 
         var container = new PaddedLayout();
         add(container);
+
+        var button = new Button();
+        button.content = 'Add fragment';
+        button.onClick(this, function() {
+            model.project.selectedFragment = model.project.addFragment();
+        });
+        container.add(button);
+
+        autorun(function() {
+            separator.active = model.project.fragments.length > 0;
+        });
 
     } //initAddFragmentButton
 

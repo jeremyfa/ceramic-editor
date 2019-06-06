@@ -9,5 +9,6 @@ import editor.manager.*;
 import editor.ui.*;
 import editor.ui.element.*;
 import editor.ui.fragments.*;
+import editor.ui.visuals.*;
 import editor.ui.form.*;
 import editor.components.*;

@@ -64,6 +64,14 @@ class TextFieldView extends FieldView implements Observable {
 
     } //new
 
+/// Public API
+
+    override function focus() {
+
+        editText.focus();
+        
+    } //focus
+
 /// Layout
 
     override function layout() {

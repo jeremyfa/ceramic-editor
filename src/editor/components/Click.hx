@@ -1,6 +1,6 @@
 package editor.components;
 
-class Click extends Component {
+class Click extends Component implements Observable {
 
 /// Events
 
@@ -12,9 +12,9 @@ class Click extends Component {
 
     public var entity:Visual;
 
-/// Internal properties
+    @observe public var pressed(default,null):Bool = false;
 
-    var pressed:Bool = false;
+/// Internal properties
 
     var pointerStartX = 0.0;
     var pointerStartY = 0.0;
@@ -48,14 +48,16 @@ class Click extends Component {
 
         if (pressed) {
             pressed = false;
-            emitClick();
+            if (entity.hits(info.x, info.y)) {
+                emitClick();
+            }
         }
 
     } //handlePointerUp
 
     function handlePointerMove(info:TouchInfo) {
 
-        if (Math.abs(screen.pointerX - pointerStartX) > threshold || Math.abs(screen.pointerY - pointerStartY) > threshold) {
+        if (threshold != -1 && (Math.abs(screen.pointerX - pointerStartX) > threshold || Math.abs(screen.pointerY - pointerStartY) > threshold)) {
             screen.offPointerMove(handlePointerMove);
             pressed = false;
         }
