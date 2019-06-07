@@ -11,7 +11,7 @@ class VisualCellDataSource implements CollectionViewDataSource implements Observ
     /** Get the number of elements. */
     public function collectionViewSize(collectionView:CollectionView):Int {
 
-        return model.project.fragments.length;
+        return model.project.selectedFragment != null ? model.project.selectedFragment.visuals.length : 0;
 
     } //collectionViewSize
 
@@ -56,11 +56,11 @@ class VisualCellDataSource implements CollectionViewDataSource implements Observ
 
         cell.autorun(function() {
 
-            var fragment = model.project.fragments[cell.itemIndex];
+            var visualData = model.project.selectedFragment.visuals[cell.itemIndex];
 
-            cell.title = fragment.name;
+            cell.title = visualData.entityId;
             cell.subTitle = 'default';
-            cell.selected = (cell.itemIndex == model.project.selectedFragmentIndex);
+            cell.selected = (cell.itemIndex == model.project.selectedFragment.selectedVisualIndex);
 
         });
 
@@ -68,7 +68,7 @@ class VisualCellDataSource implements CollectionViewDataSource implements Observ
         cell.component('click', click);
         click.onClick(cell, function() {
 
-            model.project.selectedFragmentIndex = cell.itemIndex;
+            model.project.selectedFragment.selectedVisualIndex = cell.itemIndex;
 
         });
 

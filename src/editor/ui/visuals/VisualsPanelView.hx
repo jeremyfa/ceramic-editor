@@ -38,7 +38,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
         var prevLength = 0;
         autorun(function() {
-            var length = model.project.fragments.length;
+            var length = model.project.selectedFragment != null ? model.project.selectedFragment.visuals.length : 0;
             if (length != prevLength) {
                 var scrollToBottom = prevLength > 0 && length > prevLength;
 
@@ -58,6 +58,12 @@ class VisualsPanelView extends LinearLayout implements Observable {
             }
         });
 
+        autorun(function() {
+            var active = model.project.selectedFragment != null && model.project.selectedFragment.visuals.length > 0;
+            title.active = active;
+            collectionView.active = active;
+        });
+
     } //initAllFragmentsSection
 
     function initSelectedVisualSection() {
@@ -70,7 +76,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
         add(form);
 
         autorun(function() {
-            var active = model.project.selectedFragment != null;
+            var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
             title.active = active;
             form.active = active;
         });
@@ -88,9 +94,13 @@ class VisualsPanelView extends LinearLayout implements Observable {
         var button = new Button();
         button.content = 'Add visual';
         button.onClick(this, function() {
-            //model.project.selectedFragment = model.project.addFragment();
+            model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual();
         });
         container.add(button);
+
+        autorun(function() {
+            separator.active = model.project.selectedFragment != null && model.project.selectedFragment.visuals.length > 0;
+        });
 
     } //initAddVisualButton
 
