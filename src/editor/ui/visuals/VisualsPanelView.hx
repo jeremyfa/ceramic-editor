@@ -79,9 +79,42 @@ class VisualsPanelView extends LinearLayout implements Observable {
             var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
             title.active = active;
             form.active = active;
+            form.clear();
+
+            if (active) {
+                var visual = model.project.selectedFragment.selectedVisual;
+                var entityClass = visual.entityClass;
+                unobserve();
+                fillVisualForm(form, visual);
+                reobserve();
+            }
         });
 
     } //initSelectedVisualSection
+
+    function fillVisualForm(form:FormLayout, visual:EditorVisualData) {
+
+        var editableType = editor.getEditableType(visual.entityClass);
+
+        if (editableType == null) {
+            error('No editable type info for entity class: ${visual.entityClass}');
+            return;
+        }
+
+        for (i in 0...editableType.fields.length) {
+            var field = editableType.fields[i];
+            trace('field: ${field.name}:${field.type}');
+
+            var fieldView = FieldUtils.createEditableField(editableType, field, visual);
+            if (fieldView != null) {
+                
+                var item = new LabeledFieldView(fieldView);
+                item.label = field.name;
+                form.add(item);
+            }
+        }
+
+    } //fillVisualForm
 
     function initAddVisualButton() {
 
@@ -94,7 +127,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
         var button = new Button();
         button.content = 'Add visual';
         button.onClick(this, function() {
-            model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual();
+            model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual('ceramic.Quad');
         });
         container.add(button);
 

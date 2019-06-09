@@ -138,7 +138,7 @@ class EditorFragmentData extends Model {
 
     } //visualById
 
-    public function addVisual():EditorVisualData {
+    public function addVisual(entityClass:String):EditorVisualData {
 
         // Compute visual id
         var i = 0;
@@ -150,6 +150,7 @@ class EditorFragmentData extends Model {
         //
         var visual = new EditorVisualData();
         visual.entityId = 'VISUAL_$i';
+        visual.entityClass = entityClass;
 
         var items = [].concat(this.items.mutable);
         items.push(visual);

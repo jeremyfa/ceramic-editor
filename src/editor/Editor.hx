@@ -90,6 +90,21 @@ class Editor extends Entity {
 
     } //start
 
+/// Helpers
+
+    public function getEditableType(entityClass:String):EditableType {
+
+        for (i in 0...editableTypes.length) {
+            var type = editableTypes[i];
+            if (type.entity == entityClass) {
+                return type;
+            }
+        }
+
+        return null;
+
+    } //getEditableType
+
 /// Internal
 
     function computeEditableTypes():Void {
@@ -98,9 +113,11 @@ class Editor extends Entity {
         for (key in Reflect.fields(app.info.editable)) {
 
             var classPath = Reflect.field(app.info.editable, key);
+
+            trace('EDITABLE $classPath');
             var clazz = Type.resolveClass(classPath);
             var usedFields = new Map();
-            var fields = [];
+            var fields:Array<EditableTypeField> = [];
             var rtti = Utils.getRtti(clazz);
 
             editableTypes.push({
@@ -210,25 +227,3 @@ class Editor extends Entity {
     } //updateWindow
 
 } //Editor
-
-typedef EditableType = {
-
-    var meta:Dynamic;
-
-    var entity:String;
-
-    var isVisual:Bool;
-
-    var fields:Array<EditableTypeField>;
-
-} //EditableType
-
-typedef EditableTypeField = {
-
-    var name:String;
-
-    var meta:Dynamic;
-
-    var type:String;
-
-} //EditableTypeField
