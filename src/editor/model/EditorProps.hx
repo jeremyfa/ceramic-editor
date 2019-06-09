@@ -11,7 +11,7 @@ class EditorProps extends Model {
 
     } //new
 
-    public function set(key:String, value:Dynamic) {
+    public function set(key:String, value:Dynamic):Void {
 
         if (values.exists(key)) {
             values.get(key).value = value;
@@ -24,7 +24,7 @@ class EditorProps extends Model {
 
     } //set
 
-    public function get(key:String) {
+    public function get(key:String):Dynamic {
 
         if (values.exists(key)) {
             return values.get(key).value;
@@ -35,13 +35,13 @@ class EditorProps extends Model {
 
     } //get
 
-    public function exists(key:String) {
+    public function exists(key:String):Bool {
 
         return values.exists(key);
 
     } //exists
 
-    public function remove(key:String) {
+    public function remove(key:String):Void {
 
         if (values.exists(key)) {
             values.get(key).value = null;

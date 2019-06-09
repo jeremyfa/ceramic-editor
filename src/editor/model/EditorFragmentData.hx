@@ -152,6 +152,32 @@ class EditorFragmentData extends Model {
         visual.entityId = 'VISUAL_$i';
         visual.entityClass = entityClass;
 
+        var maxDepth = 0.0;
+        for (otherVisual in visuals) {
+            maxDepth = Math.max(otherVisual.props.get('depth'), maxDepth);
+        }
+
+        visual.props.set('x', Math.round(width / 2));
+        visual.props.set('y', Math.round(height / 2));
+        visual.props.set('depth', maxDepth + 1);
+        visual.props.set('depthRange', 1);
+        visual.props.set('anchorX', 0.5);
+        visual.props.set('anchorY', 0.5);
+        visual.props.set('scaleX', 1);
+        visual.props.set('scaleY', 1);
+        visual.props.set('alpha', 1);
+        visual.props.set('visible', true);
+        visual.props.set('touchable', true);
+
+        // Specific cases
+        if (entityClass == 'ceramic.Text') {
+            visual.props.set('content', visual.entityId);
+        }
+        else if (entityClass == 'ceramic.Quad') {
+            visual.props.set('width', 100);
+            visual.props.set('height', 100);
+        }
+
         var items = [].concat(this.items.mutable);
         items.push(visual);
         this.items = cast items;
