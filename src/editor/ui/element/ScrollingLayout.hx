@@ -30,9 +30,6 @@ class ScrollingLayout extends ScrollView {
 
         if (direction == VERTICAL) {
             layoutView.computeSize(width, height, ViewLayoutMask.INCREASE_HEIGHT, true);
-            trace('(INCREASE) COMPUTED FROM HEIGHT($height) TO ${layoutView.computedHeight}');
-            //layoutView.computeSize(width, height, ViewLayoutMask.FLEXIBLE_HEIGHT, true);
-            //trace('(FLEXIBLE) COMPUTED FROM HEIGHT($height) TO ${layoutView.computedHeight}');
             layoutView.applyComputedSize();
         } else {
             layoutView.computeSize(width, height, ViewLayoutMask.INCREASE_WIDTH, true);
