@@ -10,6 +10,8 @@ class EditorTheme extends Model {
 
     @observe public var darkTextColor:Color = 0x888888;
 
+    @observe public var darkerTextColor:Color = 0x555555;
+
 /// Text fonts
 
     public var mediumFont10(get,never):BitmapFont;

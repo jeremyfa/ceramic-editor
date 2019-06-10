@@ -1,8 +1,6 @@
 package editor.ui.visuals;
 
-class VisualCellDataSource implements CollectionViewDataSource implements Observable {
-
-    public var width:Float = 0;
+class VisualCellDataSource implements CollectionViewDataSource {
 
     public function new() {
 
@@ -18,7 +16,7 @@ class VisualCellDataSource implements CollectionViewDataSource implements Observ
     /** Get the item frame at the requested index. */
     public function collectionViewItemFrameAtIndex(collectionView:CollectionView, itemIndex:Int, frame:CollectionViewItemFrame):Void {
 
-        frame.width = width;
+        frame.width = collectionView.width;
         frame.height = 39;
 
     } //collectionViewItemFrameAtIndex

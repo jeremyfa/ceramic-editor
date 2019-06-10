@@ -1,23 +1,35 @@
-package editor.ui.fragments;
+package editor.utils;
 
-class FragmentCellDataSource implements CollectionViewDataSource {
+class AutoSizingViewDataSource implements CollectionViewDataSource {
 
-    public function new() {
+    public var width:Float = 0;
+
+    public var contentView(default,null):View;
+
+    public function new(contentView:View) {
+
+        this.contentView = contentView;
 
     } //new
 
     /** Get the number of elements. */
     public function collectionViewSize(collectionView:CollectionView):Int {
 
-        return model.project.fragments.length;
+        return 1;
 
     } //collectionViewSize
 
     /** Get the item frame at the requested index. */
     public function collectionViewItemFrameAtIndex(collectionView:CollectionView, itemIndex:Int, frame:CollectionViewItemFrame):Void {
 
-        frame.width = collectionView.width;
-        frame.height = 39;
+        contentView.computeSize(
+            collectionView.width,
+            collectionView.height,
+            collectionView.direction == VERTICAL ? ViewLayoutMask.INCREASE_HEIGHT : ViewLayoutMask.INCREASE_WIDTH,
+            true
+        );
+        frame.width = contentView.computedWidth;
+        frame.height = contentView.computedHeight;
 
     } //collectionViewItemFrameAtIndex
 
@@ -34,42 +46,8 @@ class FragmentCellDataSource implements CollectionViewDataSource {
         it can be recycled as the new item to avoid creating new instances. */
     public function collectionViewItemAtIndex(collectionView:CollectionView, itemIndex:Int, reusableView:View):View {
 
-        var cell:CellView = null;
-        if (reusableView != null) {
-            cell = cast reusableView;
-            cell.itemIndex = itemIndex;
-        }
-        else {
-            cell = new CellView();
-            cell.itemIndex = itemIndex;
-            cell.collectionView = cast collectionView;
-            bindCellView(cell);
-        }
-
-        return cell;
+        return contentView;
 
     } //collectionViewItemAtIndex
-
-    function bindCellView(cell:CellView):Void {
-
-        cell.autorun(function() {
-
-            var fragment = model.project.fragments[cell.itemIndex];
-
-            cell.title = fragment.name;
-            cell.subTitle = 'default';
-            cell.selected = (cell.itemIndex == model.project.selectedFragmentIndex);
-
-        });
-
-        var click = new Click();
-        cell.component('click', click);
-        click.onClick(cell, function() {
-
-            model.project.selectedFragmentIndex = cell.itemIndex;
-
-        });
-
-    } //bindCellView
 
 } //CollectionViewDataSource

@@ -17,7 +17,7 @@ class FieldView extends LinearLayout {
         super();
 
         transparent = true;
-        direction = VERTICAL;
+        direction = HORIZONTAL;
 
         bindPointerEvents();
 

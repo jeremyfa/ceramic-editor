@@ -32,10 +32,6 @@ class VisualsPanelView extends LinearLayout implements Observable {
         collectionView.dataSource = dataSource;
         add(collectionView);
 
-        onLayout(this, function() {
-            dataSource.width = width;
-        });
-
         var prevLength = 0;
         autorun(function() {
             var length = model.project.selectedFragment != null ? model.project.selectedFragment.visuals.length : 0;
@@ -73,13 +69,18 @@ class VisualsPanelView extends LinearLayout implements Observable {
         add(title);
 
         var form = new FormLayout();
-        add(form);
+        form.id = 'form';
+
+        var scroll = new ScrollingLayout(form);
+        scroll.viewSize(fill(), fill());
+        add(scroll);
 
         autorun(function() {
             var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
             title.active = active;
-            form.active = active;
+            //collectionView.active = active;
             form.clear();
+            scroll.scroller.scrollTo(scroll.scroller.scrollX, 0);
 
             if (active) {
                 var visual = model.project.selectedFragment.selectedVisual;
@@ -87,6 +88,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
                 unobserve();
                 fillVisualForm(form, visual);
                 reobserve();
+                //collectionView.reloadData();
             }
         });
 

@@ -42,7 +42,20 @@ class FieldUtils {
             return fieldView;
         }
         else if (type == 'Bool') {
-            //
+            var fieldView = new BooleanFieldView();
+            fieldView.setValue = function(field, value) {
+                item.props.set(name, value);
+            };
+            fieldView.autorun(function() {
+                var value:Dynamic = item.props.get(name);
+                if (value == null || value == 0 || value == '' || value == false) {
+                    fieldView.value = false;
+                }
+                else {
+                    fieldView.value = true;
+                }
+            });
+            return fieldView;
         }
         else if (type == 'ceramic.Color') {
             //

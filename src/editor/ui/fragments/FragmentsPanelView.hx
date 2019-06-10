@@ -34,10 +34,6 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         collectionView.dataSource = dataSource;
         add(collectionView);
 
-        onLayout(this, function() {
-            dataSource.width = width;
-        });
-
         var prevLength = 0;
         autorun(function() {
             var length = model.project.fragments.length;
