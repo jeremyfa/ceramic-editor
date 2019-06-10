@@ -47,7 +47,9 @@ class BooleanFieldView extends FieldView implements Observable {
             switchContainer.layoutDirty = true;
         });
 
-        switchContainer.onPointerDown(this, function(_) {
+        var click = new Click();
+        switchContainer.component('click', click);
+        click.onClick(this, function() {
             this.value = !value;
             setValue(this, this.value);
         });
