@@ -21,6 +21,10 @@ class ScrollingLayout extends ScrollView {
         clip = this;
         scroller.allowPointerOutside = false;
 
+        #if !(ios || android)
+        scroller.dragEnabled = false;
+        #end
+
     } //new
 
     override function layout() {

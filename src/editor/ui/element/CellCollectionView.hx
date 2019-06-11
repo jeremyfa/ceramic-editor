@@ -18,6 +18,10 @@ class CellCollectionView extends CollectionView implements Observable {
         clip = this;
         scroller.allowPointerOutside = false;
 
+        #if !(ios || android)
+        scroller.dragEnabled = false;
+        #end
+
         contentView.onLayout(this, updateBorderDepth);
 
         autorun(updateStyle);
