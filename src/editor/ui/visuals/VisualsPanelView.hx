@@ -78,7 +78,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
         autorun(function() {
             var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
             title.active = active;
-            //collectionView.active = active;
+            scroll.active = active;
             form.clear();
             scroll.scroller.scrollTo(scroll.scroller.scrollX, 0);
 
