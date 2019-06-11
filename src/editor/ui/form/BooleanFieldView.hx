@@ -47,12 +47,19 @@ class BooleanFieldView extends FieldView implements Observable {
             switchContainer.layoutDirty = true;
         });
 
+        #if !(ios || android)
+        switchContainer.onPointerDown(this, function(_) {
+            toggleValue();
+        });
+        #else
         var click = new Click();
         switchContainer.component('click', click);
         click.onClick(this, function() {
-            this.value = !value;
-            setValue(this, this.value);
+            toggleValue();
         });
+        #end
+
+        app.onKeyDown(this, handleKeyDown);
 
     } //new
 
@@ -76,6 +83,35 @@ class BooleanFieldView extends FieldView implements Observable {
     } //layoutSwitchContainer
 
 /// Internal
+
+    function handleKeyDown(key:Key) {
+
+        if (FieldManager.manager.focusedField != this) return;
+
+        if (key.scanCode == ScanCode.SPACE) {
+            toggleValue();
+        }
+        else if (key.scanCode == ScanCode.ENTER) {
+            if (!this.value) {
+                this.value = true;
+                setValue(this, true);
+            }
+        }
+        else if (key.scanCode == ScanCode.BACKSPACE || key.scanCode == ScanCode.DELETE) {
+            if (this.value) {
+                this.value = false;
+                setValue(this, false);
+            }
+        }
+
+    } //handleKeyDown
+
+    function toggleValue() {
+
+        this.value = !value;
+        setValue(this, this.value);
+
+    } //toggleValue
 
     function updateStyle() {
         
