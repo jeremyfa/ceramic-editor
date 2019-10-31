@@ -4,7 +4,7 @@ using ceramic.Extensions;
 using unifill.Unifill;
 using StringTools;
 
-class SelectText extends Component implements Observable {
+class SelectText extends Entity implements Component implements Observable {
 
 /// Internal statics
 
@@ -57,9 +57,9 @@ class SelectText extends Component implements Observable {
 
     } //new
 
-    override function init() {
+    function bindAsComponent() {
 
-        entity.onGlyphQuadsChange(updateSelectionGraphics);
+        entity.onGlyphQuadsChange(this, updateSelectionGraphics);
 
         app.onUpdate(this, updateCursorVisibility);
         onShowCursorChange(this, handleShowCursorChange);
@@ -72,7 +72,7 @@ class SelectText extends Component implements Observable {
 
         bindKeyBindings();
         
-    } //init
+    } //bindAsComponent
 
 /// Internal
 
@@ -390,7 +390,7 @@ class SelectText extends Component implements Observable {
             toBind.onPointerDown(this, handlePointerDown);
             toBind.onPointerUp(this, handlePointerUp);
             doubleClick = new DoubleClick();
-            doubleClick.onDoubleClick(handleDoubleClick);
+            doubleClick.onDoubleClick(this, handleDoubleClick);
             toBind.component('doubleClick', doubleClick);
         }
         else {
@@ -539,7 +539,7 @@ class SelectText extends Component implements Observable {
             app.backend.clipboard.setText(selectedText);
         });
 
-        onDestroy(keyBindings, function() {
+        onDestroy(keyBindings, function(_) {
             keyBindings.destroy();
             keyBindings = null;
         });

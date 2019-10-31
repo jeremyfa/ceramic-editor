@@ -39,6 +39,8 @@ class Editor extends Entity {
 
     public function new(settings:InitSettings) {
 
+        super();
+
         if (editor != null) throw 'Only one single editor can be created.';
         editor = this;
 
@@ -50,7 +52,7 @@ class Editor extends Entity {
         settings.scaling = FIT;
         settings.title = 'Ceramic Editor';
 
-        app.onceReady(loadAssets);
+        app.onceReady(this, loadAssets);
 
     } //new
 
@@ -63,7 +65,7 @@ class Editor extends Entity {
         assets.add(Fonts.ROBOTO_MEDIUM_20);
         assets.add(Fonts.ROBOTO_BOLD_20);
 
-        assets.onceComplete(assetsLoaded);
+        assets.onceComplete(this, assetsLoaded);
 
         assets.load();
 

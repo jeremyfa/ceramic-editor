@@ -1,6 +1,6 @@
 package editor.components;
 
-class Click extends Component implements Observable {
+class Click extends Entity implements Component implements Observable {
 
 /// Events
 
@@ -21,7 +21,7 @@ class Click extends Component implements Observable {
 
 /// Lifecycle
 
-    override function init():Void {
+    function bindAsComponent():Void {
 
         entity.onPointerDown(this, handlePointerDown);
 
@@ -29,7 +29,7 @@ class Click extends Component implements Observable {
 
         entity.onBlur(this, handleBlur);
 
-    } //init
+    } //bindAsComponent
 
 /// Internal
 
@@ -40,7 +40,7 @@ class Click extends Component implements Observable {
 
         pressed = true;
 
-        screen.onPointerMove(handlePointerMove);
+        screen.onPointerMove(this, handlePointerMove);
 
     } //handlePointerDown
 

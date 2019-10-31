@@ -4,7 +4,7 @@ using ceramic.Extensions;
 using unifill.Unifill;
 using StringTools;
 
-class EditText extends Component implements TextInputDelegate {
+class EditText extends Entity implements Component implements TextInputDelegate {
 
 /// Internal statics
 
@@ -62,7 +62,7 @@ class EditText extends Component implements TextInputDelegate {
 
     } //new
 
-    override function init() {
+    function bindAsComponent() {
 
         // Get or init SelectText component
         selectText = cast entity.component('selectText');
@@ -79,7 +79,7 @@ class EditText extends Component implements TextInputDelegate {
 
         app.onUpdate(this, handleAppUpdate);
         
-    } //init
+    } //bindAsComponent
 
 /// Public API
 
@@ -265,7 +265,7 @@ class EditText extends Component implements TextInputDelegate {
             boundContainer = container;
         }
         else {
-            entity.onPointerDown(this.handlePointerDown);
+            entity.onPointerDown(this, handlePointerDown);
         }
 
     } //bindPointerEvents
@@ -321,7 +321,7 @@ class EditText extends Component implements TextInputDelegate {
             emitUpdate(newText);
         });
 
-        onDestroy(keyBindings, function() {
+        onDestroy(keyBindings, function(_) {
             keyBindings.destroy();
             keyBindings = null;
         });

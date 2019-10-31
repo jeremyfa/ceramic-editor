@@ -1,6 +1,6 @@
 package editor.manager;
 
-class FieldManager extends Entity implements Observable implements Lazy {
+class FieldManager extends Entity implements Observable {
 
 /// Statics
 
@@ -13,6 +13,8 @@ class FieldManager extends Entity implements Observable implements Lazy {
 /// Lifecycle
 
     public function new() {
+
+        super();
 
         app.onUpdate(this, function(_) {
             updateFocusedField();

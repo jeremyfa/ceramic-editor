@@ -6,6 +6,8 @@ class EditorView extends View implements Observable {
 
     @observe public var panelTabsView:PanelTabsView;
 
+    var editedFragment:Fragment = null;
+
 /// Lifecycle
 
     public function new() {
@@ -16,7 +18,15 @@ class EditorView extends View implements Observable {
         panelTabsView = new PanelTabsView();
         add(panelTabsView);
 
+        // Fragment
+        editedFragment = new Fragment({
+            assets: editor.assets,
+            editedItems: true
+        });
+        add(editedFragment);
+
         autorun(updateTabs);
+        autorun(updateEditedFragment);
         autorun(updateTabsContentView);
 
         // Styles
@@ -27,11 +37,25 @@ class EditorView extends View implements Observable {
     override function layout() {
         
         var panelsTabsWidth = 300;
+        var availableFragmentWidth = width - panelsTabsWidth;
+        var availableFragmentHeight = height;
 
         panelTabsView.viewSize(panelsTabsWidth, height);
         panelTabsView.computeSize(panelsTabsWidth, height, ViewLayoutMask.FIXED, true);
         panelTabsView.applyComputedSize();
         panelTabsView.pos(width - panelTabsView.width, 0);
+
+        if (editedFragment.width > 0 && editedFragment.height > 0) {
+            editedFragment.anchor(0.5, 0.5);
+            editedFragment.scale(Math.min(
+                availableFragmentWidth / editedFragment.width,
+                availableFragmentHeight / editedFragment.height
+            ));
+            editedFragment.pos(
+                availableFragmentWidth * 0.5,
+                availableFragmentHeight * 0.5
+            );
+        }
 
     } //layout
 
@@ -57,6 +81,27 @@ class EditorView extends View implements Observable {
         panelTabsView.tabViews.selectedIndex = selectedIndex != -1 ? selectedIndex : 0;
 
     } //updateTabs
+
+    function updateEditedFragment() {
+
+        var selectedFragment = model.project.selectedFragment;
+
+        if (selectedFragment == null) {
+            unobserve();
+            editedFragment.active = false;
+            editedFragment.fragmentData = null;
+            reobserve();
+        }
+        else {
+            var copied = Reflect.copy(selectedFragment.fragmentDataWithoutItems);
+            unobserve();
+            trace('update fragment data');
+            editedFragment.active = true;
+            editedFragment.fragmentData = copied;
+            reobserve();
+        }
+
+    } //updateEditedFragment
 
     function updateTabsContentView() {
 
@@ -91,6 +136,9 @@ class EditorView extends View implements Observable {
     function updateStyle() {
 
         color = theme.windowBackgroundColor;
+
+        editedFragment.transparent = false;
+        editedFragment.color = theme.darkBackgroundColor;
 
     } //updateStyle
 

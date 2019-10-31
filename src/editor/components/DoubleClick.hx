@@ -1,6 +1,6 @@
 package editor.components;
 
-class DoubleClick extends Component {
+class DoubleClick extends Entity implements Component {
 
 /// Events
 
@@ -25,7 +25,7 @@ class DoubleClick extends Component {
 
 /// Lifecycle
 
-    override function init():Void {
+    function bindAsComponent():Void {
 
         entity.onPointerDown(this, handlePointerDown);
 
@@ -33,7 +33,7 @@ class DoubleClick extends Component {
 
         entity.onBlur(this, handleBlur);
 
-    } //init
+    } //bindAsComponent
 
 /// Internal
 
@@ -53,7 +53,7 @@ class DoubleClick extends Component {
             }
         }
 
-        screen.onPointerMove(handlePointerMove);
+        screen.onPointerMove(this, handlePointerMove);
 
     } //handlePointerDown
 

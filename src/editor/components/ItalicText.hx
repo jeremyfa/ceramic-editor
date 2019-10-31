@@ -1,6 +1,6 @@
 package editor.components;
 
-class ItalicText extends Component {
+class ItalicText extends Entity implements Component {
 
     public var entity:Text;
 
@@ -13,11 +13,11 @@ class ItalicText extends Component {
 
 /// Lifecycle
 
-    override function init():Void {
+    function bindAsComponent():Void {
 
         entity.onGlyphQuadsChange(this, applyItalicTransform);
 
-    } //init
+    } //bindAsComponent
 
 /// Internal
 

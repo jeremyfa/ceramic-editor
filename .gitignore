@@ -2,3 +2,5 @@
 /out
 /completion.hxml
 /dump
+/.haxelib
+/project/mac/Editor.app

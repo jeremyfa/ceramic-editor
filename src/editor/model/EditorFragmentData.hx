@@ -108,6 +108,10 @@ class EditorFragmentData extends Model {
         return this.visuals;
     }
 
+/// Computed fragment data
+
+    @observe public var fragmentDataWithoutItems(default,null):FragmentData = null;
+
 /// Lifecycle
 
     public function new() {
@@ -123,7 +127,37 @@ class EditorFragmentData extends Model {
             selectedVisualIndex = -2;
         });
 
+        fragmentDataWithoutItems = {
+            id: null,
+            name: null,
+            width: 0.0,
+            height: 0.0,
+            data: {},
+            components: {}
+        };
+
+        autorun(updateFragmentDataWithoutItems);
+
     } //new
+
+/// Internal
+
+    function updateFragmentDataWithoutItems() {
+
+        unobserve();
+        var fragmentDataWithoutItems = this.fragmentDataWithoutItems;
+        reobserve();
+
+        fragmentDataWithoutItems.id = this.fragmentId;
+        fragmentDataWithoutItems.name = this.name;
+        fragmentDataWithoutItems.width = this.width;
+        fragmentDataWithoutItems.height = this.height;
+
+        unobserve();
+        invalidateFragmentDataWithoutItems();
+        reobserve();
+
+    } //updateFragmentDataWithoutItems
 
 /// Public API
 
