@@ -10,7 +10,7 @@ class SectionTitleView extends TextView implements Observable {
 
         align = CENTER;
         verticalAlign = CENTER;
-        pointSize = 11;
+        pointSize = 12;
         borderBottomSize = 1;
         borderPosition = INSIDE;
         padding(5, 0);

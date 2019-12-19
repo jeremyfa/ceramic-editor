@@ -74,7 +74,7 @@ class Editor extends Entity {
     function assetsLoaded(isSuccess:Bool) {
 
         if (!isSuccess) {
-            error('Failed to load editor assets');
+            log.error('Failed to load editor assets');
             return;
         }
 

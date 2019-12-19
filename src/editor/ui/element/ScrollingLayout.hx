@@ -4,9 +4,11 @@ class ScrollingLayout extends ScrollView {
 
     var layoutView:View;
 
-    public function new(layoutView:View) {
+    public function new(layoutView:View, ?id:String) {
 
         super();
+
+        this.id = id;
 
         this.layoutView = layoutView;
         contentView.add(layoutView);
@@ -31,6 +33,10 @@ class ScrollingLayout extends ScrollView {
 
         scroller.pos(0, 0);
         scroller.size(width, height);
+
+        //if (id == 'DEB') {
+            log.debug('ScrollingLayout($id) width=$width height=$height direction=$direction');
+        //}
 
         if (direction == VERTICAL) {
             layoutView.computeSize(width, height, ViewLayoutMask.INCREASE_HEIGHT, true);

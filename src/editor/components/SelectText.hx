@@ -31,6 +31,8 @@ class SelectText extends Entity implements Component implements Observable {
 
     @observe public var invertedSelection:Bool = false;
 
+    @observe public var pointerIsDown:Bool = false;
+
 /// Internal properties
 
     var boundContainer:Visual = null;
@@ -46,8 +48,6 @@ class SelectText extends Entity implements Component implements Observable {
     var textCursor:Quad = null;
 
     var textCursorToggleVisibilityTime:Float = 1.0;
-
-    var pointerIsDown:Bool = false;
 
 /// Lifecycle
 
@@ -372,10 +372,9 @@ class SelectText extends Entity implements Component implements Observable {
             boundContainer.offPointerUp(handlePointerUp);
             boundContainer = null;
         }
-        else {
-            entity.offPointerDown(handlePointerDown);
-            entity.offPointerUp(handlePointerUp);
-        }
+
+        entity.offPointerDown(handlePointerDown);
+        entity.offPointerUp(handlePointerUp);
 
         if (doubleClick != null) {
             doubleClick.destroy();
@@ -386,6 +385,7 @@ class SelectText extends Entity implements Component implements Observable {
             var toBind:Visual = entity;
             if (container != null) {
                 toBind = container;
+                boundContainer = container;
             }
             toBind.onPointerDown(this, handlePointerDown);
             toBind.onPointerUp(this, handlePointerUp);

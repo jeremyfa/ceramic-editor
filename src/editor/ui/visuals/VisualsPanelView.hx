@@ -71,26 +71,29 @@ class VisualsPanelView extends LinearLayout implements Observable {
         var form = new FormLayout();
         form.id = 'form';
 
-        var scroll = new ScrollingLayout(form);
+        var scroll = new ScrollingLayout(form, 'DEB');
         scroll.viewSize(fill(), fill());
         add(scroll);
 
-        autorun(function() {
-            var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
-            title.active = active;
-            scroll.active = active;
-            form.clear();
-            scroll.scroller.scrollTo(scroll.scroller.scrollX, 0);
+        //app.onceUpdate(this, (_) -> {
+            autorun(function() {
+                var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
+                title.active = active;
+                scroll.active = active;
+                form.clear();
+                scroll.scroller.scrollTo(scroll.scroller.scrollX, 0);
 
-            if (active) {
-                var visual = model.project.selectedFragment.selectedVisual;
-                var entityClass = visual.entityClass;
-                unobserve();
-                fillVisualForm(form, visual);
-                reobserve();
-                //collectionView.reloadData();
-            }
-        });
+                if (active) {
+                    log.info('-- fill form --');
+                    var visual = model.project.selectedFragment.selectedVisual;
+                    var entityClass = visual.entityClass;
+                    unobserve();
+                    fillVisualForm(form, visual);
+                    reobserve();
+                    //collectionView.reloadData();
+                }
+            });
+        //});
 
     } //initSelectedVisualSection
 
@@ -99,19 +102,20 @@ class VisualsPanelView extends LinearLayout implements Observable {
         var editableType = editor.getEditableType(visual.entityClass);
 
         if (editableType == null) {
-            error('No editable type info for entity class: ${visual.entityClass}');
+            log.error('No editable type info for entity class: ${visual.entityClass}');
             return;
         }
 
         for (i in 0...editableType.fields.length) {
             var field = editableType.fields[i];
-            trace('field: ${field.name}:${field.type}');
 
             var fieldView = FieldUtils.createEditableField(editableType, field, visual);
             if (fieldView != null) {
                 
                 var item = new LabeledFieldView(fieldView);
                 item.label = field.name;
+                item.transparent = false;
+                item.color = Color.random();
                 form.add(item);
             }
         }

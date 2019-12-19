@@ -69,7 +69,7 @@ class FieldUtils {
 
         //}
 
-        warning('Cannot create field for type: $type');
+        log.warning('Cannot create field for type: $type');
 
         return null;
 

@@ -33,7 +33,7 @@ class Button extends TextView implements Observable {
 
         align = CENTER;
         verticalAlign = CENTER;
-        pointSize = 10;
+        pointSize = 12;
         borderSize = 1;
         borderPosition = INSIDE;
         transparent = false;

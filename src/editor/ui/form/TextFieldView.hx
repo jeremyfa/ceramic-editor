@@ -49,7 +49,7 @@ class TextFieldView extends FieldView implements Observable {
         textView = new TextView();
         textView.viewSize(fill(), auto());
         textView.align = LEFT;
-        textView.pointSize = 10;
+        textView.pointSize = 12;
         textView.text.maxLineDiff = -1;
         add(textView);
 
