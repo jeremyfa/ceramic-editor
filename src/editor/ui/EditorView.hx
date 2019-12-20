@@ -23,11 +23,14 @@ class EditorView extends View implements Observable {
             assets: editor.assets,
             editedItems: true
         });
+        editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
         add(editedFragment);
 
         autorun(updateTabs);
         autorun(updateEditedFragment);
         autorun(updateTabsContentView);
+
+        autorun(updateFragmentItems);
 
         // Styles
         autorun(updateStyle);
@@ -102,6 +105,37 @@ class EditorView extends View implements Observable {
         }
 
     } //updateEditedFragment
+
+    function updateFragmentItems() {
+
+        var selectedFragment = model.project.selectedFragment;
+
+        if (selectedFragment != null) {
+            for (item in selectedFragment.items) {
+                editedFragment.putItem(item.toFragmentItem());
+            }
+        }
+
+    } //updateFragmentItems
+
+    function handleEditableItemUpdate(fragmentItem:FragmentItem) {
+
+        log.debug('ITEM UPDATED: $fragmentItem');
+
+        var item = model.project.selectedFragment.get(fragmentItem.id);
+
+        var props = fragmentItem.props;
+        if (item != null && props != null) {
+            for (key in Reflect.fields(fragmentItem.props)) {
+                var value = Reflect.field(props, key);
+                
+                unobserve();
+                item.props.set(key, value);
+                reobserve();
+            }
+        }
+
+    } //handleEditableItemUpdate
 
     function updateTabsContentView() {
 

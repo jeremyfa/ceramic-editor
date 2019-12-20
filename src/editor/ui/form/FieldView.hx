@@ -33,6 +33,13 @@ class FieldView extends LinearLayout {
 
 /// Internal
 
+    @:allow(editor.manager.FieldManager)
+    function didLostFocus():Void {
+
+        // Override in subclasses
+
+    } //didLostFocus
+
     function bindPointerEvents() {
 
         // To make it focusable

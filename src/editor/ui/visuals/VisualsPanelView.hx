@@ -75,25 +75,21 @@ class VisualsPanelView extends LinearLayout implements Observable {
         scroll.viewSize(fill(), fill());
         add(scroll);
 
-        //app.onceUpdate(this, (_) -> {
-            autorun(function() {
-                var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
-                title.active = active;
-                scroll.active = active;
-                form.clear();
-                scroll.scroller.scrollTo(scroll.scroller.scrollX, 0);
+        autorun(function() {
+            var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
+            title.active = active;
+            scroll.active = active;
+            form.clear();
+            scroll.scroller.scrollTo(scroll.scroller.scrollX, 0);
 
-                if (active) {
-                    log.info('-- fill form --');
-                    var visual = model.project.selectedFragment.selectedVisual;
-                    var entityClass = visual.entityClass;
-                    unobserve();
-                    fillVisualForm(form, visual);
-                    reobserve();
-                    //collectionView.reloadData();
-                }
-            });
-        //});
+            if (active) {
+                var visual = model.project.selectedFragment.selectedVisual;
+                var entityClass = visual.entityClass;
+                unobserve();
+                fillVisualForm(form, visual);
+                reobserve();
+            }
+        });
 
     } //initSelectedVisualSection
 
@@ -114,8 +110,6 @@ class VisualsPanelView extends LinearLayout implements Observable {
                 
                 var item = new LabeledFieldView(fieldView);
                 item.label = field.name;
-                item.transparent = false;
-                item.color = Color.random();
                 form.add(item);
             }
         }

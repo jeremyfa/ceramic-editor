@@ -38,7 +38,14 @@ class FieldManager extends Entity implements Observable {
             testedVisual = testedVisual.parent;
         }
 
+        var prevFocusedField = this.focusedField;
+
         this.focusedField = focusedField;
+
+        if (prevFocusedField != focusedField && Std.is(prevFocusedField, FieldView)) {
+            var prevFieldView:FieldView = cast prevFocusedField;
+            prevFieldView.didLostFocus();
+        }
 
         reobserve();
 

@@ -220,4 +220,16 @@ class EditorFragmentData extends Model {
 
     } //addVisual
 
+    public function get(entityId:String):EditorEntityData {
+
+        for (item in items) {
+            if (item.entityId == entityId) {
+                return item;
+            }
+        }
+
+        return null;
+
+    } //get
+
 } //EditorFragmentData

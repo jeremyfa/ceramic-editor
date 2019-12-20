@@ -11,6 +11,19 @@ class EditorProps extends Model {
 
     } //new
 
+    public function toFragmentProps():Dynamic<Dynamic> {
+        
+        var result:Dynamic<Dynamic> = {};
+
+        for (key in values.keys()) {
+            var value = get(key);
+            Reflect.setField(result, key, value);
+        }
+
+        return result;
+
+    } //toFragmentProps
+
     public function set(key:String, value:Dynamic):Void {
 
         if (values.exists(key)) {
@@ -20,6 +33,7 @@ class EditorProps extends Model {
             var aValue = new EditorValue();
             aValue.value = value;
             values.set(key, aValue);
+            invalidateValues();
         }
 
     } //set

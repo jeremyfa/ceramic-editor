@@ -23,9 +23,11 @@ class FieldUtils {
             var fieldView = new TextFieldView();
             if (type == 'Float') {
                 fieldView.setTextValue = SanitizeTextField.setTextValueToFloat;
+                fieldView.setEmptyValue = field -> item.props.set(name, 0.0);
             }
             else if (type == 'Int') {
                 fieldView.setTextValue = SanitizeTextField.setTextValueToInt;
+                fieldView.setEmptyValue = field -> item.props.set(name, 0);
             }
             fieldView.setValue = function(field, value) {
                 item.props.set(name, value);

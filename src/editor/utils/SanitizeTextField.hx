@@ -20,6 +20,13 @@ class SanitizeTextField {
 
     } //setTextValueToInt
 
+    public static function setTextValueToEmptyInt(field:TextFieldView):Void {
+
+        field.textValue = '0';
+        field.invalidateTextValue();
+
+    } //setTextValueToEmptyInt
+
     public static function setTextValueToFloat(field:TextFieldView, textValue:String):Void {
 
         if (textValue.trim() != '') {
@@ -41,5 +48,12 @@ class SanitizeTextField {
         field.invalidateTextValue();
 
     } //setTextValueToFloat
+
+    public static function setTextValueToEmptyFloat(field:TextFieldView):Void {
+
+        field.textValue = '0';
+        field.invalidateTextValue();
+
+    } //setTextValueToEmptyFloat
 
 } //SanitizeTextField

@@ -91,6 +91,10 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             var item = new LabeledFieldView(new TextFieldView());
             item.label = 'Width';
             item.field.setTextValue = SanitizeTextField.setTextValueToInt;
+            item.field.setEmptyValue = function(field) {
+                var fragment = model.project.selectedFragment;
+                if (fragment != null) fragment.width = 0;
+            };
             item.field.setValue = function(field, value) {
                 var fragment = model.project.selectedFragment;
                 if (fragment != null) fragment.width = value;
@@ -106,6 +110,10 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             var item = new LabeledFieldView(new TextFieldView());
             item.label = 'Height';
             item.field.setTextValue = SanitizeTextField.setTextValueToInt;
+            item.field.setEmptyValue = function(field) {
+                var fragment = model.project.selectedFragment;
+                if (fragment != null) fragment.height = 0;
+            };
             item.field.setValue = function(field, value) {
                 var fragment = model.project.selectedFragment;
                 if (fragment != null) fragment.height = value;

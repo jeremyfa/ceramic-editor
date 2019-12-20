@@ -20,6 +20,22 @@ class TextFieldView extends FieldView implements Observable {
 
     } //setValue
 
+    public dynamic function setEmptyValue(field:TextFieldView):Void {
+
+        // Default implementation does nothing
+
+    } //setEmptyValue
+
+/// Overrides
+
+    override function didLostFocus() {
+
+        if (textValue == '') {
+            setEmptyValue(this);
+        }
+
+    } //didLostFocus
+
 /// Public properties
 
     public var multiline(default,set):Bool = false;

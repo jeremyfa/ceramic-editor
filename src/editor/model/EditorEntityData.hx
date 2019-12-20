@@ -14,4 +14,14 @@ class EditorEntityData extends Model {
 
     } //new
 
+    public function toFragmentItem():FragmentItem {
+        
+        return {
+            entity: entityClass,
+            id: entityId,
+            props: props.toFragmentProps()
+        };
+
+    } //toFragmentItem
+
 } //EditorEntityData

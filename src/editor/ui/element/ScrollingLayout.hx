@@ -22,6 +22,8 @@ class ScrollingLayout extends ScrollView {
         borderPosition = INSIDE;
         clip = this;
         scroller.allowPointerOutside = false;
+        scroller.bounceMinDuration = 0;
+        scroller.bounceDurationFactor = 0;
 
         #if !(ios || android)
         scroller.dragEnabled = false;
@@ -33,10 +35,6 @@ class ScrollingLayout extends ScrollView {
 
         scroller.pos(0, 0);
         scroller.size(width, height);
-
-        //if (id == 'DEB') {
-            log.debug('ScrollingLayout($id) width=$width height=$height direction=$direction');
-        //}
 
         if (direction == VERTICAL) {
             layoutView.computeSize(width, height, ViewLayoutMask.INCREASE_HEIGHT, true);
