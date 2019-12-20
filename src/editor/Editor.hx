@@ -117,10 +117,23 @@ class Editor extends Entity {
             var classPath = Reflect.field(app.info.editable, key);
 
             trace('EDITABLE $classPath');
+
             var clazz = Type.resolveClass(classPath);
             var usedFields = new Map();
             var fields:Array<EditableTypeField> = [];
             var rtti = Utils.getRtti(clazz);
+
+            var isVisual = (classPath == 'ceramic.Visual');
+            if (!isVisual) {
+                var parentClazz = Type.getSuperClass(clazz);
+                while (parentClazz != null) {
+                    if (Type.getClassName(parentClazz) == 'ceramic.Visual') {
+                        isVisual = true;
+                        break;
+                    }
+                    parentClazz = Type.getSuperClass(parentClazz);
+                }
+            }
 
             editableTypes.push({
                 meta: Meta.getType(clazz),

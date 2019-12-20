@@ -110,13 +110,35 @@ class EditorView extends View implements Observable {
 
         var selectedFragment = model.project.selectedFragment;
 
+        var toCheck = [];
+
         if (selectedFragment != null) {
             for (item in selectedFragment.items) {
+                var entityId = item.entityId;
+                toCheck.push(entityId);
                 editedFragment.putItem(item.toFragmentItem());
             }
         }
 
+        app.onceUpdate(this, (_) -> {
+            if (editedFragment != null) {
+                for (entityId in toCheck) {
+                    var entity = editedFragment.get(entityId);
+                    if (Std.is(entity, Visual) && !entity.hasComponent('editable')) {
+                        bindEditableVisualComponent(cast entity, editedFragment);
+                    }
+                }
+            }
+        });
+
     } //updateFragmentItems
+
+    function bindEditableVisualComponent(visual:Visual, editedFragment:Fragment) {
+
+        var editable = new Editable(editedFragment);
+        visual.component('editable', editable);
+
+    } //bindEditableVisualComponent
 
     function handleEditableItemUpdate(fragmentItem:FragmentItem) {
 
@@ -128,7 +150,7 @@ class EditorView extends View implements Observable {
         if (item != null && props != null) {
             for (key in Reflect.fields(fragmentItem.props)) {
                 var value = Reflect.field(props, key);
-                
+
                 unobserve();
                 item.props.set(key, value);
                 reobserve();
