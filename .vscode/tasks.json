@@ -1,5 +1,5 @@
 {
-    "displayName": "▶︎ luxe / Run Web",
+    "displayName": "▶︎ luxe / Run Web (no skip)",
     "description": "ceramic luxe run web --setup --assets",
     "tasks": [
         {
@@ -16,6 +16,7 @@
                 "luxe",
                 "run",
                 "web",
+                "--no-skip",
                 "--setup",
                 "--assets",
                 "--vscode-editor",
