@@ -14,13 +14,17 @@ import editor.visuals.Highlight;
 
 class Editable extends Entity implements Component {
 
+    @event function select(visual:Visual);
+
+    @event function change(visual:Visual, changed:Dynamic);
+
     public static var highlight:Highlight;
 
-    static var active:Editable = null;
+    static var activeEditable:Editable = null;
 
     var entity:Visual;
 
-    var fragment:Fragment;
+    //var fragment:Fragment;
 
     var point:Point = { x: 0, y: 0 };
 
@@ -32,10 +36,10 @@ class Editable extends Entity implements Component {
     var aKeyPressed:Bool = false;
     var shiftPressed:Bool = false;
 
-    function new(fragment:Fragment) {
+    function new() {
         
         super();
-        this.fragment = fragment;
+        //this.fragment = fragment;
 
     } //new
 
@@ -47,9 +51,12 @@ class Editable extends Entity implements Component {
 
     override function destroy() {
 
+        Utils.printStackTrace();
+        log.error('DESTROY EDITABLE COMPONENT');
+
         super.destroy();
 
-        if (active == this && highlight != null) {
+        if (activeEditable == this && highlight != null) {
             highlight.destroy();
         }
 
@@ -66,8 +73,8 @@ class Editable extends Entity implements Component {
         });
         */
 
-        if (active == this) return;
-        active = this;
+        if (activeEditable == this) return;
+        activeEditable = this;
         
         if (highlight != null) {
             highlight.destroy();
@@ -79,9 +86,10 @@ class Editable extends Entity implements Component {
             highlight.offCornerOver(handleCornerOver);
             highlight.offCornerOut(handleCornerOut);
 
-            if (active == this) {
-                active = null;
+            if (activeEditable == this) {
+                activeEditable = null;
 
+                emitSelect(null);
                 // Set selected item
                 /*
                 editor.send({
@@ -96,7 +104,7 @@ class Editable extends Entity implements Component {
 
         highlight.anchor(0, 0);
         highlight.pos(0, 0);
-        highlight.depth = 99999;
+        highlight.depth = 999;
         highlight.transform = new Transform();
         highlight.wrapVisual(entity);
 
@@ -113,12 +121,13 @@ class Editable extends Entity implements Component {
             value: entity.id
         });
         */
+        emitSelect(entity);
 
     } //select
 
     function update(_) {
 
-        if (active != this) return;
+        if (activeEditable != this) return;
 
         highlight.wrapVisual(entity);
 
@@ -132,16 +141,22 @@ class Editable extends Entity implements Component {
         select();
 
         // Start dragging
+        var parent = entity.parent;
+        if (parent == null) {
+            log.warning('Skip pointer down event because entity has no parent');
+            return;
+        }
+
         var entityStartX = entity.x;
         var entityStartY = entity.y;
-        fragment.screenToVisual(screen.pointerX, screen.pointerY, point);
+        parent.screenToVisual(screen.pointerX, screen.pointerY, point);
         var dragStartX = point.x;
         var dragStartY = point.y;
 
         function onPointerMove(info:TouchInfo) {
             //editor.render();
 
-            fragment.screenToVisual(screen.pointerX, screen.pointerY, point);
+            parent.screenToVisual(screen.pointerX, screen.pointerY, point);
             entity.x = entityStartX + point.x - dragStartX;
             entity.y = entityStartY + point.y - dragStartY;
 
@@ -167,6 +182,11 @@ class Editable extends Entity implements Component {
                 value: entity.y
             });
             */
+
+            emitChange(entity, {
+                x: entity.x,
+                y: entity.y
+            });
 
         });
 
@@ -630,6 +650,16 @@ class Editable extends Entity implements Component {
             entity.rotation = Math.round(rotation * 100) / 100.0;
 
             log.debug('SEND VISUAL CHANGE');
+
+            emitChange(entity, {
+                x: entity.x,
+                y: entity.y,
+                scaleX: entity.scaleX,
+                scaleY: entity.scaleY,
+                skewX: entity.skewX,
+                skewY: entity.skewY,
+                rotation: entity.rotation
+            });
 
             /*
             // Update pos & scale on react side

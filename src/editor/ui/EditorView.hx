@@ -32,6 +32,8 @@ class EditorView extends View implements Observable {
 
         autorun(updateFragmentItems);
 
+        autorun(updateSelectedEditable);
+
         // Styles
         autorun(updateStyle);
 
@@ -135,14 +137,38 @@ class EditorView extends View implements Observable {
 
     function bindEditableVisualComponent(visual:Visual, editedFragment:Fragment) {
 
-        var editable = new Editable(editedFragment);
+        var editable = new Editable();
+
         visual.component('editable', editable);
+
+        editable.onSelect(this, function(visual) {
+
+            trace('ON SELECT ${visual != null}');
+            
+            var fragmentData = model.project.selectedFragment;
+            var entityData = fragmentData.get(visual.id);
+            fragmentData.selectedItem = entityData;
+
+        });
+
+        editable.onChange(this, function(visual, changed) {
+
+            var fragmentData = model.project.selectedFragment;
+            var entityData = fragmentData.get(visual.id);
+            if (entityData != null) {
+                for (key in Reflect.fields(changed)) {
+                    var value = Reflect.field(changed, key);
+                    entityData.props.set(key, value);
+                }
+            }
+
+        });
 
     } //bindEditableVisualComponent
 
     function handleEditableItemUpdate(fragmentItem:FragmentItem) {
 
-        log.debug('ITEM UPDATED: $fragmentItem');
+        log.debug('ITEM UPDATED: ${fragmentItem.id}');
 
         var item = model.project.selectedFragment.get(fragmentItem.id);
 
@@ -188,6 +214,27 @@ class EditorView extends View implements Observable {
         }
 
     } //updateTabsContentView
+
+    function updateSelectedEditable() {
+
+        var selectedFragment = model.project.selectedFragment;
+        var selectedVisual = selectedFragment != null ? selectedFragment.selectedVisual : null;
+
+        unobserve();
+
+        for (item in editedFragment.items) {
+            var entity = editedFragment.get(item.id);
+            var editable:Editable = cast entity.component('editable');
+            if (editable != null) {
+                if (entity.id == selectedVisual.entityId) {
+                    editable.select();
+                }
+            }
+        }
+
+        reobserve();
+
+    } //updateSelectedEditable
 
     function updateStyle() {
 
