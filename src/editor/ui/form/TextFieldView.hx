@@ -30,7 +30,7 @@ class TextFieldView extends FieldView implements Observable {
 
     override function didLostFocus() {
 
-        if (textValue == '') {
+        if (textValue == '' || (kind == NUMERIC && textValue == '-')) {
             setEmptyValue(this);
         }
 
@@ -53,11 +53,15 @@ class TextFieldView extends FieldView implements Observable {
 
     var editText:EditText;
 
-    public function new() {
+    public var kind(default, null):TextFieldKind;
+
+    public function new(kind:TextFieldKind = TEXT) {
 
         super();
 
-        padding(6, 6, 5, 6);
+        this.kind = kind != null ? kind : TEXT;
+
+        padding(6, 6, 6, 6);
         borderSize = 1;
         borderPosition = INSIDE;
         transparent = false;
@@ -138,3 +142,11 @@ class TextFieldView extends FieldView implements Observable {
     } //updateStyle
 
 } //TextFieldView
+
+enum TextFieldKind {
+
+    TEXT;
+
+    NUMERIC;
+
+} //TextFieldKind

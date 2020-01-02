@@ -88,8 +88,6 @@ class FormLayout extends LinearLayout {
 
     function focusPrevField() {
 
-        trace('FOCUS PREV FIELD');
-
         // Look before currently focused field
         findingWithFocused = screen.focusedVisual;
         var field:FieldView = findPrevField(this);

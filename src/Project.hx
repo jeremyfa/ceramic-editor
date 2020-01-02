@@ -1,5 +1,8 @@
 package;
 
+import ceramic.Color;
+import ceramic.AlphaColor;
+import ceramic.Mesh;
 import ceramic.InitSettings;
 import ceramic.Shortcuts.*;
 import editor.Editor;
@@ -17,6 +20,35 @@ class Project {
         new Editor(settings);
         #end
 
+        //app.onceReady(null, ready);
+
     } //new
+
+    function ready() {
+
+        var mesh = new Mesh();
+
+        mesh.colorMapping = VERTICES;
+        mesh.vertices = [
+            0, 0,
+            100, 0,
+            100, 100,
+            0, 100
+        ];
+        mesh.indices = [
+            0, 1, 2,
+            0, 2, 3
+        ];
+        mesh.colors = [
+            new AlphaColor(Color.RED),
+            new AlphaColor(Color.GREEN),
+            new AlphaColor(Color.BLUE),
+            new AlphaColor(Color.WHITE)
+        ];
+
+        mesh.depth = 999;
+        mesh.pos(screen.width * 0.5, screen.height * 0.5);
+
+    } //ready
 
 } //Project

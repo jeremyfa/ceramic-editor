@@ -27,9 +27,12 @@ class BooleanFieldView extends FieldView implements Observable {
         direction = HORIZONTAL;
         align = LEFT;
         
+        var pad = 7;
+        var w = 25;
+        
         switchContainer = new View();
-        switchContainer.padding(4);
-        switchContainer.viewSize(23 * 2, 23);
+        switchContainer.padding(pad);
+        switchContainer.viewSize(w, w);
         switchContainer.borderSize = 1;
         switchContainer.borderPosition = INSIDE;
         switchContainer.transparent = false;
@@ -37,7 +40,7 @@ class BooleanFieldView extends FieldView implements Observable {
 
         switchSquare = new View();
         switchSquare.transparent = false;
-        switchSquare.size(19, 15);
+        switchSquare.size(w - pad * 2, w - pad * 2);
         switchContainer.add(switchSquare);
 
         switchContainer.onLayout(this, layoutSwitchContainer);
@@ -118,10 +121,10 @@ class BooleanFieldView extends FieldView implements Observable {
         switchContainer.color = theme.darkBackgroundColor;
 
         if (value) {
-            switchSquare.color = theme.lightTextColor;
+            switchSquare.color = theme.mediumTextColor;
         }
         else {
-            switchSquare.color = theme.darkerTextColor;
+            switchSquare.color = theme.darkBackgroundColor;//theme.darkerTextColor.getDarkened(0.1);
         }
 
         if (focused) {
