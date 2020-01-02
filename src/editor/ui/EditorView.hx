@@ -32,7 +32,7 @@ class EditorView extends View implements Observable {
 
         autorun(updateFragmentItems);
 
-        autorun(updateSelectedEditable);
+        autorun(() -> updateSelectedEditable(true));
 
         // Styles
         autorun(updateStyle);
@@ -215,21 +215,40 @@ class EditorView extends View implements Observable {
 
     } //updateTabsContentView
 
-    function updateSelectedEditable() {
+    function updateSelectedEditable(runAfterUpdate:Bool) {
 
         var selectedFragment = model.project.selectedFragment;
         var selectedVisual = selectedFragment != null ? selectedFragment.selectedVisual : null;
+        var items = editedFragment.items;
 
         unobserve();
 
-        for (item in editedFragment.items) {
+        if (selectedVisual == null)
+            return;
+
+        for (item in items) {
             var entity = editedFragment.get(item.id);
             var editable:Editable = cast entity.component('editable');
             if (editable != null) {
                 if (entity.id == selectedVisual.entityId) {
+                    unobserve();
                     editable.select();
+                    reobserve();
                 }
             }
+        }
+
+        if (runAfterUpdate) {
+            // Somehow, this is needed because Fragment may need
+            // a whole update cycle to get updated properly,
+            // so we need to re-process selection after this update cycle
+            app.oncePostFlushImmediate(() -> {
+                updateSelectedEditable(false);
+                app.onceUpdate(this, _ -> {
+                    updateSelectedEditable(false);
+                    app.onceUpdate(this, _ -> updateSelectedEditable(false));
+                });
+            });
         }
 
         reobserve();
