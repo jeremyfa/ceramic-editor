@@ -2,6 +2,8 @@ package editor.ui.form;
 
 class FieldView extends LinearLayout {
 
+    static var _point = new Point();
+
 /// Public properties
 
     public var focused(get,never):Bool;
@@ -29,9 +31,77 @@ class FieldView extends LinearLayout {
 
         screen.focusedVisual = this;
 
+        makeVisibleInForm();
+
     } //focus
 
+    public function makeVisibleInForm():Void {
+        
+        var scrollingLayout = getScrollingLayout();
+        if (scrollingLayout == null) {
+            log.warning('Cannot make form field visible: scrolling layout is null');
+            return;
+        }
+
+        var scroller = scrollingLayout.scroller;
+
+        scroller.content.visualToScreen(0, 0, _point);
+        var formY = _point.y;
+
+        this.visualToScreen(0, 0, _point);
+        var fieldStart = _point.y;
+        this.visualToScreen(0, height, _point);
+        var fieldEnd = _point.y;
+
+        var targetStart = fieldStart - formY;
+        var targetEnd = fieldEnd - formY;
+
+        // Tweak values a bit to make it look nicer
+        targetStart -= 8;
+        targetEnd += 8;
+
+        var startVisible = scroller.isContentPositionInBounds(0, targetStart);
+        var endVisible = scroller.isContentPositionInBounds(0, targetEnd);
+
+        scroller.ensureContentPositionIsInBounds(0, targetStart);
+        scroller.ensureContentPositionIsInBounds(0, targetEnd);
+
+    } //makeVisibleInForm
+
 /// Internal
+
+    function getFormLayout():FormLayout {
+
+        var parent = this.parent;
+
+        while (parent != null) {
+            if (Std.is(parent, FormLayout)) {
+                return cast parent;
+            }
+            parent = parent.parent;
+        }
+
+        return null;
+
+    } //getFormLayout
+
+    function getScrollingLayout():ScrollingLayout<FormLayout> {
+
+        var parent = this.parent;
+
+        while (parent != null) {
+            if (Std.is(parent, ScrollingLayout)) {
+                var scrollingLayout:ScrollingLayout<View> = cast parent;
+                if (Std.is(scrollingLayout.layoutView, FormLayout)) {
+                    return cast scrollingLayout;
+                }
+            }
+            parent = parent.parent;
+        }
+
+        return null;
+
+    } //getScrollingLayout
 
     @:allow(editor.manager.FieldManager)
     function didLostFocus():Void {

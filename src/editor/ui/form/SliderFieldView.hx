@@ -38,8 +38,6 @@ class SliderFieldView extends FieldView implements Observable {
 
     var sliderSquare:View;
 
-    var textRatio:Float = 0.5;
-
     public function new(minValue:Float = 0, maxValue:Float = 1) {
 
         super();
@@ -59,7 +57,6 @@ class SliderFieldView extends FieldView implements Observable {
         textView.viewSize(40, auto());
         textView.align = LEFT;
         textView.pointSize = 12;
-        textView.text.maxLineDiff = -1;
         add(textView);
 
         editText = new EditText();
@@ -89,6 +86,8 @@ class SliderFieldView extends FieldView implements Observable {
 /// Layout
 
     override function focus() {
+
+        super.focus();
 
         if (!focused) {
             editText.focus();
@@ -189,6 +188,7 @@ class SliderFieldView extends FieldView implements Observable {
         
         color = theme.darkBackgroundColor;
 
+        textView.textColor = theme.fieldTextColor;
         textView.font = theme.mediumFont10;
 
         if (focused) {

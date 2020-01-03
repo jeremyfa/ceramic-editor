@@ -1,14 +1,12 @@
 package editor.ui.element;
 
-class ScrollingLayout extends ScrollView {
+class ScrollingLayout<T:View> extends ScrollView {
 
-    var layoutView:View;
+    public var layoutView(default, null):T;
 
-    public function new(layoutView:View, ?id:String) {
+    public function new(layoutView:T) {
 
         super();
-
-        this.id = id;
 
         this.layoutView = layoutView;
         contentView.add(layoutView);
@@ -45,6 +43,8 @@ class ScrollingLayout extends ScrollView {
         }
         
         contentView.size(layoutView.width, layoutView.height);
+
+        scroller.scrollToBounds();
 
     } //layout
 

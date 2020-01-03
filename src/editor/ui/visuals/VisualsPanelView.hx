@@ -69,9 +69,8 @@ class VisualsPanelView extends LinearLayout implements Observable {
         add(title);
 
         var form = new FormLayout();
-        form.id = 'form';
 
-        var scroll = new ScrollingLayout(form, 'DEB');
+        var scroll = new ScrollingLayout(form);
         scroll.viewSize(fill(), fill());
         add(scroll);
 

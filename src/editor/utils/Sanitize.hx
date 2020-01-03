@@ -23,4 +23,10 @@ class Sanitize {
 
     } //stringToFloat
 
+    public static function stringToColor(textValue:String):Color {
+
+        return Color.fromString(textValue);
+
+    } //stringToColor
+
 } //Sanitize

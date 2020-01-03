@@ -70,7 +70,7 @@ class TextFieldView extends FieldView implements Observable {
         textView.viewSize(fill(), auto());
         textView.align = LEFT;
         textView.pointSize = 12;
-        textView.text.maxLineDiff = -1;
+        textView.maxLineDiff = -1;
         add(textView);
 
         editText = new EditText();
@@ -87,6 +87,8 @@ class TextFieldView extends FieldView implements Observable {
 /// Public API
 
     override function focus() {
+
+        super.focus();
 
         editText.focus();
         
@@ -130,6 +132,7 @@ class TextFieldView extends FieldView implements Observable {
         
         color = theme.darkBackgroundColor;
 
+        textView.textColor = theme.fieldTextColor;
         textView.font = theme.mediumFont10;
 
         if (focused) {

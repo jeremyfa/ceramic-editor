@@ -19,7 +19,7 @@ class FieldUtils {
             return createEditableBooleanField(options, item, name);
         }
         else if (type == 'ceramic.Color') {
-            //
+            return createEditableColorField(options, item, name);
         }
         else if (type == 'ceramic.BitmapFont') {
             //
@@ -120,6 +120,7 @@ class FieldUtils {
                     value = maxValue;
                 }
                 item.props.set(name, value);
+                fieldView.textValue = '' + value;
             };
         }
         else if (type == 'Int') {
@@ -133,6 +134,7 @@ class FieldUtils {
                     value = Std.int(maxValue);
                 }
                 item.props.set(name, value);
+                fieldView.textValue = '' + value;
             };
         }
         fieldView.setValue = function(field, value) {
@@ -169,5 +171,24 @@ class FieldUtils {
         return fieldView;
 
     } //createEditableBooleanField
+
+    public static function createEditableColorField(options:Dynamic, item:EditorEntityData, name:String) {
+
+        var fieldView = new ColorFieldView();
+        fieldView.setValue = function(field, value) {
+            item.props.set(name, value);
+        };
+        fieldView.autorun(function() {
+            var value:Dynamic = item.props.get(name);
+            if (value == null) {
+                fieldView.value = Color.WHITE;
+            }
+            else {
+                fieldView.value = value;
+            }
+        });
+        return fieldView;
+
+    } //createEditableColorField
 
 } //FieldUtils

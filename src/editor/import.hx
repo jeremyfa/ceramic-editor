@@ -14,3 +14,5 @@ import editor.ui.form.*;
 import editor.components.*;
 import editor.model.*;
 import editor.utils.*;
+
+using StringTools;

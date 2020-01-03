@@ -6,6 +6,8 @@ class EditorView extends View implements Observable {
 
     @observe public var panelTabsView:PanelTabsView;
 
+    var fragmentArea:Quad = null;
+
     var editedFragment:Fragment = null;
 
 /// Lifecycle
@@ -16,6 +18,7 @@ class EditorView extends View implements Observable {
 
         // Panels tabs
         panelTabsView = new PanelTabsView();
+        panelTabsView.depth = 2;
         add(panelTabsView);
 
         // Fragment
@@ -24,7 +27,13 @@ class EditorView extends View implements Observable {
             editedItems: true
         });
         editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
+        editedFragment.depth = 1;
         add(editedFragment);
+
+        // Fragment area
+        fragmentArea = new Quad();
+        fragmentArea.transparent = true;
+        add(fragmentArea);
 
         autorun(updateTabs);
         autorun(updateEditedFragment);
@@ -61,6 +70,9 @@ class EditorView extends View implements Observable {
                 availableFragmentHeight * 0.5
             );
         }
+
+        fragmentArea.pos(0, 0);
+        fragmentArea.size(availableFragmentWidth, availableFragmentHeight);
 
     } //layout
 
@@ -233,6 +245,7 @@ class EditorView extends View implements Observable {
                 if (entity.id == selectedVisual.entityId) {
                     unobserve();
                     editable.select();
+                    Editable.highlight.clip = fragmentArea;
                     reobserve();
                 }
             }

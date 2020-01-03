@@ -4,6 +4,8 @@ class EditorTheme extends Model {
 
 /// Text colors
 
+    @observe public var fieldTextColor:Color = 0xFFFFFF;
+
     @observe public var lightTextColor:Color = 0xF3F3F3;
 
     @observe public var mediumTextColor:Color = 0xCCCCCC;

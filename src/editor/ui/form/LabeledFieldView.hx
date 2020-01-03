@@ -35,9 +35,24 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
         autorun(updateLabel);
         autorun(updateStyle);
 
+        // Focus field on label click
+        #if !(ios || android)
+        labelText.onPointerDown(this, _ -> handleLabelClick());
+        #else
+        var labelClick = new Click();
+        labelText.component(labelClick);
+        labelClick.onClick(this, handleLabelClick);
+        #end
+
     } //new
 
 /// Internal
+
+    function handleLabelClick() {
+
+        field.focus();
+
+    } //handleLabelClick
 
     function updateLabel() {
 
