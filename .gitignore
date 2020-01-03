@@ -3,3 +3,4 @@
 /completion.hxml
 /dump
 /.haxelib
+.vscode/tasks.json

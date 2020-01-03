@@ -1,6 +1,6 @@
 {
-    "displayName": "▶︎ luxe / Run Web (no skip)",
-    "description": "ceramic luxe run web --setup --assets",
+    "displayName": "▶︎ luxe / Run Mac",
+    "description": "ceramic luxe run mac --setup --assets",
     "tasks": [
         {
             "type": "shell",
@@ -15,8 +15,7 @@
             "args": [
                 "luxe",
                 "run",
-                "web",
-                "--no-skip",
+                "mac",
                 "--setup",
                 "--assets",
                 "--vscode-editor",
@@ -31,5 +30,5 @@
         }
     ],
     "version": "2.0.0",
-    "chooserIndex": 0
+    "chooserIndex": 7
 }
