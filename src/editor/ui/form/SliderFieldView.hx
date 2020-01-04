@@ -22,12 +22,6 @@ class SliderFieldView extends FieldView implements Observable {
 
     @observe public var maxValue:Float = 0.0;
 
-    /*
-    @compute public function remaining():Float {
-        return (maxValue - value);
-    }
-    */
-
 /// Internal properties
 
     var textView:TextView;
