@@ -2,6 +2,8 @@ package editor.ui.form;
 
 class ColorFieldView extends FieldView implements Observable {
 
+    static var _point = new Point();
+
     static var RE_HEX_COLOR = ~/^[0-F][0-F][0-F][0-F][0-F][0-F]$/;
 
     static var RE_HEX_COLOR_ANY_LENGTH = ~/^[0-F]+$/;
@@ -20,6 +22,8 @@ class ColorFieldView extends FieldView implements Observable {
 
 /// Internal properties
 
+    @observe var pickerVisible:Bool = false;
+
     var container:RowLayout;
 
     var textView:TextView;
@@ -29,6 +33,12 @@ class ColorFieldView extends FieldView implements Observable {
     var editText:EditText;
 
     var colorPreview:View;
+
+    var pickerContainer:View;
+
+    var pickerView:ColorPickerView;
+
+    var bubbleTriangle:Triangle;
 
     public function new() {
 
@@ -45,6 +55,13 @@ class ColorFieldView extends FieldView implements Observable {
         container.borderPosition = INSIDE;
         container.transparent = false;
         add(container);
+
+        pickerContainer = new View();
+        pickerContainer.transparent = true;
+        pickerContainer.viewSize(0, 0);
+        pickerContainer.active = false;
+        pickerContainer.depth = 10;
+        editor.view.add(pickerContainer);
         
         var filler = new View();
         filler.transparent = true;
@@ -79,8 +96,23 @@ class ColorFieldView extends FieldView implements Observable {
 
         autorun(updateStyle);
         autorun(updateFromValue);
+        autorun(updatePickerContainer);
 
         container.onLayout(this, layoutContainer);
+        pickerContainer.onLayout(this, layoutPickerContainer);
+
+        colorPreview.onPointerDown(this, _ -> togglePickerVisible());
+
+        app.onPostUpdate(this, _ -> updatePickerPosition());
+
+        // If the field is put inside a scrolling layout right after being initialized,
+        // check its scroll transform to update position instantly (without loosing a frame)
+        app.onceUpdate(this, function(_) {
+            var scrollingLayout = getScrollingLayout();
+            if (scrollingLayout != null) {
+                scrollingLayout.scroller.scrollTransform.onChange(this, updatePickerPosition);
+            }
+        });
 
     } //new
 
@@ -97,6 +129,8 @@ class ColorFieldView extends FieldView implements Observable {
     } //focus
 
     override function didLostFocus() {
+
+        pickerVisible = false;
 
         if (textView.content == '') {
             var emptyValue:Color = Color.WHITE;
@@ -123,7 +157,74 @@ class ColorFieldView extends FieldView implements Observable {
 
     } //layoutContainer
 
+    function updatePickerPosition() {
+
+        if (!pickerContainer.active)
+            return;
+        
+        colorPreview.visualToScreen(
+            colorPreview.width * 0.5,
+            colorPreview.height * 0.5,
+            _point
+        );
+
+        editor.view.screenToVisual(_point.x, _point.y, _point);
+        
+        var x = _point.x;
+        var y = _point.y;
+
+        if (x != pickerContainer.x || y != pickerContainer.y)
+            pickerContainer.layoutDirty = true;
+    
+        pickerContainer.pos(x, y);
+
+    } //updatePickerPosition
+
+    function layoutPickerContainer() {
+
+        if (pickerView != null) {
+
+            var editorMargin = 40;
+            var previewMargin = 12;
+
+            pickerView.autoComputeSizeIfNeeded(true);
+
+            pickerView.visualToScreen(pickerView.width, pickerView.height, _point);
+            editor.view.screenToVisual(_point.x, _point.y, _point);
+
+            pickerView.x = Math.min(
+                editor.view.width - pickerView.width - editorMargin - pickerContainer.x,
+                colorPreview.width * 0.5
+            );
+
+            var availableHeightAfter = editor.view.height - pickerContainer.y - colorPreview.height * 0.5 - editorMargin - previewMargin;
+
+            bubbleTriangle.size(14, 7);
+
+            if (pickerView.height <= availableHeightAfter) {
+                pickerView.y = colorPreview.height * 0.5 + previewMargin;
+                bubbleTriangle.pos(0, pickerView.y);
+            }
+            else {
+                pickerView.y = -pickerView.height - colorPreview.height * 0.5 - previewMargin;
+                bubbleTriangle.pos(0, 0);
+            }
+        }
+
+    } //layoutPickerContainer
+
 /// Internal
+
+    override function destroy() {
+
+        super.destroy();
+
+        if (pickerContainer != null) {
+            pickerContainer.destroy();
+            pickerContainer = null;
+        }
+
+    } //destroy
 
     function updateFromEditText(text:String) {
 
@@ -188,5 +289,56 @@ class ColorFieldView extends FieldView implements Observable {
         }
 
     } //updateStyle
+
+/// Picker
+
+    function togglePickerVisible() {
+
+        log.debug('toggle picker view');
+
+        pickerVisible = !pickerVisible;
+
+    } //togglePickerVisible
+
+    function updatePickerContainer() {
+
+        log.success('update picker container');
+
+        var pickerVisible = this.pickerVisible;
+
+        unobserve();
+
+        if (pickerVisible && pickerView == null) {
+
+            pickerView = new ColorPickerView();
+            pickerView.depth = 10;
+            pickerContainer.add(pickerView);
+
+            bubbleTriangle = new Triangle();
+            bubbleTriangle.anchor(0.5, 1);
+            bubbleTriangle.autorun(() -> {
+                bubbleTriangle.color = theme.bubbleBackgroundColor;
+                bubbleTriangle.alpha = theme.bubbleBackgroundAlpha;
+            });
+            pickerContainer.add(bubbleTriangle);
+
+            pickerContainer.active = true;
+            updatePickerPosition();
+
+        }
+        else if (!pickerVisible && pickerView != null) {
+
+            pickerView.destroy();
+            pickerView = null;
+
+            bubbleTriangle.destroy();
+            bubbleTriangle = null;
+
+            pickerContainer.active = false;
+        }
+
+        reobserve();
+
+    } //updatePickerContainer
 
 } //SliderFieldView

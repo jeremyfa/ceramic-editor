@@ -58,6 +58,12 @@ class EditorTheme extends Model {
 
     @observe public var focusedFieldBorderColor:Color = 0x4392E0;
 
+/// Bubble
+
+    @observe public var bubbleBackgroundColor:Color = 0x111111;
+
+    @observe public var bubbleBackgroundAlpha:Float = 0.9;
+
 /// Button
 
     @observe public var buttonBackgroundColor:Color = 0x515151;

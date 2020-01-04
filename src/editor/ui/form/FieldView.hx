@@ -39,7 +39,7 @@ class FieldView extends LinearLayout {
         
         var scrollingLayout = getScrollingLayout();
         if (scrollingLayout == null) {
-            log.warning('Cannot make form field visible: scrolling layout is null');
+            // Nothing to do if there is no scrolling layout
             return;
         }
 
@@ -69,21 +69,6 @@ class FieldView extends LinearLayout {
     } //makeVisibleInForm
 
 /// Internal
-
-    function getFormLayout():FormLayout {
-
-        var parent = this.parent;
-
-        while (parent != null) {
-            if (Std.is(parent, FormLayout)) {
-                return cast parent;
-            }
-            parent = parent.parent;
-        }
-
-        return null;
-
-    } //getFormLayout
 
     function getScrollingLayout():ScrollingLayout<FormLayout> {
 
