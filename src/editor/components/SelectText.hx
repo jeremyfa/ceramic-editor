@@ -125,6 +125,7 @@ class SelectText extends Entity implements Component implements Observable {
         var cursorHeight:Float = Math.ceil(entity.pointSize);
         var computedLineHeight = entity.lineHeight * entity.font.lineHeight * entity.pointSize / entity.font.pointSize;
         var lineBreakWidth:Float = entity.pointSize * 0.4;
+        var selectionRightPadding = 1;
 
         var hasCharsSelection = selectionEnd > selectionStart;
 
@@ -145,11 +146,11 @@ class SelectText extends Entity implements Component implements Observable {
             }
             if (backgroundLeft == 0) {
                 bg.pos(backgroundLeft - backgroundPad, backgroundTop - backgroundPad);
-                bg.size(backgroundRight + backgroundPad - backgroundLeft, backgroundBottom + backgroundPad * 2 - backgroundTop);
+                bg.size(backgroundRight + backgroundPad - backgroundLeft + selectionRightPadding, backgroundBottom + backgroundPad * 2 - backgroundTop);
             } 
             else {
                 bg.pos(backgroundLeft, backgroundTop - backgroundPad);
-                bg.size(backgroundRight - backgroundLeft, backgroundBottom + backgroundPad * 2 - backgroundTop);
+                bg.size(backgroundRight - backgroundLeft + selectionRightPadding, backgroundBottom + backgroundPad * 2 - backgroundTop);
             }
 
         } //addSelectionBackground

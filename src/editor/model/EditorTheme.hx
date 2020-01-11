@@ -30,6 +30,8 @@ class EditorTheme extends Model {
 
 /// Borders colors
 
+    @observe public var lighterBorderColor:Color = 0x999999;
+
     @observe public var lightBorderColor:Color = 0x636363;
 
     @observe public var mediumBorderColor:Color = 0x464646;

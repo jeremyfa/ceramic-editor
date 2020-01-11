@@ -47,6 +47,8 @@ class TextFieldView extends FieldView implements Observable {
 
     @observe public var textValue:String = '';
 
+    @observe public var inBubble:Bool = false;
+
 /// Internal properties
 
     var textView:TextView;
@@ -62,9 +64,6 @@ class TextFieldView extends FieldView implements Observable {
         this.kind = kind != null ? kind : TEXT;
 
         padding(6, 6, 6, 6);
-        borderSize = 1;
-        borderPosition = INSIDE;
-        transparent = false;
 
         textView = new TextView();
         textView.viewSize(fill(), auto());
@@ -129,17 +128,35 @@ class TextFieldView extends FieldView implements Observable {
     } //handleStopEditText
 
     function updateStyle() {
+
+        if (inBubble) {
+            color = Color.WHITE;
+            alpha = 0.1;
         
-        color = theme.darkBackgroundColor;
-
-        textView.textColor = theme.fieldTextColor;
-        textView.font = theme.mediumFont10;
-
-        if (focused) {
-            borderColor = theme.focusedFieldBorderColor;
+            borderSize = 0;
+            borderPosition = INSIDE;
+            transparent = false;
+    
+            textView.textColor = theme.fieldTextColor;
+            textView.font = theme.mediumFont10;
         }
         else {
-            borderColor = theme.lightBorderColor;
+            color = theme.darkBackgroundColor;
+            alpha = 1;
+        
+            borderSize = 1;
+            borderPosition = INSIDE;
+            transparent = false;
+    
+            textView.textColor = theme.fieldTextColor;
+            textView.font = theme.mediumFont10;
+    
+            if (focused) {
+                borderColor = theme.focusedFieldBorderColor;
+            }
+            else {
+                borderColor = theme.lightBorderColor;
+            }
         }
 
     } //updateStyle

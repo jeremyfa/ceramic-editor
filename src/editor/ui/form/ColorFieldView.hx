@@ -103,6 +103,7 @@ class ColorFieldView extends FieldView implements Observable {
 
         colorPreview.onPointerDown(this, _ -> togglePickerVisible());
 
+        app.onUpdate(this, _ -> updatePickerVisibility());
         app.onPostUpdate(this, _ -> updatePickerPosition());
 
         // If the field is put inside a scrolling layout right after being initialized,
@@ -130,8 +131,6 @@ class ColorFieldView extends FieldView implements Observable {
 
     override function didLostFocus() {
 
-        pickerVisible = false;
-
         if (textView.content == '') {
             var emptyValue:Color = Color.WHITE;
             setValue(this, emptyValue);
@@ -156,6 +155,30 @@ class ColorFieldView extends FieldView implements Observable {
         //
 
     } //layoutContainer
+
+    function updatePickerVisibility() {
+
+        if (pickerView == null || !pickerVisible)
+            return;
+
+        if (FieldManager.manager.focusedField == this)
+            return;
+
+        var parent = screen.focusedVisual;
+        var keepFocus = false;
+        while (parent != null) {
+            if (parent == pickerView) {
+                keepFocus = true;
+                break;
+            }
+            parent = parent.parent;
+        }
+
+        if (!keepFocus) {
+            pickerVisible = false;
+        }
+
+    } //updatePickerVisibility
 
     function updatePickerPosition() {
 
@@ -281,7 +304,7 @@ class ColorFieldView extends FieldView implements Observable {
         textPrefixView.textColor = theme.darkTextColor;
         textPrefixView.font = theme.mediumFont10;
 
-        if (focused) {
+        if (focused || pickerVisible) {
             container.borderColor = theme.focusedFieldBorderColor;
         }
         else {
@@ -305,25 +328,33 @@ class ColorFieldView extends FieldView implements Observable {
         log.success('update picker container');
 
         var pickerVisible = this.pickerVisible;
+        var value = this.value;
 
         unobserve();
 
-        if (pickerVisible && pickerView == null) {
+        if (pickerVisible) {
 
-            pickerView = new ColorPickerView();
-            pickerView.depth = 10;
-            pickerContainer.add(pickerView);
+            if (pickerView == null) {
+                pickerView = new ColorPickerView();
+                pickerView.depth = 10;
+                pickerView.onColorValueChange(pickerView, (color, _) -> {
+                    this.value = color;
+                });
+                pickerContainer.add(pickerView);
+    
+                bubbleTriangle = new Triangle();
+                bubbleTriangle.anchor(0.5, 1);
+                bubbleTriangle.autorun(() -> {
+                    bubbleTriangle.color = theme.bubbleBackgroundColor;
+                    bubbleTriangle.alpha = theme.bubbleBackgroundAlpha;
+                });
+                pickerContainer.add(bubbleTriangle);
+    
+                pickerContainer.active = true;
+                updatePickerPosition();
+            }
 
-            bubbleTriangle = new Triangle();
-            bubbleTriangle.anchor(0.5, 1);
-            bubbleTriangle.autorun(() -> {
-                bubbleTriangle.color = theme.bubbleBackgroundColor;
-                bubbleTriangle.alpha = theme.bubbleBackgroundAlpha;
-            });
-            pickerContainer.add(bubbleTriangle);
-
-            pickerContainer.active = true;
-            updatePickerPosition();
+            pickerView.colorValue = value;
 
         }
         else if (!pickerVisible && pickerView != null) {
