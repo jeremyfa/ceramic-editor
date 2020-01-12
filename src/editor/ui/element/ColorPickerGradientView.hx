@@ -12,9 +12,7 @@ class ColorPickerGradientView extends View {
     function set_colorValue(colorValue:Color):Color {
         if (this.colorValue == colorValue) return colorValue;
         this.colorValue = colorValue;
-        var tintColor = Color.fromHSL(colorValue.hue, 1, 0.5);
-        tintGradient.colors[1] = new AlphaColor(tintColor);
-        tintGradient.colors[2] = new AlphaColor(tintColor);
+        updateTintColor();
         updatePointerFromColor();
         return colorValue;
     }
@@ -23,12 +21,25 @@ class ColorPickerGradientView extends View {
 
     var tintGradient:Mesh;
 
-    var colorPointer:Quad;
+    var colorPointer:Border;
+
+    var targetPointerColor:Color = Color.NONE;
+
+    var pointerColorTween:Tween = null;
+
+    var movingPointer:Bool = false;
+
+    var savedPointerX:Float = 0;
+
+    var savedPointerY:Float = 0;
+
+    public var hue(default, null):Float = 0;
 
     public function new() {
 
         super();
         
+        clip = this;
         transparent = true;
 
         tintGradient = new Mesh();
@@ -41,18 +52,12 @@ class ColorPickerGradientView extends View {
         blackGradient.depth = 2;
         add(blackGradient);
 
-        colorPointer = new Quad();
+        colorPointer = new Border();
         colorPointer.anchor(0.5, 0.5);
-        colorPointer.size(4, 4);
+        colorPointer.size(10, 10);
         colorPointer.depth = 3;
-        colorPointer.color = Color.BLACK;
-        {
-            var internal = new Quad();
-            internal.color = Color.WHITE;
-            internal.size(2, 2);
-            internal.pos(1, 1);
-            colorPointer.add(internal);
-        }
+        colorPointer.borderPosition = INSIDE;
+        colorPointer.borderSize = 1;
         add(colorPointer);
 
         blackGradient.vertices = [
@@ -90,15 +95,88 @@ class ColorPickerGradientView extends View {
 
     } //new
 
+    public function updateTintColor(?hue:Float) {
+
+        if (hue != null) {
+            this.hue = hue;
+        }
+
+        var tintColor = Color.fromHSL(this.hue, 1, 0.5);
+        tintGradient.colors[1] = new AlphaColor(tintColor);
+        tintGradient.colors[2] = new AlphaColor(tintColor);
+
+    } //updateTintColor
+
+    public function savePointerPosition() {
+
+        savedPointerX = colorPointer.x;
+        savedPointerY = colorPointer.y;
+
+    } //savePointerPosition
+
+    public function restorePointerPosition() {
+
+        colorPointer.x = savedPointerX;
+        colorPointer.y = savedPointerY;
+
+    } //restorePointerPosition
+
+    public function getBrightnessFromPointer():Float {
+
+        var brightness = 1 - (colorPointer.y / height);
+        if (brightness < 0)
+            brightness = 0;
+        if (brightness > 1)
+            brightness = 1;
+
+        return brightness;
+
+    } //getBrightnessFromPointer
+
+    public function getSaturationFromPointer():Float {
+
+        var saturation = colorPointer.x / width;
+        if (saturation < 0)
+            saturation = 0;
+        if (saturation > 1)
+            saturation = 1;
+
+        return saturation;
+
+    } //getSaturationFromPointer
+
     function updatePointerFromColor() {
 
-        var lightness = colorValue.lightness;
+        var brightness = colorValue.brightness;
         var saturation = colorValue.saturation;
 
         colorPointer.pos(
             width * saturation,
-            height * (1.0 - lightness)
+            height * (1.0 - brightness)
         );
+
+        var newPointerColor = Color.WHITE;
+        if (brightness > 0.5) {
+            newPointerColor = Color.BLACK;
+        }
+
+        if (movingPointer) {
+            if (targetPointerColor != newPointerColor) {
+                targetPointerColor = newPointerColor;
+                if (pointerColorTween != null) {
+                    pointerColorTween.destroy();
+                    pointerColorTween = null;
+                }
+                var startColor = colorPointer.borderColor;
+                pointerColorTween = tween(0.4, 0, 1, (v, t) -> {
+                    colorPointer.borderColor = Color.interpolate(startColor, targetPointerColor, v);
+                });
+            }
+        }
+        else {
+            targetPointerColor = newPointerColor;
+            colorPointer.borderColor = targetPointerColor;
+        }
 
     } //updatePointerFromColor
 
@@ -119,6 +197,8 @@ class ColorPickerGradientView extends View {
         
         updateColorFromTouchInfo(info);
 
+        movingPointer = true;
+
     } //handlePointerDown
 
     function handlePointerMove(info:TouchInfo) {
@@ -133,33 +213,38 @@ class ColorPickerGradientView extends View {
 
         updateColorFromTouchInfo(info);
 
+        movingPointer = false;
+
     } //handlePointerUp
 
     function updateColorFromTouchInfo(info:TouchInfo) {
 
         screenToVisual(info.x, info.y, _point);
 
-        var hue = colorValue.hue;
+        var brightness = 1 - (_point.y / height);
+        if (brightness < 0)
+            brightness = 0;
+        if (brightness > 1)
+            brightness = 1;
 
-        var lightness = 1 - (_point.x / height);
-        if (lightness < 0)
-            lightness = 0;
-        if (lightness > 1)
-            lightness = 1;
-
-        var saturation = _point.y / width;
+        var saturation = _point.x / width;
         if (saturation < 0)
             saturation = 0;
         if (saturation > 1)
             saturation = 1;
 
-        this.colorValue = Color.fromHSL(
-            hue, saturation, lightness
+        this.colorValue = Color.fromHSB(
+            hue, saturation, brightness
         );
 
         updatePointerFromColor();
 
         emitUpdateColorFromPointer();
+
+        colorPointer.pos(
+            Math.max(0, Math.min(width, _point.x)),
+            Math.max(0, Math.min(height, _point.y))
+        );
 
     } //updateColorFromTouchInfo
 

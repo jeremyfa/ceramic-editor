@@ -40,6 +40,8 @@ class ColorFieldView extends FieldView implements Observable {
 
     var bubbleTriangle:Triangle;
 
+    var updatingFromPicker:Int = 0;
+
     public function new() {
 
         super();
@@ -338,7 +340,11 @@ class ColorFieldView extends FieldView implements Observable {
                 pickerView = new ColorPickerView();
                 pickerView.depth = 10;
                 pickerView.onColorValueChange(pickerView, (color, _) -> {
+                    updatingFromPicker++;
                     this.value = color;
+                    app.onceUpdate(this, _ -> {
+                        updatingFromPicker--;
+                    });
                 });
                 pickerContainer.add(pickerView);
     
@@ -354,7 +360,11 @@ class ColorFieldView extends FieldView implements Observable {
                 updatePickerPosition();
             }
 
-            pickerView.colorValue = value;
+            if (updatingFromPicker == 0) {
+                pickerView.setColorFromRGB(
+                    value.red, value.green, value.blue
+                );
+            }
 
         }
         else if (!pickerVisible && pickerView != null) {

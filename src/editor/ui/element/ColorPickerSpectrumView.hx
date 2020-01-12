@@ -4,9 +4,23 @@ using ceramic.Extensions;
 
 class ColorPickerSpectrumView extends View {
 
+    @event function updateHueFromPointer();
+
+    static var _point = new Point();
+
     static var PRECISION:Int = 16;
 
     var spectrum:Mesh;
+    
+    var huePointer:Border;
+
+    public var hue(default, set):Float = 0;
+    function set_hue(hue:Float):Float {
+        if (this.hue == hue) return hue;
+        this.hue = hue;
+        updatePointerFromHue();
+        return hue;
+    }
 
     public function new() {
 
@@ -18,6 +32,16 @@ class ColorPickerSpectrumView extends View {
         spectrum.colorMapping = VERTICES;
         spectrum.depth = 1;
         add(spectrum);
+
+        huePointer = new Border();
+        huePointer.depth = 2;
+        huePointer.borderTopSize = 1;
+        huePointer.borderBottomSize = 1;
+        huePointer.borderTopColor = Color.WHITE;
+        huePointer.borderBottomColor = Color.BLACK;
+        huePointer.borderPosition = OUTSIDE;
+        huePointer.anchor(0.5, 0.5);
+        add(huePointer);
 
         spectrum.vertices = [
             0, 0,
@@ -53,7 +77,19 @@ class ColorPickerSpectrumView extends View {
 
         }
 
+        onPointerDown(this, handlePointerDown);
+        onPointerUp(this, handlePointerUp);
+
     } //new
+
+    function updatePointerFromHue() {
+
+        huePointer.pos(
+            width * 0.5,
+            height * (1.0 - (hue / 360))
+        );
+
+    } //updatePointerFromHue
 
     override function layout() {
 
@@ -62,6 +98,46 @@ class ColorPickerSpectrumView extends View {
             height / PRECISION
         );
 
+        huePointer.size(width, 0);
+
+        updatePointerFromHue();
+
     } //layout
+
+/// Pointer events
+    
+    function handlePointerDown(info:TouchInfo) {
+        
+        screen.onPointerMove(this, handlePointerMove);
+        
+        updateHueFromTouchInfo(info);
+
+    } //handlePointerDown
+
+    function handlePointerMove(info:TouchInfo) {
+
+        updateHueFromTouchInfo(info);
+
+    } //handlePointerMove
+
+    function handlePointerUp(info:TouchInfo) {
+
+        screen.offPointerMove(handlePointerMove);
+
+        updateHueFromTouchInfo(info);
+
+    } //handlePointerUp
+
+    function updateHueFromTouchInfo(info:TouchInfo) {
+
+        screenToVisual(info.x, info.y, _point);
+
+        hue = Math.round((1.0 - Math.max(0, Math.min(_point.y / height, 1.0))) * 360);
+
+        updatePointerFromHue();
+
+        emitUpdateHueFromPointer();
+
+    } //updateColorFromTouchInfo
 
 } //ColorPickerSpectrumView
