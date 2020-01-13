@@ -319,15 +319,11 @@ class ColorFieldView extends FieldView implements Observable {
 
     function togglePickerVisible() {
 
-        log.debug('toggle picker view');
-
         pickerVisible = !pickerVisible;
 
     } //togglePickerVisible
 
     function updatePickerContainer() {
-
-        log.success('update picker container');
 
         var pickerVisible = this.pickerVisible;
         var value = this.value;
@@ -341,7 +337,7 @@ class ColorFieldView extends FieldView implements Observable {
                 pickerView.depth = 10;
                 pickerView.onColorValueChange(pickerView, (color, _) -> {
                     updatingFromPicker++;
-                    this.value = color;
+                    this.setValue(this, color);
                     app.onceUpdate(this, _ -> {
                         updatingFromPicker--;
                     });

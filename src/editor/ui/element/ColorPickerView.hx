@@ -4,7 +4,9 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     final FIELD_ROW_WIDTH = 34.0;
 
-    final FIELD_ADVANCE = 25.0;
+    final FIELD_ADVANCE = 26.0;
+
+    final FIELD_Y_GAP = 1.0;
 
     final PADDING = 6.0;
 
@@ -26,11 +28,27 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     var rgbLabel:TextView;
 
+    var hslHueField:TextFieldView;
+
+    var hslSaturationField:TextFieldView;
+
+    var hslLightnessField:TextFieldView;
+
+    var hslHueFieldValue:String = '0';
+
+    var hslSaturationFieldValue:String = '0';
+
+    var hslLightnessFieldValue:String = '0';
+
+    var hslLabel:TextView;
+
     var updatingFromRGB:Int = 0;
 
     var updatingFromHSL:Int = 0;
 
     var updatingFromHSB:Int = 0;
+
+    var hslFieldsLocked:Int = 0;
 
 /// Lifecycle
 
@@ -94,24 +112,24 @@ class ColorPickerView extends LayersLayout implements Observable {
         rgbLabel.viewSize(FIELD_ROW_WIDTH, 12);
         add(rgbLabel);
 
-        rgbRedField = create256Field(setColorFromRGBFields);
+        rgbRedField = createTextField(setColorFromRGBFields, 0, 256);
         rgbRedField.offset(
             offsetX,
             rgbLabel.offsetY + rgbLabel.viewHeight + PADDING
         );
         add(rgbRedField);
 
-        rgbGreenField = create256Field(setColorFromRGBFields);
+        rgbGreenField = createTextField(setColorFromRGBFields, 0, 256);
         rgbGreenField.offset(
             offsetX,
-            rgbRedField.offsetY + FIELD_ADVANCE + PADDING
+            rgbRedField.offsetY + FIELD_ADVANCE + FIELD_Y_GAP
         );
         add(rgbGreenField);
 
-        rgbBlueField = create256Field(setColorFromRGBFields);
+        rgbBlueField = createTextField(setColorFromRGBFields, 0, 256);
         rgbBlueField.offset(
             offsetX,
-            rgbGreenField.offsetY + FIELD_ADVANCE + PADDING
+            rgbGreenField.offsetY + FIELD_ADVANCE + FIELD_Y_GAP
         );
         add(rgbBlueField);
 
@@ -119,7 +137,6 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     function initHSLFields(offsetX:Float) {
 
-        /*
         hslLabel = new TextView();
         hslLabel.align = CENTER;
         hslLabel.verticalAlign = CENTER;
@@ -132,27 +149,26 @@ class ColorPickerView extends LayersLayout implements Observable {
         hslLabel.viewSize(FIELD_ROW_WIDTH, 12);
         add(hslLabel);
 
-        rgbRedField = create256Field(setColorFromRGBFields);
-        rgbRedField.offset(
+        hslHueField = createTextField(setColorFromHSLFieldHue, 0, 360);
+        hslHueField.offset(
             offsetX,
-            rgbLabel.offsetY + rgbLabel.viewHeight + pad
+            hslLabel.offsetY + hslLabel.viewHeight + PADDING
         );
-        add(rgbRedField);
+        add(hslHueField);
 
-        rgbGreenField = create256Field(setColorFromRGBFields);
-        rgbGreenField.offset(
+        hslSaturationField = createTextField(setColorFromHSLFieldSaturation, 0, 100);
+        hslSaturationField.offset(
             offsetX,
-            rgbRedField.offsetY + fieldAdvance + pad
+            hslHueField.offsetY + FIELD_ADVANCE + FIELD_Y_GAP
         );
-        add(rgbGreenField);
+        add(hslSaturationField);
 
-        rgbBlueField = create256Field(setColorFromRGBFields);
-        rgbBlueField.offset(
+        hslLightnessField = createTextField(setColorFromHSLFieldLightness, 0, 100);
+        hslLightnessField.offset(
             offsetX,
-            rgbGreenField.offsetY + fieldAdvance + pad
+            hslSaturationField.offsetY + FIELD_ADVANCE + FIELD_Y_GAP
         );
-        add(rgbBlueField);
-        */
+        add(hslLightnessField);
 
     } //initHSLFields
 
@@ -177,6 +193,9 @@ class ColorPickerView extends LayersLayout implements Observable {
         // Update RGB fields
         updateRGBFields(colorValue);
 
+        // Update HSL fields
+        updateHSLFields(colorValue, colorValue.hue);
+
         // Update gradient & spectrum
         updateGradientAndSpectrum(colorValue, colorValue.hue);
 
@@ -194,6 +213,9 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         // Update RGB fields
         updateRGBFields(colorValue);
+
+        // Update HSL fields
+        updateHSLFields(colorValue, h);
 
         // Update gradient & spectrum
         updateGradientAndSpectrum(colorValue, h);
@@ -213,6 +235,9 @@ class ColorPickerView extends LayersLayout implements Observable {
         // Update RGB fields
         updateRGBFields(colorValue);
 
+        // Update HSL fields
+        updateHSLFields(colorValue, h);
+
         // Update gradient & spectrum
         updateGradientAndSpectrum(colorValue, h);
 
@@ -231,6 +256,17 @@ class ColorPickerView extends LayersLayout implements Observable {
         rgbBlueField.setTextValue(rgbBlueField, '' + colorValue.blue);
 
     } //updateRGBFields
+
+    function updateHSLFields(colorValue:Color, hue:Float) {
+
+        if (hslFieldsLocked > 0)
+            return;
+
+        hslHueField.setTextValue(hslHueField, '' + Math.round(hue));
+        hslSaturationField.setTextValue(hslSaturationField, '' + (Math.round(colorValue.saturation * 1000) / 10));
+        hslLightnessField.setTextValue(hslLightnessField, '' + (Math.round(colorValue.lightness * 1000) / 10));
+
+    } //updateHSLFields
 
     function updateGradientAndSpectrum(colorValue:Color, hue:Float) {
 
@@ -256,14 +292,112 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     } //setColorFromRGBFields
 
-    function create256Field(?applyValue:Void->Void) {
+    function setColorFromHSLFieldHue() {
+
+        if (hslHueField.textValue == hslHueFieldValue)
+            return;
+
+        hslHueFieldValue = hslHueField.textValue;
+
+        if (updatingFromHSL > 0 || updatingFromHSB > 0 || updatingFromRGB > 0)
+            return;
+
+        hslFieldsLocked++;
+
+        var hue = Std.parseFloat(hslHueField.textValue);
+
+        gradientView.savePointerPosition();
+        gradientView.updateTintColor(hue);
+        setColorFromHSB(
+            gradientView.hue,
+            gradientView.getSaturationFromPointer(),
+            gradientView.getBrightnessFromPointer()
+        );
+        gradientView.restorePointerPosition();
+
+        app.onceUpdate(this, _ -> {
+            hslFieldsLocked--;
+        });
+
+    } //setColorFromHSLFieldHue
+
+    function setColorFromHSLFieldSaturation() {
+
+        if (hslSaturationField.textValue == hslSaturationFieldValue)
+            return;
+
+        hslSaturationFieldValue = hslSaturationField.textValue;
+
+        if (updatingFromHSL > 0 || updatingFromHSB > 0 || updatingFromRGB > 0)
+            return;
+
+        hslFieldsLocked++;
+
+        var saturation = Std.parseFloat(hslSaturationField.textValue) * 0.01;
+        var lightness = Std.parseFloat(hslLightnessField.textValue) * 0.01;
+
+        setColorFromHSL(
+            gradientView.hue,
+            saturation,
+            lightness
+        );
+
+        app.onceUpdate(this, _ -> {
+            hslFieldsLocked--;
+        });
+
+    } //setColorFromHSLFieldSaturation
+
+    function setColorFromHSLFieldLightness() {
+
+        if (hslLightnessField.textValue == hslLightnessFieldValue)
+            return;
+
+        hslLightnessFieldValue = hslLightnessField.textValue;
+
+        if (updatingFromHSL > 0 || updatingFromHSB > 0 || updatingFromRGB > 0)
+            return;
+
+        hslFieldsLocked++;
+
+        var saturation = Std.parseFloat(hslSaturationField.textValue) * 0.01;
+        var lightness = Std.parseFloat(hslLightnessField.textValue) * 0.01;
+
+        setColorFromHSL(
+            gradientView.hue,
+            saturation,
+            lightness
+        );
+
+        app.onceUpdate(this, _ -> {
+            hslFieldsLocked--;
+        });
+
+    } //setColorFromHSLFieldLightness
+
+    /*
+    function setColorFromHSLFields() {
+
+        if (updatingFromHSL > 0 || updatingFromHSB > 0 || updatingFromRGB > 0)
+            return;
+
+        setColorFromHSL(
+            Std.parseInt(hslHueField.textValue),
+            Std.parseFloat(hslSaturationField.textValue) * 0.01,
+            Std.parseFloat(hslLightnessField.textValue) * 0.01
+        );
+
+    } //setColorFromHSLFields
+    */
+
+    function createTextField(?applyValue:Void->Void, minValue:Int = 0, maxValue:Int = 100) {
 
         var fieldView = new TextFieldView(NUMERIC);
         fieldView.inBubble = true;
         fieldView.textValue = '0';
         fieldView.viewWidth = FIELD_ROW_WIDTH;
 
-        var sanitize = SanitizeTextField.setTextValueToInt(0, 255);
+        var sanitize = SanitizeTextField.setTextValueToInt(minValue, maxValue);
         fieldView.setTextValue = function(field, textValue) {
             if (applyValue != null) {
                 app.oncePostFlushImmediate(applyValue);
@@ -272,11 +406,11 @@ class ColorPickerView extends LayersLayout implements Observable {
         };
         fieldView.setEmptyValue = function(field) {
             var value:Int = 0;
-            if (value < 0) {
-                value = 0;
+            if (value < minValue) {
+                value = minValue;
             }
-            if (value > 255) {
-                value = 255;
+            if (value > maxValue) {
+                value = maxValue;
             }
             fieldView.textValue = '' + value;
             if (applyValue != null) {
@@ -286,7 +420,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         return fieldView;
 
-    } //create256Field
+    } //createTextField
 
     function updateStyle() {
 
