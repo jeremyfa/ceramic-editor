@@ -26,6 +26,12 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     var rgbBlueField:TextFieldView;
 
+    var rgbRedFieldValue:String = '255';
+
+    var rgbGreenFieldValue:String = '255';
+
+    var rgbBlueFieldValue:String = '255';
+
     var rgbLabel:TextView;
 
     var hslHueField:TextFieldView;
@@ -280,6 +286,15 @@ class ColorPickerView extends LayersLayout implements Observable {
     } //updateGradientAndSpectrum
 
     function setColorFromRGBFields() {
+
+        if (rgbRedField.textValue == rgbRedFieldValue
+            && rgbGreenField.textValue == rgbGreenFieldValue
+            && rgbBlueField.textValue == rgbBlueFieldValue)
+            return;
+        
+        rgbRedFieldValue = rgbRedField.textValue;
+        rgbGreenFieldValue = rgbGreenField.textValue;
+        rgbBlueFieldValue = rgbBlueField.textValue;
 
         if (updatingFromHSL > 0 || updatingFromHSB > 0 || updatingFromRGB > 0)
             return;
