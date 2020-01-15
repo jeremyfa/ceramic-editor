@@ -2,7 +2,7 @@ package editor.ui.element;
 
 using ceramic.Extensions;
 
-class ColorPickerSpectrumView extends View {
+class ColorPickerHSBSpectrumView extends View {
 
     @event function updateHueFromPointer();
 
@@ -28,11 +28,6 @@ class ColorPickerSpectrumView extends View {
         
         transparent = true;
 
-        spectrum = new Mesh();
-        spectrum.colorMapping = VERTICES;
-        spectrum.depth = 1;
-        add(spectrum);
-
         huePointer = new Border();
         huePointer.depth = 2;
         huePointer.borderTopSize = 1;
@@ -43,6 +38,20 @@ class ColorPickerSpectrumView extends View {
         huePointer.anchor(0.5, 0.5);
         add(huePointer);
 
+        initSpectrum();
+
+        onPointerDown(this, handlePointerDown);
+        onPointerUp(this, handlePointerUp);
+
+    } //new
+
+    function initSpectrum() {
+
+        spectrum = new Mesh();
+        spectrum.colorMapping = VERTICES;
+        spectrum.depth = 1;
+        add(spectrum);
+
         spectrum.vertices = [
             0, 0,
             1, 0
@@ -52,7 +61,7 @@ class ColorPickerSpectrumView extends View {
         var indices = spectrum.indices;
         var colors = spectrum.colors;
 
-        var color = new AlphaColor(Color.fromHSB(0, 1, 1));
+        var color = colorWithHue(0);
         colors.push(color);
         colors.push(color);
 
@@ -63,7 +72,7 @@ class ColorPickerSpectrumView extends View {
             vertices.push(1);
             vertices.push(i + 1);
 
-            var color = new AlphaColor(Color.fromHSB(360 - (i + 1) * 360 / PRECISION, 1, 1));
+            var color = colorWithHue(360 - (i + 1) * 360 / PRECISION);
             colors.push(color);
             colors.push(color);
 
@@ -77,10 +86,7 @@ class ColorPickerSpectrumView extends View {
 
         }
 
-        onPointerDown(this, handlePointerDown);
-        onPointerUp(this, handlePointerUp);
-
-    } //new
+    } //initSpectrum
 
     function updatePointerFromHue() {
 
@@ -103,6 +109,12 @@ class ColorPickerSpectrumView extends View {
         updatePointerFromHue();
 
     } //layout
+
+    function colorWithHue(hue:Float):AlphaColor {
+
+        return new AlphaColor(Color.fromHSB(hue, 1, 1));
+
+    } //colorWithHue
 
 /// Pointer events
     
@@ -140,4 +152,4 @@ class ColorPickerSpectrumView extends View {
 
     } //updateColorFromTouchInfo
 
-} //ColorPickerSpectrumView
+} //ColorPickerHSBSpectrumView

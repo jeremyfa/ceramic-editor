@@ -2,24 +2,28 @@ package editor.ui.element;
 
 using ceramic.Extensions;
 
-class ColorPickerGradientView extends View {
+class ColorPickerHSLuvGradientView extends View {
 
     @event function updateColorFromPointer();
 
+    static var PRECISION_X:Int = 64;
+
+    static var PRECISION_Y:Int = 32;
+
     static var _point = new Point();
+
+    static var _tuple:Array<Float> = [0, 0, 0];
 
     public var colorValue(default, set):Color = Color.WHITE;
     function set_colorValue(colorValue:Color):Color {
         if (this.colorValue == colorValue) return colorValue;
         this.colorValue = colorValue;
-        updateTintColor();
+        updateGradientColors();
         updatePointerFromColor();
         return colorValue;
     }
 
-    var blackGradient:Mesh;
-
-    var tintGradient:Mesh;
+    var gradient:Mesh;
 
     var colorPointer:Border;
 
@@ -33,7 +37,7 @@ class ColorPickerGradientView extends View {
 
     var savedPointerY:Float = 0;
 
-    public var hue(default, null):Float = 0;
+    public var lightness(default, null):Float = 0.5;
 
     public function new() {
 
@@ -41,16 +45,6 @@ class ColorPickerGradientView extends View {
         
         clip = this;
         transparent = true;
-
-        tintGradient = new Mesh();
-        tintGradient.colorMapping = VERTICES;
-        tintGradient.depth = 1;
-        add(tintGradient);
-
-        blackGradient = new Mesh();
-        blackGradient.colorMapping = VERTICES;
-        blackGradient.depth = 2;
-        add(blackGradient);
 
         colorPointer = new Border();
         colorPointer.anchor(0.5, 0.5);
@@ -60,34 +54,42 @@ class ColorPickerGradientView extends View {
         colorPointer.borderSize = 1;
         add(colorPointer);
 
-        blackGradient.vertices = [
-            0, 0,
-            1, 0,
-            1, 1,
-            0, 1
-        ];
+        gradient = new Mesh();
+        gradient.colorMapping = VERTICES;
+        gradient.depth = 1;
+        add(gradient);
 
-        blackGradient.indices = [
-            0, 1, 2,
-            0, 2, 3
-        ];
+        var vertices = gradient.vertices;
+        var indices = gradient.indices;
 
-        blackGradient.colors[0] = new AlphaColor(Color.WHITE, 0);
-        blackGradient.colors[1] = new AlphaColor(Color.WHITE, 0);
-        blackGradient.colors[2] = new AlphaColor(Color.BLACK);
-        blackGradient.colors[3] = new AlphaColor(Color.BLACK);
+        for (c in 0...PRECISION_X) {
 
-        tintGradient.vertices = blackGradient.vertices;
-        tintGradient.indices = blackGradient.indices;
+            vertices.push(c);
+            vertices.push(0);
+            vertices.push(c + 1);
+            vertices.push(0);
 
-        tintGradient.colors[0] = new AlphaColor(Color.WHITE);
+            for (r in 0...PRECISION_Y) {
+    
+                vertices.push(c);
+                vertices.push(r + 1);
+                vertices.push(c + 1);
+                vertices.push(r + 1);
+    
+                var i = r * 2 + c * (PRECISION_Y * 2 + 2);
 
-        var tintColor = Color.fromHSL(colorValue.hue, 1, 0.5);
-        tintGradient.colors[1] = new AlphaColor(tintColor);
-        tintGradient.colors[2] = new AlphaColor(tintColor);
+                indices.push(i);
+                indices.push(i + 1);
+                indices.push(i + 2);
+                
+                indices.push(i + 1);
+                indices.push(i + 2);
+                indices.push(i + 3);
+    
+            }
+        }
 
-        tintGradient.colors[3] = new AlphaColor(Color.WHITE);
-
+        updateGradientColors();
         updatePointerFromColor();
 
         onPointerDown(this, handlePointerDown);
@@ -95,15 +97,43 @@ class ColorPickerGradientView extends View {
 
     } //new
 
-    public function updateTintColor(?hue:Float) {
+    public function updateGradientColors(?lightness:Float) {
 
-        if (hue != null) {
-            this.hue = hue;
+        if (lightness != null) {
+            this.lightness = lightness;
         }
 
-        var tintColor = Color.fromHSL(this.hue, 1, 0.5);
-        tintGradient.colors[1] = new AlphaColor(tintColor);
-        tintGradient.colors[2] = new AlphaColor(tintColor);
+        var colors = gradient.colors;
+
+        var ci = 0;
+
+        for (c in 0...PRECISION_X) {
+
+            colors[ci] = colorWithHueAndSaturation(
+                c * 360 / PRECISION_X,
+                1
+            );
+            ci++;
+            colors[ci] = colorWithHueAndSaturation(
+                (c + 1) * 360 / PRECISION_X,
+                1
+            );
+            ci++;
+
+            for (r in 0...PRECISION_Y) {
+
+                colors[ci] = colorWithHueAndSaturation(
+                    c * 360 / PRECISION_X,
+                    1.0 - (r + 1) * 1.0 / PRECISION_Y
+                );
+                ci++;
+                colors[ci] = colorWithHueAndSaturation(
+                    (c + 1) * 360 / PRECISION_X,
+                    1.0 - (r + 1) * 1.0 / PRECISION_Y
+                );
+                ci++;
+            }
+        }
 
     } //updateTintColor
 
@@ -121,21 +151,9 @@ class ColorPickerGradientView extends View {
 
     } //restorePointerPosition
 
-    public function getBrightnessFromPointer():Float {
-
-        var brightness = 1 - (colorPointer.y / height);
-        if (brightness < 0)
-            brightness = 0;
-        if (brightness > 1)
-            brightness = 1;
-
-        return brightness;
-
-    } //getBrightnessFromPointer
-
     public function getSaturationFromPointer():Float {
 
-        var saturation = colorPointer.x / width;
+        var saturation = 1 - (colorPointer.y / height);
         if (saturation < 0)
             saturation = 0;
         if (saturation > 1)
@@ -145,16 +163,45 @@ class ColorPickerGradientView extends View {
 
     } //getSaturationFromPointer
 
+    public function getHueFromPointer():Float {
+
+        var hue = colorPointer.x / width;
+        if (hue < 0)
+            hue = 0;
+        if (hue > 1)
+            hue = 1;
+        hue *= 360;
+
+        return hue;
+
+    } //getHueFromPointer
+
+    function colorWithHueAndSaturation(hue:Float, saturation:Float):AlphaColor {
+
+        return new AlphaColor(Color.fromHSLuv(hue, saturation, lightness));
+
+    } //colorWithHueAndSaturation
+
     function updatePointerFromColor() {
 
-        var brightness = colorValue.brightness;
-        var saturation = colorValue.saturation;
+        colorValue.getHSLuv(_tuple);
+
+        var hue = _tuple[0] / 360;
+        var saturation = _tuple[1];
 
         colorPointer.pos(
-            width * saturation,
-            height * (1.0 - brightness)
+            width * hue,
+            height * (1.0 - saturation)
         );
 
+        var newPointerColor = Color.WHITE;
+        if (lightness > 0.5) {
+            newPointerColor = Color.BLACK;
+        }
+        targetPointerColor = newPointerColor;
+        colorPointer.borderColor = targetPointerColor;
+
+        /*
         var newPointerColor = Color.WHITE;
         if (brightness > 0.5) {
             newPointerColor = Color.BLACK;
@@ -177,13 +224,16 @@ class ColorPickerGradientView extends View {
             targetPointerColor = newPointerColor;
             colorPointer.borderColor = targetPointerColor;
         }
+        */
 
     } //updatePointerFromColor
 
     override function layout() {
 
-        blackGradient.scale(width, height);
-        tintGradient.scale(width, height);
+        gradient.scale(
+            width / PRECISION_X,
+            height / PRECISION_Y
+        );
 
         updatePointerFromColor();
 
@@ -221,31 +271,30 @@ class ColorPickerGradientView extends View {
 
         screenToVisual(info.x, info.y, _point);
 
-        var brightness = 1 - (_point.y / height);
-        if (brightness < 0)
-            brightness = 0;
-        if (brightness > 1)
-            brightness = 1;
-
-        var saturation = _point.x / width;
+        var saturation = 1 - (_point.y / height);
         if (saturation < 0)
             saturation = 0;
         if (saturation > 1)
             saturation = 1;
 
-        this.colorValue = Color.fromHSB(
-            hue, saturation, brightness
+        var hue = _point.x / width;
+        if (hue < 0)
+            hue = 0;
+        if (hue > 1)
+            hue = 1;
+        hue *= 360;
+
+        this.colorValue = Color.fromHSLuv(
+            hue, saturation, lightness
         );
-
-        updatePointerFromColor();
-
-        emitUpdateColorFromPointer();
 
         colorPointer.pos(
             Math.max(0, Math.min(width, _point.x)),
             Math.max(0, Math.min(height, _point.y))
         );
 
+        emitUpdateColorFromPointer();
+
     } //updateColorFromTouchInfo
 
-} //ColorPickerGradientView
+} //ColorPickerHSLuvGradientView
