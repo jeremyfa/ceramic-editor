@@ -18,7 +18,9 @@ class ColorPickerView extends LayersLayout implements Observable {
 
 /// Internal
 
-    @observe var hsluv:Bool = false;
+    var hsluv(get, set):Bool;
+    inline function get_hsluv():Bool return model.project.colorPickerHsluv;
+    inline function set_hsluv(hsluv:Bool) return model.project.colorPickerHsluv = hsluv;
 
     var hsbGradientView:ColorPickerHSBGradientView;
 
@@ -605,6 +607,9 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         rgbLabel.textColor = theme.lightTextColor;
         rgbLabel.font = theme.mediumFont10;
+
+        hslLabel.textColor = theme.lightTextColor;
+        hslLabel.font = theme.mediumFont10;
 
     } //updateStyle
 

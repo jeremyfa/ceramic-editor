@@ -10,6 +10,10 @@ class ProjectData extends Model {
 
     @serialize public var assets:ImmutableArray<EditorAsset> = [];
 
+/// Settings
+
+    @serialize public var colorPickerHsluv:Bool = false;
+
 /// UI info
 
     @serialize public var selectedFragmentIndex:Int = -1;
