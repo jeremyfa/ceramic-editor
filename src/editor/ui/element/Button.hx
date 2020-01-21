@@ -17,6 +17,8 @@ class Button extends TextView implements Observable {
         return click.pressed;
     }
 
+    @observe public var inBubble:Bool = false;
+
 /// Internal
 
     @observe var hover:Bool = false;
@@ -28,15 +30,11 @@ class Button extends TextView implements Observable {
         super();
 
         click = new Click();
-        click.threshold = -1;
         click.onClick(this, emitClick);
 
         align = CENTER;
         verticalAlign = CENTER;
         pointSize = 12;
-        borderSize = 1;
-        borderPosition = INSIDE;
-        transparent = false;
         padding(5, 2);
 
         transform = new Transform();
@@ -64,17 +62,50 @@ class Button extends TextView implements Observable {
         font = theme.mediumFont10;
         textColor = theme.lightTextColor;
 
-        if (pressed) {
-            color = theme.buttonPressedBackgroundColor;
-            borderColor = theme.buttonPressedBackgroundColor;
-        }
-        else if (hover) {
-            color = theme.buttonOverBackgroundColor;
-            borderColor = theme.lightBorderColor;
+        if (inBubble) {
+            borderSize = 1;
+            borderPosition = INSIDE;
+            border.alpha = 0.2;
         }
         else {
-            color = theme.buttonBackgroundColor;
-            borderColor = theme.lightBorderColor;
+            borderSize = 1;
+            borderPosition = INSIDE;
+            transparent = false;
+            border.alpha = 1;
+        }
+
+        if (inBubble) {
+            borderColor = theme.lightTextColor;
+            if (pressed) {
+                transparent = false;
+                color = Color.WHITE;
+                alpha = 0.05;
+                border.alpha = 0.33;
+            }
+            else if (hover) {
+                transparent = false;
+                color = Color.WHITE;
+                alpha = 0.025;
+                border.alpha = 0.25;
+            }
+            else {
+                transparent = true;
+            }
+        }
+        else {
+            alpha = 1;
+            if (pressed) {
+                color = theme.buttonPressedBackgroundColor;
+                borderColor = theme.buttonPressedBackgroundColor;
+            }
+            else if (hover) {
+                color = theme.buttonOverBackgroundColor;
+                borderColor = theme.lightBorderColor;
+            }
+            else {
+                color = theme.buttonBackgroundColor;
+                borderColor = theme.lightBorderColor;
+            }
         }
 
     } //updateStyle

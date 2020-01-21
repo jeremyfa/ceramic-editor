@@ -2,13 +2,23 @@ package editor.ui.element;
 
 class ColorPickerView extends LayersLayout implements Observable {
 
-    final FIELD_ROW_WIDTH = 34.0;
+    static final FIELD_ROW_WIDTH = 41.0;
 
-    final FIELD_ADVANCE = 26.0;
+    static final FIELD_ADVANCE = 26.0;
 
-    final FIELD_Y_GAP = 1.0;
+    static final BUTTON_ADVANCE = 24.0;
 
-    final PADDING = 6.0;
+    static final FIELD_Y_GAP = 1.0;
+
+    static final PADDING = 6.0;
+
+    static final GRADIENT_SIZE = 158.0;
+
+    static final SPECTRUM_WIDTH = 12.0;
+
+    static final PALETTE_COLOR_SIZE = ColorPickerPaletteColorView.PALETTE_COLOR_SIZE;
+
+    static final PALETTE_COLOR_GAP = 2.0;
 
     static var _tuple:Array<Float> = [0, 0, 0];
 
@@ -18,9 +28,15 @@ class ColorPickerView extends LayersLayout implements Observable {
 
 /// Internal
 
+    @observe var paletteHeight:Float = 0;
+
     var hsluv(get, set):Bool;
     inline function get_hsluv():Bool return model.project.colorPickerHsluv;
     inline function set_hsluv(hsluv:Bool) return model.project.colorPickerHsluv = hsluv;
+
+    var paletteColors(get, set):ImmutableArray<Color>;
+    inline function get_paletteColors():ImmutableArray<Color> return model.project.paletteColors;
+    inline function set_paletteColors(paletteColors:ImmutableArray<Color>) return model.project.paletteColors = paletteColors;
 
     var hsbGradientView:ColorPickerHSBGradientView;
 
@@ -62,6 +78,12 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     var hslFieldsLocked:Int = 0;
 
+    var paletteAddButton:Button;
+
+    var paletteEditButton:Button;
+
+    var paletteColorPreviews:Array<ColorPickerPaletteColorView> = [];
+
 /// Lifecycle
 
     public function new() {
@@ -73,10 +95,10 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         onPointerDown(this, _ -> {});
 
-        viewSize(250, 200);
+        component(new FieldsTabFocus());
 
         hsbGradientView = new ColorPickerHSBGradientView();
-        hsbGradientView.viewSize(140, 140);
+        hsbGradientView.viewSize(GRADIENT_SIZE, GRADIENT_SIZE);
         hsbGradientView.onUpdateColorFromPointer(this, () -> {
             setColorFromHSB(
                 hsbGradientView.hue,
@@ -87,7 +109,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         add(hsbGradientView);
 
         hsluvGradientView = new ColorPickerHSLuvGradientView();
-        hsluvGradientView.viewSize(140, 140);
+        hsluvGradientView.viewSize(GRADIENT_SIZE, GRADIENT_SIZE);
         hsluvGradientView.onUpdateColorFromPointer(this, () -> {
             setColorFromHSLuv(
                 hsluvGradientView.getHueFromPointer(),
@@ -98,7 +120,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         add(hsluvGradientView);
 
         hsbSpectrumView = new ColorPickerHSBSpectrumView();
-        hsbSpectrumView.viewSize(12, 140);
+        hsbSpectrumView.viewSize(SPECTRUM_WIDTH, GRADIENT_SIZE);
         hsbSpectrumView.offset(hsbGradientView.viewWidth + PADDING, 0);
         hsbSpectrumView.onUpdateHueFromPointer(this, () -> {
             hsbGradientView.savePointerPosition();
@@ -113,7 +135,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         add(hsbSpectrumView);
 
         hsluvSpectrumView = new ColorPickerHSLuvSpectrumView();
-        hsluvSpectrumView.viewSize(12, 140);
+        hsluvSpectrumView.viewSize(SPECTRUM_WIDTH, GRADIENT_SIZE);
         hsluvSpectrumView.offset(hsluvGradientView.viewWidth + PADDING, 0);
         hsluvSpectrumView.onUpdateHueFromPointer(this, () -> {
             hsluvGradientView.savePointerPosition();
@@ -130,11 +152,44 @@ class ColorPickerView extends LayersLayout implements Observable {
         var offsetX = hsbGradientView.viewWidth + hsbSpectrumView.viewWidth + PADDING * 2;
         initRGBFields(offsetX);
         offsetX += FIELD_ROW_WIDTH + PADDING;
-        initHSLFields(offsetX);
+        var offsetY = initHSLFields(offsetX);
+
+        offsetX = hsbGradientView.viewWidth + hsbSpectrumView.viewWidth + PADDING * 2;
+        initPaletteUI(offsetX, offsetY);
 
         autorun(updateStyle);
+        autorun(updateColorPreviews);
+        autorun(updateSize);
 
     } //new
+
+    function getColorPickerWidth() {
+
+        return GRADIENT_SIZE + FIELD_ROW_WIDTH * 2 + SPECTRUM_WIDTH + PADDING * 5;
+
+    } //getAvailableWidth
+
+    function updateSize() {
+
+        var w = getColorPickerWidth();
+        var h = GRADIENT_SIZE + PADDING * 2;
+
+        var paletteHeight = this.paletteHeight;
+
+        unobserve();
+
+        if (paletteHeight > 0) {
+            h += PADDING + paletteHeight;
+        }
+
+        viewSize(
+            w,
+            h
+        );
+
+        reobserve();
+
+    } //updateSize
 
     function initRGBFields(offsetX:Float) {
 
@@ -170,6 +225,8 @@ class ColorPickerView extends LayersLayout implements Observable {
             rgbGreenField.offsetY + FIELD_ADVANCE + FIELD_Y_GAP
         );
         add(rgbBlueField);
+
+        return rgbBlueField.offsetY + FIELD_ADVANCE + PADDING;
 
     } //initRGBFields
 
@@ -232,7 +289,31 @@ class ColorPickerView extends LayersLayout implements Observable {
         );
         add(hslLightnessField);
 
+        return hslLightnessField.offsetY + FIELD_ADVANCE + PADDING;
+
     } //initHSLFields
+
+    function initPaletteUI(offsetX:Float, offsetY:Float) {
+
+        paletteAddButton = new Button();
+        paletteAddButton.content = 'Save color';
+        paletteAddButton.inBubble = true;
+        paletteAddButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
+        paletteAddButton.offset(offsetX, offsetY);
+        paletteAddButton.onClick(this, saveColor);
+        add(paletteAddButton);
+
+        offsetY += BUTTON_ADVANCE + PADDING;
+
+        paletteEditButton = new Button();
+        paletteEditButton.content = 'Edit palette';
+        paletteEditButton.inBubble = true;
+        paletteEditButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
+        paletteEditButton.offset(offsetX, offsetY);
+        add(paletteEditButton);
+
+
+    } //initPaletteUI
 
 /// Layout
 
@@ -571,6 +652,7 @@ class ColorPickerView extends LayersLayout implements Observable {
     function createTextField(?applyValue:Void->Void, minValue:Int = 0, maxValue:Int = 100) {
 
         var fieldView = new TextFieldView(NUMERIC);
+        fieldView.textAlign = CENTER;
         fieldView.inBubble = true;
         fieldView.textValue = '0';
         fieldView.viewWidth = FIELD_ROW_WIDTH;
@@ -612,5 +694,89 @@ class ColorPickerView extends LayersLayout implements Observable {
         hslLabel.font = theme.mediumFont10;
 
     } //updateStyle
+
+    function saveColor() {
+
+        model.project.addPaletteColor(colorValue, false);
+
+    } //saveColor
+
+    function updateColorPreviews() {
+
+        var paletteColors = this.paletteColors;
+
+        unobserve();
+
+        while (paletteColorPreviews.length > paletteColors.length) {
+            var toRemove = paletteColorPreviews.pop();
+            toRemove.destroy();
+        }
+
+        while (paletteColorPreviews.length < paletteColors.length) {
+            var toAdd = createColorPreview();
+            add(toAdd);
+            paletteColorPreviews.push(toAdd);
+        }
+
+        if (paletteColors.length > 0) {
+
+            var w = getColorPickerWidth();
+            var availableWidth = w - PADDING * 2;
+    
+            var x = -(PALETTE_COLOR_SIZE + PALETTE_COLOR_GAP);
+            var y = PADDING + GRADIENT_SIZE;
+    
+            for (i in 0...paletteColors.length) {
+                x += PALETTE_COLOR_SIZE + PALETTE_COLOR_GAP;
+                if (x + PALETTE_COLOR_SIZE > availableWidth) {
+                    x = 0;
+                    y += PALETTE_COLOR_SIZE + PALETTE_COLOR_GAP;
+                }
+    
+                var colorPreview = paletteColorPreviews[i];
+                colorPreview.colorValue = paletteColors[i];
+                colorPreview.offset(x, y);
+            }
+    
+            this.paletteHeight = y + PALETTE_COLOR_SIZE - GRADIENT_SIZE - PADDING;
+        }
+        else {
+            this.paletteHeight = 0;
+        }
+
+        reobserve();
+
+    } //updateColorPreviews
+
+    function createColorPreview():ColorPickerPaletteColorView {
+
+        var colorPreview = new ColorPickerPaletteColorView();
+
+        colorPreview.onClick(this, handlePaletteColorClick);
+        //colorPreview.onLongPress(this, handlePaletteColorLongPress);
+
+        return colorPreview;
+
+    } //createColorPreview
+
+    function handlePaletteColorClick(colorPreview:ColorPickerPaletteColorView) {
+
+        var colorValue = colorPreview.colorValue;
+
+        setColorFromRGB(
+            colorValue.red,
+            colorValue.green,
+            colorValue.blue
+        );
+
+    } //handlePaletteColorClick
+
+    // function handlePaletteColorLongPress(colorPreview:ColorPickerPaletteColorView, info:TouchInfo) {
+
+    //     log.debug('long press ' + colorPreview.colorValue);
+
+    //     colorPreview.drag(info.x, info.y);
+
+    // } //handlePaletteColorLongPress
 
 } //ColorPickerView

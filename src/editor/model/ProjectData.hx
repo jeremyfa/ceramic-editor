@@ -90,4 +90,25 @@ class ProjectData extends Model {
 
     } //addFragment
 
+    public function addPaletteColor(color:Color, forbidDuplicate:Bool = true):Void {
+
+        var prevPaletteColors = this.paletteColors;
+
+        // Ensure the color is not already listed if needed
+        if (forbidDuplicate) {
+            for (i in 0...prevPaletteColors.length) {
+                if (color == prevPaletteColors[i]) {
+                    log.warning('Cannot add color $color in palette because it already exists. Ignoring.');
+                    return;
+                }
+            }
+        }
+
+        // Add color
+        var paletteColors = [].concat(prevPaletteColors.mutable);
+        paletteColors.push(color);
+        this.paletteColors = cast paletteColors;
+
+    } //addPaletteColor
+
 } //ProjectData

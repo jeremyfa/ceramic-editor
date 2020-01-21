@@ -104,7 +104,7 @@ class Editable extends Entity implements Component {
 
         highlight.anchor(0, 0);
         highlight.pos(0, 0);
-        highlight.depth = 999;
+        highlight.depth = 500;
         highlight.transform = new Transform();
         highlight.wrapVisual(entity);
 

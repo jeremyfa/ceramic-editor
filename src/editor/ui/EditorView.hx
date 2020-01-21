@@ -180,7 +180,9 @@ class EditorView extends View implements Observable {
 
     function handleEditableItemUpdate(fragmentItem:FragmentItem) {
 
+        #if editor_debug_item_update
         log.debug('ITEM UPDATED: ${fragmentItem.id}');
+        #end
 
         var item = model.project.selectedFragment.get(fragmentItem.id);
 

@@ -49,6 +49,8 @@ class TextFieldView extends FieldView implements Observable {
 
     @observe public var inBubble:Bool = false;
 
+    @observe public var textAlign:TextAlign = LEFT;
+
 /// Internal properties
 
     var textView:TextView;
@@ -67,7 +69,9 @@ class TextFieldView extends FieldView implements Observable {
 
         textView = new TextView();
         textView.viewSize(fill(), auto());
-        textView.align = LEFT;
+        autorun(() -> {
+            textView.align = textAlign;
+        });
         textView.pointSize = 12;
         textView.maxLineDiff = -1;
         add(textView);

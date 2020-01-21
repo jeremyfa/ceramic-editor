@@ -8,7 +8,7 @@ class Click extends Entity implements Component implements Observable {
 
 /// Public properties
 
-    public var threshold = 4.0;
+    public var threshold:Float = -1; // 4
 
     public var entity:Visual;
 
@@ -30,6 +30,14 @@ class Click extends Entity implements Component implements Observable {
         entity.onBlur(this, handleBlur);
 
     } //bindAsComponent
+
+/// Public API
+
+    public function cancel():Void {
+
+        pressed = false;
+
+    } //cancel
 
 /// Internal
 
