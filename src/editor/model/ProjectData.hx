@@ -14,6 +14,13 @@ class ProjectData extends Model {
 
     @serialize public var colorPickerHsluv:Bool = false;
 
+    @serialize public var paletteColors:ImmutableArray<Color> = (() -> {
+        var res = [];
+        for (i in 0...40)
+            res.push(Color.random());
+        return res;
+    })();
+
 /// UI info
 
     @serialize public var selectedFragmentIndex:Int = -1;
