@@ -1,5 +1,7 @@
 package editor.ui.element;
 
+using editor.components.VisualTransition;
+
 class ColorPickerView extends LayersLayout implements Observable {
 
     static final FIELD_ROW_WIDTH = 41.0;
