@@ -10,5 +10,6 @@ app:
         - snow_web_use_electron_fs
         - snow_web_use_electron_pngjs
         - js-source-map
+        - ceramic_assert
 
     libs: []

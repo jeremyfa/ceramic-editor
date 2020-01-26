@@ -1,5 +1,7 @@
 package;
 
+import ceramic.Line;
+import ceramic.Shape;
 import ceramic.Color;
 import ceramic.AlphaColor;
 import ceramic.Mesh;
@@ -20,12 +22,29 @@ class Project {
         new Editor(settings);
         #end
 
-        //app.onceReady(null, ready);
+        app.onceReady(null, ready);
 
     } //new
 
     function ready() {
 
+        /*
+        var shape = new Shape();
+
+        shape.points = [
+            0, 0,
+            100, 15,
+            80, 120,
+            60, 60
+        ];
+
+        shape.color = Color.RED;
+
+        shape.depth = 999;
+        shape.pos(screen.width * 0.5, screen.height * 0.5);
+        */
+
+        /*
         var mesh = new Mesh();
 
         mesh.colorMapping = VERTICES;
@@ -48,6 +67,7 @@ class Project {
 
         mesh.depth = 999;
         mesh.pos(screen.width * 0.5, screen.height * 0.5);
+        */
 
     } //ready
 

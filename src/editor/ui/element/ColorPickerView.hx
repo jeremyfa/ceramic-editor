@@ -30,6 +30,67 @@ class ColorPickerView extends LayersLayout implements Observable {
 
 /// Internal
 
+    @compute function draggingColorPreview():ColorPickerPaletteColorView {
+
+        var paletteColorPreviews = this.paletteColorPreviews;
+
+        if (paletteColorPreviews == null)
+            return null;
+
+        for (i in 0...paletteColorPreviews.length) {
+            var instance = paletteColorPreviews[i];
+            if (instance.dragging)
+                return instance;
+        }
+
+        return null;
+
+    } //draggingColorPreview
+
+    @compute function draggingColorDropIndex():Int {
+
+        var draggingColorPreview = this.draggingColorPreview;
+        var paletteColors = this.paletteColors;
+        if (draggingColorPreview == null || paletteColors.length == 0) {
+            log.info('nope draggingColorPreview=$draggingColorPreview paletteColors.length=${paletteColors.length}');
+            return -1;
+        }
+
+        var dragX = draggingColorPreview.offsetX + draggingColorPreview.dragX;
+        var dragY = draggingColorPreview.offsetY + draggingColorPreview.dragY;
+
+        var bestIndex = -1;
+        var bestDistance = 999999999.0;
+
+        var w = getColorPickerWidth();
+        var availableWidth = w - PADDING * 2;
+
+        var x = -(PALETTE_COLOR_SIZE + PALETTE_COLOR_GAP);
+        var y = PADDING + GRADIENT_SIZE;
+
+        for (i in 0...paletteColors.length) {
+            x += PALETTE_COLOR_SIZE + PALETTE_COLOR_GAP;
+            if (x + PALETTE_COLOR_SIZE > availableWidth) {
+                x = 0;
+                y += PALETTE_COLOR_SIZE + PALETTE_COLOR_GAP;
+            }
+
+            var distance = Utils.distance(
+                dragX + PALETTE_COLOR_SIZE * 0.5, dragY + PALETTE_COLOR_SIZE * 0.5,
+                x + PALETTE_COLOR_SIZE * 0.5, y + PALETTE_COLOR_SIZE * 0.5
+            );
+            if (distance < bestDistance) {
+                bestIndex = i;
+                bestDistance = distance;
+            }
+        }
+
+        //log.info('distance=$bestDistance index=$bestIndex');
+
+        return bestIndex;
+
+    } //draggingColorDropIndex
+
     @observe var paletteHeight:Float = 0;
 
     var hsluv(get, set):Bool;
@@ -84,7 +145,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     var paletteEditButton:Button;
 
-    var paletteColorPreviews:Array<ColorPickerPaletteColorView> = [];
+    @observe var paletteColorPreviews:Array<ColorPickerPaletteColorView> = [];
 
 /// Lifecycle
 
@@ -162,6 +223,11 @@ class ColorPickerView extends LayersLayout implements Observable {
         autorun(updateStyle);
         autorun(updateColorPreviews);
         autorun(updateSize);
+
+        autorun(() -> {
+            log.debug('dragging: $draggingColorPreview');
+            log.debug('dropIndex: $draggingColorDropIndex');
+        });
 
     } //new
 
@@ -706,18 +772,29 @@ class ColorPickerView extends LayersLayout implements Observable {
     function updateColorPreviews() {
 
         var paletteColors = this.paletteColors;
+        var draggingColorPreview = this.draggingColorPreview;
+        var draggingColorDropIndex = this.draggingColorDropIndex;
 
         unobserve();
+
+        var didChange = false;
 
         while (paletteColorPreviews.length > paletteColors.length) {
             var toRemove = paletteColorPreviews.pop();
             toRemove.destroy();
+            didChange = true;
         }
 
         while (paletteColorPreviews.length < paletteColors.length) {
             var toAdd = createColorPreview();
             add(toAdd);
             paletteColorPreviews.push(toAdd);
+            didChange = true;
+        }
+
+        var paletteColorDragIndex = -1;
+        if (draggingColorPreview != null) {
+            paletteColorDragIndex = paletteColorPreviews.indexOf(draggingColorPreview);
         }
 
         if (paletteColors.length > 0) {
@@ -734,16 +811,39 @@ class ColorPickerView extends LayersLayout implements Observable {
                     x = 0;
                     y += PALETTE_COLOR_SIZE + PALETTE_COLOR_GAP;
                 }
+
+                var n = i;
+
+                if (draggingColorDropIndex != -1) {
+                    if (i >= paletteColorDragIndex && i <= draggingColorDropIndex) {
+                        n++;
+                    }
+                    else if (i <= paletteColorDragIndex && i > draggingColorDropIndex) {
+                        n--;
+                    }
+                }
     
-                var colorPreview = paletteColorPreviews[i];
-                colorPreview.colorValue = paletteColors[i];
-                colorPreview.offset(x, y);
+                var colorPreview = paletteColorPreviews[n];
+                if (colorPreview != null) {
+                    colorPreview.colorValue = paletteColors[n];
+                    var transitionDuration = 0.0;
+                    if (draggingColorPreview != null && draggingColorPreview != colorPreview) {
+                        transitionDuration = 0.1;
+                    }
+                    colorPreview.transition(transitionDuration, colorPreview -> {
+                        colorPreview.offset(x, y);
+                    });
+                }
             }
     
             this.paletteHeight = y + PALETTE_COLOR_SIZE - GRADIENT_SIZE - PADDING;
         }
         else {
             this.paletteHeight = 0;
+        }
+
+        if (didChange) {
+            invalidatePaletteColorPreviews();
         }
 
         reobserve();

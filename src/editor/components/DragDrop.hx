@@ -113,7 +113,7 @@ class DragDrop extends Entity implements Component implements Observable {
         }
         else {
             if (Math.abs(info.x - pointerDownX) > threshold || Math.abs(info.y - pointerDownY) > threshold) {
-                drag(info.x, info.y);
+                drag(pointerDownX, pointerDownY);
                 updateDrag(info.x, info.y);
             }
         }

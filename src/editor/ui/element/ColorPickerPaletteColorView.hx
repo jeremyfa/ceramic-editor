@@ -122,4 +122,10 @@ class ColorPickerPaletteColorView extends View implements Observable {
 
     } //drag
 
+    override function toString() {
+
+        return 'ColorPickerPaletteColorView(' + colorValue + ')';
+
+    } //toString
+
 } //ColorPickerPaletteColorView
