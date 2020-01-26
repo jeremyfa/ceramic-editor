@@ -14,12 +14,12 @@ class ProjectData extends Model {
 
     @serialize public var colorPickerHsluv:Bool = false;
 
-    @serialize public var paletteColors:ImmutableArray<Color> = (() -> {
+    @serialize public var paletteColors:ImmutableArray<Color> = [];/*(() -> {
         var res = [];
         for (i in 0...40)
             res.push(Color.random());
         return res;
-    })();
+    })();*/
 
 /// UI info
 
@@ -110,5 +110,28 @@ class ProjectData extends Model {
         this.paletteColors = cast paletteColors;
 
     } //addPaletteColor
+
+    public function movePaletteColor(fromIndex:Int, toIndex:Int):Void {
+
+        var paletteColors = [].concat(this.paletteColors.mutable);
+
+        var colorToMove = paletteColors[fromIndex];
+
+        paletteColors.splice(fromIndex, 1);
+        paletteColors.insert(toIndex, colorToMove);
+
+        this.paletteColors = cast paletteColors;
+
+    } //movePaletteColor
+
+    public function removePaletteColor(index:Int):Void {
+
+        var paletteColors = [].concat(this.paletteColors.mutable);
+
+        paletteColors.splice(index, 1);
+
+        this.paletteColors = cast paletteColors;
+
+    } //removePaletteColor
 
 } //ProjectData

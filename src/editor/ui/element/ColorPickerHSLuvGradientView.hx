@@ -23,6 +23,9 @@ class ColorPickerHSLuvGradientView extends View {
         return colorValue;
     }
 
+    @:allow(editor.ui.element.ColorPickerView)
+    var movingSpectrum:Bool = false;
+
     var gradient:Mesh;
 
     var colorPointer:Border;
@@ -199,15 +202,8 @@ class ColorPickerHSLuvGradientView extends View {
             newPointerColor = Color.BLACK;
         }
         targetPointerColor = newPointerColor;
-        colorPointer.borderColor = targetPointerColor;
 
-        /*
-        var newPointerColor = Color.WHITE;
-        if (brightness > 0.5) {
-            newPointerColor = Color.BLACK;
-        }
-
-        if (movingPointer) {
+        if (movingSpectrum) {
             if (targetPointerColor != newPointerColor) {
                 targetPointerColor = newPointerColor;
                 if (pointerColorTween != null) {
@@ -224,7 +220,6 @@ class ColorPickerHSLuvGradientView extends View {
             targetPointerColor = newPointerColor;
             colorPointer.borderColor = targetPointerColor;
         }
-        */
 
     } //updatePointerFromColor
 

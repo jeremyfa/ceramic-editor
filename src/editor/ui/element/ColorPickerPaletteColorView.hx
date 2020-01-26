@@ -14,7 +14,9 @@ class ColorPickerPaletteColorView extends View implements Observable {
 
     @event function click(instance:ColorPickerPaletteColorView);
 
-    //@event function longPress(instance:ColorPickerPaletteColorView, info:TouchInfo);
+    @event function drop(instance:ColorPickerPaletteColorView);
+
+    @event function longPress(instance:ColorPickerPaletteColorView, info:TouchInfo);
 
 /// Properties
 
@@ -52,10 +54,11 @@ class ColorPickerPaletteColorView extends View implements Observable {
         click = new Click();
         click.onClick(this, () -> emitClick(this));
 
-        //longPress = new LongPress(click);
-        //longPress.onLongPress(this, (info) -> emitLongPress(this, info));
+        longPress = new LongPress(click);
+        longPress.onLongPress(this, (info) -> emitLongPress(this, info));
 
         dragDrop = new DragDrop(click, getDraggingVisual, releaseDraggingVisual);
+        dragDrop.onDraggingChange(this, handleDraggingChange);
 
         transform = new Transform();
 
@@ -115,6 +118,16 @@ class ColorPickerPaletteColorView extends View implements Observable {
         // Nothing to do
 
     } //releaseDraggingVisual
+
+    function handleDraggingChange(dragging:Bool, wasDragging:Bool) {
+
+        trace('dragging change dragging=$dragging wasDragging=$wasDragging');
+
+        if (wasDragging && !dragging) {
+            emitDrop(this);
+        }
+
+    } //handleDraggingChange
 
     public function drag(pointerX:Float, pointerY:Float) {
 

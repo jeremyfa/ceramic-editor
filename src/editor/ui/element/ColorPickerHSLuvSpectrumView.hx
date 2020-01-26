@@ -2,13 +2,15 @@ package editor.ui.element;
 
 using ceramic.Extensions;
 
-class ColorPickerHSLuvSpectrumView extends View {
+class ColorPickerHSLuvSpectrumView extends View implements Observable {
 
     @event function updateHueFromPointer();
 
     static var _point = new Point();
 
     static var PRECISION:Int = 16;
+
+    @observe public var movingPointer(default, null):Bool = false;
 
     var spectrum:Mesh;
     
@@ -176,6 +178,8 @@ class ColorPickerHSLuvSpectrumView extends View {
 
     function handlePointerMove(info:TouchInfo) {
 
+        movingPointer = true;
+
         updateHueFromTouchInfo(info);
 
     } //handlePointerMove
@@ -183,6 +187,8 @@ class ColorPickerHSLuvSpectrumView extends View {
     function handlePointerUp(info:TouchInfo) {
 
         screen.offPointerMove(handlePointerMove);
+
+        movingPointer = false;
 
         updateHueFromTouchInfo(info);
 

@@ -52,7 +52,6 @@ class ColorPickerView extends LayersLayout implements Observable {
         var draggingColorPreview = this.draggingColorPreview;
         var paletteColors = this.paletteColors;
         if (draggingColorPreview == null || paletteColors.length == 0) {
-            log.info('nope draggingColorPreview=$draggingColorPreview paletteColors.length=${paletteColors.length}');
             return -1;
         }
 
@@ -143,7 +142,11 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     var paletteAddButton:Button;
 
-    var paletteEditButton:Button;
+    var colorModeButton:Button;
+
+    var lastDraggingColorDropIndex:Int = -1;
+
+    var lastDraggingColorPreview:ColorPickerPaletteColorView = null;
 
     @observe var paletteColorPreviews:Array<ColorPickerPaletteColorView> = [];
 
@@ -185,6 +188,9 @@ class ColorPickerView extends LayersLayout implements Observable {
         hsbSpectrumView = new ColorPickerHSBSpectrumView();
         hsbSpectrumView.viewSize(SPECTRUM_WIDTH, GRADIENT_SIZE);
         hsbSpectrumView.offset(hsbGradientView.viewWidth + PADDING, 0);
+        hsbSpectrumView.onMovingPointerChange(this, (moving, _) -> {
+            hsbGradientView.movingSpectrum = moving;
+        });
         hsbSpectrumView.onUpdateHueFromPointer(this, () -> {
             hsbGradientView.savePointerPosition();
             hsbGradientView.updateTintColor(hsbSpectrumView.hue);
@@ -200,6 +206,9 @@ class ColorPickerView extends LayersLayout implements Observable {
         hsluvSpectrumView = new ColorPickerHSLuvSpectrumView();
         hsluvSpectrumView.viewSize(SPECTRUM_WIDTH, GRADIENT_SIZE);
         hsluvSpectrumView.offset(hsluvGradientView.viewWidth + PADDING, 0);
+        hsluvSpectrumView.onMovingPointerChange(this, (moving, _) -> {
+            hsluvGradientView.movingSpectrum = moving;
+        });
         hsluvSpectrumView.onUpdateHueFromPointer(this, () -> {
             hsluvGradientView.savePointerPosition();
             hsluvGradientView.updateGradientColors(hsluvSpectrumView.lightness);
@@ -223,6 +232,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         autorun(updateStyle);
         autorun(updateColorPreviews);
         autorun(updateSize);
+        autorun(updateFromColorDrop);
 
         autorun(() -> {
             log.debug('dragging: $draggingColorPreview');
@@ -331,10 +341,12 @@ class ColorPickerView extends LayersLayout implements Observable {
             }
         });
 
+        /*
         hslLabel.onPointerDown(this, _ -> {
             this.hsluv = !this.hsluv;
             setColorFromRGB(colorValue.red, colorValue.green, colorValue.blue);
         });
+        */
 
         hslHueField = createTextField(setColorFromHSLFieldHue, 0, 360);
         hslHueField.offset(
@@ -363,22 +375,40 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     function initPaletteUI(offsetX:Float, offsetY:Float) {
 
-        paletteAddButton = new Button();
-        paletteAddButton.content = 'Save color';
-        paletteAddButton.inBubble = true;
-        paletteAddButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
-        paletteAddButton.offset(offsetX, offsetY);
-        paletteAddButton.onClick(this, saveColor);
-        add(paletteAddButton);
+        colorModeButton = new Button();
+        colorModeButton.content = 'Color mode';
+        colorModeButton.inBubble = true;
+        colorModeButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
+        colorModeButton.offset(offsetX, offsetY);
+        colorModeButton.onClick(this, switchColorMode);
+        add(colorModeButton);
 
         offsetY += BUTTON_ADVANCE + PADDING;
 
-        paletteEditButton = new Button();
-        paletteEditButton.content = 'Edit palette';
-        paletteEditButton.inBubble = true;
-        paletteEditButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
-        paletteEditButton.offset(offsetX, offsetY);
-        add(paletteEditButton);
+        paletteAddButton = new Button();
+        paletteAddButton.inBubble = true;
+        paletteAddButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
+        paletteAddButton.offset(offsetX, offsetY);
+        paletteAddButton.onClick(this, () -> {
+            var colorIndex = paletteColors.indexOf(colorValue);
+            if (colorIndex != -1) {
+                model.project.removePaletteColor(colorIndex);
+            }
+            else {
+                saveColor();
+            }
+        });
+        paletteAddButton.autorun(() -> {
+            var colorExists = paletteColors.indexOf(colorValue) != -1;
+            unobserve();
+            if (colorExists) {
+                paletteAddButton.content = 'Delete color';
+            }
+            else {
+                paletteAddButton.content = 'Save color';
+            }
+        });
+        add(paletteAddButton);
 
 
     } //initPaletteUI
@@ -765,9 +795,16 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     function saveColor() {
 
-        model.project.addPaletteColor(colorValue, false);
+        model.project.addPaletteColor(colorValue);
 
     } //saveColor
+
+    function switchColorMode() {
+
+        this.hsluv = !this.hsluv;
+        setColorFromRGB(colorValue.red, colorValue.green, colorValue.blue);
+
+    } //switchColorMode
 
     function updateColorPreviews() {
 
@@ -827,7 +864,7 @@ class ColorPickerView extends LayersLayout implements Observable {
                 if (colorPreview != null) {
                     colorPreview.colorValue = paletteColors[n];
                     var transitionDuration = 0.0;
-                    if (draggingColorPreview != null && draggingColorPreview != colorPreview) {
+                    if (draggingColorPreview != null && draggingColorPreview != colorPreview && colorPreview.offsetY == y) {
                         transitionDuration = 0.1;
                     }
                     colorPreview.transition(transitionDuration, colorPreview -> {
@@ -850,12 +887,25 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     } //updateColorPreviews
 
+    function updateFromColorDrop() {
+
+        var draggingColorDropIndex = this.draggingColorDropIndex;
+        if (draggingColorDropIndex != -1)
+            lastDraggingColorDropIndex = draggingColorDropIndex;
+
+        var draggingColorPreview = this.draggingColorPreview;
+        if (draggingColorPreview != null)
+            lastDraggingColorPreview = draggingColorPreview;
+
+    } //updateFromColorDrop
+
     function createColorPreview():ColorPickerPaletteColorView {
 
         var colorPreview = new ColorPickerPaletteColorView();
 
         colorPreview.onClick(this, handlePaletteColorClick);
-        //colorPreview.onLongPress(this, handlePaletteColorLongPress);
+        colorPreview.onDrop(this, handlePaletteColorDrop);
+        colorPreview.onLongPress(this, handlePaletteColorLongPress);
 
         return colorPreview;
 
@@ -873,12 +923,21 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     } //handlePaletteColorClick
 
-    // function handlePaletteColorLongPress(colorPreview:ColorPickerPaletteColorView, info:TouchInfo) {
+    function handlePaletteColorDrop(colorPreview:ColorPickerPaletteColorView) {
 
-    //     log.debug('long press ' + colorPreview.colorValue);
+        var lastDraggingColorDragIndex = paletteColorPreviews.indexOf(draggingColorPreview);
 
-    //     colorPreview.drag(info.x, info.y);
+        model.project.movePaletteColor(lastDraggingColorDragIndex, lastDraggingColorDropIndex);
 
-    // } //handlePaletteColorLongPress
+    } //handlePaletteColorDrop
+
+    function handlePaletteColorLongPress(colorPreview:ColorPickerPaletteColorView, info:TouchInfo) {
+
+        var index = paletteColorPreviews.indexOf(colorPreview);
+
+        if (index != -1)
+            model.project.removePaletteColor(index);
+
+    } //handlePaletteColorLongPress
 
 } //ColorPickerView

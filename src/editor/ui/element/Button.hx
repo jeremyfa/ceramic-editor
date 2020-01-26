@@ -19,6 +19,8 @@ class Button extends TextView implements Observable {
 
     @observe public var inBubble:Bool = false;
 
+    @observe public var enabled:Bool = true;
+
 /// Internal
 
     @observe var hover:Bool = false;
@@ -50,7 +52,9 @@ class Button extends TextView implements Observable {
 
     function updateStyle() {
 
-        if (pressed) {
+        var enabled = this.enabled;
+
+        if (pressed && enabled) {
             transform.ty = 1;
             transform.changedDirty = true;
         }
@@ -65,7 +69,6 @@ class Button extends TextView implements Observable {
         if (inBubble) {
             borderSize = 1;
             borderPosition = INSIDE;
-            border.alpha = 0.2;
         }
         else {
             borderSize = 1;
@@ -76,33 +79,49 @@ class Button extends TextView implements Observable {
 
         if (inBubble) {
             borderColor = theme.lightTextColor;
-            if (pressed) {
-                transparent = false;
-                color = Color.WHITE;
-                alpha = 0.05;
-                border.alpha = 0.33;
-            }
-            else if (hover) {
-                transparent = false;
-                color = Color.WHITE;
-                alpha = 0.025;
-                border.alpha = 0.25;
+            if (enabled) {
+                border.alpha = 0.2;
+                text.alpha = 1;
+                if (pressed) {
+                    transparent = false;
+                    color = Color.WHITE;
+                    alpha = 0.05;
+                    border.alpha = 0.33;
+                }
+                else if (hover) {
+                    transparent = false;
+                    color = Color.WHITE;
+                    alpha = 0.025;
+                    border.alpha = 0.25;
+                }
+                else {
+                    transparent = true;
+                }
             }
             else {
+                border.alpha = 0.1;
+                text.alpha = 0.5;
                 transparent = true;
             }
         }
         else {
-            alpha = 1;
-            if (pressed) {
-                color = theme.buttonPressedBackgroundColor;
-                borderColor = theme.buttonPressedBackgroundColor;
-            }
-            else if (hover) {
-                color = theme.buttonOverBackgroundColor;
-                borderColor = theme.lightBorderColor;
+            if (enabled) {
+                alpha = 1;
+                if (pressed) {
+                    color = theme.buttonPressedBackgroundColor;
+                    borderColor = theme.buttonPressedBackgroundColor;
+                }
+                else if (hover) {
+                    color = theme.buttonOverBackgroundColor;
+                    borderColor = theme.lightBorderColor;
+                }
+                else {
+                    color = theme.buttonBackgroundColor;
+                    borderColor = theme.lightBorderColor;
+                }
             }
             else {
+                alpha = 0.6;
                 color = theme.buttonBackgroundColor;
                 borderColor = theme.lightBorderColor;
             }

@@ -8,6 +8,8 @@ class ColorPickerHSBGradientView extends View {
 
     static var _point = new Point();
 
+    static var _tuple:Array<Float> = [0, 0, 0];
+
     public var colorValue(default, set):Color = Color.WHITE;
     function set_colorValue(colorValue:Color):Color {
         if (this.colorValue == colorValue) return colorValue;
@@ -16,6 +18,9 @@ class ColorPickerHSBGradientView extends View {
         updatePointerFromColor();
         return colorValue;
     }
+
+    @:allow(editor.ui.element.ColorPickerView)
+    var movingSpectrum:Bool = false;
 
     var blackGradient:Mesh;
 
@@ -156,11 +161,12 @@ class ColorPickerHSBGradientView extends View {
         );
 
         var newPointerColor = Color.WHITE;
-        if (brightness > 0.5) {
+        colorValue.getHSLuv(_tuple);
+        if (_tuple[2] > 0.5) {
             newPointerColor = Color.BLACK;
         }
 
-        if (movingPointer) {
+        if (movingPointer || movingSpectrum) {
             if (targetPointerColor != newPointerColor) {
                 targetPointerColor = newPointerColor;
                 if (pointerColorTween != null) {
