@@ -1,5 +1,7 @@
 package;
 
+import tracker.Model;
+
 import ceramic.Line;
 import ceramic.Shape;
 import ceramic.Color;
