@@ -17,7 +17,7 @@ class ItalicText extends Entity implements Component {
 
         entity.onGlyphQuadsChange(this, applyItalicTransform);
 
-    } //bindAsComponent
+    }
 
 /// Internal
 
@@ -30,6 +30,6 @@ class ItalicText extends Entity implements Component {
             glyph.skewX = skewX;
         }
 
-    } //applyItalicTransform
+    }
 
-} //ItalicText
+}

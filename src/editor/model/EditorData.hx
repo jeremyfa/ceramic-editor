@@ -8,6 +8,8 @@ class EditorData extends Model {
 
     @serialize public var project:ProjectData = new ProjectData();
 
+    @observe public var images:ImmutableArray<String> = [];
+
     public function new() {
 
         super();
@@ -15,6 +17,6 @@ class EditorData extends Model {
         //this.loadSaved('editor');
         this.autoSaveAsKey('editor');
 
-    } //new
+    }
 
-} //EditorData
+}

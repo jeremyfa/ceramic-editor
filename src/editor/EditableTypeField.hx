@@ -9,4 +9,4 @@ class EditableTypeField {
 
     public var type:String;
 
-} //EditableTypeField
+}

@@ -14,7 +14,15 @@ class Editor extends Entity {
 
 /// Public properties
 
-    public var assets:Assets;
+    /**
+     * Assets used to make the editor work properly (fonts/icons, mostly)
+     */
+    public var editorAssets:Assets;
+
+    /**
+     * Assets used by the content being edited (fragments)
+     */
+    public var contentAssets:Assets;
 
     public var model:EditorData;
 
@@ -23,6 +31,8 @@ class Editor extends Entity {
 /// Internal properties
 
     var renders:Int = 0;
+
+    var options:EditorOptions;
 
     var editableTypes:Array<EditableType> = [];
 
@@ -37,12 +47,14 @@ class Editor extends Entity {
 
 /// Lifecycle
 
-    public function new(settings:InitSettings) {
+    public function new(settings:InitSettings, options:EditorOptions) {
 
         super();
 
         if (editor != null) throw 'Only one single editor can be created.';
         editor = this;
+
+        this.options = options;
 
         settings.antialiasing = 4;
         settings.background = 0x282828;
@@ -54,22 +66,32 @@ class Editor extends Entity {
 
         app.onceReady(this, loadAssets);
 
-    } //new
+    }
 
     function loadAssets() {
 
-        trace('LOAD EDITOR ASSETS');
+        trace('LOAD EDITOR ASSETS & INIT CONTENT ASSETS');
 
-        assets = new Assets();
+        contentAssets = new Assets();
+        if (options != null) {
+            if (options.assets != null) {
+                if (options.assets != settings.assetsPath) {
+                    trace('new runtime assets ${options.assets}');
+                    contentAssets.runtimeAssets = RuntimeAssets.fromPath(options.assets);
+                }
+            } 
+        }
+
+        editorAssets = new Assets();
         
-        assets.add(Fonts.ROBOTO_MEDIUM_20);
-        assets.add(Fonts.ROBOTO_BOLD_20);
+        editorAssets.add(Fonts.ROBOTO_MEDIUM_20);
+        editorAssets.add(Fonts.ROBOTO_BOLD_20);
 
-        assets.onceComplete(this, assetsLoaded);
+        editorAssets.onceComplete(this, assetsLoaded);
 
-        assets.load();
+        editorAssets.load();
 
-    } //loadAssets
+    }
 
     function assetsLoaded(isSuccess:Bool) {
 
@@ -80,7 +102,7 @@ class Editor extends Entity {
 
         start();
 
-    } //assetsLoaded
+    }
 
     public function start():Void {
 
@@ -90,7 +112,7 @@ class Editor extends Entity {
 
         initView();
 
-    } //start
+    }
 
 /// Helpers
 
@@ -105,7 +127,34 @@ class Editor extends Entity {
 
         return null;
 
-    } //getEditableType
+    }
+
+    public function computeLists(model:EditorData) {
+
+        var images:Array<String> = [];
+        if (contentAssets.runtimeAssets != null) {
+            for (item in contentAssets.runtimeAssets.getNames('image')) {
+                images.push(item.name);
+            }
+        }
+        else {
+            for (key in Reflect.fields(Images)) {
+                var value:Dynamic = Reflect.field(Images, key);
+                if (value != null && Std.is(value, String) && value.startsWith('image:')) {
+                    images.push(value.substring(6));
+                }
+            }
+        }
+        model.images = cast images;
+
+        /*
+        texts: runtimeAssets.getNames('text'),
+        sounds: runtimeAssets.getNames('sound'),
+        fonts: runtimeAssets.getNames('font'),
+        databases: runtimeAssets.getNames('database'),
+        */
+
+    }
 
 /// Internal
 
@@ -198,16 +247,19 @@ class Editor extends Entity {
 
         }
 
-    } //computeEditableTypes
+    }
 
     function initModel() {
 
         model = new EditorData();
+        computeLists(model);
+        trace('images: ' + model.images);
+
         app.flushImmediate();
 
         autorun(updateWindow);
         
-    } //initModel
+    }
 
     function initView() {
 
@@ -225,20 +277,20 @@ class Editor extends Entity {
 
         layout();
         
-    } //initModel
+    }
 
     function layout() {
 
         view.pos(0, 0);
         view.size(settings.targetWidth, settings.targetHeight);
 
-    } //layout
+    }
 
     function updateWindow() {
 
         // Update window title
         settings.title = model.project.title;
 
-    } //updateWindow
+    }
 
-} //Editor
+}

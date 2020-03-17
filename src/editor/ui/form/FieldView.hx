@@ -23,7 +23,7 @@ class FieldView extends LinearLayout {
 
         bindPointerEvents();
 
-    } //new
+    }
 
 /// Public API
 
@@ -33,7 +33,7 @@ class FieldView extends LinearLayout {
 
         makeVisibleInForm();
 
-    } //focus
+    }
 
     public function makeVisibleInForm():Void {
         
@@ -66,7 +66,7 @@ class FieldView extends LinearLayout {
         scroller.ensureContentPositionIsInBounds(0, targetStart);
         scroller.ensureContentPositionIsInBounds(0, targetEnd);
 
-    } //makeVisibleInForm
+    }
 
 /// Internal
 
@@ -86,20 +86,20 @@ class FieldView extends LinearLayout {
 
         return null;
 
-    } //getScrollingLayout
+    }
 
     @:allow(editor.manager.FieldManager)
     function didLostFocus():Void {
 
         // Override in subclasses
 
-    } //didLostFocus
+    }
 
     function bindPointerEvents() {
 
         // To make it focusable
         onPointerDown(this, function(_) {});
 
-    } //bindPointerEvents
+    }
 
-} //FieldView
+}

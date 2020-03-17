@@ -7,6 +7,7 @@ app:
 
     defines:
         - editor
+        - ceramic_use_electron
         - snow_web_use_electron_fs
         - snow_web_use_electron_pngjs
         - js-source-map

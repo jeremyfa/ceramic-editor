@@ -98,7 +98,7 @@ class ColorPickerHSLuvGradientView extends View {
         onPointerDown(this, handlePointerDown);
         onPointerUp(this, handlePointerUp);
 
-    } //new
+    }
 
     public function updateGradientColors(?lightness:Float) {
 
@@ -138,21 +138,21 @@ class ColorPickerHSLuvGradientView extends View {
             }
         }
 
-    } //updateTintColor
+    }
 
     public function savePointerPosition() {
 
         savedPointerX = colorPointer.x;
         savedPointerY = colorPointer.y;
 
-    } //savePointerPosition
+    }
 
     public function restorePointerPosition() {
 
         colorPointer.x = savedPointerX;
         colorPointer.y = savedPointerY;
 
-    } //restorePointerPosition
+    }
 
     public function getSaturationFromPointer():Float {
 
@@ -164,7 +164,7 @@ class ColorPickerHSLuvGradientView extends View {
 
         return saturation;
 
-    } //getSaturationFromPointer
+    }
 
     public function getHueFromPointer():Float {
 
@@ -177,13 +177,13 @@ class ColorPickerHSLuvGradientView extends View {
 
         return hue;
 
-    } //getHueFromPointer
+    }
 
     function colorWithHueAndSaturation(hue:Float, saturation:Float):AlphaColor {
 
         return new AlphaColor(Color.fromHSLuv(hue, saturation, lightness));
 
-    } //colorWithHueAndSaturation
+    }
 
     function updatePointerFromColor() {
 
@@ -221,7 +221,7 @@ class ColorPickerHSLuvGradientView extends View {
             colorPointer.borderColor = targetPointerColor;
         }
 
-    } //updatePointerFromColor
+    }
 
     override function layout() {
 
@@ -232,7 +232,7 @@ class ColorPickerHSLuvGradientView extends View {
 
         updatePointerFromColor();
 
-    } //layout
+    }
 
 /// Pointer events
 
@@ -244,13 +244,13 @@ class ColorPickerHSLuvGradientView extends View {
 
         movingPointer = true;
 
-    } //handlePointerDown
+    }
 
     function handlePointerMove(info:TouchInfo) {
 
         updateColorFromTouchInfo(info);
 
-    } //handlePointerMove
+    }
 
     function handlePointerUp(info:TouchInfo) {
 
@@ -260,7 +260,7 @@ class ColorPickerHSLuvGradientView extends View {
 
         movingPointer = false;
 
-    } //handlePointerUp
+    }
 
     function updateColorFromTouchInfo(info:TouchInfo) {
 
@@ -290,6 +290,6 @@ class ColorPickerHSLuvGradientView extends View {
 
         emitUpdateColorFromPointer();
 
-    } //updateColorFromTouchInfo
+    }
 
-} //ColorPickerHSLuvGradientView
+}

@@ -18,6 +18,6 @@ class ExampleView extends View implements Observable {
 
         });
 
-    } //new
+    }
 
-} //ExampleView
+}

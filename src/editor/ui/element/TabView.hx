@@ -31,7 +31,7 @@ class TabView extends TextView implements Observable {
         onPointerOver(this, function(_) hover = true);
         onPointerOut(this, function(_) hover = false);
 
-    } //new
+    }
 
 /// Internal
 
@@ -40,7 +40,7 @@ class TabView extends TextView implements Observable {
         var name = this.name;
         content = name != null ? name : '';
 
-    } //updateText
+    }
 
     function updateStyle() {
 
@@ -65,6 +65,6 @@ class TabView extends TextView implements Observable {
         borderRightSize = 1;
         font = theme.boldFont20;
 
-    } //updateStyle
+    }
 
-} //TabView
+}

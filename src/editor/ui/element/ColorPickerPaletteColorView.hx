@@ -66,7 +66,7 @@ class ColorPickerPaletteColorView extends View implements Observable {
 
         bindDraggingDepth();
 
-    } //new
+    }
 
     function updateStyle() {
 
@@ -86,7 +86,7 @@ class ColorPickerPaletteColorView extends View implements Observable {
             transform.changedDirty = true;
         }
 
-    } //updateStyle
+    }
 
 /// Drag & Drop
 
@@ -105,19 +105,19 @@ class ColorPickerPaletteColorView extends View implements Observable {
             computedDepth = originalComputedDepth;
         });
 
-    } //bindDraggingDepth
+    }
 
     function getDraggingVisual() {
 
         return this;
 
-    } //getDraggingVisual
+    }
 
     function releaseDraggingVisual(visual:Visual) {
 
         // Nothing to do
 
-    } //releaseDraggingVisual
+    }
 
     function handleDraggingChange(dragging:Bool, wasDragging:Bool) {
 
@@ -127,18 +127,18 @@ class ColorPickerPaletteColorView extends View implements Observable {
             emitDrop(this);
         }
 
-    } //handleDraggingChange
+    }
 
     public function drag(pointerX:Float, pointerY:Float) {
 
         dragDrop.drag(pointerX, pointerY);
 
-    } //drag
+    }
 
     override function toString() {
 
         return 'ColorPickerPaletteColorView(' + colorValue + ')';
 
-    } //toString
+    }
 
-} //ColorPickerPaletteColorView
+}

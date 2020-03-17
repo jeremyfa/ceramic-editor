@@ -44,7 +44,7 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
         labelClick.onClick(this, handleLabelClick);
         #end
 
-    } //new
+    }
 
 /// Internal
 
@@ -52,19 +52,19 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
 
         field.focus();
 
-    } //handleLabelClick
+    }
 
     function updateLabel() {
 
         labelText.content = label;
 
-    } //updateLabel
+    }
 
     function updateStyle() {
 
         labelText.textColor = theme.lightTextColor;
         labelText.font = theme.mediumFont10;
 
-    } //updateStyle
+    }
 
-} //LabeledFieldView
+}

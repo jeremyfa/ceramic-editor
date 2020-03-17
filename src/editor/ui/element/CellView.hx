@@ -62,7 +62,7 @@ class CellView extends LinearLayout implements Observable {
         onPointerOver(this, function(_) hover = true);
         onPointerOut(this, function(_) hover = false);
 
-    } //new
+    }
 
 /// Internal
 
@@ -82,7 +82,7 @@ class CellView extends LinearLayout implements Observable {
             titleTextView.active = false;
         }
 
-    } //updateTitle
+    }
 
     function updateSubTitle() {
 
@@ -96,7 +96,7 @@ class CellView extends LinearLayout implements Observable {
             subTitleTextView.active = false;
         }
 
-    } //updateSubTitle
+    }
 
     function updateStyle() {
 
@@ -135,6 +135,6 @@ class CellView extends LinearLayout implements Observable {
 
         borderBottomColor = theme.mediumBorderColor;
 
-    } //updateStyle
+    }
 
-} //CellView
+}

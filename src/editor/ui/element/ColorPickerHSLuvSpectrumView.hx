@@ -75,7 +75,7 @@ class ColorPickerHSLuvSpectrumView extends View implements Observable {
         onPointerDown(this, handlePointerDown);
         onPointerUp(this, handlePointerUp);
 
-    } //new
+    }
 
     function initSpectrum() {
 
@@ -111,7 +111,7 @@ class ColorPickerHSLuvSpectrumView extends View implements Observable {
 
         updateSpectrumColors();
 
-    } //initSpectrum
+    }
 
     function updateSpectrumColors() {
 
@@ -135,7 +135,7 @@ class ColorPickerHSLuvSpectrumView extends View implements Observable {
             ci++;
         }
 
-    } //updateSpectrumColors
+    }
 
     function updatePointerFromLightness() {
 
@@ -144,7 +144,7 @@ class ColorPickerHSLuvSpectrumView extends View implements Observable {
             height * (1.0 - lightness)
         );
 
-    } //updatePointerFromHue
+    }
 
     override function layout() {
 
@@ -157,14 +157,14 @@ class ColorPickerHSLuvSpectrumView extends View implements Observable {
 
         updatePointerFromLightness();
 
-    } //layout
+    }
 
     function colorWithLightness(lightness:Float):AlphaColor {
 
         //return new AlphaColor(Color.fromHSL(0, 0, lightness));
         return new AlphaColor(Color.fromHSLuv(hue, saturation, lightness));
 
-    } //colorWithHue
+    }
 
 /// Pointer events
     
@@ -174,7 +174,7 @@ class ColorPickerHSLuvSpectrumView extends View implements Observable {
         
         updateHueFromTouchInfo(info);
 
-    } //handlePointerDown
+    }
 
     function handlePointerMove(info:TouchInfo) {
 
@@ -182,7 +182,7 @@ class ColorPickerHSLuvSpectrumView extends View implements Observable {
 
         updateHueFromTouchInfo(info);
 
-    } //handlePointerMove
+    }
 
     function handlePointerUp(info:TouchInfo) {
 
@@ -192,7 +192,7 @@ class ColorPickerHSLuvSpectrumView extends View implements Observable {
 
         updateHueFromTouchInfo(info);
 
-    } //handlePointerUp
+    }
 
     function updateHueFromTouchInfo(info:TouchInfo) {
 
@@ -204,6 +204,6 @@ class ColorPickerHSLuvSpectrumView extends View implements Observable {
 
         emitUpdateHueFromPointer();
 
-    } //updateColorFromTouchInfo
+    }
 
-} //ColorPickerHSLuvSpectrumView
+}

@@ -29,7 +29,7 @@ class Click extends Entity implements Component implements Observable {
 
         entity.onBlur(this, handleBlur);
 
-    } //bindAsComponent
+    }
 
 /// Public API
 
@@ -37,7 +37,7 @@ class Click extends Entity implements Component implements Observable {
 
         pressed = false;
 
-    } //cancel
+    }
 
 /// Internal
 
@@ -50,7 +50,7 @@ class Click extends Entity implements Component implements Observable {
 
         screen.onPointerMove(this, handlePointerMove);
 
-    } //handlePointerDown
+    }
 
     function handlePointerUp(info:TouchInfo) {
 
@@ -61,7 +61,7 @@ class Click extends Entity implements Component implements Observable {
             }
         }
 
-    } //handlePointerUp
+    }
 
     function handlePointerMove(info:TouchInfo) {
 
@@ -70,12 +70,12 @@ class Click extends Entity implements Component implements Observable {
             pressed = false;
         }
 
-    } //handlePointerMove
+    }
 
     function handleBlur() {
         
         pressed = false;
 
-    } //handleBlur
+    }
 
-} //Click
+}

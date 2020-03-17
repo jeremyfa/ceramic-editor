@@ -28,14 +28,14 @@ class LongPress extends Entity implements Component {
             onLongPress(null, handleLongPress);
         }
 
-    } //new
+    }
 
     function bindAsComponent():Void {
 
         // Bind pointer events
         bindPointerEvents();
 
-    } //bindAsComponent
+    }
 
 /// Internal
 
@@ -52,7 +52,7 @@ class LongPress extends Entity implements Component {
         entity.onPointerDown(this, handlePointerDown);
         entity.onPointerUp(this, handlePointerUp);
 
-    } //bindPointerEvents
+    }
 
     function handlePointerDown(info:TouchInfo) {
 
@@ -74,7 +74,7 @@ class LongPress extends Entity implements Component {
             emitLongPress(info);
         });
 
-    } //handlePointerDown
+    }
 
     function handlePointerMove(info:TouchInfo) {
 
@@ -86,7 +86,7 @@ class LongPress extends Entity implements Component {
             }
         }
 
-    } //handlePointerMove
+    }
 
     function handlePointerUp(info:TouchInfo) {
 
@@ -96,6 +96,6 @@ class LongPress extends Entity implements Component {
         }
         screen.offPointerMove(handlePointerMove);
 
-    } //handlePointerUp
+    }
 
-} //LongPress
+}

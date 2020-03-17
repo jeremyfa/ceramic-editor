@@ -4,4 +4,4 @@ class EditorValue extends Model {
 
     @serialize public var value:Dynamic = null;
 
-} //EditorValue
+}

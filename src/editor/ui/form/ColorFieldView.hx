@@ -14,7 +14,7 @@ class ColorFieldView extends FieldView implements Observable {
 
         // Default implementation does nothing
 
-    } //setValue
+    }
 
 /// Public properties
 
@@ -117,7 +117,7 @@ class ColorFieldView extends FieldView implements Observable {
             }
         });
 
-    } //new
+    }
 
 /// Layout
 
@@ -129,7 +129,7 @@ class ColorFieldView extends FieldView implements Observable {
             editText.focus();
         }
         
-    } //focus
+    }
 
     override function didLostFocus() {
 
@@ -142,7 +142,7 @@ class ColorFieldView extends FieldView implements Observable {
             updateFromValue();
         }
 
-    } //didLostFocus
+    }
 
 /// Layout
 
@@ -150,13 +150,13 @@ class ColorFieldView extends FieldView implements Observable {
 
         super.layout();
 
-    } //layout
+    }
 
     function layoutContainer() {
 
         //
 
-    } //layoutContainer
+    }
 
     function updatePickerVisibility() {
 
@@ -180,7 +180,7 @@ class ColorFieldView extends FieldView implements Observable {
             pickerVisible = false;
         }
 
-    } //updatePickerVisibility
+    }
 
     function updatePickerPosition() {
 
@@ -203,7 +203,7 @@ class ColorFieldView extends FieldView implements Observable {
     
         pickerContainer.pos(x, y);
 
-    } //updatePickerPosition
+    }
 
     function layoutPickerContainer() {
 
@@ -236,7 +236,7 @@ class ColorFieldView extends FieldView implements Observable {
             }
         }
 
-    } //layoutPickerContainer
+    }
 
 /// Internal
 
@@ -249,7 +249,7 @@ class ColorFieldView extends FieldView implements Observable {
             pickerContainer = null;
         }
 
-    } //destroy
+    }
 
     function updateFromEditText(text:String) {
 
@@ -271,13 +271,13 @@ class ColorFieldView extends FieldView implements Observable {
             updateFromValue();
         }
 
-    } //updateFromEditText
+    }
 
     function handleStopEditText() {
 
         //
 
-    } //handleStopEditText
+    }
 
     function updateFromValue() {
 
@@ -294,7 +294,7 @@ class ColorFieldView extends FieldView implements Observable {
 
         reobserve();
 
-    } //updateFromValue
+    }
 
     function updateStyle() {
         
@@ -313,7 +313,7 @@ class ColorFieldView extends FieldView implements Observable {
             container.borderColor = theme.lightBorderColor;
         }
 
-    } //updateStyle
+    }
 
 /// Picker
 
@@ -321,7 +321,7 @@ class ColorFieldView extends FieldView implements Observable {
 
         pickerVisible = !pickerVisible;
 
-    } //togglePickerVisible
+    }
 
     function updatePickerContainer() {
 
@@ -376,6 +376,6 @@ class ColorFieldView extends FieldView implements Observable {
 
         reobserve();
 
-    } //updatePickerContainer
+    }
 
-} //SliderFieldView
+}

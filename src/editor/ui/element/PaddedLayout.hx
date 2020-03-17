@@ -16,12 +16,12 @@ class PaddedLayout extends LinearLayout {
 
         autorun(updateStyle);
 
-    } //new
+    }
 
 /// Internal
 
     function updateStyle() {
 
-    } //updateStyle
+    }
 
-} //PaddedLayout
+}

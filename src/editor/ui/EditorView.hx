@@ -23,7 +23,7 @@ class EditorView extends View implements Observable {
 
         // Fragment
         editedFragment = new Fragment({
-            assets: editor.assets,
+            assets: editor.contentAssets,
             editedItems: true
         });
         editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
@@ -46,7 +46,7 @@ class EditorView extends View implements Observable {
         // Styles
         autorun(updateStyle);
 
-    } //new
+    }
 
     override function layout() {
         
@@ -74,7 +74,7 @@ class EditorView extends View implements Observable {
         fragmentArea.pos(0, 0);
         fragmentArea.size(availableFragmentWidth, availableFragmentHeight);
 
-    } //layout
+    }
 
 /// Internal
 
@@ -97,7 +97,7 @@ class EditorView extends View implements Observable {
         var selectedIndex = panelTabsView.tabViews.tabs.indexOf(selectedName);
         panelTabsView.tabViews.selectedIndex = selectedIndex != -1 ? selectedIndex : 0;
 
-    } //updateTabs
+    }
 
     function updateEditedFragment() {
 
@@ -118,7 +118,7 @@ class EditorView extends View implements Observable {
             reobserve();
         }
 
-    } //updateEditedFragment
+    }
 
     function updateFragmentItems() {
 
@@ -145,7 +145,7 @@ class EditorView extends View implements Observable {
             }
         });
 
-    } //updateFragmentItems
+    }
 
     function bindEditableVisualComponent(visual:Visual, editedFragment:Fragment) {
 
@@ -176,7 +176,7 @@ class EditorView extends View implements Observable {
 
         });
 
-    } //bindEditableVisualComponent
+    }
 
     function handleEditableItemUpdate(fragmentItem:FragmentItem) {
 
@@ -197,7 +197,7 @@ class EditorView extends View implements Observable {
             }
         }
 
-    } //handleEditableItemUpdate
+    }
 
     function updateTabsContentView() {
 
@@ -227,7 +227,7 @@ class EditorView extends View implements Observable {
             }
         }
 
-    } //updateTabsContentView
+    }
 
     function updateSelectedEditable(runAfterUpdate:Bool) {
 
@@ -268,7 +268,7 @@ class EditorView extends View implements Observable {
 
         reobserve();
 
-    } //updateSelectedEditable
+    }
 
     function updateStyle() {
 
@@ -277,6 +277,6 @@ class EditorView extends View implements Observable {
         editedFragment.transparent = false;
         editedFragment.color = theme.darkBackgroundColor;
 
-    } //updateStyle
+    }
 
-} //EditorView
+}

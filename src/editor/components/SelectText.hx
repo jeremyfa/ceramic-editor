@@ -55,7 +55,7 @@ class SelectText extends Entity implements Component implements Observable {
 
         super();
 
-    } //new
+    }
 
     function bindAsComponent() {
 
@@ -72,7 +72,7 @@ class SelectText extends Entity implements Component implements Observable {
 
         bindKeyBindings();
         
-    } //bindAsComponent
+    }
 
 /// Internal
 
@@ -90,7 +90,7 @@ class SelectText extends Entity implements Component implements Observable {
 
         reobserve();
 
-    } //updateFromSelection
+    }
 
     function updateSelectionGraphics():Void {
 
@@ -99,7 +99,7 @@ class SelectText extends Entity implements Component implements Observable {
         willUpdateSelection = true;
         app.onceImmediate(doUpdateSelectionGraphics);
 
-    } //updateSelectionGraphics
+    }
 
     function doUpdateSelectionGraphics():Void {
 
@@ -153,7 +153,7 @@ class SelectText extends Entity implements Component implements Observable {
                 bg.size(backgroundRight - backgroundLeft + selectionRightPadding, backgroundBottom + backgroundPad * 2 - backgroundTop);
             }
 
-        } //addSelectionBackground
+        }
 
         inline function createTextCursorIfNeeded() {
 
@@ -166,7 +166,7 @@ class SelectText extends Entity implements Component implements Observable {
                 entity.add(textCursor);
             }
 
-        } //createTextCursorIfNeeded
+        }
 
         if (hasCharsSelection) {
 
@@ -306,7 +306,7 @@ class SelectText extends Entity implements Component implements Observable {
             bg.destroy();
         }
 
-    } //updateSelectionGraphics
+    }
 
     function clearSelectionGraphics() {
 
@@ -320,13 +320,13 @@ class SelectText extends Entity implements Component implements Observable {
             bg.destroy();
         }
 
-    } //clearSelectionGraphics
+    }
 
     function handleShowCursorChange(_, _) {
 
         resetCursorVisibility();
 
-    } //handleShowCursorChange
+    }
 
     function updateCursorVisibility(delta:Float):Void {
 
@@ -348,7 +348,7 @@ class SelectText extends Entity implements Component implements Observable {
             textCursor.visible = !textCursor.visible;
         }
 
-    } //updateCursorVisibility
+    }
 
     function resetCursorVisibility() {
 
@@ -357,7 +357,7 @@ class SelectText extends Entity implements Component implements Observable {
             textCursor.visible = showCursor;
         }
 
-    } //resetCursorVisibility
+    }
 
 /// Selecting from pointer
 
@@ -401,7 +401,7 @@ class SelectText extends Entity implements Component implements Observable {
 
         reobserve();
 
-    } //updatePointerEventBindings
+    }
 
     function indexFromScreenPosition(x, y):Int {
 
@@ -415,7 +415,7 @@ class SelectText extends Entity implements Component implements Observable {
 
         return entity.indexForPosInLine(line, posInLine);
 
-    } //indexFromScreenPosition
+    }
 
     function handlePointerDown(info:TouchInfo):Void {
 
@@ -433,13 +433,13 @@ class SelectText extends Entity implements Component implements Observable {
         pointerIsDown = true;
         screen.onPointerMove(this, handlePointerMove);
 
-    } //handlePointerDown
+    }
 
     function handlePointerMove(info:TouchInfo):Void {
 
         updateSelectionFromMovingPointer(screen.pointerX, screen.pointerY);
 
-    } //handlePointerMove
+    }
 
     function handlePointerUp(info:TouchInfo):Void {
 
@@ -456,7 +456,7 @@ class SelectText extends Entity implements Component implements Observable {
             }
         }
 
-    } //handlePointerUp
+    }
 
     function updateSelectionFromMovingPointer(x:Float, y:Float):Void {
 
@@ -485,7 +485,7 @@ class SelectText extends Entity implements Component implements Observable {
 
         resetCursorVisibility();
 
-    } //updateSelectionFromMovingPointer
+    }
 
     function handleDoubleClick():Void {
 
@@ -525,7 +525,7 @@ class SelectText extends Entity implements Component implements Observable {
         selectionStart = start;
         selectionEnd = end;
 
-    } //handleDoubleClick
+    }
 
 /// Key bindings
 
@@ -545,6 +545,6 @@ class SelectText extends Entity implements Component implements Observable {
             keyBindings = null;
         });
 
-    } //bindKeyBindings
+    }
 
-} //SelectText
+}

@@ -60,7 +60,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
 
         id = Utils.uniqueId();
 
-    } //new
+    }
 
     function bindAsComponent() {
 
@@ -79,7 +79,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
 
         app.onUpdate(this, handleAppUpdate);
         
-    } //bindAsComponent
+    }
 
 /// Public API
 
@@ -134,7 +134,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
             this
         );
 
-    } //startInput
+    }
 
     public function stopInput():Void {
 
@@ -156,7 +156,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
 
         emitStop();
 
-    } //stopInput
+    }
 
     public function updateText(text:String):Void {
 
@@ -164,7 +164,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
 
         app.textInput.text = text;
 
-    } //updateText
+    }
 
     public function focus() {
 
@@ -177,7 +177,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
             });
         }
 
-    } //focus
+    }
 
 /// Internal
 
@@ -185,7 +185,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
 
         stopInput();
 
-    } //handleStop
+    }
 
     function updateFromTextInput(text:String):Void {
 
@@ -195,20 +195,20 @@ class EditText extends Entity implements Component implements TextInputDelegate 
         // But allow external code to put another processed value if needed
         emitUpdate(text);
 
-    } //updateFromTextInput
+    }
 
     function updateFromSelection(selectionStart:Int, selectionEnd:Int, inverted:Bool):Void {
 
         app.textInput.updateSelection(selectionStart, selectionEnd, inverted);
 
-    } //updateFromSelection
+    }
 
     function updateFromInputSelection(selectionStart:Int, selectionEnd:Int):Void {
 
         selectText.selectionStart = selectionStart;
         selectText.selectionEnd = selectionEnd;
 
-    } //updateFromInputSelection
+    }
 
 /// TextInput delegate
 
@@ -219,7 +219,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
 
         return entity.posInLineForX(toLine, xPosition);
 
-    } //textInputClosestPositionInLine
+    }
 
     public function textInputNumberOfLines():Int {
 
@@ -228,25 +228,25 @@ class EditText extends Entity implements Component implements TextInputDelegate 
 
         return glyphQuads[glyphQuads.length - 1].line + 1;
 
-    } //textInputNumberOfLines
+    }
 
     public function textInputIndexForPosInLine(lineNumber:Int, lineOffset:Int):Int {
 
         return entity.indexForPosInLine(lineNumber, lineOffset);
 
-    } //textInputIndexForPosInLine
+    }
 
     public function textInputLineForIndex(index:Int):Int {
 
         return entity.lineForIndex(index);
 
-    } //textInputLineForIndex
+    }
 
     public function textInputPosInLineForIndex(index:Int):Int {
 
         return entity.posInLineForIndex(index);
 
-    } //textInputPosInLineForIndex
+    }
 
 /// Pointer events and focus
 
@@ -268,13 +268,13 @@ class EditText extends Entity implements Component implements TextInputDelegate 
             entity.onPointerDown(this, handlePointerDown);
         }
 
-    } //bindPointerEvents
+    }
 
     function handlePointerDown(info:TouchInfo) {
 
         focus();
 
-    } //handlePointerDown
+    }
 
     function handleAppUpdate(delta:Float) {
 
@@ -283,7 +283,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
             stopInput();
         }
 
-    } //handleAppUpdate
+    }
 
 /// Key bindings
 
@@ -326,6 +326,6 @@ class EditText extends Entity implements Component implements TextInputDelegate 
             keyBindings = null;
         });
 
-    } //bindKeyBindings
+    }
 
-} //EditText
+}

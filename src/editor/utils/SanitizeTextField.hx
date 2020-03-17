@@ -29,14 +29,14 @@ class SanitizeTextField {
 
         };
 
-    } //setTextValueToInt
+    }
 
     public static function setTextValueToEmptyInt(field:TextFieldView):Void {
 
         field.textValue = '0';
         field.invalidateTextValue();
 
-    } //setTextValueToEmptyInt
+    }
 
     public static function setTextValueToFloat(minValue:Float, maxValue:Float) {
         
@@ -69,13 +69,13 @@ class SanitizeTextField {
 
         };
 
-    } //setTextValueToFloat
+    }
 
     public static function setTextValueToEmptyFloat(field:TextFieldView):Void {
 
         field.textValue = '0';
         field.invalidateTextValue();
 
-    } //setTextValueToEmptyFloat
+    }
 
-} //SanitizeTextField
+}

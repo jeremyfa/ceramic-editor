@@ -17,16 +17,16 @@ class EditorTheme extends Model {
 /// Text fonts
 
     public var mediumFont10(get,never):BitmapFont;
-    function get_mediumFont10():BitmapFont return editor.assets.font(Fonts.ROBOTO_MEDIUM_10);
+    function get_mediumFont10():BitmapFont return editor.editorAssets.font(Fonts.ROBOTO_MEDIUM_10);
 
     public var mediumFont20(get,never):BitmapFont;
-    function get_mediumFont20():BitmapFont return editor.assets.font(Fonts.ROBOTO_MEDIUM_20);
+    function get_mediumFont20():BitmapFont return editor.editorAssets.font(Fonts.ROBOTO_MEDIUM_20);
 
     public var boldFont10(get,never):BitmapFont;
-    function get_boldFont10():BitmapFont return editor.assets.font(Fonts.ROBOTO_BOLD_10);
+    function get_boldFont10():BitmapFont return editor.editorAssets.font(Fonts.ROBOTO_BOLD_10);
 
     public var boldFont20(get,never):BitmapFont;
-    function get_boldFont20():BitmapFont return editor.assets.font(Fonts.ROBOTO_BOLD_20);
+    function get_boldFont20():BitmapFont return editor.editorAssets.font(Fonts.ROBOTO_BOLD_20);
 
 /// Borders colors
 
@@ -78,6 +78,6 @@ class EditorTheme extends Model {
 
         super();
 
-    } //new
+    }
 
-} //EditorTheme
+}

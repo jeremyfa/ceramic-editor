@@ -46,7 +46,7 @@ class Button extends TextView implements Observable {
 
         autorun(updateStyle);
 
-    } //new
+    }
 
 /// Internal
 
@@ -127,6 +127,6 @@ class Button extends TextView implements Observable {
             }
         }
 
-    } //updateStyle
+    }
 
-} //Button
+}

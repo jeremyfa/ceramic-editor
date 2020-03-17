@@ -12,7 +12,7 @@ class SliderFieldView extends FieldView implements Observable {
 
         // Default implementation does nothing
 
-    } //setValue
+    }
 
 /// Public properties
 
@@ -75,7 +75,7 @@ class SliderFieldView extends FieldView implements Observable {
         autorun(updateStyle);
         autorun(updateFromValue);
 
-    } //new
+    }
 
 /// Layout
 
@@ -87,7 +87,7 @@ class SliderFieldView extends FieldView implements Observable {
             editText.focus();
         }
         
-    } //focus
+    }
 
     override function didLostFocus() {
 
@@ -107,7 +107,7 @@ class SliderFieldView extends FieldView implements Observable {
         screen.offPointerMove(handleSliderMove);
         screen.offPointerUp(handleSliderUp);
 
-    } //didLostFocus
+    }
 
 /// Overrides
 
@@ -115,7 +115,7 @@ class SliderFieldView extends FieldView implements Observable {
 
         super.layout();
 
-    } //layout
+    }
 
     function layoutSliderContainer() {
 
@@ -135,7 +135,7 @@ class SliderFieldView extends FieldView implements Observable {
             sliderContainer.paddingTop
         );
 
-    } //layoutSliderContainer
+    }
 
 /// Internal
 
@@ -154,13 +154,13 @@ class SliderFieldView extends FieldView implements Observable {
             }
         }
 
-    } //updateFromEditText
+    }
 
     function handleStopEditText() {
 
         //
 
-    } //handleStopEditText
+    }
 
     function updateFromValue() {
 
@@ -176,7 +176,7 @@ class SliderFieldView extends FieldView implements Observable {
 
         reobserve();
 
-    } //updateFromValue
+    }
 
     function updateStyle() {
         
@@ -196,7 +196,7 @@ class SliderFieldView extends FieldView implements Observable {
             borderColor = theme.lightBorderColor;
         }
 
-    } //updateStyle
+    }
 
 /// Slider
 
@@ -208,21 +208,21 @@ class SliderFieldView extends FieldView implements Observable {
         screen.onPointerMove(this, handleSliderMove);
         screen.oncePointerUp(this, handleSliderUp);
 
-    } //handleSliderDown
+    }
 
     function handleSliderMove(info:TouchInfo) {
 
         sliderContainer.screenToVisual(info.x, info.y, _point);
         setValueFromSliderX(_point.x);
 
-    } //handleSliderMove
+    }
 
     function handleSliderUp(info:TouchInfo) {
 
         screen.offPointerMove(handleSliderMove);
         screen.offPointerUp(handleSliderUp);
 
-    } //handleSliderUp
+    }
 
     function setValueFromSliderX(sliderX:Float) {
 
@@ -251,6 +251,6 @@ class SliderFieldView extends FieldView implements Observable {
         setValue(this, newValue);
         updateFromValue();
 
-    } //setValueFromSliderX
+    }
 
-} //SliderFieldView
+}

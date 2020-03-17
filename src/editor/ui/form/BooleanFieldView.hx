@@ -12,7 +12,7 @@ class BooleanFieldView extends FieldView implements Observable {
 
         // Default implementation does nothing
 
-    } //setValue
+    }
 
 /// Public properties
 
@@ -64,7 +64,7 @@ class BooleanFieldView extends FieldView implements Observable {
 
         app.onKeyDown(this, handleKeyDown);
 
-    } //new
+    }
 
 /// Layout
 
@@ -83,7 +83,7 @@ class BooleanFieldView extends FieldView implements Observable {
             );
         }
 
-    } //layoutSwitchContainer
+    }
 
 /// Internal
 
@@ -107,14 +107,14 @@ class BooleanFieldView extends FieldView implements Observable {
             }
         }
 
-    } //handleKeyDown
+    }
 
     function toggleValue() {
 
         this.value = !value;
         setValue(this, this.value);
 
-    } //toggleValue
+    }
 
     function updateStyle() {
         
@@ -134,6 +134,6 @@ class BooleanFieldView extends FieldView implements Observable {
             switchContainer.borderColor = theme.lightBorderColor;
         }
 
-    } //updateStyle
+    }
 
-} //BooleanFieldView
+}

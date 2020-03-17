@@ -19,7 +19,7 @@ class FieldsTabFocus extends Entity implements Component {
         app.onKeyDown(this, handleKeyDown);
         app.onKeyUp(this, handleKeyUp);
 
-    } //bindAsComponent
+    }
 
 /// Internal
 
@@ -45,7 +45,7 @@ class FieldsTabFocus extends Entity implements Component {
             rightShiftPressed = true;
         }
 
-    } //handleKeyDown
+    }
 
     function handleKeyUp(key:Key) {
 
@@ -57,7 +57,7 @@ class FieldsTabFocus extends Entity implements Component {
             rightShiftPressed = false;
         }
 
-    } //handleKeyDown
+    }
 
     function focusNextField() {
 
@@ -77,7 +77,7 @@ class FieldsTabFocus extends Entity implements Component {
         }
         findingWithFocused = null;
 
-    } //focusNextField
+    }
 
     function focusPrevField() {
 
@@ -97,7 +97,7 @@ class FieldsTabFocus extends Entity implements Component {
         }
         findingWithFocused = null;
 
-    } //focusPrevField
+    }
 
     function findNextField(walkVisual:Visual):FieldView {
 
@@ -128,7 +128,7 @@ class FieldsTabFocus extends Entity implements Component {
 
         return null;
 
-    } //findNextField
+    }
 
     function findPrevField(walkVisual:Visual):FieldView {
 
@@ -161,7 +161,7 @@ class FieldsTabFocus extends Entity implements Component {
 
         return null;
 
-    } //findPrevField
+    }
 
     function hasIndirectParent(visual:Visual, targetParent:Visual):Bool {
 
@@ -174,6 +174,6 @@ class FieldsTabFocus extends Entity implements Component {
 
         return false;
 
-    } //hasIndirectParent
+    }
 
-} //FieldsTabFocus
+}

@@ -17,7 +17,7 @@ class SectionTitleView extends TextView implements Observable {
 
         autorun(updateStyle);
 
-    } //new
+    }
 
 /// Internal
 
@@ -27,6 +27,6 @@ class SectionTitleView extends TextView implements Observable {
         borderBottomColor = theme.mediumBorderColor;
         font = theme.boldFont10;
 
-    } //updateStyle
+    }
 
-} //SectionTitleView
+}

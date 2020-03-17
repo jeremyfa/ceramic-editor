@@ -12,6 +12,6 @@ class PopupView extends View {
 
         // TODO
 
-    } //new
+    }
 
-} //PopupView
+}

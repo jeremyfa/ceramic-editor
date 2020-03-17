@@ -11,4 +11,4 @@ class EditableType {
 
     public var fields:Array<EditableTypeField>;
 
-} //EditableType
+}

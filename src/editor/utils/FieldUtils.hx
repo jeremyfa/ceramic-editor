@@ -34,7 +34,7 @@ class FieldUtils {
 
         return null;
 
-    } //createEditableField
+    }
 
     public static function createEditableSliderField(options:Dynamic, item:EditorEntityData, name:String):SliderFieldView {
 
@@ -92,7 +92,7 @@ class FieldUtils {
 
         return fieldView;
 
-    } //createEditableSliderField
+    }
 
     public static function createEditableTextField(options:Dynamic, item:EditorEntityData, name:String, type:String) {
 
@@ -151,7 +151,7 @@ class FieldUtils {
         });
         return fieldView;
 
-    } //createEditableTextField
+    }
 
     public static function createEditableBooleanField(options:Dynamic, item:EditorEntityData, name:String) {
 
@@ -170,7 +170,7 @@ class FieldUtils {
         });
         return fieldView;
 
-    } //createEditableBooleanField
+    }
 
     public static function createEditableColorField(options:Dynamic, item:EditorEntityData, name:String) {
 
@@ -189,6 +189,6 @@ class FieldUtils {
         });
         return fieldView;
 
-    } //createEditableColorField
+    }
 
-} //FieldUtils
+}

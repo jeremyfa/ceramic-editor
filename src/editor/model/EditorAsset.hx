@@ -6,6 +6,6 @@ class EditorAsset extends Model {
 
         super();
 
-    } //new
+    }
 
-} //EditorAsset
+}

@@ -41,7 +41,7 @@ class TabsView extends LinearLayout implements Observable {
         autorun(updateTabViews);
         autorun(updateStyle);
 
-    } //new
+    }
 
 /// Layout
 
@@ -69,7 +69,7 @@ class TabsView extends LinearLayout implements Observable {
             afterBorder.active = false;
         }
 
-    } //layout
+    }
 
 /// Manage tab views
 
@@ -95,7 +95,7 @@ class TabsView extends LinearLayout implements Observable {
             unusedTabView.destroy();
         }
 
-    } //updateTabViews
+    }
 
     function initTabView(index:Int, tabView:TabView) {
 
@@ -112,7 +112,7 @@ class TabsView extends LinearLayout implements Observable {
             selectedIndex = index;
         });
 
-    } //initTabView
+    }
 
 /// Internal
 
@@ -123,6 +123,6 @@ class TabsView extends LinearLayout implements Observable {
         beforeBorder.color = theme.darkBorderColor;
         afterBorder.color = theme.darkBorderColor;
 
-    } //updateStyle
+    }
 
-} //TabsView
+}

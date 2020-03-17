@@ -33,7 +33,7 @@ class DoubleClick extends Entity implements Component {
 
         entity.onBlur(this, handleBlur);
 
-    } //bindAsComponent
+    }
 
 /// Internal
 
@@ -55,7 +55,7 @@ class DoubleClick extends Entity implements Component {
 
         screen.onPointerMove(this, handlePointerMove);
 
-    } //handlePointerDown
+    }
 
     function handlePointerUp(info:TouchInfo) {
 
@@ -71,7 +71,7 @@ class DoubleClick extends Entity implements Component {
             firstClickTime = -1;
         }
 
-    } //handlePointerUp
+    }
 
     function handlePointerMove(info:TouchInfo) {
 
@@ -81,12 +81,12 @@ class DoubleClick extends Entity implements Component {
             firstClickTime = -1;
         }
 
-    } //handlePointerMove
+    }
 
     function handleBlur() {
         
         pressed = false;
 
-    } //handleBlur
+    }
 
-} //DoubleClick
+}

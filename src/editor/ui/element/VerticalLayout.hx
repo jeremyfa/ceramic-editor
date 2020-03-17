@@ -14,12 +14,12 @@ class VerticalLayout extends LinearLayout {
 
         autorun(updateStyle);
 
-    } //new
+    }
 
 /// Internal
 
     function updateStyle() {
 
-    } //updateStyle
+    }
 
-} //VerticalLayout
+}

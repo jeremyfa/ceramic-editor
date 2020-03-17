@@ -98,7 +98,7 @@ class ColorPickerHSBGradientView extends View {
         onPointerDown(this, handlePointerDown);
         onPointerUp(this, handlePointerUp);
 
-    } //new
+    }
 
     public function updateTintColor(?hue:Float) {
 
@@ -110,21 +110,21 @@ class ColorPickerHSBGradientView extends View {
         tintGradient.colors[1] = new AlphaColor(tintColor);
         tintGradient.colors[2] = new AlphaColor(tintColor);
 
-    } //updateTintColor
+    }
 
     public function savePointerPosition() {
 
         savedPointerX = colorPointer.x;
         savedPointerY = colorPointer.y;
 
-    } //savePointerPosition
+    }
 
     public function restorePointerPosition() {
 
         colorPointer.x = savedPointerX;
         colorPointer.y = savedPointerY;
 
-    } //restorePointerPosition
+    }
 
     public function getBrightnessFromPointer():Float {
 
@@ -136,7 +136,7 @@ class ColorPickerHSBGradientView extends View {
 
         return brightness;
 
-    } //getBrightnessFromPointer
+    }
 
     public function getSaturationFromPointer():Float {
 
@@ -148,7 +148,7 @@ class ColorPickerHSBGradientView extends View {
 
         return saturation;
 
-    } //getSaturationFromPointer
+    }
 
     function updatePointerFromColor() {
 
@@ -184,7 +184,7 @@ class ColorPickerHSBGradientView extends View {
             colorPointer.borderColor = targetPointerColor;
         }
 
-    } //updatePointerFromColor
+    }
 
     override function layout() {
 
@@ -193,7 +193,7 @@ class ColorPickerHSBGradientView extends View {
 
         updatePointerFromColor();
 
-    } //layout
+    }
 
 /// Pointer events
 
@@ -205,13 +205,13 @@ class ColorPickerHSBGradientView extends View {
 
         movingPointer = true;
 
-    } //handlePointerDown
+    }
 
     function handlePointerMove(info:TouchInfo) {
 
         updateColorFromTouchInfo(info);
 
-    } //handlePointerMove
+    }
 
     function handlePointerUp(info:TouchInfo) {
 
@@ -221,7 +221,7 @@ class ColorPickerHSBGradientView extends View {
 
         movingPointer = false;
 
-    } //handlePointerUp
+    }
 
     function updateColorFromTouchInfo(info:TouchInfo) {
 
@@ -252,6 +252,6 @@ class ColorPickerHSBGradientView extends View {
             Math.max(0, Math.min(height, _point.y))
         );
 
-    } //updateColorFromTouchInfo
+    }
 
-} //ColorPickerHSBGradientView
+}

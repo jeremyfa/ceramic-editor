@@ -14,7 +14,7 @@ class EditorEntityData extends Model {
 
         super();
 
-    } //new
+    }
 
     public function toFragmentItem():FragmentItem {
         
@@ -25,7 +25,7 @@ class EditorEntityData extends Model {
             props: props.toFragmentProps()
         };
 
-    } //toFragmentItem
+    }
 
     public function entityComponentsToDynamic():Dynamic<String> {
 
@@ -37,6 +37,6 @@ class EditorEntityData extends Model {
 
         return result;
 
-    } //entityComponentsToDynamic
+    }
 
-} //EditorEntityData
+}

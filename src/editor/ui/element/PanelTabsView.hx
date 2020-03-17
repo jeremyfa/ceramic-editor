@@ -24,7 +24,7 @@ class PanelTabsView extends LinearLayout implements Observable {
         autorun(updateContentView);
         autorun(updateStyle);
 
-    } //new
+    }
 
 /// Layout
 
@@ -32,7 +32,7 @@ class PanelTabsView extends LinearLayout implements Observable {
 
         super.layout();
 
-    } //layout
+    }
 
 /// Internal
 
@@ -45,7 +45,7 @@ class PanelTabsView extends LinearLayout implements Observable {
             contentView.viewSize(fill(), fill());
         }
 
-    } //updateContentView
+    }
 
     function updateStyle() {
 
@@ -54,6 +54,6 @@ class PanelTabsView extends LinearLayout implements Observable {
         borderLeftSize = 1;
         borderLeftColor = theme.darkBorderColor;
 
-    } //updateStyle
+    }
 
-} //PanelTabsView
+}

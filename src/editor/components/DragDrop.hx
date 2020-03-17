@@ -45,13 +45,13 @@ class DragDrop extends Entity implements Component implements Observable {
         this.getDraggingVisual = getDraggingVisual;
         this.releaseDraggingVisual = releaseDraggingVisual;
 
-    } //new
+    }
 
     function bindAsComponent() {
 
         entity.onPointerDown(this, handlePointerDown);
 
-    } //bindAsComponent
+    }
 
     public function drag(?pointerX:Float, ?pointerY:Float) {
 
@@ -92,7 +92,7 @@ class DragDrop extends Entity implements Component implements Observable {
         dragX = 0;
         dragY = 0;
 
-    } //drag
+    }
 
     function handlePointerDown(info:TouchInfo) {
 
@@ -104,7 +104,7 @@ class DragDrop extends Entity implements Component implements Observable {
         screen.onPointerMove(this, handlePointerMove);
         entity.oncePointerUp(this, handlePointerUp);
 
-    } //handlePointerDown
+    }
 
     function handlePointerMove(info:TouchInfo) {
 
@@ -118,7 +118,7 @@ class DragDrop extends Entity implements Component implements Observable {
             }
         }
 
-    } //handlePointerMove
+    }
 
     function handlePointerUp(info:TouchInfo) {
 
@@ -128,7 +128,7 @@ class DragDrop extends Entity implements Component implements Observable {
             dragging = false;
         }
 
-    } //handlePointerUp
+    }
 
     function updateDrag(pointerX:Float, pointerY:Float) {
 
@@ -153,6 +153,6 @@ class DragDrop extends Entity implements Component implements Observable {
             dragY = pointerY - pointerDragStartY;
         }
 
-    } //updateDrag
+    }
 
-} //DragDrop
+}

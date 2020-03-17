@@ -41,13 +41,13 @@ class Editable extends Entity implements Component {
         super();
         //this.fragment = fragment;
 
-    } //new
+    }
 
     function bindAsComponent() {
 
         entity.onPointerDown(this, handleDown);
 
-    } //bindAsComponent
+    }
 
     override function destroy() {
 
@@ -60,7 +60,7 @@ class Editable extends Entity implements Component {
             highlight.destroy();
         }
 
-    } //destroy
+    }
 
 /// Public API
 
@@ -123,7 +123,7 @@ class Editable extends Entity implements Component {
         */
         emitSelect(entity);
 
-    } //select
+    }
 
     function update(_) {
 
@@ -131,7 +131,7 @@ class Editable extends Entity implements Component {
 
         highlight.wrapVisual(entity);
 
-    } //update
+    }
 
 /// Clicked
 
@@ -190,7 +190,7 @@ class Editable extends Entity implements Component {
 
         });
 
-    } //handleDown
+    }
 
 /// Corner clicked
 
@@ -695,18 +695,18 @@ class Editable extends Entity implements Component {
 
         });
 
-    } //handleCornerDown
+    }
 
     function handleCornerOver(corner:HighlightCorner, info:TouchInfo) {
 
         //
 
-    } //handleCornerOver
+    }
 
     function handleCornerOut(corner:HighlightCorner, info:TouchInfo) {
 
         //
 
-    } //handleCornerOut
+    }
 
-} //Editable
+}

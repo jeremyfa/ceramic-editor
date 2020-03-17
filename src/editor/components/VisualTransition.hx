@@ -126,13 +126,13 @@ class VisualTransition extends Entity implements Component {
         this.easing = easing;
         this.duration = duration;
 
-    } //new
+    }
 
     function bindAsComponent() {
 
         isView = Std.is(entity, View);
 
-    } //bindAsComponent
+    }
 
 /// Public API
 
@@ -172,14 +172,14 @@ class VisualTransition extends Entity implements Component {
             _currentTransform.cleanChangedState();
             _currentTransform.changedDirty = false;
             return _currentTransform;
-        } //copyCurrentTransform
+        }
 
         inline function copyTargetTransform(transform) {
             _targetTransform.setToTransform(transform);
             _targetTransform.cleanChangedState();
             _targetTransform.changedDirty = false;
             return _targetTransform;
-        } //copyTargetTransform
+        }
 
         var asView:View = isView ? cast entity : null;
 
@@ -430,7 +430,7 @@ class VisualTransition extends Entity implements Component {
             }
         }
 
-    } //run
+    }
 
     override function destroy() {
 
@@ -451,7 +451,7 @@ class VisualTransition extends Entity implements Component {
 
         super.destroy();
 
-    } //destroy
+    }
 
 /// Static extension
 
@@ -465,9 +465,9 @@ class VisualTransition extends Entity implements Component {
 
         transitionComponent.run(easing, duration, cb);
 
-    } //transition
+    }
 
-} //VisualTransition
+}
 
 abstract VisualTransitionProperties(VisualTransition) from VisualTransition {
 
@@ -677,4 +677,4 @@ abstract VisualTransitionProperties(VisualTransition) from VisualTransition {
         inline set_viewHeight(viewHeight);
     }
 
-} //VisualTransitionProperties
+}

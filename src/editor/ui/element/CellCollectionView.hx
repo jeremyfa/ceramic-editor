@@ -28,31 +28,31 @@ class CellCollectionView extends CollectionView implements Observable {
 
         app.onUpdate(this, updateScrollingFlag);
 
-    } //new
+    }
 
     function updateScrollingFlag(delta:Float) {
 
         scrolling = (scroller.status != IDLE);
         
-    } //updateScrollingFlag
+    }
 
     override function layout() {
 
         super.layout();
 
-    } //layout
+    }
 
     function updateBorderDepth() {
 
         borderDepth = contentView.children.length + 10;
 
-    } //updateBorderDepth
+    }
 
     function updateStyle() {
 
         contentView.borderTopColor = theme.mediumBorderColor;
         borderBottomColor = theme.mediumBorderColor;
         
-    } //updateStyle
+    }
 
-} //CellCollectionView
+}

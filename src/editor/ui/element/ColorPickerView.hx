@@ -45,7 +45,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         return null;
 
-    } //draggingColorPreview
+    }
 
     @compute function draggingColorDropIndex():Int {
 
@@ -88,7 +88,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         return bestIndex;
 
-    } //draggingColorDropIndex
+    }
 
     @observe var paletteHeight:Float = 0;
 
@@ -239,13 +239,13 @@ class ColorPickerView extends LayersLayout implements Observable {
             log.debug('dropIndex: $draggingColorDropIndex');
         });
 
-    } //new
+    }
 
     function getColorPickerWidth() {
 
         return GRADIENT_SIZE + FIELD_ROW_WIDTH * 2 + SPECTRUM_WIDTH + PADDING * 5;
 
-    } //getAvailableWidth
+    }
 
     function updateSize() {
 
@@ -267,7 +267,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         reobserve();
 
-    } //updateSize
+    }
 
     function initRGBFields(offsetX:Float) {
 
@@ -306,7 +306,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         return rgbBlueField.offsetY + FIELD_ADVANCE + PADDING;
 
-    } //initRGBFields
+    }
 
     function initHSLFields(offsetX:Float) {
 
@@ -371,7 +371,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         return hslLightnessField.offsetY + FIELD_ADVANCE + PADDING;
 
-    } //initHSLFields
+    }
 
     function initPaletteUI(offsetX:Float, offsetY:Float) {
 
@@ -411,7 +411,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         add(paletteAddButton);
 
 
-    } //initPaletteUI
+    }
 
 /// Layout
 
@@ -419,7 +419,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         super.layout();
 
-    } //layout
+    }
 
 /// Public API
 
@@ -444,7 +444,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             updatingColor--;
         });
 
-    } //setColorFromRGB
+    }
 
     public function setColorFromHSL(h:Float, s:Float, l:Float) {
 
@@ -465,7 +465,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             updatingColor--;
         });
 
-    } //setColorFromHSL
+    }
 
     public function setColorFromHSB(h:Float, s:Float, b:Float) {
 
@@ -486,7 +486,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             updatingColor--;
         });
 
-    } //setColorFromHSB
+    }
 
     public function setColorFromHSLuv(h:Float, s:Float, l:Float) {
 
@@ -509,7 +509,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             updatingColor--;
         });
 
-    } //setColorFromHSLuv
+    }
 
 /// Internal
 
@@ -519,7 +519,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         rgbGreenField.setTextValue(rgbGreenField, '' + colorValue.green);
         rgbBlueField.setTextValue(rgbBlueField, '' + colorValue.blue);
 
-    } //updateRGBFields
+    }
 
     function updateHSLFields(colorValue:Color, ?hue:Float, ?saturation:Float, ?lightness:Float) {
 
@@ -548,7 +548,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         hslSaturationField.setTextValue(hslSaturationField, '' + (Math.round(saturation * 1000) / 10));
         hslLightnessField.setTextValue(hslLightnessField, '' + (Math.round(lightness * 1000) / 10));
 
-    } //updateHSLFields
+    }
 
     function updateGradientAndSpectrum(colorValue:Color, ?hue:Float, ?saturation:Float, ?lightness:Float) {
 
@@ -593,7 +593,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             hsluvSpectrumView.lightness = _tuple[2];
         }
 
-    } //updateGradientAndSpectrum
+    }
 
     function setColorFromRGBFields() {
 
@@ -615,7 +615,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             Std.parseInt(rgbBlueField.textValue)
         );
 
-    } //setColorFromRGBFields
+    }
 
     function setColorFromHSLFieldHue() {
 
@@ -654,7 +654,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             hslFieldsLocked--;
         });
 
-    } //setColorFromHSLFieldHue
+    }
 
     function setColorFromHSLFieldSaturation() {
 
@@ -691,7 +691,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             hslFieldsLocked--;
         });
 
-    } //setColorFromHSLFieldSaturation
+    }
 
     function setColorFromHSLFieldLightness() {
 
@@ -730,7 +730,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             hslFieldsLocked--;
         });
 
-    } //setColorFromHSLFieldLightness
+    }
 
     /*
     function setColorFromHSLFields() {
@@ -744,7 +744,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             Std.parseFloat(hslLightnessField.textValue) * 0.01
         );
 
-    } //setColorFromHSLFields
+    }
     */
 
     function createTextField(?applyValue:Void->Void, minValue:Int = 0, maxValue:Int = 100) {
@@ -778,7 +778,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         return fieldView;
 
-    } //createTextField
+    }
 
     function updateStyle() {
 
@@ -791,20 +791,20 @@ class ColorPickerView extends LayersLayout implements Observable {
         hslLabel.textColor = theme.lightTextColor;
         hslLabel.font = theme.mediumFont10;
 
-    } //updateStyle
+    }
 
     function saveColor() {
 
         model.project.addPaletteColor(colorValue);
 
-    } //saveColor
+    }
 
     function switchColorMode() {
 
         this.hsluv = !this.hsluv;
         setColorFromRGB(colorValue.red, colorValue.green, colorValue.blue);
 
-    } //switchColorMode
+    }
 
     function updateColorPreviews() {
 
@@ -885,7 +885,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         reobserve();
 
-    } //updateColorPreviews
+    }
 
     function updateFromColorDrop() {
 
@@ -897,7 +897,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         if (draggingColorPreview != null)
             lastDraggingColorPreview = draggingColorPreview;
 
-    } //updateFromColorDrop
+    }
 
     function createColorPreview():ColorPickerPaletteColorView {
 
@@ -909,7 +909,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         return colorPreview;
 
-    } //createColorPreview
+    }
 
     function handlePaletteColorClick(colorPreview:ColorPickerPaletteColorView) {
 
@@ -921,7 +921,7 @@ class ColorPickerView extends LayersLayout implements Observable {
             colorValue.blue
         );
 
-    } //handlePaletteColorClick
+    }
 
     function handlePaletteColorDrop(colorPreview:ColorPickerPaletteColorView) {
 
@@ -929,7 +929,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         model.project.movePaletteColor(lastDraggingColorDragIndex, lastDraggingColorDropIndex);
 
-    } //handlePaletteColorDrop
+    }
 
     function handlePaletteColorLongPress(colorPreview:ColorPickerPaletteColorView, info:TouchInfo) {
 
@@ -938,6 +938,6 @@ class ColorPickerView extends LayersLayout implements Observable {
         if (index != -1)
             model.project.removePaletteColor(index);
 
-    } //handlePaletteColorLongPress
+    }
 
-} //ColorPickerView
+}

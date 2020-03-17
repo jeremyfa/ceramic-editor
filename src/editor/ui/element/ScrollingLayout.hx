@@ -27,7 +27,7 @@ class ScrollingLayout<T:View> extends ScrollView {
         scroller.dragEnabled = false;
         #end
 
-    } //new
+    }
 
     override function layout() {
 
@@ -46,6 +46,6 @@ class ScrollingLayout<T:View> extends ScrollView {
 
         scroller.scrollToBounds();
 
-    } //layout
+    }
 
-} //ScrollingLayout
+}

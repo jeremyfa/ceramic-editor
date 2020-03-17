@@ -51,7 +51,7 @@ class ProjectData extends Model {
         }
         this.fragments = cast fragments;*/
 
-    } //new
+    }
 
 /// Public API
 
@@ -64,7 +64,7 @@ class ProjectData extends Model {
 
         return null;
 
-    } //fragmentById
+    }
 
     public function addFragment():EditorFragmentData {
 
@@ -88,7 +88,7 @@ class ProjectData extends Model {
 
         return fragment;
 
-    } //addFragment
+    }
 
     public function addPaletteColor(color:Color, forbidDuplicate:Bool = true):Void {
 
@@ -109,7 +109,7 @@ class ProjectData extends Model {
         paletteColors.push(color);
         this.paletteColors = cast paletteColors;
 
-    } //addPaletteColor
+    }
 
     public function movePaletteColor(fromIndex:Int, toIndex:Int):Void {
 
@@ -122,7 +122,7 @@ class ProjectData extends Model {
 
         this.paletteColors = cast paletteColors;
 
-    } //movePaletteColor
+    }
 
     public function removePaletteColor(index:Int):Void {
 
@@ -132,6 +132,6 @@ class ProjectData extends Model {
 
         this.paletteColors = cast paletteColors;
 
-    } //removePaletteColor
+    }
 
-} //ProjectData
+}

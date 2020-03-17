@@ -9,7 +9,7 @@ class EditorProps extends Model {
         
         super();
 
-    } //new
+    }
 
     public function toFragmentProps():Dynamic<Dynamic> {
         
@@ -22,7 +22,7 @@ class EditorProps extends Model {
 
         return result;
 
-    } //toFragmentProps
+    }
 
     public function set(key:String, value:Dynamic):Void {
 
@@ -36,7 +36,7 @@ class EditorProps extends Model {
             invalidateValues();
         }
 
-    } //set
+    }
 
     public function get(key:String):Dynamic {
 
@@ -47,13 +47,13 @@ class EditorProps extends Model {
             return null;
         }
 
-    } //get
+    }
 
     public function exists(key:String):Bool {
 
         return values.exists(key);
 
-    } //exists
+    }
 
     public function remove(key:String):Void {
 
@@ -62,6 +62,6 @@ class EditorProps extends Model {
             values.remove(key);
         }
 
-    } //remove
+    }
 
-} //EditorProps
+}

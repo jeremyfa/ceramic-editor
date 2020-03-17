@@ -138,7 +138,7 @@ class EditorFragmentData extends Model {
 
         autorun(updateFragmentDataWithoutItems);
 
-    } //new
+    }
 
 /// Internal
 
@@ -157,7 +157,7 @@ class EditorFragmentData extends Model {
         invalidateFragmentDataWithoutItems();
         reobserve();
 
-    } //updateFragmentDataWithoutItems
+    }
 
 /// Public API
 
@@ -170,7 +170,7 @@ class EditorFragmentData extends Model {
 
         return null;
 
-    } //visualById
+    }
 
     public function addVisual(entityClass:String):EditorVisualData {
 
@@ -218,7 +218,7 @@ class EditorFragmentData extends Model {
 
         return visual;
 
-    } //addVisual
+    }
 
     public function get(entityId:String):EditorEntityData {
 
@@ -230,6 +230,6 @@ class EditorFragmentData extends Model {
 
         return null;
 
-    } //get
+    }
 
-} //EditorFragmentData
+}

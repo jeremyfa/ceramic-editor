@@ -45,7 +45,7 @@ class ColorPickerHSBSpectrumView extends View implements Observable {
         onPointerDown(this, handlePointerDown);
         onPointerUp(this, handlePointerUp);
 
-    } //new
+    }
 
     function initSpectrum() {
 
@@ -88,7 +88,7 @@ class ColorPickerHSBSpectrumView extends View implements Observable {
 
         }
 
-    } //initSpectrum
+    }
 
     function updatePointerFromHue() {
 
@@ -97,7 +97,7 @@ class ColorPickerHSBSpectrumView extends View implements Observable {
             height * (1.0 - (hue / 360))
         );
 
-    } //updatePointerFromHue
+    }
 
     override function layout() {
 
@@ -110,13 +110,13 @@ class ColorPickerHSBSpectrumView extends View implements Observable {
 
         updatePointerFromHue();
 
-    } //layout
+    }
 
     function colorWithHue(hue:Float):AlphaColor {
 
         return new AlphaColor(Color.fromHSB(hue, 1, 1));
 
-    } //colorWithHue
+    }
 
 /// Pointer events
     
@@ -126,7 +126,7 @@ class ColorPickerHSBSpectrumView extends View implements Observable {
         
         updateHueFromTouchInfo(info);
 
-    } //handlePointerDown
+    }
 
     function handlePointerMove(info:TouchInfo) {
 
@@ -134,7 +134,7 @@ class ColorPickerHSBSpectrumView extends View implements Observable {
 
         updateHueFromTouchInfo(info);
 
-    } //handlePointerMove
+    }
 
     function handlePointerUp(info:TouchInfo) {
 
@@ -144,7 +144,7 @@ class ColorPickerHSBSpectrumView extends View implements Observable {
 
         updateHueFromTouchInfo(info);
 
-    } //handlePointerUp
+    }
 
     function updateHueFromTouchInfo(info:TouchInfo) {
 
@@ -156,6 +156,6 @@ class ColorPickerHSBSpectrumView extends View implements Observable {
 
         emitUpdateHueFromPointer();
 
-    } //updateColorFromTouchInfo
+    }
 
-} //ColorPickerHSBSpectrumView
+}

@@ -6,6 +6,6 @@ class EditorVisualData extends EditorEntityData {
 
         super();
 
-    } //new
+    }
 
-} //EditorEntityData
+}

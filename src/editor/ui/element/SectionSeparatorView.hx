@@ -15,7 +15,7 @@ class SectionSeparatorView extends View {
 
         autorun(updateStyle);
 
-    } //new
+    }
 
 /// Internal
 
@@ -23,6 +23,6 @@ class SectionSeparatorView extends View {
 
         borderColor = theme.mediumBorderColor;
 
-    } //updateStyle
+    }
 
-} //SectionTitleView
+}

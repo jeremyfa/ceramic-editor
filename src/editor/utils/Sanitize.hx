@@ -21,12 +21,12 @@ class Sanitize {
 
         return 0;
 
-    } //stringToFloat
+    }
 
     public static function stringToColor(textValue:String):Color {
 
         return Color.fromString(textValue);
 
-    } //stringToColor
+    }
 
-} //Sanitize
+}

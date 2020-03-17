@@ -18,7 +18,7 @@ class FormLayout extends LinearLayout {
 
         autorun(updateStyle);
 
-    } //new
+    }
 
 /// Internal
 
@@ -26,6 +26,6 @@ class FormLayout extends LinearLayout {
 
         color = theme.mediumBackgroundColor;
 
-    } //updateStyle
+    }
 
-} //FormLayout
+}

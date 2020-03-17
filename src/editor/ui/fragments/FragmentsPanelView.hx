@@ -18,7 +18,7 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         initSelectedFragmentSection();
         initAddFragmentButton();
 
-    } //new
+    }
 
     function initAllFragmentsSection() {
 
@@ -62,7 +62,7 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             collectionView.active = active;
         });
 
-    } //initAllFragmentsSection
+    }
 
     function initSelectedFragmentSection() {
 
@@ -131,7 +131,7 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             form.active = active;
         });
 
-    } //initSelectedFragmentSection
+    }
 
     function initAddFragmentButton() {
 
@@ -152,6 +152,6 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             separator.active = model.project.fragments.length > 0;
         });
 
-    } //initAddFragmentButton
+    }
 
-} //FragmentsPanelView
+}

@@ -4,14 +4,14 @@ class VisualCellDataSource implements CollectionViewDataSource {
 
     public function new() {
 
-    } //new
+    }
 
     /** Get the number of elements. */
     public function collectionViewSize(collectionView:CollectionView):Int {
 
         return model.project.selectedFragment != null ? model.project.selectedFragment.visuals.length : 0;
 
-    } //collectionViewSize
+    }
 
     /** Get the item frame at the requested index. */
     public function collectionViewItemFrameAtIndex(collectionView:CollectionView, itemIndex:Int, frame:CollectionViewItemFrame):Void {
@@ -19,7 +19,7 @@ class VisualCellDataSource implements CollectionViewDataSource {
         frame.width = collectionView.width;
         frame.height = 39;
 
-    } //collectionViewItemFrameAtIndex
+    }
 
     /** Called when a view is not used anymore at the given index. Lets the dataSource
         do some cleanup if needed, before this view gets reused (if it can).
@@ -28,7 +28,7 @@ class VisualCellDataSource implements CollectionViewDataSource {
 
         return true;
 
-    } //collectionViewReleaseItemAtIndex
+    }
 
     /** Get a view at the given index. If `reusableView` is provided,
         it can be recycled as the new item to avoid creating new instances. */
@@ -48,7 +48,7 @@ class VisualCellDataSource implements CollectionViewDataSource {
 
         return cell;
 
-    } //collectionViewItemAtIndex
+    }
 
     function bindCellView(cell:CellView):Void {
 
@@ -70,6 +70,6 @@ class VisualCellDataSource implements CollectionViewDataSource {
 
         });
 
-    } //bindCellView
+    }
 
-} //CollectionViewDataSource
+}

@@ -16,7 +16,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
         initSelectedVisualSection();
         initAddVisualButton();
 
-    } //new
+    }
 
     function initAllVisualsSection() {
 
@@ -60,7 +60,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
             collectionView.active = active;
         });
 
-    } //initAllFragmentsSection
+    }
 
     function initSelectedVisualSection() {
 
@@ -90,7 +90,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
             }
         });
 
-    } //initSelectedVisualSection
+    }
 
     function fillVisualForm(form:FormLayout, visual:EditorVisualData) {
 
@@ -113,7 +113,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
             }
         }
 
-    } //fillVisualForm
+    }
 
     function initAddVisualButton() {
 
@@ -134,6 +134,6 @@ class VisualsPanelView extends LinearLayout implements Observable {
             separator.active = model.project.selectedFragment != null && model.project.selectedFragment.visuals.length > 0;
         });
 
-    } //initAddVisualButton
+    }
 
-} //VisualsPanelView
+}

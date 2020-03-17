@@ -20,7 +20,7 @@ class FieldManager extends Entity implements Observable {
             updateFocusedField();
         });
 
-    } //new
+    }
 
     public function updateFocusedField():Void {
 
@@ -49,6 +49,6 @@ class FieldManager extends Entity implements Observable {
 
         reobserve();
 
-    } //updateFocusedField
+    }
 
-} //FieldManager
+}

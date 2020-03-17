@@ -12,19 +12,19 @@ class TextFieldView extends FieldView implements Observable {
         this.textValue = textValue;
         setValue(field, textValue);
 
-    } //setTextValue
+    }
 
     public dynamic function setValue(field:TextFieldView, value:Dynamic):Void {
 
         // Default implementation does nothing
 
-    } //setValue
+    }
 
     public dynamic function setEmptyValue(field:TextFieldView):Void {
 
         // Default implementation does nothing
 
-    } //setEmptyValue
+    }
 
 /// Overrides
 
@@ -34,7 +34,7 @@ class TextFieldView extends FieldView implements Observable {
             setEmptyValue(this);
         }
 
-    } //didLostFocus
+    }
 
 /// Public properties
 
@@ -85,7 +85,7 @@ class TextFieldView extends FieldView implements Observable {
         autorun(updateStyle);
         autorun(updateFromTextValue);
 
-    } //new
+    }
 
 /// Public API
 
@@ -95,7 +95,7 @@ class TextFieldView extends FieldView implements Observable {
 
         editText.focus();
         
-    } //focus
+    }
 
 /// Layout
 
@@ -103,7 +103,7 @@ class TextFieldView extends FieldView implements Observable {
 
         super.layout();
         
-    } //layout
+    }
 
 /// Internal
 
@@ -114,13 +114,13 @@ class TextFieldView extends FieldView implements Observable {
 
         textView.content = displayedText;
 
-    } //updateFromTextValue
+    }
 
     function updateFromEditText(text:String) {
 
         setTextValue(this, text);
 
-    } //updateFromEditText
+    }
 
     function handleStopEditText() {
 
@@ -129,7 +129,7 @@ class TextFieldView extends FieldView implements Observable {
             screen.focusedVisual = null;
         }
 
-    } //handleStopEditText
+    }
 
     function updateStyle() {
 
@@ -163,9 +163,9 @@ class TextFieldView extends FieldView implements Observable {
             }
         }
 
-    } //updateStyle
+    }
 
-} //TextFieldView
+}
 
 enum TextFieldKind {
 
@@ -173,4 +173,4 @@ enum TextFieldKind {
 
     NUMERIC;
 
-} //TextFieldKind
+}

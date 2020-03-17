@@ -14,12 +14,12 @@ class HorizontalLayout extends LinearLayout {
 
         autorun(updateStyle);
 
-    } //new
+    }
 
 /// Internal
 
     function updateStyle() {
 
-    } //updateStyle
+    }
 
-} //HorizontalLayout
+}

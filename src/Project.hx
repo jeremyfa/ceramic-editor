@@ -11,6 +11,8 @@ import ceramic.InitSettings;
 import ceramic.Shortcuts.*;
 import editor.Editor;
 
+import editor.ui.form.SelectFieldView;
+
 /** Minimal project to bootstrap default ceramic editor canvas. */
 class Project {
 
@@ -21,12 +23,14 @@ class Project {
         #end
 
         #if editor
-        new Editor(settings);
+        new Editor(settings, {
+            assets: '/Users/jeremyfa/Developer/clicktube/assets'
+        });
         #end
 
         app.onceReady(null, ready);
 
-    } //new
+    }
 
     function ready() {
 
@@ -71,6 +75,6 @@ class Project {
         mesh.pos(screen.width * 0.5, screen.height * 0.5);
         */
 
-    } //ready
+    }
 
-} //Project
+}
