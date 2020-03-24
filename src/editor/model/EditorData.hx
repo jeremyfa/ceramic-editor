@@ -10,6 +10,14 @@ class EditorData extends Model {
 
     @observe public var images:ImmutableArray<String> = [];
 
+    @observe public var texts:ImmutableArray<String> = [];
+
+    @observe public var sounds:ImmutableArray<String> = [];
+
+    @observe public var fonts:ImmutableArray<String> = [];
+
+    @observe public var databases:ImmutableArray<String> = [];
+
     public function new() {
 
         super();

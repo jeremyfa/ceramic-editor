@@ -7,6 +7,8 @@ import haxe.DynamicAccess;
 import editor.model.*;
 import editor.ui.*;
 
+import ceramic.SpinePlugin;
+
 /** Turns the app into an editor. */
 class Editor extends Entity {
 
@@ -131,6 +133,7 @@ class Editor extends Entity {
 
     public function computeLists(model:EditorData) {
 
+        // Images
         var images:Array<String> = [];
         if (contentAssets.runtimeAssets != null) {
             for (item in contentAssets.runtimeAssets.getNames('image')) {
@@ -147,12 +150,90 @@ class Editor extends Entity {
         }
         model.images = cast images;
 
-        /*
-        texts: runtimeAssets.getNames('text'),
-        sounds: runtimeAssets.getNames('sound'),
-        fonts: runtimeAssets.getNames('font'),
-        databases: runtimeAssets.getNames('database'),
-        */
+        // Texts
+        var texts:Array<String> = [];
+        if (contentAssets.runtimeAssets != null) {
+            for (item in contentAssets.runtimeAssets.getNames('text')) {
+                texts.push(item.name);
+            }
+        }
+        else {
+            for (key in Reflect.fields(Texts)) {
+                var value:Dynamic = Reflect.field(Texts, key);
+                if (value != null && Std.is(value, String) && value.startsWith('text:')) {
+                    texts.push(value.substring(5));
+                }
+            }
+        }
+        model.texts = cast texts;
+
+        // Sounds
+        var sounds:Array<String> = [];
+        if (contentAssets.runtimeAssets != null) {
+            for (item in contentAssets.runtimeAssets.getNames('sound')) {
+                sounds.push(item.name);
+            }
+        }
+        else {
+            for (key in Reflect.fields(Sounds)) {
+                var value:Dynamic = Reflect.field(Sounds, key);
+                if (value != null && Std.is(value, String) && value.startsWith('sound:')) {
+                    sounds.push(value.substring(6));
+                }
+            }
+        }
+        model.sounds = cast sounds;
+
+        // Fonts
+        var fonts:Array<String> = [];
+        if (contentAssets.runtimeAssets != null) {
+            for (item in contentAssets.runtimeAssets.getNames('font')) {
+                fonts.push(item.name);
+            }
+        }
+        else {
+            for (key in Reflect.fields(Fonts)) {
+                var value:Dynamic = Reflect.field(Fonts, key);
+                if (value != null && Std.is(value, String) && value.startsWith('font:')) {
+                    fonts.push(value.substring(5));
+                }
+            }
+        }
+        model.fonts = cast fonts;
+
+        // Databases
+        var databases:Array<String> = [];
+        if (contentAssets.runtimeAssets != null) {
+            for (item in contentAssets.runtimeAssets.getNames('database')) {
+                databases.push(item.name);
+            }
+        }
+        else {
+            for (key in Reflect.fields(Databases)) {
+                var value:Dynamic = Reflect.field(Databases, key);
+                if (value != null && Std.is(value, String) && value.startsWith('database:')) {
+                    databases.push(value.substring(9));
+                }
+            }
+        }
+        model.databases = cast databases;
+
+        // Custom assets
+        var customAssets:DynamicAccess<Dynamic> = {};
+        for (kindName in @:privateAccess Assets.customAssetKinds.keys()) {
+            var assetKind = @:privateAccess Assets.customAssetKinds.get(kindName);
+            if (contentAssets.runtimeAssets != null) {
+                var info = contentAssets.runtimeAssets.getNames(
+                    assetKind.kind,
+                    assetKind.extensions,
+                    assetKind.dir
+                );
+                customAssets.set(assetKind.kind, {
+                    lists: info,
+                    types: assetKind.types
+                });
+            }
+        }
 
     }
 
@@ -253,7 +334,12 @@ class Editor extends Entity {
 
         model = new EditorData();
         computeLists(model);
+
         trace('images: ' + model.images);
+        trace('texts: ' + model.texts);
+        trace('sounds: ' + model.sounds);
+        trace('fonts: ' + model.fonts);
+        trace('databases: ' + model.databases);
 
         app.flushImmediate();
 

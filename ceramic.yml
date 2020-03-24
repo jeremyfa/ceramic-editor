@@ -5,6 +5,11 @@ app:
     author: My Company
     version: '1.0'
 
+    libs:
+        - spine-hx
+    
+    spine: true
+
     defines:
         - editor
         - ceramic_use_electron
