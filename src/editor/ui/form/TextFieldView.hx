@@ -47,9 +47,11 @@ class TextFieldView extends FieldView implements Observable {
 
     @observe public var textValue:String = '';
 
-    @observe public var inBubble:Bool = false;
+    @observe public var overlayStyle:Bool = false;
 
     @observe public var textAlign:TextAlign = LEFT;
+
+    @observe public var disabled:Bool = false;
 
 /// Internal properties
 
@@ -85,6 +87,11 @@ class TextFieldView extends FieldView implements Observable {
         autorun(updateStyle);
         autorun(updateFromTextValue);
 
+        onDisabledChange(this, (disabled, _) -> {
+            trace('disabled: ' + disabled);
+            editText.disabled = disabled;
+        });
+
     }
 
 /// Public API
@@ -93,7 +100,8 @@ class TextFieldView extends FieldView implements Observable {
 
         super.focus();
 
-        editText.focus();
+        if (!disabled)
+            editText.focus();
         
     }
 
@@ -133,7 +141,7 @@ class TextFieldView extends FieldView implements Observable {
 
     function updateStyle() {
 
-        if (inBubble) {
+        if (overlayStyle) {
             color = Color.WHITE;
             alpha = 0.1;
         
@@ -155,11 +163,18 @@ class TextFieldView extends FieldView implements Observable {
             textView.textColor = theme.fieldTextColor;
             textView.font = theme.mediumFont10;
     
-            if (focused) {
-                borderColor = theme.focusedFieldBorderColor;
+            if (disabled) {
+                borderColor = theme.mediumBorderColor;
+                textView.text.alpha = 0.5;
             }
             else {
-                borderColor = theme.lightBorderColor;
+                textView.text.alpha = 1;
+                if (focused) {
+                    borderColor = theme.focusedFieldBorderColor;
+                }
+                else {
+                    borderColor = theme.lightBorderColor;
+                }
             }
         }
 

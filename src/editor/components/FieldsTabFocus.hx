@@ -1,5 +1,7 @@
 package editor.components;
 
+using ceramic.Extensions;
+
 /** Update field focus from tab key events */
 class FieldsTabFocus extends Entity implements Component {
 
@@ -112,7 +114,10 @@ class FieldsTabFocus extends Entity implements Component {
                 }
                 else {
                     var inside = findNextField(child);
-                    if (inside != null) return inside;
+                    if (inside != null) {
+                        if (!inside.getProperty('disabled'))
+                            return inside;
+                    }
                 }
             }
             else {
@@ -121,7 +126,10 @@ class FieldsTabFocus extends Entity implements Component {
                 }
                 else {
                     var inside = findNextField(child);
-                    if (inside != null) return inside;
+                    if (inside != null) {
+                        if (!inside.getProperty('disabled'))
+                            return inside;
+                    }
                 }
             }
         }
@@ -144,7 +152,10 @@ class FieldsTabFocus extends Entity implements Component {
                 }
                 else {
                     var inside = findPrevField(child);
-                    if (inside != null) return inside;
+                    if (inside != null) {
+                        if (!inside.getProperty('disabled'))
+                            return inside;
+                    }
                 }
             }
             else {
@@ -153,7 +164,10 @@ class FieldsTabFocus extends Entity implements Component {
                 }
                 else {
                     var inside = findPrevField(child);
-                    if (inside != null) return inside;
+                    if (inside != null) {
+                        if (!inside.getProperty('disabled'))
+                            return inside;
+                    }
                 }
             }
             i--;

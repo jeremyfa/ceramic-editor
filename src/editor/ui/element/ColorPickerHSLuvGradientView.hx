@@ -40,13 +40,17 @@ class ColorPickerHSLuvGradientView extends View {
 
     var savedPointerY:Float = 0;
 
+    var filter:Filter;
+
     public var lightness(default, null):Float = 0.5;
 
     public function new() {
 
         super();
         
-        clip = this;
+        filter = new Filter();
+        add(filter);
+        
         transparent = true;
 
         colorPointer = new Border();
@@ -55,12 +59,12 @@ class ColorPickerHSLuvGradientView extends View {
         colorPointer.depth = 3;
         colorPointer.borderPosition = INSIDE;
         colorPointer.borderSize = 1;
-        add(colorPointer);
+        filter.content.add(colorPointer);
 
         gradient = new Mesh();
         gradient.colorMapping = VERTICES;
         gradient.depth = 1;
-        add(gradient);
+        filter.content.add(gradient);
 
         var vertices = gradient.vertices;
         var indices = gradient.indices;
@@ -224,6 +228,8 @@ class ColorPickerHSLuvGradientView extends View {
     }
 
     override function layout() {
+
+        filter.size(width, height);
 
         gradient.scale(
             width / PRECISION_X,

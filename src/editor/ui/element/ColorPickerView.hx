@@ -377,7 +377,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         colorModeButton = new Button();
         colorModeButton.content = 'Color mode';
-        colorModeButton.inBubble = true;
+        colorModeButton.overlayStyle = true;
         colorModeButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
         colorModeButton.offset(offsetX, offsetY);
         colorModeButton.onClick(this, switchColorMode);
@@ -386,7 +386,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         offsetY += BUTTON_ADVANCE + PADDING;
 
         paletteAddButton = new Button();
-        paletteAddButton.inBubble = true;
+        paletteAddButton.overlayStyle = true;
         paletteAddButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
         paletteAddButton.offset(offsetX, offsetY);
         paletteAddButton.onClick(this, () -> {
@@ -751,7 +751,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         var fieldView = new TextFieldView(NUMERIC);
         fieldView.textAlign = CENTER;
-        fieldView.inBubble = true;
+        fieldView.overlayStyle = true;
         fieldView.textValue = '0';
         fieldView.viewWidth = FIELD_ROW_WIDTH;
 
@@ -782,8 +782,8 @@ class ColorPickerView extends LayersLayout implements Observable {
 
     function updateStyle() {
 
-        color = theme.bubbleBackgroundColor;
-        alpha = theme.bubbleBackgroundAlpha;
+        color = theme.overlayBackgroundColor;
+        alpha = theme.overlayBackgroundAlpha;
 
         rgbLabel.textColor = theme.lightTextColor;
         rgbLabel.font = theme.mediumFont10;

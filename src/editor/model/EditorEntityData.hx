@@ -14,6 +14,14 @@ class EditorEntityData extends Model {
 
         super();
 
+        props.entityData = this;
+
+    }
+
+    override function didDeserialize() {
+
+        props.entityData = this;
+
     }
 
     public function toFragmentItem():FragmentItem {

@@ -51,9 +51,6 @@ class Editable extends Entity implements Component {
 
     override function destroy() {
 
-        Utils.printStackTrace();
-        log.error('DESTROY EDITABLE COMPONENT');
-
         super.destroy();
 
         if (activeEditable == this && highlight != null) {

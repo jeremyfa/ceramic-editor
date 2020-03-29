@@ -38,24 +38,29 @@ class ColorPickerHSBGradientView extends View {
 
     var savedPointerY:Float = 0;
 
+    var filter:Filter;
+
     public var hue(default, null):Float = 0;
 
     public function new() {
 
         super();
         
-        clip = this;
+        filter = new Filter();
+        add(filter);
+
         transparent = true;
 
         tintGradient = new Mesh();
+        tintGradient.clip = editor.view;
         tintGradient.colorMapping = VERTICES;
         tintGradient.depth = 1;
-        add(tintGradient);
+        filter.content.add(tintGradient);
 
         blackGradient = new Mesh();
         blackGradient.colorMapping = VERTICES;
         blackGradient.depth = 2;
-        add(blackGradient);
+        filter.content.add(blackGradient);
 
         colorPointer = new Border();
         colorPointer.anchor(0.5, 0.5);
@@ -63,7 +68,7 @@ class ColorPickerHSBGradientView extends View {
         colorPointer.depth = 3;
         colorPointer.borderPosition = INSIDE;
         colorPointer.borderSize = 1;
-        add(colorPointer);
+        filter.content.add(colorPointer);
 
         blackGradient.vertices = [
             0, 0,
@@ -187,6 +192,8 @@ class ColorPickerHSBGradientView extends View {
     }
 
     override function layout() {
+
+        filter.size(width, height);
 
         blackGradient.scale(width, height);
         tintGradient.scale(width, height);

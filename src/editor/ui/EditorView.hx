@@ -6,6 +6,8 @@ class EditorView extends View implements Observable {
 
     @observe public var panelTabsView:PanelTabsView;
 
+    @observe var prevSelectedFragment:EditorFragmentData = null;
+
     var fragmentArea:Quad = null;
 
     var editedFragment:Fragment = null;
@@ -112,6 +114,11 @@ class EditorView extends View implements Observable {
         else {
             var copied = Reflect.copy(selectedFragment.fragmentDataWithoutItems);
             unobserve();
+            if (prevSelectedFragment != selectedFragment) {
+                trace('this is a new fragment being loaded, reset items');
+                copied.items = [];
+                prevSelectedFragment = selectedFragment;
+            }
             trace('update fragment data');
             editedFragment.active = true;
             editedFragment.fragmentData = copied;
@@ -123,6 +130,7 @@ class EditorView extends View implements Observable {
     function updateFragmentItems() {
 
         var selectedFragment = model.project.selectedFragment;
+        var prevSelectedFragment = this.prevSelectedFragment; // Used for invalidation
 
         var toCheck = [];
 
@@ -181,7 +189,7 @@ class EditorView extends View implements Observable {
     function handleEditableItemUpdate(fragmentItem:FragmentItem) {
 
         #if editor_debug_item_update
-        log.debug('ITEM UPDATED: ${fragmentItem.id}');
+        log.debug('ITEM UPDATED: ${fragmentItem.id} w=${fragmentItem.props.width} h=${fragmentItem.props.height}');
         #end
 
         var item = model.project.selectedFragment.get(fragmentItem.id);

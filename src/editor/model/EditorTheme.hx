@@ -62,9 +62,9 @@ class EditorTheme extends Model {
 
 /// Bubble
 
-    @observe public var bubbleBackgroundColor:Color = 0x111111;
+    @observe public var overlayBackgroundColor:Color = 0x111111;
 
-    @observe public var bubbleBackgroundAlpha:Float = 0.9;
+    @observe public var overlayBackgroundAlpha:Float = 0.9;
 
 /// Button
 

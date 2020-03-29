@@ -17,7 +17,7 @@ class Button extends TextView implements Observable {
         return click.pressed;
     }
 
-    @observe public var inBubble:Bool = false;
+    @observe public var overlayStyle:Bool = false;
 
     @observe public var enabled:Bool = true;
 
@@ -66,7 +66,7 @@ class Button extends TextView implements Observable {
         font = theme.mediumFont10;
         textColor = theme.lightTextColor;
 
-        if (inBubble) {
+        if (overlayStyle) {
             borderSize = 1;
             borderPosition = INSIDE;
         }
@@ -77,7 +77,7 @@ class Button extends TextView implements Observable {
             border.alpha = 1;
         }
 
-        if (inBubble) {
+        if (overlayStyle) {
             borderColor = theme.lightTextColor;
             if (enabled) {
                 border.alpha = 0.2;

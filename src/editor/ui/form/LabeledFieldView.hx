@@ -1,12 +1,21 @@
 package editor.ui.form;
 
+using ceramic.Extensions;
+
 class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
 
 /// Public properties
 
     @observe public var label:String = '';
 
-    public var field(default,null):T;
+    @observe public var disabled:Bool = false;
+
+    public var field(default,set):T;
+    function set_field(field:T):T {
+        this.field = field;
+        invalidateDisabled();
+        return field;
+    }
 
 /// Internal properties
 
@@ -32,6 +41,7 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
         field.viewSize(fill(), auto());
         add(field);
 
+        autorun(updateDisabled);
         autorun(updateLabel);
         autorun(updateStyle);
 
@@ -60,9 +70,37 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
 
     }
 
+    function updateDisabled() {
+
+        var field = this.field;
+        unobserve();
+
+        if (field != null) {
+            var disabled = false;
+            reobserve();
+            if (field.getProperty('disabled')) {
+                disabled = true;
+            }
+            unobserve();
+            this.disabled = disabled;
+        }
+        else {
+            this.disabled = false;
+        }
+
+        reobserve();
+
+    }
+
     function updateStyle() {
 
-        labelText.textColor = theme.lightTextColor;
+        if (disabled) {
+            labelText.textColor = theme.mediumTextColor;
+        }
+        else {
+            labelText.textColor = theme.lightTextColor;
+        }
+
         labelText.font = theme.mediumFont10;
 
     }

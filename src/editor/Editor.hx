@@ -1,7 +1,7 @@
 package editor;
 
 import haxe.rtti.Meta;
-import haxe.rtti.Rtti;
+//import haxe.rtti.Rtti;
 import haxe.DynamicAccess;
 
 import editor.model.*;
@@ -75,6 +75,9 @@ class Editor extends Entity {
         trace('LOAD EDITOR ASSETS & INIT CONTENT ASSETS');
 
         contentAssets = new Assets();
+        contentAssets.defaultImageOptions = {
+            premultiplyAlpha: true
+        };
         if (options != null) {
             if (options.assets != null) {
                 if (options.assets != settings.assetsPath) {
@@ -88,6 +91,8 @@ class Editor extends Entity {
         
         editorAssets.add(Fonts.ROBOTO_MEDIUM_20);
         editorAssets.add(Fonts.ROBOTO_BOLD_20);
+
+        editorAssets.add(Images.ROBOTO_BOLD_10); // TODO remove
 
         editorAssets.onceComplete(this, assetsLoaded);
 
@@ -246,12 +251,10 @@ class Editor extends Entity {
 
             var classPath = Reflect.field(app.info.editable, key);
 
-            trace('EDITABLE $classPath');
-
             var clazz = Type.resolveClass(classPath);
             var usedFields = new Map();
             var fields:Array<EditableTypeField> = [];
-            var rtti = Utils.getRtti(clazz);
+            var fieldInfo = FieldInfo.editableFieldInfo(classPath);
 
             var isVisual = (classPath == 'ceramic.Visual');
             if (!isVisual) {
@@ -272,59 +275,69 @@ class Editor extends Entity {
                 isVisual: true // TODO handle non-visuals
             });
 
-            while (clazz != null) {
-
-                // Process every field marked `@editable`
-                var meta = Meta.getFields(clazz);
-                for (field in rtti.fields) {
-                    var k = field.name;
-                    var v = Reflect.field(meta, k);
-
-                    if (v != null && Reflect.hasField(v, 'editable') && !usedFields.exists(k)) {
-                        usedFields.set(k, true);
-
-                        var fieldMeta:Dynamic = {};
-                        var origMeta = v;
-                        for (mk in Reflect.fields(origMeta)) {
-                            Reflect.setField(fieldMeta, mk, Reflect.field(origMeta, mk));
-                        }
-
-                        var fieldType = FieldInfo.stringFromCType(field.type);
-
-                        var editable:Array<Dynamic> = fieldMeta.editable;
-                        if (editable == null) {
-                            fieldMeta.editable = [{}];
-                            editable = fieldMeta.editable;
-                        }
-                        else if (editable.length == 0) editable.push({});
-
-                        if (!BASIC_TYPES.exists(fieldType)) {
-
-                            // Enum?
-                            var resolvedEnum = Type.resolveEnum(fieldType);
-                            if (resolvedEnum != null && editable[0].options == null) {
-                                var rawOptions = Type.getEnumConstructs(resolvedEnum);
-                                var options = [];
-                                for (item in rawOptions) {
-                                    options.push(item.toLowerCase());
-                                }
-                                editable[0].options = options;
-                            }
-                        }
-
-                        fields.push({
-                            name: k,
-                            meta: fieldMeta,
-                            type: fieldType
-                        });
-                    }
-                }
-
-                // Process parent class fields as well
-                clazz = Type.getSuperClass(clazz);
-                if (clazz != null) rtti = Utils.getRtti(clazz);
-
+            var fieldKeys = [];
+            for (k in fieldInfo.keys()) {
+                fieldKeys.push(k);
             }
+            fieldKeys.sort((a, b) -> {
+                var indexA = fieldInfo.get(a).index;
+                var indexB = fieldInfo.get(b).index;
+                if (indexA > indexB)
+                    return 1;
+                else if (indexA < indexB)
+                    return -1;
+                else
+                    return 0;
+            });
+
+            for (k in fieldKeys) {
+
+                var v = fieldInfo.get(k);
+                var meta = v.meta;
+                var type = v.type;
+
+                if (v != null && Reflect.hasField(meta, 'editable') && !usedFields.exists(k)) {
+                    usedFields.set(k, true);
+
+                    var fieldMeta:Dynamic = {};
+                    var origMeta = meta;
+                    for (mk in Reflect.fields(origMeta)) {
+                        Reflect.setField(fieldMeta, mk, Reflect.field(origMeta, mk));
+                    }
+
+                    var fieldType = type;
+
+                    var editable:Array<Dynamic> = fieldMeta.editable;
+                    if (editable == null) {
+                        fieldMeta.editable = [{}];
+                        editable = fieldMeta.editable;
+                    }
+                    else if (editable.length == 0) editable.push({});
+
+                    if (!BASIC_TYPES.exists(fieldType)) {
+
+                        // Enum?
+                        var resolvedEnum = Type.resolveEnum(fieldType);
+                        if (resolvedEnum != null && editable[0].options == null) {
+                            var rawOptions = Type.getEnumConstructs(resolvedEnum);
+                            var options = [];
+                            for (item in rawOptions) {
+                                options.push(item.toLowerCase());
+                            }
+                            editable[0].options = options;
+                        }
+                    }
+
+                    fields.push({
+                        name: k,
+                        meta: fieldMeta,
+                        type: fieldType
+                    });
+                }
+            }
+
+            // Process parent class fields as well
+            clazz = Type.getSuperClass(clazz);
 
         }
 

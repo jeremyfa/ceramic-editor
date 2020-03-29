@@ -6,6 +6,8 @@ class SelectListView extends View implements CollectionViewDataSource implements
 
     @observe public var list:ImmutableArray<String> = [];
 
+    @observe public var nullValueText:String = null;
+
     var collectionView:CellCollectionView;
 
     public function new() {
@@ -16,14 +18,30 @@ class SelectListView extends View implements CollectionViewDataSource implements
         collectionView.viewSize(fill(), fill());
         collectionView.transparent = true;
         collectionView.dataSource = this;
+        collectionView.overlayStyle = true;
         add(collectionView);
 
         autorun(() -> {
             var size = list.length;
-            log.debug('list size: $size');
+            if (nullValueText != null) {
+                size++;
+            }
             unobserve();
             collectionView.reloadData();
         });
+
+        autorun(updateStyle);
+
+    }
+
+    public function scrollToValue(position:CollectionViewItemPosition) {
+
+        if (value == null || list == null) {
+            collectionView.scrollToItem(0, position);
+        }
+        else {
+            collectionView.scrollToItem(list.indexOf(value) + (nullValueText != null ? 1 : 0), position);
+        }
 
     }
 
@@ -40,7 +58,7 @@ class SelectListView extends View implements CollectionViewDataSource implements
     /** Get the number of elements. */
     public function collectionViewSize(collectionView:CollectionView):Int {
 
-        return list.length;
+        return list.length + (nullValueText != null ? 1 : 0);
 
     }
 
@@ -48,7 +66,7 @@ class SelectListView extends View implements CollectionViewDataSource implements
     public function collectionViewItemFrameAtIndex(collectionView:CollectionView, itemIndex:Int, frame:CollectionViewItemFrame):Void {
 
         frame.width = collectionView.width;
-        frame.height = 30;
+        frame.height = 26;
 
     }
 
@@ -72,6 +90,7 @@ class SelectListView extends View implements CollectionViewDataSource implements
         }
         else {
             cell = new CellView();
+            cell.overlayStyle = true;
             cell.itemIndex = itemIndex;
             cell.collectionView = cast collectionView;
             bindCellView(cell);
@@ -85,9 +104,15 @@ class SelectListView extends View implements CollectionViewDataSource implements
 
         cell.autorun(function() {
 
-            var value = list[cell.itemIndex];
+            var index = cell.itemIndex;
+            if (nullValueText != null) {
+                index--;
+            }
 
-            cell.title = value;
+            var value = index >= 0 ? list[index] : null;
+
+            cell.title = value != null ? value : nullValueText;
+            cell.displaysEmptyValue = value == null;
             cell.selected = (value == this.value);
 
         });
@@ -96,9 +121,23 @@ class SelectListView extends View implements CollectionViewDataSource implements
         cell.component('click', click);
         click.onClick(cell, function() {
 
-            this.value = list[cell.itemIndex];
+            var index = cell.itemIndex;
+            if (nullValueText != null) {
+                index--;
+            }
+
+            this.value = index >= 0 ? list[index] : null;
+
+            invalidateValue();
 
         });
+
+    }
+
+    function updateStyle() {
+
+        color = theme.overlayBackgroundColor;
+        alpha = theme.overlayBackgroundAlpha;
 
     }
 

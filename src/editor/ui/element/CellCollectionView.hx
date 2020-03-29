@@ -4,6 +4,8 @@ class CellCollectionView extends CollectionView implements Observable {
 
     @observe public var scrolling(default,null):Bool = false;
 
+    @observe public var overlayStyle:Bool = false;
+
     public function new() {
 
         super();
@@ -11,9 +13,7 @@ class CellCollectionView extends CollectionView implements Observable {
         viewSize(fill(), fill());
         transparent = true;
         contentView.transparent = true;
-        contentView.borderTopSize = 1;
         contentView.borderPosition = OUTSIDE;
-        borderBottomSize = 1;
         borderPosition = INSIDE;
         clip = this;
         scroller.allowPointerOutside = false;
@@ -50,8 +50,21 @@ class CellCollectionView extends CollectionView implements Observable {
 
     function updateStyle() {
 
+        if (overlayStyle) {
+            contentView.borderTopSize = 1;
+            borderBottomSize = 1;
+            borderTopSize = 1;
+            borderBottomColor = theme.lightBorderColor;
+        }
+        else {
+            contentView.borderTopSize = 1;
+            borderBottomSize = 1;
+            borderTopSize = 0;
+            borderBottomColor = theme.mediumBorderColor;
+        }
+
         contentView.borderTopColor = theme.mediumBorderColor;
-        borderBottomColor = theme.mediumBorderColor;
+        contentView.borderBottomColor = theme.mediumBorderColor;
         
     }
 

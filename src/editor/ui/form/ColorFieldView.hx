@@ -117,6 +117,19 @@ class ColorFieldView extends FieldView implements Observable {
             }
         });
 
+        // Some keyboard shortcuts
+        app.onKeyDown(this, key -> {
+            if (key.scanCode == ScanCode.ESCAPE) {
+                pickerVisible = false;
+            }
+            else if (focused && key.scanCode == ScanCode.ENTER) {
+                pickerVisible = true;
+            }
+            else if (focused && key.scanCode == ScanCode.SPACE) {
+                pickerVisible = !pickerVisible;
+            }
+        });
+
     }
 
 /// Layout
@@ -193,6 +206,9 @@ class ColorFieldView extends FieldView implements Observable {
             _point
         );
 
+        pickerContainer.clip = getScrollingLayout();
+        getScrollingLayout().id = 'scrollingLayout';
+
         editor.view.screenToVisual(_point.x, _point.y, _point);
         
         var x = _point.x;
@@ -209,7 +225,9 @@ class ColorFieldView extends FieldView implements Observable {
 
         if (pickerView != null) {
 
-            var editorMargin = 40;
+            // Margin between bubble right border and editor bounds
+            var editorMargin = 9;
+
             var previewMargin = 12;
 
             pickerView.autoComputeSizeIfNeeded(true);
@@ -229,10 +247,12 @@ class ColorFieldView extends FieldView implements Observable {
             if (pickerView.height <= availableHeightAfter) {
                 pickerView.y = colorPreview.height * 0.5 + previewMargin;
                 bubbleTriangle.pos(0, pickerView.y);
+                bubbleTriangle.rotation = 0;
             }
             else {
                 pickerView.y = -pickerView.height - colorPreview.height * 0.5 - previewMargin;
-                bubbleTriangle.pos(0, 0);
+                bubbleTriangle.pos(0, pickerView.y + pickerView.height);
+                bubbleTriangle.rotation = 180;
             }
         }
 
@@ -347,8 +367,8 @@ class ColorFieldView extends FieldView implements Observable {
                 bubbleTriangle = new Triangle();
                 bubbleTriangle.anchor(0.5, 1);
                 bubbleTriangle.autorun(() -> {
-                    bubbleTriangle.color = theme.bubbleBackgroundColor;
-                    bubbleTriangle.alpha = theme.bubbleBackgroundAlpha;
+                    bubbleTriangle.color = theme.overlayBackgroundColor;
+                    bubbleTriangle.alpha = theme.overlayBackgroundAlpha;
                 });
                 pickerContainer.add(bubbleTriangle);
     

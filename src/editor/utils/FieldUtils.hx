@@ -24,7 +24,7 @@ class FieldUtils {
         else if (type == 'ceramic.Texture') {
             return createEditableSelectField(options, item, name, () -> {
                 return editor.model.images;
-            });
+            }, 'no texture');
         }
         else if (type == 'ceramic.BitmapFont') {
             return createEditableSelectField(options, item, name, () -> {
@@ -156,6 +156,13 @@ class FieldUtils {
                 fieldView.textValue = '' + value;
             }
         });
+        if (name == 'width' || name == 'height') {
+            fieldView.autorun(function() {
+                var implicitSize = item.props.implicitSize;
+                unobserve();
+                fieldView.disabled = implicitSize;
+            });
+        }
         return fieldView;
 
     }
@@ -198,9 +205,10 @@ class FieldUtils {
 
     }
 
-    public static function createEditableSelectField(options:Dynamic, item:EditorEntityData, name:String, getter:Void->ImmutableArray<String>) {
+    public static function createEditableSelectField(options:Dynamic, item:EditorEntityData, name:String, getter:Void->ImmutableArray<String>, ?nullValueText:String) {
 
         var fieldView = new SelectFieldView();
+        fieldView.nullValueText = nullValueText;
         fieldView.setValue = function(field, value) {
             item.props.set(name, value);
         };

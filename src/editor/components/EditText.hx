@@ -24,6 +24,16 @@ class EditText extends Entity implements Component implements TextInputDelegate 
 
     public var multiline:Bool = false;
 
+    public var disabled(default, set):Bool = false;
+    function set_disabled(disabled:Bool):Bool {
+        if (disabled == this.disabled) return disabled;
+        this.disabled = disabled;
+        if (disabled) {
+            stopInput();
+        }
+        return disabled;
+    }
+
     /** Optional container on which pointer events are bound */
     public var container(default,set):Visual = null;
     function set_container(container:Visual):Visual {
@@ -167,6 +177,9 @@ class EditText extends Entity implements Component implements TextInputDelegate 
     }
 
     public function focus() {
+
+        if (disabled)
+            return;
 
         screen.focusedVisual = entity;
         if (!inputActive) {

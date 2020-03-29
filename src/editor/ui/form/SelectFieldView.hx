@@ -4,6 +4,8 @@ class SelectFieldView extends FieldView implements Observable {
 
     static var _point = new Point();
 
+    static final LIST_HEIGHT = 220;
+
 /// Hooks
 
     public dynamic function setValue(field:SelectFieldView, value:String):Void {
@@ -18,7 +20,11 @@ class SelectFieldView extends FieldView implements Observable {
 
     @observe public var list:ImmutableArray<String> = [];
 
+    @observe public var nullValueText:String = null;
+
 /// Internal properties
+
+    @observe var listVisible:Bool = false;
 
     var container:RowLayout;
 
@@ -30,7 +36,7 @@ class SelectFieldView extends FieldView implements Observable {
 
     var tip:Line;
 
-    var listVisible:Bool = true;
+    var listIsAbove:Bool = false;
 
     public function new() {
 
@@ -48,6 +54,8 @@ class SelectFieldView extends FieldView implements Observable {
         container.transparent = false;
         container.depth = 1;
         add(container);
+
+        container.onPointerDown(this, _ -> toggleListVisible());
 
         listContainer = new View();
         listContainer.transparent = true;
@@ -107,6 +115,10 @@ class SelectFieldView extends FieldView implements Observable {
             if (listView != null)
                 listView.list = list;
         });
+        onNullValueTextChange(listView, (nullValueText, _) -> {
+            if (listView != null)
+                listView.nullValueText = nullValueText;
+        });
 
         app.onUpdate(this, _ -> updateListVisibility());
         app.onPostUpdate(this, _ -> updateListPosition());
@@ -117,6 +129,46 @@ class SelectFieldView extends FieldView implements Observable {
             var scrollingLayout = getScrollingLayout();
             if (scrollingLayout != null) {
                 scrollingLayout.scroller.scrollTransform.onChange(this, updateListPosition);
+            }
+        });
+
+        // Some keyboard shortcuts
+        app.onKeyDown(this, key -> {
+            if (key.scanCode == ScanCode.ESCAPE) {
+                listVisible = false;
+            }
+            else if (focused && key.scanCode == ScanCode.DOWN) {
+                if (list != null) {
+                    if (value == null) {
+                        if (list.length > 0) {
+                            value = list[0];
+                        }
+                    }
+                    else if (list.indexOf(value) < list.length - 1) {
+                        value = list[list.indexOf(value) + 1];
+                    }
+                }
+            }
+            else if (focused && key.scanCode == ScanCode.UP) {
+                if (list != null) {
+                    if (list.indexOf(value) > 0) {
+                        value = list[list.indexOf(value) - 1];
+                    }
+                    else if (nullValueText != null) {
+                        value = null;
+                    }
+                }
+            }
+            else if (focused && key.scanCode == ScanCode.ENTER) {
+                listVisible = true;
+            }
+            else if (focused && key.scanCode == ScanCode.SPACE) {
+                listVisible = !listVisible;
+            }
+            else if (focused && key.scanCode == ScanCode.BACKSPACE) {
+                if (nullValueText != null) {
+                    this.value = null;
+                }
             }
         });
 
@@ -167,7 +219,7 @@ class SelectFieldView extends FieldView implements Observable {
 
             listView.size(
                 container.width,
-                200
+                LIST_HEIGHT
             );
         }
 
@@ -203,15 +255,22 @@ class SelectFieldView extends FieldView implements Observable {
     function updateFromValue() {
 
         var value = this.value;
+        var nullValueText = this.nullValueText;
 
         unobserve();
 
         if (value != null) {
-            textView.content = value;
+            var displayedValue = value.trim().replace("\n", ' ');
+            if (displayedValue.length > 20) {
+                displayedValue = displayedValue.substr(0, 20) + '...'; // TODO at textview level
+            }
+            textView.content = displayedValue;
         }
         else {
-            textView.content = '';
+            textView.content = nullValueText != null ? nullValueText : '';
         }
+
+        setValue(this, value);
 
         reobserve();
 
@@ -224,7 +283,7 @@ class SelectFieldView extends FieldView implements Observable {
         textView.font = theme.mediumFont10;
         if (value == null) {
             textView.textColor = theme.mediumTextColor;
-            textView.text.skewX = 10;
+            textView.text.skewX = 8;
         }
         else {
             textView.textColor = theme.fieldTextColor;
@@ -275,11 +334,23 @@ class SelectFieldView extends FieldView implements Observable {
         
         container.visualToScreen(
             0,
-            container.height,
+            0,
             _point
         );
-
         editor.view.screenToVisual(_point.x, _point.y, _point);
+
+        if (editor.view.height - _point.y <= LIST_HEIGHT) {
+            listIsAbove = true;
+            container.visualToScreen(
+                0,
+                container.height - LIST_HEIGHT,
+                _point
+            );
+            editor.view.screenToVisual(_point.x, _point.y, _point);
+        }
+        else {
+            listIsAbove = false;
+        }
         
         var x = _point.x;
         var y = _point.y;
@@ -312,13 +383,28 @@ class SelectFieldView extends FieldView implements Observable {
                 listView.depth = 10;
                 listView.value = this.value;
                 listView.list = this.list;
+                listView.nullValueText = this.nullValueText;
                 listContainer.add(listView);
 
                 // Update value from list view if a new value is selected
-                listView.onValueChange(this, (value, _) -> this.value = value);
+                listView.onValueChange(this, (value, _) -> {
+                    this.value = value;
+                    this.listVisible = false;
+                    focus();
+                });
     
                 listContainer.active = true;
                 updateListPosition();
+
+                listView.scrollToValue(listIsAbove ? END : START);
+                app.oncePostFlushImmediate(() -> {
+                    if (destroyed)
+                        return;
+                    listView.scrollToValue(listIsAbove ? END : START);
+                    app.onceUpdate(this, _ -> {
+                        listView.scrollToValue(listIsAbove ? END : START);
+                    });
+                });
             }
 
         }

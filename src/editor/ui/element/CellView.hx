@@ -1,7 +1,6 @@
 package editor.ui.element;
 
 using StringTools;
-using unifill.Unifill;
 
 class CellView extends LinearLayout implements Observable {
 
@@ -16,6 +15,10 @@ class CellView extends LinearLayout implements Observable {
     @observe public var itemIndex:Int = -1;
 
     @observe public var collectionView:CellCollectionView = null;
+
+    @observe public var overlayStyle:Bool = false;
+
+    @observe public var displaysEmptyValue:Bool = false;
 
 /// Internal
 
@@ -71,8 +74,8 @@ class CellView extends LinearLayout implements Observable {
         var title = this.title;
         if (title != null) {
             title = title.trim().replace("\n", ' ');
-            if (title.uLength() > 20) {
-                title = title.uSubstr(0, 20) + '...'; // TODO at textview level
+            if (title.length > 20) {
+                title = title.substr(0, 20) + '...'; // TODO at textview level
             }
             titleTextView.content = title;
             titleTextView.active = true;
@@ -101,12 +104,37 @@ class CellView extends LinearLayout implements Observable {
     function updateStyle() {
 
         if (selected) {
-            borderLeftColor = theme.selectionBorderColor;
-            borderLeftSize = 2;
-            color = theme.lightBackgroundColor;
+            if (overlayStyle) {
+                alpha = 0.125;
+                color = Color.WHITE;
+                transparent = false;
+                borderLeftSize = 1;
+                borderRightSize = 1;
+                borderLeftColor = theme.lightBorderColor;
+                borderRightColor = theme.lightBorderColor;
+            }
+            else {
+                alpha = 1;
+                borderLeftColor = theme.selectionBorderColor;
+                borderLeftSize = 2;
+                borderRightSize = 0;
+                color = theme.lightBackgroundColor;
+                transparent = false;
+            }
         }
         else {
-            borderLeftSize = 0;
+            alpha = 1;
+            transparent = overlayStyle;
+            if (overlayStyle) {
+                borderLeftSize = 1;
+                borderRightSize = 1;
+                borderLeftColor = theme.lightBorderColor;
+                borderRightColor = theme.lightBorderColor;
+            }
+            else {
+                borderLeftSize = 0;
+                borderRightSize = 0;
+            }
 
             if (collectionView == null || !collectionView.scrolling) {
                 if (hover) {
@@ -134,6 +162,15 @@ class CellView extends LinearLayout implements Observable {
         subTitleTextView.font = theme.mediumFont10;
 
         borderBottomColor = theme.mediumBorderColor;
+
+        if (overlayStyle && displaysEmptyValue) {
+            titleTextView.text.skewX = 8;
+            titleTextView.text.alpha = 0.8;
+        }
+        else {
+            titleTextView.text.skewX = 0;
+            titleTextView.text.alpha = 1;
+        }
 
     }
 

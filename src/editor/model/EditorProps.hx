@@ -5,6 +5,8 @@ class EditorProps extends Model {
 
     @serialize var values:Map<String,EditorValue> = new Map();
 
+    @observe public var entityData:EditorEntityData;
+
     public function new() {
         
         super();
@@ -14,8 +16,12 @@ class EditorProps extends Model {
     public function toFragmentProps():Dynamic<Dynamic> {
         
         var result:Dynamic<Dynamic> = {};
+        var implicitSize = this.implicitSize;
 
         for (key in values.keys()) {
+            if (implicitSize && (key == 'width' || key == 'height'))
+                continue;
+
             var value = get(key);
             Reflect.setField(result, key, value);
         }
@@ -61,6 +67,32 @@ class EditorProps extends Model {
             values.get(key).value = null;
             values.remove(key);
         }
+
+    }
+
+    @compute public function implicitSize():Bool {
+
+        if (entityData == null)
+            return false;
+
+        var editableType = editor.getEditableType(entityData.entityClass);
+
+        if (editableType.meta != null && editableType.meta.editable != null && Std.is(editableType.meta.editable, Array)) {
+            var editableMeta:Array<Dynamic> = editableType.meta.editable;
+            if (editableMeta.length > 0) {
+                if (editableMeta[0].implicitSize) {
+                    return true;
+                }
+                else if (editableMeta[0].implicitSizeUnlessNull != null) {
+                    var field:String = editableMeta[0].implicitSizeUnlessNull;
+                    if (get(field) != null) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
 
     }
 
