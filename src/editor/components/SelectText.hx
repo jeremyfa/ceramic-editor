@@ -1,7 +1,6 @@
 package editor.components;
 
 using ceramic.Extensions;
-using unifill.Unifill;
 using StringTools;
 
 class SelectText extends Entity implements Component implements Observable {
@@ -494,26 +493,26 @@ class SelectText extends Entity implements Component implements Observable {
         var index = indexFromScreenPosition(screen.pointerX, screen.pointerY);
 
         var text = entity.content;
-        var len = text.uLength();
+        var len = text.length;
 
         var start = index;
         var c:String = null;
         var didSelectBefore = false;
         while (start > 0) {
-            c = text.uCharAt(start - 1);
+            c = text.charAt(start - 1);
             if (c.trim() == '') break;
             didSelectBefore = true;
             start--;
         }
 
         var end = didSelectBefore ? index : index + 1;
-        c = text.uCharAt(index);
+        c = text.charAt(index);
         if (c == null || c.trim() == '') {
             // Nothing to do
         }
         else {
             while (end < len) {
-                c = text.uCharAt(end);
+                c = text.charAt(end);
                 if (c.trim() == '') break;
                 end++;
             }
@@ -536,7 +535,7 @@ class SelectText extends Entity implements Component implements Observable {
         keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_C)], function() {
             // CMD/CTRL + C
             if (screen.focusedVisual != entity || selectionEnd - selectionStart <= 0) return;
-            var selectedText = entity.content.uSubstring(selectionStart, selectionEnd);
+            var selectedText = entity.content.substring(selectionStart, selectionEnd);
             app.backend.clipboard.setText(selectedText);
         });
 

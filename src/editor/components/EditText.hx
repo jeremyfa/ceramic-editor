@@ -1,7 +1,6 @@
 package editor.components;
 
 using ceramic.Extensions;
-using unifill.Unifill;
 using StringTools;
 
 class EditText extends Entity implements Component implements TextInputDelegate {
@@ -186,7 +185,7 @@ class EditText extends Entity implements Component implements TextInputDelegate 
             app.onceImmediate(function() {
                 // This way of calling will ensure any previous text input
                 // can be stopped before we start this new one
-                startInput(0, entity.content.uLength());
+                startInput(0, entity.content.length);
             });
         }
 
@@ -311,8 +310,8 @@ class EditText extends Entity implements Component implements TextInputDelegate 
             if (pasteText == null) pasteText = '';
             if (!multiline) pasteText = pasteText.replace("\n", ' ');
             pasteText.replace("\r", '');
-            var newText = entity.content.uSubstring(0, selectText.selectionStart) + pasteText + entity.content.uSubstring(selectText.selectionEnd);
-            selectText.selectionStart += pasteText.uLength();
+            var newText = entity.content.substring(0, selectText.selectionStart) + pasteText + entity.content.substring(selectText.selectionEnd);
+            selectText.selectionStart += pasteText.length;
             selectText.selectionEnd = selectText.selectionStart;
 
             // Update text content
@@ -323,10 +322,10 @@ class EditText extends Entity implements Component implements TextInputDelegate 
         keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_X)], function() {
             // CMD/CTRL + X
             if (screen.focusedVisual != entity || selectText.selectionEnd - selectText.selectionStart <= 0) return;
-            var selectedText = entity.content.uSubstring(selectText.selectionStart, selectText.selectionEnd);
+            var selectedText = entity.content.substring(selectText.selectionStart, selectText.selectionEnd);
             app.backend.clipboard.setText(selectedText);
 
-            var newText = entity.content.uSubstring(0, selectText.selectionStart) + entity.content.uSubstring(selectText.selectionEnd);
+            var newText = entity.content.substring(0, selectText.selectionStart) + entity.content.substring(selectText.selectionEnd);
             selectText.selectionEnd = selectText.selectionStart;
 
             // Update text content
