@@ -1,5 +1,7 @@
 package editor.ui.visuals;
 
+import editor.utils.TextUtils;
+
 class VisualsPanelView extends LinearLayout implements Observable {
 
 /// Internal properties
@@ -101,15 +103,77 @@ class VisualsPanelView extends LinearLayout implements Observable {
             return;
         }
 
-        for (i in 0...editableType.fields.length) {
-            var field = editableType.fields[i];
+        var usedGroups:Map<String,Bool> = new Map();
+
+        inline function createFieldView(field:EditableTypeField) {
+
+            var editableMeta:Dynamic = field.meta.editable != null ? field.meta.editable[0] : null;
 
             var fieldView = FieldUtils.createEditableField(editableType, field, visual);
             if (fieldView != null) {
                 
                 var item = new LabeledFieldView(fieldView);
-                item.label = field.name;
-                form.add(item);
+                if (editableMeta.label != null) {
+                    item.label = editableMeta.label;
+                }
+                else {
+                    item.label = TextUtils.toFieldLabel(field.name);
+                }
+
+                return item;
+            }
+
+            return null;
+
+        }
+
+        inline function createFieldGroupView(group:String, fields:Array<EditableTypeField>) {
+
+            var fieldViews = [];
+
+            for (field in fields) {
+                var item = createFieldView(field);
+                if (item != null) {
+                    fieldViews.push(item);
+                }
+            }
+
+            var item = new LabeledFieldGroupView(fieldViews);
+            item.label = group;
+            
+            return item;
+
+        }
+
+        for (i in 0...editableType.fields.length) {
+            var field = editableType.fields[i];
+            var editableMeta:Dynamic = field.meta.editable != null ? field.meta.editable[0] : null;
+            var group = editableMeta != null ? editableMeta.group : null;
+
+            if (group != null) {
+                if (usedGroups.exists(group))
+                    continue;
+                usedGroups.set(group, true);
+
+                var fieldsInGroup = [];
+                for (j in 0...editableType.fields.length) {
+                    var fieldInGroup = editableType.fields[j];
+                    var fieldEditableMeta:Dynamic = fieldInGroup.meta.editable != null ? fieldInGroup.meta.editable[0] : null;
+                    if (fieldEditableMeta != null && fieldEditableMeta.group == group) {
+                        fieldsInGroup.push(fieldInGroup);
+                    }
+                }
+                var item = createFieldGroupView(group, fieldsInGroup);
+                if (item != null)
+                    form.add(item);
+            }
+            else {
+                var item = createFieldView(field);
+                if (item != null) {
+                    //item.paddingLeft = 4;
+                    //item.paddingRight = 4;
+                    form.add(item);
+                }
             }
         }
 

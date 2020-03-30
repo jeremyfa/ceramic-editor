@@ -355,6 +355,27 @@ class SelectFieldView extends FieldView implements Observable {
         var x = _point.x;
         var y = _point.y;
 
+        // Clip if needed
+        if (listVisible) {
+            var scrollingLayout = getScrollingLayout();
+            if (scrollingLayout != null) {
+                scrollingLayout.screenToVisual(0, 0, _point);
+                editor.view.screenToVisual(_point.x, _point.y, _point);
+                if (y + _point.y < 0) {
+                    listContainer.clip = scrollingLayout;
+                }
+                else {
+                    listContainer.clip = null;
+                }
+            }
+            else {
+                listContainer.clip = null;
+            }
+        }
+        else {
+            listContainer.clip = null;
+        }
+
         if (x != listContainer.x || y != listContainer.y)
             listContainer.layoutDirty = true;
     
@@ -379,7 +400,6 @@ class SelectFieldView extends FieldView implements Observable {
 
             if (listView == null) {
                 listView = new SelectListView();
-                listView.color = Color.BLACK;
                 listView.depth = 10;
                 listView.value = this.value;
                 listView.list = this.list;

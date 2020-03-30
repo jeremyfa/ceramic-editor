@@ -206,13 +206,31 @@ class ColorFieldView extends FieldView implements Observable {
             _point
         );
 
-        pickerContainer.clip = getScrollingLayout();
-        getScrollingLayout().id = 'scrollingLayout';
-
         editor.view.screenToVisual(_point.x, _point.y, _point);
         
         var x = _point.x;
         var y = _point.y;
+
+        // Clip if needed
+        if (pickerView != null) {
+            var scrollingLayout = getScrollingLayout();
+            if (scrollingLayout != null) {
+                scrollingLayout.screenToVisual(0, 0, _point);
+                editor.view.screenToVisual(_point.x, _point.y, _point);
+                if (y + _point.y < 0) {
+                    pickerContainer.clip = scrollingLayout;
+                }
+                else {
+                    pickerContainer.clip = null;
+                }
+            }
+            else {
+                pickerContainer.clip = null;
+            }
+        }
+        else {
+            pickerContainer.clip = null;
+        }
 
         if (x != pickerContainer.x || y != pickerContainer.y)
             pickerContainer.layoutDirty = true;

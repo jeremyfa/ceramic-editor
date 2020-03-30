@@ -16,7 +16,7 @@ class CellView extends LinearLayout implements Observable {
 
     @observe public var collectionView:CellCollectionView = null;
 
-    @observe public var overlayStyle:Bool = false;
+    @observe public var inputStyle:Bool = false;
 
     @observe public var displaysEmptyValue:Bool = false;
 
@@ -38,7 +38,6 @@ class CellView extends LinearLayout implements Observable {
 
         direction = VERTICAL;
         align = CENTER;
-        padding(0, 8);
         borderBottomSize = 1;
         itemSpacing = 1;
         borderPosition = INSIDE;
@@ -103,38 +102,32 @@ class CellView extends LinearLayout implements Observable {
 
     function updateStyle() {
 
+        if (inputStyle) {
+            padding(0, 6);
+        }
+        else {
+            padding(0, 8);
+        }
+
         if (selected) {
-            if (overlayStyle) {
-                alpha = 0.125;
-                color = Color.WHITE;
-                transparent = false;
-                borderLeftSize = 1;
-                borderRightSize = 1;
-                borderLeftColor = theme.lightBorderColor;
-                borderRightColor = theme.lightBorderColor;
+            color = theme.lightBackgroundColor;
+            transparent = false;
+            alpha = 1;
+            if (inputStyle) {
+                borderLeftSize = 0;
+                borderRightSize = 0;
             }
             else {
-                alpha = 1;
                 borderLeftColor = theme.selectionBorderColor;
                 borderLeftSize = 2;
                 borderRightSize = 0;
-                color = theme.lightBackgroundColor;
-                transparent = false;
             }
         }
         else {
             alpha = 1;
-            transparent = overlayStyle;
-            if (overlayStyle) {
-                borderLeftSize = 1;
-                borderRightSize = 1;
-                borderLeftColor = theme.lightBorderColor;
-                borderRightColor = theme.lightBorderColor;
-            }
-            else {
-                borderLeftSize = 0;
-                borderRightSize = 0;
-            }
+            transparent = false;
+            borderLeftSize = 0;
+            borderRightSize = 0;
 
             if (collectionView == null || !collectionView.scrolling) {
                 if (hover) {
@@ -142,7 +135,12 @@ class CellView extends LinearLayout implements Observable {
                     color = theme.lightBackgroundColor;
                 } else {
                     appliedHoverItemIndex = -1;
-                    color = theme.mediumBackgroundColor;
+                    if (inputStyle) {
+                        color = theme.darkBackgroundColor;
+                    }
+                    else {
+                        color = theme.mediumBackgroundColor;
+                    }
                 }
             }
             else {
@@ -150,7 +148,12 @@ class CellView extends LinearLayout implements Observable {
                     color = theme.lightBackgroundColor;
                 }
                 else {
-                    color = theme.mediumBackgroundColor;
+                    if (inputStyle) {
+                        color = theme.darkBackgroundColor;
+                    }
+                    else {
+                        color = theme.mediumBackgroundColor;
+                    }
                 }
             }
         }
@@ -163,7 +166,7 @@ class CellView extends LinearLayout implements Observable {
 
         borderBottomColor = theme.mediumBorderColor;
 
-        if (overlayStyle && displaysEmptyValue) {
+        if (inputStyle && displaysEmptyValue) {
             titleTextView.text.skewX = 8;
             titleTextView.text.alpha = 0.8;
         }

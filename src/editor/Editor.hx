@@ -6,6 +6,7 @@ import haxe.DynamicAccess;
 
 import editor.model.*;
 import editor.ui.*;
+import editor.utils.TextUtils;
 
 import ceramic.SpinePlugin;
 
@@ -153,6 +154,7 @@ class Editor extends Entity {
                 }
             }
         }
+        images.sort(TextUtils.compareStrings);
         model.images = cast images;
 
         // Texts
@@ -170,6 +172,7 @@ class Editor extends Entity {
                 }
             }
         }
+        texts.sort(TextUtils.compareStrings);
         model.texts = cast texts;
 
         // Sounds
@@ -187,6 +190,7 @@ class Editor extends Entity {
                 }
             }
         }
+        sounds.sort(TextUtils.compareStrings);
         model.sounds = cast sounds;
 
         // Fonts
@@ -204,6 +208,7 @@ class Editor extends Entity {
                 }
             }
         }
+        fonts.sort(TextUtils.compareStrings);
         model.fonts = cast fonts;
 
         // Databases
@@ -221,6 +226,7 @@ class Editor extends Entity {
                 }
             }
         }
+        databases.sort(TextUtils.compareStrings);
         model.databases = cast databases;
 
         // Custom assets

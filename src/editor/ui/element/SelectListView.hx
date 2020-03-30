@@ -10,16 +10,21 @@ class SelectListView extends View implements CollectionViewDataSource implements
 
     var collectionView:CellCollectionView;
 
+    var filter:Filter;
+
     public function new() {
 
         super();
+
+        filter = new Filter();
+        add(filter);
 
         collectionView = new CellCollectionView();
         collectionView.viewSize(fill(), fill());
         collectionView.transparent = true;
         collectionView.dataSource = this;
-        collectionView.overlayStyle = true;
-        add(collectionView);
+        collectionView.inputStyle = true;
+        filter.content.add(collectionView);
 
         autorun(() -> {
             var size = list.length;
@@ -48,6 +53,8 @@ class SelectListView extends View implements CollectionViewDataSource implements
     /// Layout
 
     override function layout() {
+
+        filter.size(width, height);
 
         collectionView.size(width, height);
         
@@ -90,7 +97,7 @@ class SelectListView extends View implements CollectionViewDataSource implements
         }
         else {
             cell = new CellView();
-            cell.overlayStyle = true;
+            cell.inputStyle = true;
             cell.itemIndex = itemIndex;
             cell.collectionView = cast collectionView;
             bindCellView(cell);
@@ -136,8 +143,10 @@ class SelectListView extends View implements CollectionViewDataSource implements
 
     function updateStyle() {
 
-        color = theme.overlayBackgroundColor;
-        alpha = theme.overlayBackgroundAlpha;
+        borderSize = 1;
+        borderColor = theme.lightBorderColor;
+        borderPosition = INSIDE;
+        borderDepth = 2;
 
     }
 

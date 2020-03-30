@@ -17,6 +17,14 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
         return field;
     }
 
+    public var labelViewWidth(get, set):Float;
+    function get_labelViewWidth():Float {
+        return labelText.viewWidth;
+    }
+    function set_labelViewWidth(labelViewWidth:Float):Float {
+        return labelText.viewWidth = labelViewWidth;
+    }
+
 /// Internal properties
 
     var labelText:TextView;
@@ -31,7 +39,7 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
         itemSpacing = 8;
 
         labelText = new TextView();
-        labelText.viewSize(percent(30), auto());
+        labelText.viewSize(65, auto());
         labelText.align = RIGHT;
         labelText.verticalAlign = CENTER;
         labelText.pointSize = 12;

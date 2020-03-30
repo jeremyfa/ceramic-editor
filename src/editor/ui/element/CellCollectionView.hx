@@ -4,7 +4,7 @@ class CellCollectionView extends CollectionView implements Observable {
 
     @observe public var scrolling(default,null):Bool = false;
 
-    @observe public var overlayStyle:Bool = false;
+    @observe public var inputStyle:Bool = false;
 
     public function new() {
 
@@ -50,13 +50,14 @@ class CellCollectionView extends CollectionView implements Observable {
 
     function updateStyle() {
 
-        if (overlayStyle) {
+        if (inputStyle) {
             contentView.borderTopSize = 1;
             borderBottomSize = 1;
             borderTopSize = 1;
             borderBottomColor = theme.lightBorderColor;
         }
         else {
+            borderSize = 0;
             contentView.borderTopSize = 1;
             borderBottomSize = 1;
             borderTopSize = 0;
