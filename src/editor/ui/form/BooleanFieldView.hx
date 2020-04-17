@@ -43,7 +43,9 @@ class BooleanFieldView extends FieldView implements Observable {
         switchSquare.size(w - pad * 2, w - pad * 2);
         switchContainer.add(switchSquare);
 
-        switchContainer.onLayout(this, layoutSwitchContainer);
+        switchContainer.onLayout(this, () -> {
+            app.oncePostFlushImmediate(layoutSwitchContainer);
+        });
 
         autorun(updateStyle);
         onValueChange(this, function(_, _) {

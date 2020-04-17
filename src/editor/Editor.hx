@@ -31,13 +31,15 @@ class Editor extends Entity {
 
     public var view:EditorView;
 
+    public var editableTypes:ImmutableArray<EditableType> = [];
+
+    public var editableVisuals:ImmutableArray<EditableType> = [];
+
 /// Internal properties
 
     var renders:Int = 0;
 
     var options:EditorOptions;
-
-    var editableTypes:Array<EditableType> = [];
 
 /// Internal statics
 
@@ -83,7 +85,8 @@ class Editor extends Entity {
             if (options.assets != null) {
                 if (options.assets != settings.assetsPath) {
                     trace('new runtime assets ${options.assets}');
-                    contentAssets.runtimeAssets = RuntimeAssets.fromPath(options.assets);
+                    contentAssets.watchDirectory(options.assets);
+                    //contentAssets.runtimeAssets = RuntimeAssets.fromPath(options.assets);
                 }
             } 
         }
@@ -98,6 +101,33 @@ class Editor extends Entity {
         editorAssets.onceComplete(this, assetsLoaded);
 
         editorAssets.load();
+
+        /*
+        contentAssets.add(Images.ICONS); // TODO remove?
+        contentAssets.add(Texts.SOME_TEXT); // TODO remove?
+        contentAssets.onceComplete(this, success -> {
+
+            var quad = new Quad();
+            quad.depth = 99998;
+            quad.texture = contentAssets.texture(Images.ICONS);
+            quad.pos(screen.width * 0.5, screen.height * 0.5);
+            quad.anchor(0.5, 0.5);
+            quad.scale(0.25);
+            quad.skewX = 20;
+
+            var text = new Text();
+            text.depth = 99999;
+            text.pointSize = 40;
+            text.color = Color.RED;
+            text.align = CENTER;
+            text.anchor(0.5, 0.5);
+            text.pos(screen.width * 0.5, screen.height * 0.5);
+            text.autorun(() -> {
+                text.content = contentAssets.text(Texts.SOME_TEXT);
+            });
+        });
+        contentAssets.load();
+        //*/
 
     }
 
@@ -252,6 +282,9 @@ class Editor extends Entity {
 
     function computeEditableTypes():Void {
 
+        var editableTypes = [];
+        var editableVisuals = [];
+
         // Compute editable types
         for (key in Reflect.fields(app.info.editable)) {
 
@@ -278,8 +311,12 @@ class Editor extends Entity {
                 meta: Meta.getType(clazz),
                 entity: classPath,
                 fields: fields,
-                isVisual: true // TODO handle non-visuals
+                isVisual: isVisual
             });
+
+            if (isVisual) {
+                editableVisuals.push(editableTypes[editableTypes.length - 1]);
+            }
 
             var fieldKeys = [];
             for (k in fieldInfo.keys()) {
@@ -346,6 +383,9 @@ class Editor extends Entity {
             clazz = Type.getSuperClass(clazz);
 
         }
+
+        this.editableTypes = cast editableTypes;
+        this.editableVisuals = cast editableVisuals;
 
     }
 

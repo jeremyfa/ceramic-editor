@@ -78,7 +78,7 @@ class TextFieldView extends FieldView implements Observable {
         textView.maxLineDiff = -1;
         add(textView);
 
-        editText = new EditText();
+        editText = new EditText(theme.focusedFieldSelectionColor, theme.lightTextColor);
         editText.container = this;
         textView.text.component('editText', editText);
         editText.onUpdate(this, updateFromEditText);
@@ -140,6 +140,11 @@ class TextFieldView extends FieldView implements Observable {
     }
 
     function updateStyle() {
+
+        if (editText != null) {
+            editText.selectionColor = theme.focusedFieldSelectionColor;
+            editText.textCursorColor = theme.lightTextColor;
+        }
 
         if (overlayStyle) {
             color = Color.WHITE;

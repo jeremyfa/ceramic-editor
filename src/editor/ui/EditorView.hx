@@ -12,6 +12,8 @@ class EditorView extends View implements Observable {
 
     var editedFragment:Fragment = null;
 
+    var popup:PopupView = null;
+
 /// Lifecycle
 
     public function new() {
@@ -37,10 +39,15 @@ class EditorView extends View implements Observable {
         fragmentArea.transparent = true;
         add(fragmentArea);
 
+        // Popup
+        popup = new PopupView();
+        popup.depth = 3;
+        add(popup);
+
         autorun(updateTabs);
         autorun(updateEditedFragment);
         autorun(updateTabsContentView);
-
+        autorun(updatePopupContentView);
         autorun(updateFragmentItems);
 
         autorun(() -> updateSelectedEditable(true));
@@ -75,6 +82,10 @@ class EditorView extends View implements Observable {
 
         fragmentArea.pos(0, 0);
         fragmentArea.size(availableFragmentWidth, availableFragmentHeight);
+
+        popup.anchor(0.5, 0.5);
+        popup.pos(width * 0.5, height * 0.5);
+        popup.size(width, height);
 
     }
 
@@ -152,6 +163,30 @@ class EditorView extends View implements Observable {
                 }
             }
         });
+
+    }
+
+    function updatePopupContentView() {
+
+        var pendingChoice = model.pendingChoice;
+
+        unobserve();
+
+        if (pendingChoice != null) {
+            popup.title = pendingChoice.title;
+            popup.contentView = new PendingChoiceContentView(pendingChoice);
+            popup.cancelable = pendingChoice.cancelable;
+            if (pendingChoice.cancelable) {
+                popup.onCancel(popup.contentView, () -> {
+                    model.pendingChoice = null;
+                });
+            }
+        }
+        else {
+            popup.reset();
+        }
+
+        reobserve();
 
     }
 

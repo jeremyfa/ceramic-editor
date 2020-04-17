@@ -30,7 +30,58 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
+                }
+            ],
+            "onSelect": {
+                "command": "ceramic",
+                "args": [
+                    "luxe",
+                    "hxml",
+                    "web",
+                    "--setup",
+                    "--output",
+                    "completion.hxml"
+                ]
+            }
+        },
+        {
+            "displayName": "▶︎ luxe / Run Web (hot reload)",
+            "description": "ceramic luxe run web --setup --assets --hot-reload",
+            "tasks": [
+                {
+                    "type": "shell",
+                    "label": "build",
+                    "command": "ceramic",
+                    "presentation": {
+                        "echo": true,
+                        "reveal": "always",
+                        "focus": false,
+                        "panel": "shared"
+                    },
+                    "args": [
+                        "luxe",
+                        "run",
+                        "web",
+                        "--no-skip",
+                        "--setup",
+                        "--assets",
+                        "--hot-reload",
+                        "--vscode-editor",
+                        "--hxml-output",
+                        "completion.hxml"
+                    ],
+                    "group": {
+                        "kind": "build",
+                        "isDefault": true
+                    },
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -73,7 +124,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -117,7 +171,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -163,7 +220,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -208,7 +268,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -252,7 +315,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -299,7 +365,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -345,7 +414,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -389,7 +461,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -433,7 +508,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -477,7 +555,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -521,7 +602,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -565,7 +649,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -609,7 +696,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -653,7 +743,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -697,7 +790,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -741,7 +837,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -785,7 +884,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {
@@ -829,7 +931,10 @@
                         "kind": "build",
                         "isDefault": true
                     },
-                    "problemMatcher": "$haxe"
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
                 }
             ],
             "onSelect": {

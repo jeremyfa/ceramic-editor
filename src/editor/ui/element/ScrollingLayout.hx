@@ -4,7 +4,7 @@ class ScrollingLayout<T:View> extends ScrollView {
 
     public var layoutView(default, null):T;
 
-    public function new(layoutView:T) {
+    public function new(layoutView:T, withBorders:Bool = false) {
 
         super();
 
@@ -14,14 +14,17 @@ class ScrollingLayout<T:View> extends ScrollView {
         viewSize(fill(), fill());
         transparent = true;
         contentView.transparent = true;
-        contentView.borderTopSize = 1;
-        contentView.borderPosition = OUTSIDE;
-        borderBottomSize = 1;
-        borderPosition = INSIDE;
         clip = this;
         scroller.allowPointerOutside = false;
         scroller.bounceMinDuration = 0;
         scroller.bounceDurationFactor = 0;
+        
+        if (withBorders) {
+            contentView.borderTopSize = 1;
+            contentView.borderPosition = OUTSIDE;
+            borderBottomSize = 1;
+            borderPosition = INSIDE;
+        }
 
         #if !(ios || android)
         scroller.dragEnabled = false;

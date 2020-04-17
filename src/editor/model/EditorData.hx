@@ -18,6 +18,8 @@ class EditorData extends Model {
 
     @observe public var databases:ImmutableArray<String> = [];
 
+    @observe public var pendingChoice:EditorPendingChoice = null;
+
     public function new() {
 
         super();

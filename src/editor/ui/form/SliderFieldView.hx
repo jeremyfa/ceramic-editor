@@ -53,7 +53,7 @@ class SliderFieldView extends FieldView implements Observable {
         textView.pointSize = 12;
         add(textView);
 
-        editText = new EditText();
+        editText = new EditText(theme.focusedFieldSelectionColor, theme.lightTextColor);
         editText.container = textView;
         textView.text.component('editText', editText);
         editText.onUpdate(this, updateFromEditText);
@@ -179,6 +179,11 @@ class SliderFieldView extends FieldView implements Observable {
     }
 
     function updateStyle() {
+
+        if (editText != null) {
+            editText.selectionColor = theme.focusedFieldSelectionColor;
+            editText.textCursorColor = theme.lightTextColor;
+        }
         
         color = theme.darkBackgroundColor;
 

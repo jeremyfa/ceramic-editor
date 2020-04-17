@@ -1,5 +1,8 @@
 package;
 
+import ceramic.macros.DefinesMacro;
+import ceramic.ImageAsset;
+import ceramic.Assets;
 import tracker.Model;
 
 import ceramic.Line;
@@ -7,6 +10,7 @@ import ceramic.Shape;
 import ceramic.Color;
 import ceramic.AlphaColor;
 import ceramic.Mesh;
+import ceramic.Timer;
 import ceramic.InitSettings;
 import ceramic.Shortcuts.*;
 import editor.Editor;
@@ -24,6 +28,7 @@ class Project {
 
         #if editor
         new Editor(settings, {
+            //assets: DefinesMacro.getDefine('assets_path')
             assets: '/Users/jeremyfa/Developer/clicktube/assets'
         });
         #end
@@ -32,7 +37,7 @@ class Project {
 
     }
 
-    function ready() {
+    function ready() { 
 
         /*
         var shape = new Shape();
@@ -42,8 +47,8 @@ class Project {
             100, 15,
             80, 120,
             60, 60
-        ];
-
+        ]; 
+ 
         shape.color = Color.RED;
 
         shape.depth = 999;

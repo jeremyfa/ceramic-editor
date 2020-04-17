@@ -85,7 +85,7 @@ class ColorFieldView extends FieldView implements Observable {
         textView.pointSize = 12;
         container.add(textView);
 
-        editText = new EditText();
+        editText = new EditText(theme.focusedFieldSelectionColor, theme.lightTextColor);
         editText.container = textView;
         textView.text.component('editText', editText);
         editText.onUpdate(this, updateFromEditText);
@@ -335,6 +335,11 @@ class ColorFieldView extends FieldView implements Observable {
     }
 
     function updateStyle() {
+
+        if (editText != null) {
+            editText.selectionColor = theme.focusedFieldSelectionColor;
+            editText.textCursorColor = theme.lightTextColor;
+        }
         
         container.color = theme.darkBackgroundColor;
 

@@ -72,7 +72,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
         var form = new FormLayout();
 
-        var scroll = new ScrollingLayout(form);
+        var scroll = new ScrollingLayout(form, true);
         scroll.viewSize(fill(), fill());
         add(scroll);
 
@@ -190,7 +190,12 @@ class VisualsPanelView extends LinearLayout implements Observable {
         var button = new Button();
         button.content = 'Add visual';
         button.onClick(this, function() {
-            model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual('ceramic.Quad');
+            var choices = editor.editableVisuals.map(info -> {
+                return info.entity;
+            });
+            Choice.choose('Add visual', choices, true, (index, text) -> {
+                model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual(editor.editableVisuals[index].entity);
+            });
         });
         container.add(button);
 
