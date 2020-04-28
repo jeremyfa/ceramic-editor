@@ -63,7 +63,7 @@ class Button extends TextView implements Observable {
             transform.changedDirty = true;
         }
 
-        font = theme.mediumFont10;
+        font = theme.mediumFont;
         textColor = theme.lightTextColor;
 
         if (overlayStyle) {

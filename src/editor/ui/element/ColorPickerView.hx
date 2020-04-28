@@ -786,10 +786,10 @@ class ColorPickerView extends LayersLayout implements Observable {
         alpha = theme.overlayBackgroundAlpha;
 
         rgbLabel.textColor = theme.lightTextColor;
-        rgbLabel.font = theme.mediumFont10;
+        rgbLabel.font = theme.mediumFont;
 
         hslLabel.textColor = theme.lightTextColor;
-        hslLabel.font = theme.mediumFont10;
+        hslLabel.font = theme.mediumFont;
 
     }
 

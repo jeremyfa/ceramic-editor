@@ -433,6 +433,53 @@
             }
         },
         {
+            "displayName": "▶︎ luxe / Run Mac (no skip)",
+            "description": "ceramic luxe run mac --setup --assets --no-skip",
+            "tasks": [
+                {
+                    "type": "shell",
+                    "label": "build",
+                    "command": "ceramic",
+                    "presentation": {
+                        "echo": true,
+                        "reveal": "always",
+                        "focus": false,
+                        "panel": "shared"
+                    },
+                    "args": [
+                        "luxe",
+                        "run",
+                        "mac",
+                        "--no-skip",
+                        "--setup",
+                        "--assets",
+                        "--vscode-editor",
+                        "--hxml-output",
+                        "completion.hxml"
+                    ],
+                    "group": {
+                        "kind": "build",
+                        "isDefault": true
+                    },
+                    "problemMatcher": "$haxe",
+                    "runOptions": {
+                        "instanceLimit": 1
+                    }
+                }
+            ],
+            "onSelect": {
+                "command": "ceramic",
+                "args": [
+                    "luxe",
+                    "hxml",
+                    "mac",
+                    "--setup",
+                    "--output",
+                    "completion.hxml"
+                ]
+            }
+        },
+        {
             "displayName": "▶︎ luxe / Run Mac (debug)",
             "description": "ceramic luxe run mac --setup --assets --debug",
             "tasks": [

@@ -2,6 +2,20 @@ package editor.model;
 
 class EditorValue extends Model {
 
-    @serialize public var value:Dynamic = null;
+    @serialize public var value(default,set):Dynamic = null;
+    function set_value(value:Dynamic):Dynamic {
+        if (this.value == value) return value;
+        this.value = value;
+        if (value == null) {
+            Utils.printStackTrace();
+        }
+        return value;
+    }
+
+    override function toString() {
+
+        return 'EditorValue(' + value + ')';
+
+    }
 
 }

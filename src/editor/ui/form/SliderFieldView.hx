@@ -49,6 +49,7 @@ class SliderFieldView extends FieldView implements Observable {
 
         textView = new TextView();
         textView.viewSize(40, auto());
+        textView.verticalAlign = CENTER;
         textView.align = LEFT;
         textView.pointSize = 12;
         add(textView);
@@ -188,7 +189,7 @@ class SliderFieldView extends FieldView implements Observable {
         color = theme.darkBackgroundColor;
 
         textView.textColor = theme.fieldTextColor;
-        textView.font = theme.mediumFont10;
+        textView.font = theme.mediumFont;
 
         if (focused) {
             sliderSquare.color = theme.mediumTextColor;

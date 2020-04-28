@@ -31,6 +31,11 @@ class FieldUtils {
                 return editor.model.fonts;
             });
         }
+        else if (options.options != null) {
+            return createEditableSelectField(options, item, name, () -> {
+                return options.options;
+            });
+        }
         else {
             //
         }
@@ -143,6 +148,14 @@ class FieldUtils {
                 item.props.set(name, value);
                 fieldView.textValue = '' + value;
             };
+        }
+        else {
+            if (options != null && options.multiline) {
+                fieldView.multiline = true;
+            }
+            if (options != null && options.identifier) {
+                fieldView.setTextValue = SanitizeTextField.setTextValueToIdentifier;
+            }
         }
         fieldView.setValue = function(field, value) {
             item.props.set(name, value);

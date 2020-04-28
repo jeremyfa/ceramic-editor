@@ -8,11 +8,17 @@ class PopupView extends View implements Observable {
 
     var containerView:ColumnLayout;
 
-    var headerView:TextView;
+    var headerView:RowLayout;
+
+    var titleView:TextView;
 
     var bodyView:View;
 
     var usedContentView:View = null;
+
+    var leftIconView:ClickableIconView = null;
+
+    var rightIconView:ClickableIconView = null;
 
     @observe public var cancelable:Bool = false;
 
@@ -41,21 +47,48 @@ class PopupView extends View implements Observable {
         containerView = new ColumnLayout();
         containerView.depth = 2;
         containerView.transparent = true;
+        containerView.onPointerDown(this, _ -> {});
         add(containerView);
         {
-            headerView = new TextView();
+
+            headerView = new RowLayout();
+            headerView.transparent = false;
             headerView.depth = 3;
-            headerView.viewSize(fill(), auto());
+            headerView.viewSize(fill(), 28);
             headerView.align = CENTER;
-            headerView.verticalAlign = CENTER;
-            headerView.pointSize = 12;
             headerView.padding(5, 0);
+            containerView.add(headerView);
+
+            leftIconView = new ClickableIconView();
+            leftIconView.viewSize(24, fill());
+            leftIconView.icon = CANCEL;
+            leftIconView.autorun(() -> {
+                leftIconView.visible = cancelable;
+            });
+            leftIconView.onClick(this, () -> {
+                if (cancelable) {
+                    emitCancel();
+                }
+            });
+            headerView.add(leftIconView);
+
+            titleView = new TextView();
+            titleView.viewSize(fill(), auto());
+            titleView.align = CENTER;
+            titleView.verticalAlign = CENTER;
+            titleView.pointSize = 12;
+            titleView.padding(5, 0);
             autorun(() -> {
                 var title = this.title;
                 unobserve();
-                headerView.content = title == null ? '' : title;
+                titleView.content = title == null ? '' : title;
             });
-            containerView.add(headerView);
+            headerView.add(titleView);
+
+            rightIconView = new ClickableIconView();
+            rightIconView.viewSize(24, fill());
+            rightIconView.visible = false;
+            headerView.add(rightIconView);
     
             bodyView = new View();
             bodyView.depth = 4;
@@ -106,6 +139,9 @@ class PopupView extends View implements Observable {
         overlay.alpha = 0.5;
         overlay.color = Color.BLACK;
 
+        leftIconView.textColor = theme.mediumTextColor;
+        rightIconView.textColor = theme.mediumTextColor;
+
         containerView.borderSize = 1;
         containerView.borderPosition = OUTSIDE;
         containerView.borderColor = theme.mediumBorderColor;
@@ -116,7 +152,8 @@ class PopupView extends View implements Observable {
         headerView.borderBottomColor = theme.mediumBorderColor;
         headerView.borderBottomSize = 1;
         headerView.borderPosition = INSIDE;
-        headerView.font = theme.boldFont10;
+
+        titleView.font = theme.boldFont;
 
     }
 

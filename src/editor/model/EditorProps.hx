@@ -5,11 +5,19 @@ class EditorProps extends Model {
 
     @serialize var values:Map<String,EditorValue> = new Map();
 
-    @observe public var entityData:EditorEntityData;
+    @serialize public var entityData:EditorEntityData;
 
     public function new() {
         
         super();
+
+    }
+
+    override function serializeShouldDestroy() {
+        
+        log.debug('DESTROY PROPS ${entityData != null ? ${entityData.entityId} : '-'} #${_serializeId}');
+
+        return true;
 
     }
 
@@ -32,6 +40,13 @@ class EditorProps extends Model {
 
     public function set(key:String, value:Dynamic):Void {
 
+        unobserve();
+        var shouldScheduleStep = false;
+        var prevValue = get(key);
+        if (prevValue != value)
+            shouldScheduleStep = true;
+        reobserve();
+
         if (values.exists(key)) {
             values.get(key).value = value;
         }
@@ -42,12 +57,19 @@ class EditorProps extends Model {
             invalidateValues();
         }
 
+        if (shouldScheduleStep) {
+            unobserve();
+            model.history.step();
+            reobserve();
+        }
+
     }
 
     public function get(key:String):Dynamic {
 
         if (values.exists(key)) {
-            return values.get(key).value;
+            var v = values.get(key);
+            return v.value;
         }
         else {
             return null;
@@ -93,6 +115,17 @@ class EditorProps extends Model {
         }
 
         return false;
+
+    }
+
+    override function toString() {
+
+        /*
+        var valuesDyn:Dynamic = {};
+        for (key in values.keys()) {
+            valuesDyn.set(key, values.get(key));
+        }*/
+        return '' + values;
 
     }
 

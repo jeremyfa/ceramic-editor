@@ -190,9 +190,10 @@ class VisualsPanelView extends LinearLayout implements Observable {
         var button = new Button();
         button.content = 'Add visual';
         button.onClick(this, function() {
-            var choices = editor.editableVisuals.map(info -> {
-                return info.entity;
-            });
+            var choices = [];
+            for (i in 0...editor.editableVisuals.length) {
+                choices.push(editor.editableVisuals[i].entity);
+            }
             Choice.choose('Add visual', choices, true, (index, text) -> {
                 model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual(editor.editableVisuals[index].entity);
             });

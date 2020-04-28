@@ -4,7 +4,9 @@ class SelectFieldView extends FieldView implements Observable {
 
     static var _point = new Point();
 
-    static final LIST_HEIGHT = 220;
+    static final MAX_LIST_HEIGHT = 220;
+
+    static final ITEM_HEIGHT = SelectListView.ITEM_HEIGHT;
 
 /// Hooks
 
@@ -219,9 +221,15 @@ class SelectFieldView extends FieldView implements Observable {
 
             listView.size(
                 container.width,
-                LIST_HEIGHT
+                listHeight()
             );
         }
+
+    }
+
+    function listHeight() {
+
+        return Math.min(ITEM_HEIGHT * list.length, MAX_LIST_HEIGHT);
 
     }
 
@@ -280,7 +288,7 @@ class SelectFieldView extends FieldView implements Observable {
         
         container.color = theme.darkBackgroundColor;
 
-        textView.font = theme.mediumFont10;
+        textView.font = theme.mediumFont;
         if (value == null) {
             textView.textColor = theme.mediumTextColor;
             textView.text.skewX = 8;
@@ -339,11 +347,11 @@ class SelectFieldView extends FieldView implements Observable {
         );
         editor.view.screenToVisual(_point.x, _point.y, _point);
 
-        if (editor.view.height - _point.y <= LIST_HEIGHT) {
+        if (editor.view.height - _point.y <= listHeight()) {
             listIsAbove = true;
             container.visualToScreen(
                 0,
-                container.height - LIST_HEIGHT,
+                container.height - listHeight(),
                 _point
             );
             editor.view.screenToVisual(_point.x, _point.y, _point);

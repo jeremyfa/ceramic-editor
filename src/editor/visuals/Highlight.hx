@@ -205,10 +205,19 @@ class Highlight extends Visual {
     public function wrapVisual(visual:Visual):Void {
 
         visual.visualToScreen(0, 0, pointTopLeft);
+        this.screenToVisual(pointTopLeft.x, pointTopLeft.y, pointTopLeft);
+
         visual.visualToScreen(visual.width, 0, pointTopRight);
+        this.screenToVisual(pointTopRight.x, pointTopRight.y, pointTopRight);
+
         visual.visualToScreen(0, visual.height, pointBottomLeft);
+        this.screenToVisual(pointBottomLeft.x, pointBottomLeft.y, pointBottomLeft);
+
         visual.visualToScreen(visual.width, visual.height, pointBottomRight);
+        this.screenToVisual(pointBottomRight.x, pointBottomRight.y, pointBottomRight);
+
         visual.visualToScreen(visual.width * visual.anchorX, visual.height * visual.anchorY, pointAnchor);
+        this.screenToVisual(pointAnchor.x, pointAnchor.y, pointAnchor);
 
         updateCornersAndBorders();
 

@@ -8,7 +8,9 @@ import editor.model.*;
 import editor.ui.*;
 import editor.utils.TextUtils;
 
+#if spine
 import ceramic.SpinePlugin;
+#end
 
 /** Turns the app into an editor. */
 class Editor extends Entity {
@@ -93,10 +95,9 @@ class Editor extends Entity {
 
         editorAssets = new Assets();
         
-        editorAssets.add(Fonts.ROBOTO_MEDIUM_20);
-        editorAssets.add(Fonts.ROBOTO_BOLD_20);
+        editorAssets.add(Fonts.ROBOTO_BOLD);
 
-        editorAssets.add(Images.ROBOTO_BOLD_10); // TODO remove
+        editorAssets.add(Fonts.ENTYPO);
 
         editorAssets.onceComplete(this, assetsLoaded);
 
@@ -147,6 +148,8 @@ class Editor extends Entity {
         computeEditableTypes();
 
         initModel();
+
+        bindKeyBindings();
 
         initView();
 
@@ -282,8 +285,8 @@ class Editor extends Entity {
 
     function computeEditableTypes():Void {
 
-        var editableTypes = [];
-        var editableVisuals = [];
+        var editableTypes:Array<EditableType> = [];
+        var editableVisuals:Array<EditableType> = [];
 
         // Compute editable types
         for (key in Reflect.fields(app.info.editable)) {
@@ -365,7 +368,7 @@ class Editor extends Entity {
                             var rawOptions = Type.getEnumConstructs(resolvedEnum);
                             var options = [];
                             for (item in rawOptions) {
-                                options.push(item.toLowerCase());
+                                options.push(TextUtils.upperCaseToCamelCase(item, true, ' '));
                             }
                             editable[0].options = options;
                         }
@@ -435,6 +438,28 @@ class Editor extends Entity {
 
         // Update window title
         settings.title = model.project.title;
+
+    }
+
+/// Key bindings
+
+    function bindKeyBindings() {
+
+        var keyBindings = new KeyBindings();
+
+        keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_Z)], function() {
+            model.history.undo();
+        });
+
+
+        keyBindings.bind([CMD_OR_CTRL, SHIFT, KEY(KeyCode.KEY_Z)], function() {
+            model.history.redo();
+        });
+
+        onDestroy(keyBindings, function(_) {
+            keyBindings.destroy();
+            keyBindings = null;
+        });
 
     }
 

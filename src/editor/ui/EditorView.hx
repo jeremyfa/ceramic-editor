@@ -8,7 +8,7 @@ class EditorView extends View implements Observable {
 
     @observe var prevSelectedFragment:EditorFragmentData = null;
 
-    var fragmentArea:Quad = null;
+    public var fragmentOverlay(default, null):Quad;
 
     var editedFragment:Fragment = null;
 
@@ -20,9 +20,15 @@ class EditorView extends View implements Observable {
 
         super();
 
+        app.onceImmediate(() -> init());
+
+    }
+
+    function init() {
+
         // Panels tabs
         panelTabsView = new PanelTabsView();
-        panelTabsView.depth = 2;
+        panelTabsView.depth = 3;
         add(panelTabsView);
 
         // Fragment
@@ -32,16 +38,18 @@ class EditorView extends View implements Observable {
         });
         editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
         editedFragment.depth = 1;
+        editedFragment.onPointerDown(this, (_) -> deselectItems());
         add(editedFragment);
 
         // Fragment area
-        fragmentArea = new Quad();
-        fragmentArea.transparent = true;
-        add(fragmentArea);
+        fragmentOverlay = new Quad();
+        fragmentOverlay.transparent = true;
+        fragmentOverlay.depth = 2;
+        add(fragmentOverlay);
 
         // Popup
         popup = new PopupView();
-        popup.depth = 3;
+        popup.depth = 4;
         add(popup);
 
         autorun(updateTabs);
@@ -54,6 +62,9 @@ class EditorView extends View implements Observable {
 
         // Styles
         autorun(updateStyle);
+
+        // Keyboard shortcuts
+        app.onKeyDown(this, handleKeyDown);
 
     }
 
@@ -80,8 +91,8 @@ class EditorView extends View implements Observable {
             );
         }
 
-        fragmentArea.pos(0, 0);
-        fragmentArea.size(availableFragmentWidth, availableFragmentHeight);
+        fragmentOverlay.pos(0, 0);
+        fragmentOverlay.size(availableFragmentWidth, availableFragmentHeight);
 
         popup.anchor(0.5, 0.5);
         popup.pos(width * 0.5, height * 0.5);
@@ -146,10 +157,27 @@ class EditorView extends View implements Observable {
         var toCheck = [];
 
         if (selectedFragment != null) {
+            // Add or update items
             for (item in selectedFragment.items) {
                 var entityId = item.entityId;
                 toCheck.push(entityId);
-                editedFragment.putItem(item.toFragmentItem());
+                var fragmentItem = item.toFragmentItem();
+                trace('PUT ITEM $entityId');
+                editedFragment.putItem(fragmentItem);
+            }
+            // Remove missing items
+            var toRemove = null;
+            for (fragmentItem in editedFragment.items) {
+                if (selectedFragment.get(fragmentItem.id) == null) {
+                    if (toRemove == null)
+                        toRemove = [];
+                    toRemove.push(fragmentItem.id);
+                }
+            }
+            if (toRemove != null) {
+                for (id in toRemove) {
+                    editedFragment.removeItem(id);
+                }
             }
         }
 
@@ -203,6 +231,11 @@ class EditorView extends View implements Observable {
             var fragmentData = model.project.selectedFragment;
             var entityData = fragmentData.get(visual.id);
             fragmentData.selectedItem = entityData;
+
+            // // Ensure we are on Visuals tab
+            // var selectedIndex = panelTabsView.tabViews.tabs.indexOf('Visuals');
+            // if (selectedIndex != -1)
+            //     panelTabsView.tabViews.selectedIndex = selectedIndex;
 
         });
 
@@ -280,17 +313,17 @@ class EditorView extends View implements Observable {
 
         unobserve();
 
-        if (selectedVisual == null)
-            return;
-
         for (item in items) {
             var entity = editedFragment.get(item.id);
             var editable:Editable = cast entity.component('editable');
             if (editable != null) {
-                if (entity.id == selectedVisual.entityId) {
+                if (selectedVisual == null) {
+                    editable.deselect();
+                }
+                else if (entity.id == selectedVisual.entityId) {
                     unobserve();
                     editable.select();
-                    Editable.highlight.clip = fragmentArea;
+                    Editable.highlight.clip = fragmentOverlay;
                     reobserve();
                 }
             }
@@ -310,6 +343,29 @@ class EditorView extends View implements Observable {
         }
 
         reobserve();
+
+    }
+
+    function deselectItems() {
+
+        if (model.project.selectedFragment != null)
+            model.project.selectedFragment.selectedItem = null;
+
+    }
+    
+    function handleKeyDown(key:Key) {
+
+        if (key.scanCode == ScanCode.BACKSPACE) {
+            var fragment = model.project.selectedFragment;
+            if (fragment != null) {
+                var selectedItem = fragment.selectedItem;
+                if (selectedItem != null) {
+                    if (FieldManager.manager.focusedField == null && popup.contentView == null) {
+                        fragment.removeItem(selectedItem);
+                    }
+                }
+            }
+        }
 
     }
 

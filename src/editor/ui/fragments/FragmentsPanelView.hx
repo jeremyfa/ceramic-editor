@@ -35,8 +35,9 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         add(collectionView);
 
         var prevLength = 0;
-        autorun(function() {
+        var auto = autorun(function() {
             var length = model.project.fragments.length;
+            unobserve();
             if (length != prevLength) {
                 var scrollToBottom = prevLength > 0 && length > prevLength;
 
@@ -121,6 +122,26 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             autorun(function() {
                 var fragment = model.project.selectedFragment;
                 if (fragment != null) item.field.textValue = '' + fragment.height;
+            });
+            form.add(item);
+        })();
+
+        (function() {
+            var item = new LabeledFieldView(new TextFieldView());
+            item.label = 'Bundle';
+            item.field.placeholder = 'default';
+            item.field.setTextValue = SanitizeTextField.setTextValueToIdentifier;
+            item.field.setEmptyValue = function(field) {
+                var fragment = model.project.selectedFragment;
+                if (fragment != null) fragment.bundle = null;
+            };
+            item.field.setValue = function(field, value) {
+                var fragment = model.project.selectedFragment;
+                if (fragment != null) fragment.bundle = value;
+            };
+            autorun(function() {
+                var fragment = model.project.selectedFragment;
+                if (fragment != null) item.field.textValue = fragment.bundle != null ? '' + fragment.bundle : '';
             });
             form.add(item);
         })();

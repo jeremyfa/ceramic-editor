@@ -6,6 +6,8 @@ class EditorTheme extends Model {
 
     @observe public var fieldTextColor:Color = 0xFFFFFF;
 
+    @observe public var fieldPlaceholderColor:Color = 0x888888;
+
     @observe public var lightTextColor:Color = 0xF3F3F3;
 
     @observe public var mediumTextColor:Color = 0xCCCCCC;
@@ -16,17 +18,11 @@ class EditorTheme extends Model {
 
 /// Text fonts
 
-    public var mediumFont10(get,never):BitmapFont;
-    function get_mediumFont10():BitmapFont return editor.editorAssets.font(Fonts.ROBOTO_MEDIUM_10);
+    public var mediumFont(get,never):BitmapFont;
+    function get_mediumFont():BitmapFont return app.assets.font(Fonts.ROBOTO_MEDIUM);
 
-    public var mediumFont20(get,never):BitmapFont;
-    function get_mediumFont20():BitmapFont return editor.editorAssets.font(Fonts.ROBOTO_MEDIUM_20);
-
-    public var boldFont10(get,never):BitmapFont;
-    function get_boldFont10():BitmapFont return editor.editorAssets.font(Fonts.ROBOTO_BOLD_10);
-
-    public var boldFont20(get,never):BitmapFont;
-    function get_boldFont20():BitmapFont return editor.editorAssets.font(Fonts.ROBOTO_BOLD_20);
+    public var boldFont(get,never):BitmapFont;
+    function get_boldFont():BitmapFont return editor.editorAssets.font(Fonts.ROBOTO_BOLD);
 
 /// Borders colors
 

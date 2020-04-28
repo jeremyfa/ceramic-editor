@@ -1,8 +1,11 @@
 package editor.model;
 
 using tracker.SaveModel;
+using tracker.History;
 
 class EditorData extends Model {
+
+    @component public var history:History;
 
     @observe public var theme:EditorTheme = new EditorTheme();
 
@@ -24,9 +27,20 @@ class EditorData extends Model {
 
         super();
 
-        //this.loadSaved('editor');
+        this.loadFromKey('editor');
         this.autoSaveAsKey('editor');
 
+        history = new History();
+        history.step();
+
+    }
+
+    override function destroy() {
+
+        super.destroy();
+
+        trace('MODEL DESTROY');
+        
     }
 
 }

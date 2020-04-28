@@ -2,6 +2,8 @@ package editor.ui.element;
 
 class SelectListView extends View implements CollectionViewDataSource implements Observable {
 
+    public static final ITEM_HEIGHT = 26;
+
     @observe public var value:String = null;
 
     @observe public var list:ImmutableArray<String> = [];
@@ -73,7 +75,7 @@ class SelectListView extends View implements CollectionViewDataSource implements
     public function collectionViewItemFrameAtIndex(collectionView:CollectionView, itemIndex:Int, frame:CollectionViewItemFrame):Void {
 
         frame.width = collectionView.width;
-        frame.height = 26;
+        frame.height = ITEM_HEIGHT;
 
     }
 
@@ -142,6 +144,8 @@ class SelectListView extends View implements CollectionViewDataSource implements
     }
 
     function updateStyle() {
+
+        color = Color.interpolate(theme.darkBackgroundColor, Color.BLACK, 0.1);
 
         borderSize = 1;
         borderColor = theme.lightBorderColor;

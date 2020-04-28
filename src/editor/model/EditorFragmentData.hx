@@ -4,14 +4,36 @@ class EditorFragmentData extends Model {
 
 /// Main data
 
+    /**
+     * Fragment id
+     */
     @serialize public var fragmentId:String;
 
+    /**
+     * Fragment name
+     */
     @serialize public var name:String;
 
+    /**
+     * Fragment width
+     */
     @serialize public var width:Int;
 
+    /**
+     * Fragment height
+     */
     @serialize public var height:Int;
 
+    /**
+     * The bundle name this fragment belongs to.
+     * A fragment bundle is a file where one ore more fragments are saved together.
+     * An empty value with save fragments into default bundle.
+     */
+    @serialize public var bundle:String;
+
+    /**
+     * Fragments items
+     */
     @serialize public var items:ImmutableArray<EditorEntityData> = [];
 
     @serialize public var selectedItemIndex:Int = -1;
@@ -114,9 +136,27 @@ class EditorFragmentData extends Model {
 
 /// Lifecycle
 
+    var didInit = false;
+
     public function new() {
 
         super();
+
+        if (!didInit)
+            init();
+
+    }
+
+    override function didDeserialize() {
+
+        if (!didInit)
+            init();
+
+    }
+
+    function init() {
+
+        didInit = true;
 
         // Reset computed values when their source value changes
         onItemsChange(this, function(_, _) {
@@ -216,6 +256,8 @@ class EditorFragmentData extends Model {
         items.push(visual);
         this.items = cast items;
 
+        model.history.step();
+
         return visual;
 
     }
@@ -229,6 +271,30 @@ class EditorFragmentData extends Model {
         }
 
         return null;
+
+    }
+
+    public function removeItem(item:EditorEntityData):Bool {
+
+        var didRemove = false;
+
+        var newItems = [];
+        for (anItem in items) {
+            if (item == anItem) {
+                didRemove = true;
+            }
+            else {
+                newItems.push(anItem);
+            }
+        }
+
+        if (didRemove) {
+            items = cast newItems;
+
+            model.history.step();
+        }
+
+        return didRemove;
 
     }
 

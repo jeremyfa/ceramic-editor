@@ -8,4 +8,12 @@ class EditorVisualData extends EditorEntityData {
 
     }
 
+    override function serializeShouldDestroy() {
+        
+        log.info('DESTROY VISUAL DATA ${entityId}');
+
+        return true;
+
+    }
+
 }

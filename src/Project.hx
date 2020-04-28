@@ -29,7 +29,7 @@ class Project {
         #if editor
         new Editor(settings, {
             //assets: DefinesMacro.getDefine('assets_path')
-            assets: '/Users/jeremyfa/Developer/clicktube/assets'
+            //assets: '/Users/jeremyfa/Developer/clicktube/assets'
         });
         #end
 

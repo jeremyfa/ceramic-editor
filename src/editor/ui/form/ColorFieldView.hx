@@ -75,6 +75,7 @@ class ColorFieldView extends FieldView implements Observable {
         textPrefixView.align = LEFT;
         textPrefixView.pointSize = 12;
         textPrefixView.content = '#';
+        textPrefixView.verticalAlign = CENTER;
         textPrefixView.padding(0, 3, 0, 2);
         textPrefixView.text.component(new ItalicText());
         container.add(textPrefixView);
@@ -82,6 +83,7 @@ class ColorFieldView extends FieldView implements Observable {
         textView = new TextView();
         textView.viewSize(fill(), auto());
         textView.align = LEFT;
+        textView.verticalAlign = CENTER;
         textView.pointSize = 12;
         container.add(textView);
 
@@ -344,10 +346,10 @@ class ColorFieldView extends FieldView implements Observable {
         container.color = theme.darkBackgroundColor;
 
         textView.textColor = theme.fieldTextColor;
-        textView.font = theme.mediumFont10;
+        textView.font = theme.mediumFont;
 
         textPrefixView.textColor = theme.darkTextColor;
-        textPrefixView.font = theme.mediumFont10;
+        textPrefixView.font = theme.mediumFont;
 
         if (focused || pickerVisible) {
             container.borderColor = theme.focusedFieldBorderColor;

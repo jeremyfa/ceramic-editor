@@ -159,10 +159,10 @@ class CellView extends LinearLayout implements Observable {
         }
 
         titleTextView.textColor = theme.lightTextColor;
-        titleTextView.font = theme.mediumFont10;
+        titleTextView.font = theme.mediumFont;
 
         subTitleTextView.textColor = theme.darkTextColor;
-        subTitleTextView.font = theme.mediumFont10;
+        subTitleTextView.font = theme.mediumFont;
 
         borderBottomColor = theme.mediumBorderColor;
 

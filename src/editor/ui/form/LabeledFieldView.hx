@@ -109,7 +109,7 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
             labelText.textColor = theme.lightTextColor;
         }
 
-        labelText.font = theme.mediumFont10;
+        labelText.font = theme.mediumFont;
 
     }
 

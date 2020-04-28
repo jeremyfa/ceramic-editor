@@ -5,10 +5,10 @@ app:
     author: My Company
     version: '1.0'
 
-    libs:
-        - spine-hx
+    #libs:
+    #    - spine-hx
     
-    spine: true
+    #spine: true
 
     defines:
         - editor
@@ -18,6 +18,7 @@ app:
         - js-source-map
         - ceramic_assert
         - editor_debug_item_update
+        - experimental_serialize
         #- ceramic_debug_draw
         #- ceramic_debug_multitexture
         #- ceramic_no_multitexture

@@ -39,18 +39,6 @@ class ProjectData extends Model {
 
         super();
 
-        // Dummy fragments
-        /*var fragments = [];
-        for (i in 0...10) {
-            var fragment = new EditorFragmentData();
-            fragment.fragmentId = 'FRAGMENT_$i';
-            fragment.name = 'Fragment $i';
-            fragment.width = 800;
-            fragment.height = 600;
-            fragments.push(fragment);
-        }
-        this.fragments = cast fragments;*/
-
     }
 
 /// Public API
@@ -85,6 +73,8 @@ class ProjectData extends Model {
         var fragments = [].concat(this.fragments.mutable);
         fragments.push(fragment);
         this.fragments = cast fragments;
+
+        model.history.step();
 
         return fragment;
 

@@ -48,13 +48,15 @@ class VisualCellDataSource implements CollectionViewDataSource {
 
         return cell;
 
-    }
+    }   
 
     function bindCellView(cell:CellView):Void {
 
         cell.autorun(function() {
 
             var visualData = model.project.selectedFragment.visuals[cell.itemIndex];
+            if (visualData == null)
+                return;
 
             cell.title = visualData.entityId;
             cell.subTitle = 'default';
@@ -66,7 +68,12 @@ class VisualCellDataSource implements CollectionViewDataSource {
         cell.component('click', click);
         click.onClick(cell, function() {
 
-            model.project.selectedFragment.selectedVisualIndex = cell.itemIndex;
+            if (model.project.selectedFragment.selectedVisualIndex != cell.itemIndex) {
+                model.project.selectedFragment.selectedVisualIndex = cell.itemIndex;
+            }
+            else {
+                model.project.selectedFragment.selectedVisualIndex = -1;
+            }
 
         });
 

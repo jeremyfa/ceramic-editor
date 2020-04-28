@@ -4,6 +4,12 @@ using StringTools;
 
 class SanitizeTextField {
 
+    static final RE_SPACES = ~/\s+/;
+
+    static final RE_NUMERIC_PREFIX = ~/^[0-9]+/;
+
+    static final RE_SLUG_UNSAFE = ~/[$*+~.()'"!\\:@]/g;
+
     public static function setTextValueToInt(minValue:Int, maxValue:Int) {
         
         return function(field:TextFieldView, textValue:String):Void {
@@ -74,6 +80,21 @@ class SanitizeTextField {
     public static function setTextValueToEmptyFloat(field:TextFieldView):Void {
 
         field.textValue = '0';
+        field.invalidateTextValue();
+
+    }
+
+    public static function setTextValueToIdentifier(field:TextFieldView, textValue:String):Void {
+
+        textValue = RE_NUMERIC_PREFIX.replace(textValue, '');
+        textValue = RE_SPACES.replace(textValue, '_');
+        textValue = Slug.encode(textValue, {
+            lower: false,
+            replacement: '_',
+            remove: RE_SLUG_UNSAFE
+        });
+        field.setValue(field, textValue);
+        field.textValue = textValue;
         field.invalidateTextValue();
 
     }

@@ -109,6 +109,8 @@ class Editable extends Entity implements Component {
         highlight.onCornerOver(this, handleCornerOver);
         highlight.onCornerOut(this, handleCornerOut);
 
+        editor.view.fragmentOverlay.add(highlight);
+
         app.onUpdate(this, update);
 
         // Set selected item
@@ -119,6 +121,17 @@ class Editable extends Entity implements Component {
         });
         */
         emitSelect(entity);
+
+    }
+
+    public function deselect():Void {
+
+        if (activeEditable != this) return;
+
+        activeEditable = null;
+        if (highlight != null) {
+            highlight.destroy();
+        }
 
     }
 
