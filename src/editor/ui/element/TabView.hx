@@ -23,6 +23,7 @@ class TabView extends TextView implements Observable {
         borderPosition = OUTSIDE;
         transparent = false;
         pointSize = 14;
+        preRenderedSize = 20;
         padding(5, 10);
 
         autorun(updateStyle);

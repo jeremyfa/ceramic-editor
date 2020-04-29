@@ -37,6 +37,7 @@ class Button extends TextView implements Observable {
         align = CENTER;
         verticalAlign = CENTER;
         pointSize = 12;
+        preRenderedSize = 20;
         padding(5, 2);
 
         transform = new Transform();

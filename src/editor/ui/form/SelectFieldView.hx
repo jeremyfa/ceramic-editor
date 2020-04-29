@@ -91,6 +91,7 @@ class SelectFieldView extends FieldView implements Observable {
         textView.viewSize(fill(), auto());
         textView.align = LEFT;
         textView.pointSize = 12;
+        textView.preRenderedSize = 20;
         container.add(textView);
 
         /*

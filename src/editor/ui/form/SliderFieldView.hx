@@ -52,6 +52,7 @@ class SliderFieldView extends FieldView implements Observable {
         textView.verticalAlign = CENTER;
         textView.align = LEFT;
         textView.pointSize = 12;
+        textView.preRenderedSize = 20;
         add(textView);
 
         editText = new EditText(theme.focusedFieldSelectionColor, theme.lightTextColor);

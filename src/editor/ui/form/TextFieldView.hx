@@ -85,6 +85,7 @@ class TextFieldView extends FieldView implements Observable {
             textView.align = textAlign;
         });
         textView.pointSize = 12;
+        textView.preRenderedSize = 20;
         textView.maxLineDiff = -1;
         layers.add(textView);
 
@@ -97,6 +98,7 @@ class TextFieldView extends FieldView implements Observable {
             placeholderView.align = textAlign;
         });
         placeholderView.pointSize = 12;
+        placeholderView.preRenderedSize = 20;
         placeholderView.maxLineDiff = -1;
         layers.add(placeholderView);
 

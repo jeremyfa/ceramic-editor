@@ -74,6 +74,7 @@ class ColorFieldView extends FieldView implements Observable {
         textPrefixView.viewSize(auto(), auto());
         textPrefixView.align = LEFT;
         textPrefixView.pointSize = 12;
+        textPrefixView.preRenderedSize = 20;
         textPrefixView.content = '#';
         textPrefixView.verticalAlign = CENTER;
         textPrefixView.padding(0, 3, 0, 2);
@@ -85,6 +86,7 @@ class ColorFieldView extends FieldView implements Observable {
         textView.align = LEFT;
         textView.verticalAlign = CENTER;
         textView.pointSize = 12;
+        textView.preRenderedSize = 20;
         container.add(textView);
 
         editText = new EditText(theme.focusedFieldSelectionColor, theme.lightTextColor);

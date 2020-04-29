@@ -77,6 +77,7 @@ class PopupView extends View implements Observable {
             titleView.align = CENTER;
             titleView.verticalAlign = CENTER;
             titleView.pointSize = 12;
+            titleView.preRenderedSize = 20;
             titleView.padding(5, 0);
             autorun(() -> {
                 var title = this.title;

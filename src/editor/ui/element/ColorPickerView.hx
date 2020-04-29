@@ -275,6 +275,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         rgbLabel.align = CENTER;
         rgbLabel.verticalAlign = CENTER;
         rgbLabel.pointSize = 12;
+        rgbLabel.preRenderedSize = 20;
         rgbLabel.content = 'RGB';
         rgbLabel.offset(
             offsetX,
@@ -314,6 +315,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         hslLabel.align = CENTER;
         hslLabel.verticalAlign = CENTER;
         hslLabel.pointSize = 12;
+        hslLabel.preRenderedSize = 20;
         hslLabel.offset(
             offsetX,
             0

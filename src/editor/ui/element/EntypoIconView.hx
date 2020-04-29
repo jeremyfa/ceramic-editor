@@ -12,6 +12,7 @@ class EntypoIconView extends TextView implements Observable {
         align = CENTER;
         verticalAlign = CENTER;
         pointSize = 16;
+        preRenderedSize = 20;
         font = editor.editorAssets.font(Fonts.ENTYPO);
         
         autorun(updateContent);
