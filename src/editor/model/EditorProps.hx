@@ -27,7 +27,12 @@ class EditorProps extends Model {
         var implicitSize = this.implicitSize;
 
         for (key in values.keys()) {
+            // Skip width & height if size is implicit
             if (implicitSize && (key == 'width' || key == 'height'))
+                continue;
+
+            // Skip temporary keys
+            if (key.startsWith('_tmp_'))
                 continue;
 
             var value = get(key);

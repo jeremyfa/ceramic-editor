@@ -76,6 +76,7 @@ class TextFieldView extends FieldView implements Observable {
         padding(6, 6, 6, 6);
 
         layers = new LayersLayout();
+        layers.viewSize(fill(), auto());
         add(layers);
 
         textView = new TextView();

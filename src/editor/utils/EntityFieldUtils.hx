@@ -1,6 +1,6 @@
 package editor.utils;
 
-class FieldUtils {
+class EntityFieldUtils {
 
     public static function createEditableField(editableType:EditableType, field:EditableTypeField, item:EditorEntityData):FieldView {
 
@@ -113,6 +113,8 @@ class FieldUtils {
             ? NUMERIC
             : TEXT
         );
+        var temporize:Bool = options != null && options.temporize;
+        var tmpName:String = temporize ? '_tmp_' + name : null;
         var minValue:Float = -999999999;
         var maxValue:Float = 999999999;
         if (options.min != null) {
@@ -158,10 +160,18 @@ class FieldUtils {
             }
         }
         fieldView.setValue = function(field, value) {
-            item.props.set(name, value);
+            if (temporize) {
+                item.props.set(tmpName, value);
+            }
+            else {
+                item.props.set(name, value);
+            }
         };
         fieldView.autorun(function() {
             var value:Dynamic = item.props.get(name);
+            if (item.props.exists(tmpName)) {
+                value = item.props.get(tmpName);
+            }
             if (value == null) {
                 fieldView.textValue = '';
             }

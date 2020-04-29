@@ -109,7 +109,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
             var editableMeta:Dynamic = field.meta.editable != null ? field.meta.editable[0] : null;
 
-            var fieldView = FieldUtils.createEditableField(editableType, field, visual);
+            var fieldView = EntityFieldUtils.createEditableField(editableType, field, visual);
             if (fieldView != null) {
                 
                 var item = new LabeledFieldView(fieldView);
