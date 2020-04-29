@@ -177,6 +177,7 @@ class EditorFragmentData extends Model {
         };
 
         autorun(updateFragmentDataWithoutItems);
+        autorun(updateItemsFragmentData);
 
     }
 
@@ -195,6 +196,20 @@ class EditorFragmentData extends Model {
 
         unobserve();
         invalidateFragmentDataWithoutItems();
+        reobserve();
+
+    }
+
+    function updateItemsFragmentData() {
+
+        var items = this.items;
+
+        unobserve();
+
+        for (i in 0...items.length) {
+            items[i].fragmentData = this;
+        }
+
         reobserve();
 
     }
@@ -223,6 +238,7 @@ class EditorFragmentData extends Model {
         // Create and add visual data
         //
         var visual = new EditorVisualData();
+        visual.fragmentData = this;
         visual.entityId = 'VISUAL_$i';
         visual.entityClass = entityClass;
 
@@ -282,6 +298,9 @@ class EditorFragmentData extends Model {
         for (anItem in items) {
             if (item == anItem) {
                 didRemove = true;
+                if (item.fragmentData == this) {
+                    item.fragmentData = null;
+                }
             }
             else {
                 newItems.push(anItem);

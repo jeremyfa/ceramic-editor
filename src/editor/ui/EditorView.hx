@@ -176,6 +176,7 @@ class EditorView extends View implements Observable {
             }
             if (toRemove != null) {
                 for (id in toRemove) {
+                    trace('REMOVE ITEM $id');
                     editedFragment.removeItem(id);
                 }
             }
@@ -362,6 +363,10 @@ class EditorView extends View implements Observable {
                 if (selectedItem != null) {
                     if (FieldManager.manager.focusedField == null && popup.contentView == null) {
                         fragment.removeItem(selectedItem);
+                        app.onceUpdate(this, _ -> {
+                            selectedItem.destroy();
+                            selectedItem = null;
+                        });
                     }
                 }
             }

@@ -8,7 +8,7 @@ class SanitizeTextField {
 
     static final RE_NUMERIC_PREFIX = ~/^[0-9]+/;
 
-    static final RE_SLUG_UNSAFE = ~/[$*+~.()'"!\\:@]/g;
+    static final RE_SLUG_UNSAFE = ~/[$*+~.()'"!\\:@\?§]/g;
 
     public static function setTextValueToInt(minValue:Int, maxValue:Int) {
         

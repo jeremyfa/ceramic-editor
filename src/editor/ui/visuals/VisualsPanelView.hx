@@ -145,6 +145,18 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
         }
 
+        // Entity id
+        {
+            var fieldView = EntityFieldUtils.createEditableEntityIdField(visual);
+            if (fieldView != null) {
+                
+                var item = new LabeledFieldView(fieldView);
+                item.label = 'Id';
+
+                form.add(item);
+            }
+        }
+
         for (i in 0...editableType.fields.length) {
             var field = editableType.fields[i];
             var editableMeta:Dynamic = field.meta.editable != null ? field.meta.editable[0] : null;
@@ -194,6 +206,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
             for (i in 0...editor.editableVisuals.length) {
                 choices.push(editor.editableVisuals[i].entity);
             }
+            choices.sort(TextUtils.compareStrings);
             Choice.choose('Add visual', choices, true, (index, text) -> {
                 model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual(editor.editableVisuals[index].entity);
             });

@@ -10,6 +10,8 @@ class EditorEntityData extends Model {
 
     @serialize public var props:EditorProps = new EditorProps();
 
+    @observe public var fragmentData:EditorFragmentData = null;
+
     public function new() {
 
         super();

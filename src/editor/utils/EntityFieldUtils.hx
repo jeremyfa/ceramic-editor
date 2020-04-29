@@ -190,6 +190,51 @@ class EntityFieldUtils {
 
     }
 
+    public static function createEditableEntityIdField(item:EditorEntityData) {
+        
+        var fieldView = new TextFieldView(TEXT);
+        fieldView.setTextValue = SanitizeTextField.setTextValueToIdentifier;
+        fieldView.setValue = function(field, value) {
+            fieldView.textValue = value;
+        };
+        fieldView.autorun(function() {
+            fieldView.textValue = item.entityId;
+        });
+        var valueOnFocus = null;
+        var wasFocused = fieldView.focused;
+        fieldView.autorun(function() {
+            var isFocused = fieldView.focused;
+            unobserve();
+            if (wasFocused && !isFocused) {
+                if (valueOnFocus != null) {
+                    var value = fieldView.textValue;
+                    if (item.fragmentData != null) {
+                        var itemForId = item.fragmentData.get(value);
+                        if (itemForId != null && itemForId != item) {
+                            log.warning('Ignoring value: $value (duplicate entity id in fragment)');
+                            
+                            fieldView.setValue(fieldView, valueOnFocus);
+                            fieldView.textValue = valueOnFocus;
+                        }
+                        else {
+                            item.entityId = value;
+                        }
+                    }
+                    else {
+                        item.entityId = value;
+                    }
+                }
+            }
+            else if (!wasFocused && isFocused) {
+                valueOnFocus = item.entityId;
+            }
+            wasFocused = isFocused;
+            reobserve();
+        });
+        return fieldView;
+
+    }
+
     public static function createEditableBooleanField(options:Dynamic, item:EditorEntityData, name:String) {
 
         var fieldView = new BooleanFieldView();
