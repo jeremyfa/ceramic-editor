@@ -197,10 +197,12 @@ class EntityFieldUtils {
         fieldView.setValue = function(field, value) {
             fieldView.textValue = value;
         };
+        var valueOnFocus = null;
         fieldView.autorun(function() {
             fieldView.textValue = item.entityId;
+            valueOnFocus = item.entityId;
         });
-        var valueOnFocus = null;
+        valueOnFocus = null;
         var wasFocused = fieldView.focused;
         inline function applyChange() {
             var value = fieldView.textValue;
@@ -218,11 +220,17 @@ class EntityFieldUtils {
                     fieldView.textValue = valueOnFocus;
                 }
                 else {
-                    item.entityId = value;
+                    if (item.entityId != value) {
+                        item.entityId = value;
+                        model.history.step();
+                    }
                 }
             }
             else {
-                item.entityId = value;
+                if (item.entityId != value) {
+                    item.entityId = value;
+                    model.history.step();
+                }
             }
         }
         fieldView.autorun(function() {
