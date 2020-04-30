@@ -202,27 +202,35 @@ class EntityFieldUtils {
         });
         var valueOnFocus = null;
         var wasFocused = fieldView.focused;
+        inline function applyChange() {
+            var value = fieldView.textValue;
+            if (value == '') {
+                // Empty value, restore previous value
+                fieldView.setValue(fieldView, valueOnFocus);
+                fieldView.textValue = valueOnFocus;
+            }
+            else if (item.fragmentData != null) {
+                var itemForId = item.fragmentData.get(value);
+                if (itemForId != null && itemForId != item) {
+                    log.warning('Ignoring value: $value (duplicate entity id in fragment)');
+                    
+                    fieldView.setValue(fieldView, valueOnFocus);
+                    fieldView.textValue = valueOnFocus;
+                }
+                else {
+                    item.entityId = value;
+                }
+            }
+            else {
+                item.entityId = value;
+            }
+        }
         fieldView.autorun(function() {
             var isFocused = fieldView.focused;
             unobserve();
             if (wasFocused && !isFocused) {
                 if (valueOnFocus != null) {
-                    var value = fieldView.textValue;
-                    if (item.fragmentData != null) {
-                        var itemForId = item.fragmentData.get(value);
-                        if (itemForId != null && itemForId != item) {
-                            log.warning('Ignoring value: $value (duplicate entity id in fragment)');
-                            
-                            fieldView.setValue(fieldView, valueOnFocus);
-                            fieldView.textValue = valueOnFocus;
-                        }
-                        else {
-                            item.entityId = value;
-                        }
-                    }
-                    else {
-                        item.entityId = value;
-                    }
+                    applyChange();
                 }
             }
             else if (!wasFocused && isFocused) {
@@ -230,6 +238,13 @@ class EntityFieldUtils {
             }
             wasFocused = isFocused;
             reobserve();
+        });
+        fieldView.onDestroy(item, function(_) {
+            if (wasFocused) {
+                if (valueOnFocus != null) {
+                    applyChange();
+                }
+            }
         });
         return fieldView;
 
