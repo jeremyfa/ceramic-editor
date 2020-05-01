@@ -1,5 +1,6 @@
 package;
 
+import ceramic.Dialogs;
 import ceramic.macros.DefinesMacro;
 import ceramic.ImageAsset;
 import ceramic.Assets;
@@ -37,7 +38,7 @@ class Project {
 
     }
 
-    function ready() { 
+    function ready() {
 
         /*
         var shape = new Shape();

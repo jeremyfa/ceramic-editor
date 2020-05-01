@@ -14,6 +14,8 @@ import editor.visuals.Highlight;
 
 class Editable extends Entity implements Component {
 
+    static var _point:Point = new Point(0, 0);
+
     @event function select(visual:Visual);
 
     @event function change(visual:Visual, changed:Dynamic);
@@ -271,8 +273,9 @@ class Editable extends Entity implements Component {
         entity.anchorKeepPosition(tmpAnchorX, tmpAnchorY);
 
         inline function distanceMain() {
-            var a = screen.pointerX - cornerPoint.x;
-            var b = screen.pointerY - cornerPoint.y;
+            highlight.visualToScreen(cornerPoint.x, cornerPoint.y, _point);
+            var a = screen.pointerX - _point.x;
+            var b = screen.pointerY - _point.y;
             return Math.sqrt(a * a + b * b);
         }
 

@@ -18,6 +18,8 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         initSelectedFragmentSection();
         initAddFragmentButton();
 
+        autorun(updateStyle);
+
     }
 
     function initAllFragmentsSection() {
@@ -30,7 +32,6 @@ class FragmentsPanelView extends LinearLayout implements Observable {
 
         var collectionView = new CellCollectionView();
         collectionView.viewSize(fill(), percent(25));
-        collectionView.transparent = true;
         collectionView.dataSource = dataSource;
         add(collectionView);
 
@@ -172,6 +173,12 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         autorun(function() {
             separator.active = model.project.fragments.length > 0;
         });
+
+    }
+
+    function updateStyle() {
+
+        //
 
     }
 

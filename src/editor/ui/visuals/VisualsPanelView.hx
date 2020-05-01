@@ -4,10 +4,6 @@ import editor.utils.TextUtils;
 
 class VisualsPanelView extends LinearLayout implements Observable {
 
-/// Internal properties
-
-    var allVisualsCollectionView:CellCollectionView;
-
 /// Lifecycle
 
     public function new() {
@@ -17,6 +13,8 @@ class VisualsPanelView extends LinearLayout implements Observable {
         initAllVisualsSection();
         initSelectedVisualSection();
         initAddVisualButton();
+
+        autorun(updateStyle);
 
     }
 
@@ -30,7 +28,6 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
         var collectionView = new CellCollectionView();
         collectionView.viewSize(fill(), percent(25));
-        collectionView.transparent = true;
         collectionView.dataSource = dataSource;
         add(collectionView);
 
@@ -216,6 +213,12 @@ class VisualsPanelView extends LinearLayout implements Observable {
         autorun(function() {
             separator.active = model.project.selectedFragment != null && model.project.selectedFragment.visuals.length > 0;
         });
+
+    }
+
+    function updateStyle() {
+
+        //
 
     }
 

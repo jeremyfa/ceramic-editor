@@ -9,6 +9,7 @@ app:
     #    - spine-hx
     
     #spine: true
+    dialogs: true
 
     defines:
         - editor

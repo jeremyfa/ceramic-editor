@@ -1,5 +1,7 @@
 package editor.ui;
 
+using editor.components.Tooltip;
+
 class EditorView extends View implements Observable {
 
 /// Properties
@@ -9,6 +11,8 @@ class EditorView extends View implements Observable {
     @observe var prevSelectedFragment:EditorFragmentData = null;
 
     public var fragmentOverlay(default, null):Quad;
+
+    var leftSideMenu:ColumnLayout;
 
     var editedFragment:Fragment = null;
 
@@ -30,6 +34,44 @@ class EditorView extends View implements Observable {
         panelTabsView = new PanelTabsView();
         panelTabsView.depth = 3;
         add(panelTabsView);
+
+        // Left side menu
+        leftSideMenu = new ColumnLayout();
+        leftSideMenu.padding(6, 0);
+        leftSideMenu.depth = 4;
+        {
+            var h = 34;
+            var s = 20;
+
+            var settingsButton = new ClickableIconView();
+            settingsButton.icon = COG;
+            settingsButton.viewSize(fill(), h);
+            settingsButton.pointSize = s;
+            settingsButton.tooltip('Settings');
+            leftSideMenu.add(settingsButton);
+            
+            var settingsButton = new ClickableIconView();
+            settingsButton.icon = FLOPPY;
+            settingsButton.viewSize(fill(), h);
+            settingsButton.pointSize = s;
+            settingsButton.tooltip('Save / Save As');
+            leftSideMenu.add(settingsButton);
+            
+            var settingsButton = new ClickableIconView();
+            settingsButton.icon = PLUS_SQUARED;
+            settingsButton.viewSize(fill(), h);
+            settingsButton.pointSize = s;
+            settingsButton.tooltip('New Project');
+            leftSideMenu.add(settingsButton);
+            
+            var settingsButton = new ClickableIconView();
+            settingsButton.icon = PUBLISH;
+            settingsButton.viewSize(fill(), h);
+            settingsButton.pointSize = s - 2;
+            settingsButton.tooltip('Export fragments');
+            leftSideMenu.add(settingsButton);
+        }
+        add(leftSideMenu);
 
         // Fragment
         editedFragment = new Fragment({
@@ -70,14 +112,20 @@ class EditorView extends View implements Observable {
 
     override function layout() {
         
+        var leftSideMenuWidth = 40;
         var panelsTabsWidth = 300;
-        var availableFragmentWidth = width - panelsTabsWidth;
+        var availableFragmentWidth = width - panelsTabsWidth - leftSideMenuWidth;
         var availableFragmentHeight = height;
 
         panelTabsView.viewSize(panelsTabsWidth, height);
         panelTabsView.computeSize(panelsTabsWidth, height, ViewLayoutMask.FIXED, true);
         panelTabsView.applyComputedSize();
         panelTabsView.pos(width - panelTabsView.width, 0);
+
+        leftSideMenu.viewSize(leftSideMenuWidth, height);
+        leftSideMenu.computeSize(leftSideMenuWidth, height, ViewLayoutMask.FIXED, true);
+        leftSideMenu.applyComputedSize();
+        leftSideMenu.pos(0, 0);
 
         if (editedFragment.width > 0 && editedFragment.height > 0) {
             editedFragment.anchor(0.5, 0.5);
@@ -86,12 +134,15 @@ class EditorView extends View implements Observable {
                 availableFragmentHeight / editedFragment.height
             ));
             editedFragment.pos(
-                availableFragmentWidth * 0.5,
+                leftSideMenuWidth + availableFragmentWidth * 0.5,
                 availableFragmentHeight * 0.5
             );
         }
 
-        fragmentOverlay.pos(0, 0);
+        fragmentOverlay.pos(
+            editedFragment.x - availableFragmentWidth * 0.5,
+            editedFragment.y - availableFragmentHeight * 0.5
+        );
         fragmentOverlay.size(availableFragmentWidth, availableFragmentHeight);
 
         popup.anchor(0.5, 0.5);
@@ -377,6 +428,12 @@ class EditorView extends View implements Observable {
     function updateStyle() {
 
         color = theme.windowBackgroundColor;
+
+        leftSideMenu.transparent = false;
+        leftSideMenu.color = theme.mediumBackgroundColor;
+        leftSideMenu.borderRightSize = 1;
+        leftSideMenu.borderRightColor = theme.darkBorderColor;
+        leftSideMenu.borderPosition = INSIDE;
 
         editedFragment.transparent = false;
         editedFragment.color = theme.darkBackgroundColor;

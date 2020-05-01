@@ -1,6 +1,6 @@
 package editor.ui.element;
 
-using editor.components.VisualTransition;
+using ceramic.VisualTransition;
 
 class ColorPickerView extends LayersLayout implements Observable {
 

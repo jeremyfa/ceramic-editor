@@ -51,12 +51,15 @@ class CellCollectionView extends CollectionView implements Observable {
     function updateStyle() {
 
         if (inputStyle) {
+            transparent = true;
             contentView.borderTopSize = 1;
             borderBottomSize = 1;
             borderTopSize = 1;
             borderBottomColor = theme.lightBorderColor;
         }
         else {
+            transparent = false;
+            color = theme.mediumBackgroundColor;
             borderSize = 0;
             contentView.borderTopSize = 1;
             borderBottomSize = 1;
