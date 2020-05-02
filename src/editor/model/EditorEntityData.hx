@@ -20,6 +20,12 @@ class EditorEntityData extends Model {
 
     }
 
+    override function didDeserialize() {
+
+        props.entityData = this;
+
+    }
+
     override function destroy() {
 
         super.destroy();
@@ -28,12 +34,6 @@ class EditorEntityData extends Model {
 
         props.destroy();
         props = null;
-
-    }
-
-    override function didDeserialize() {
-
-        props.entityData = this;
 
     }
 
@@ -57,6 +57,29 @@ class EditorEntityData extends Model {
         }
 
         return result;
+
+    }
+
+    public function toJson():Dynamic {
+
+        var json:Dynamic = {};
+
+        json.id = entityId;
+        json.entity = entityClass;
+
+        if (Lambda.count(entityComponents) > 0) {
+            json.components = {};
+            for (key => val in entityComponents) {
+                Reflect.setField(json.components, key, val);
+            }
+        }
+
+        json.props = {};
+        for (key in props.keys()) {
+            Reflect.setField(json.props, key, props.get(key));
+        }
+
+        return json;
 
     }
 

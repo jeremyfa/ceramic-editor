@@ -58,7 +58,17 @@ class EditorView extends View implements Observable {
             settingsButton.icon = FLOPPY;
             settingsButton.viewSize(fill(), h);
             settingsButton.pointSize = s;
-            settingsButton.tooltip('Save / Save As');
+            settingsButton.autorun(() -> {
+                if (model.projectPath == null) {
+                    settingsButton.tooltip('Save As...');
+                }
+                else {
+                    settingsButton.tooltip('Save');
+                }
+            });
+            settingsButton.onClick(this, () -> {
+                model.saveProject();
+            });
             leftSideMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();

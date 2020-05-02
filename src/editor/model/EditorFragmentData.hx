@@ -332,4 +332,25 @@ class EditorFragmentData extends Model {
 
     }
 
+    public function toJson():Dynamic {
+
+        var json:Dynamic = {};
+
+        json.id = fragmentId;
+        json.name = name;
+        json.width = width;
+        json.height = height;
+        json.bundle = bundle;
+        json.selectedItemIndex = selectedItemIndex;
+
+        var jsonItems = [];
+        for (item in items) {
+            jsonItems.push(item.toJson());
+        }
+        json.items = jsonItems;
+
+        return json;
+
+    }
+
 }

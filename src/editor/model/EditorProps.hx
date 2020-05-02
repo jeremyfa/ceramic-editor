@@ -5,7 +5,7 @@ class EditorProps extends Model {
 
     @serialize var values:Map<String,EditorValue> = new Map();
 
-    @serialize public var entityData:EditorEntityData;
+    @observe public var entityData:EditorEntityData;
 
     public function new() {
         
@@ -40,6 +40,12 @@ class EditorProps extends Model {
         }
 
         return result;
+
+    }
+
+    public function keys():Iterator<String> {
+
+        return values.keys();
 
     }
 

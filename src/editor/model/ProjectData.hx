@@ -1,5 +1,7 @@
 package editor.model;
 
+import haxe.iterators.DynamicAccessIterator;
+import haxe.DynamicAccess;
 import tracker.SerializeModel;
 
 class ProjectData extends Model {
@@ -147,6 +149,26 @@ class ProjectData extends Model {
         paletteColors.splice(index, 1);
 
         this.paletteColors = cast paletteColors;
+
+    }
+
+    public function toJson():Dynamic {
+
+        var json:Dynamic = {};
+
+        json.title = title;
+
+        json.paletteColors = paletteColors;
+        json.colorPickerHsluv = colorPickerHsluv;
+        json.selectedFragmentIndex = selectedFragmentIndex;
+
+        var jsonFragments = [];
+        for (fragment in fragments) {
+            jsonFragments.push(fragment.toJson());
+        }
+        json.fragments = jsonFragments;
+
+        return json;
 
     }
 

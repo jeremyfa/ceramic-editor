@@ -1,5 +1,6 @@
 package editor.model;
 
+import haxe.Json;
 using tracker.SaveModel;
 using tracker.History;
 
@@ -8,6 +9,8 @@ class EditorData extends Model {
     @component public var history:History;
 
     @observe public var projectUnsaved:Bool = false;
+
+    @observe public var projectPath:String = null;
 
     @observe public var theme:EditorTheme = new EditorTheme();
 
@@ -64,6 +67,26 @@ class EditorData extends Model {
         clearStatusMessageDelay = Timer.delay(this, duration, () -> {
             this.statusMessage = null;
         });
+
+    }
+
+    public function saveProject() {
+
+        if (projectPath != null) {
+            // TODO save
+        }
+        else {
+            trace('save file dialog...');
+            Dialogs.saveFile('Save project', [{
+                name: 'Ceramic project', extensions: ['ceramic']
+            }], file -> {
+                if (file != null) {
+                    trace('Save as file: $file');
+                    project.title = Path.withoutExtension(Path.withoutDirectory(file));
+                    Files.saveContent(file, Json.stringify(project.toJson(), null, '    '));
+                }
+            });
+        }
 
     }
 
