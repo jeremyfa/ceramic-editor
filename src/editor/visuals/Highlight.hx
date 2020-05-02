@@ -46,6 +46,8 @@ class Highlight extends Visual {
 
     public var leftDistance(default,null):Float;
 
+    var wrappedVisual:Visual = null;
+
     var borderTop = new Quad();
 
     var borderRight = new Quad();
@@ -204,6 +206,14 @@ class Highlight extends Visual {
 
     public function wrapVisual(visual:Visual):Void {
 
+        wrappedVisual = visual;
+        doWrapVisual(visual);
+        contentDirty = true;
+
+    }
+
+    function doWrapVisual(visual:Visual) {
+
         visual.visualToScreen(0, 0, pointTopLeft);
         this.screenToVisual(pointTopLeft.x, pointTopLeft.y, pointTopLeft);
 
@@ -220,6 +230,21 @@ class Highlight extends Visual {
         this.screenToVisual(pointAnchor.x, pointAnchor.y, pointAnchor);
 
         updateCornersAndBorders();
+
+    }
+
+    override function computeContent() {
+
+        if (wrappedVisual != null) {
+            if (wrappedVisual.destroyed) {
+                wrappedVisual = null;
+            }
+            else {
+                doWrapVisual(wrappedVisual);
+            }
+        }
+
+        contentDirty = false;
 
     }
 

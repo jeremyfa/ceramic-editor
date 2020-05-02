@@ -147,6 +147,21 @@ class EditorFragmentData extends Model {
 
     }
 
+    override function destroy() {
+
+        super.destroy();
+
+        var prevItems = items;
+        items = null;
+        selectedItemIndex = -1;
+        for (item in prevItems) {
+            item.destroy();
+        }
+
+        fragmentDataWithoutItems = null;
+
+    }
+
     override function didDeserialize() {
 
         if (!didInit)

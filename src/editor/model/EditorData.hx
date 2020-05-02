@@ -7,6 +7,8 @@ class EditorData extends Model {
 
     @component public var history:History;
 
+    @observe public var projectUnsaved:Bool = false;
+
     @observe public var theme:EditorTheme = new EditorTheme();
 
     @serialize public var project:ProjectData = new ProjectData();
@@ -23,6 +25,10 @@ class EditorData extends Model {
 
     @observe public var pendingChoice:EditorPendingChoice = null;
 
+    @observe public var statusMessage(default, null):String = null;
+
+    var clearStatusMessageDelay:Void->Void = null;
+
     public function new() {
 
         super();
@@ -33,6 +39,10 @@ class EditorData extends Model {
         history = new History();
         history.step();
 
+        serializer.onChangeset(this, changeset -> {
+            projectUnsaved = true;
+        });
+
     }
 
     override function destroy() {
@@ -41,6 +51,20 @@ class EditorData extends Model {
 
         trace('MODEL DESTROY');
         
+    }
+
+    public function status(message:String, duration:Float = 60) {
+
+        if (clearStatusMessageDelay != null) {
+            clearStatusMessageDelay();
+        }
+
+        this.statusMessage = message;
+
+        clearStatusMessageDelay = Timer.delay(this, duration, () -> {
+            this.statusMessage = null;
+        });
+
     }
 
 }

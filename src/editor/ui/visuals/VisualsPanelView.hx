@@ -205,7 +205,8 @@ class VisualsPanelView extends LinearLayout implements Observable {
             }
             choices.sort(TextUtils.compareStrings);
             Choice.choose('Add visual', choices, true, (index, text) -> {
-                model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual(editor.editableVisuals[index].entity);
+                log.debug('ADD VISUAL ' + choices[index]);
+                model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual(choices[index]);
             });
         });
         container.add(button);

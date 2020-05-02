@@ -14,9 +14,13 @@ class EditorView extends View implements Observable {
 
     var leftSideMenu:ColumnLayout;
 
+    var bottomBar:RowLayout;
+
     var editedFragment:Fragment = null;
 
     var popup:PopupView = null;
+
+    var statusText:TextView;
 
 /// Lifecycle
 
@@ -58,10 +62,22 @@ class EditorView extends View implements Observable {
             leftSideMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
-            settingsButton.icon = PLUS_SQUARED;
+            settingsButton.icon = TRASH;
             settingsButton.viewSize(fill(), h);
             settingsButton.pointSize = s;
-            settingsButton.tooltip('New Project');
+            settingsButton.tooltip('Clear project');
+            settingsButton.onClick(this, () -> {
+                Confirmation.confirm(
+                    'Clear project?',
+                    'Any unsaved change will be lost.\nDo you want to continue?',
+                    true,
+                    confirmed -> {
+                        if (confirmed) {
+                            model.project.clear();
+                        }
+                    }
+                );
+            });
             leftSideMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
@@ -72,6 +88,27 @@ class EditorView extends View implements Observable {
             leftSideMenu.add(settingsButton);
         }
         add(leftSideMenu);
+
+        bottomBar = new RowLayout();
+        bottomBar.padding(0, 6);
+        add(bottomBar);
+
+        statusText = new TextView();
+        statusText.preRenderedSize = 20;
+        statusText.pointSize = 11;
+        statusText.align = LEFT;
+        statusText.verticalAlign = CENTER;
+        statusText.viewSize(auto(), fill());
+        statusText.autorun(() -> {
+            var message = model.statusMessage;
+            unobserve();
+            statusText.content = message != null ? message : '';
+        });
+        bottomBar.add(statusText);
+        
+        Timer.delay(this, 2.0, () -> {
+            model.status('Welcome to ceramic editor!');
+        });
 
         // Fragment
         editedFragment = new Fragment({
@@ -87,6 +124,7 @@ class EditorView extends View implements Observable {
         fragmentOverlay = new Quad();
         fragmentOverlay.transparent = true;
         fragmentOverlay.depth = 2;
+        editedFragment.clip = fragmentOverlay;
         add(fragmentOverlay);
 
         // Popup
@@ -114,8 +152,9 @@ class EditorView extends View implements Observable {
         
         var leftSideMenuWidth = 40;
         var panelsTabsWidth = 300;
+        var bottomBarHeight = 18;
         var availableFragmentWidth = width - panelsTabsWidth - leftSideMenuWidth;
-        var availableFragmentHeight = height;
+        var availableFragmentHeight = height - bottomBarHeight;
 
         panelTabsView.viewSize(panelsTabsWidth, height);
         panelTabsView.computeSize(panelsTabsWidth, height, ViewLayoutMask.FIXED, true);
@@ -148,6 +187,11 @@ class EditorView extends View implements Observable {
         popup.anchor(0.5, 0.5);
         popup.pos(width * 0.5, height * 0.5);
         popup.size(width, height);
+
+        bottomBar.viewSize(availableFragmentWidth, bottomBarHeight);
+        bottomBar.computeSize(availableFragmentWidth, bottomBarHeight, ViewLayoutMask.FIXED, true);
+        bottomBar.applyComputedSize();
+        bottomBar.pos(leftSideMenuWidth, height - bottomBarHeight);
 
     }
 
@@ -437,6 +481,15 @@ class EditorView extends View implements Observable {
 
         editedFragment.transparent = false;
         editedFragment.color = theme.darkBackgroundColor;
+
+        bottomBar.transparent = false;
+        bottomBar.color = theme.mediumBackgroundColor;
+        bottomBar.borderTopSize = 1;
+        bottomBar.borderTopColor = theme.darkBorderColor;
+        bottomBar.borderPosition = INSIDE;
+
+        statusText.color = theme.lightTextColor;
+        statusText.font = theme.mediumFont;
 
     }
 

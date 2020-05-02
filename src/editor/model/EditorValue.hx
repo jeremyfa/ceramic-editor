@@ -6,9 +6,6 @@ class EditorValue extends Model {
     function set_value(value:Dynamic):Dynamic {
         if (this.value == value) return value;
         this.value = value;
-        if (value == null) {
-            Utils.printStackTrace();
-        }
         return value;
     }
 

@@ -20,6 +20,17 @@ class EditorEntityData extends Model {
 
     }
 
+    override function destroy() {
+
+        super.destroy();
+
+        fragmentData = null;
+
+        props.destroy();
+        props = null;
+
+    }
+
     override function didDeserialize() {
 
         props.entityData = this;

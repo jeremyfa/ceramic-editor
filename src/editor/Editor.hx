@@ -436,8 +436,10 @@ class Editor extends Entity {
 
     function updateWindow() {
 
+        var projectUnsaved = model.projectUnsaved;
+
         // Update window title
-        settings.title = model.project.title;
+        settings.title = model.project.title + (projectUnsaved ? ' *' : '');
 
     }
 

@@ -1,5 +1,7 @@
 package editor.model;
 
+import tracker.SerializeModel;
+
 class ProjectData extends Model {
 
 /// Main data
@@ -8,18 +10,11 @@ class ProjectData extends Model {
 
     @serialize public var fragments:ImmutableArray<EditorFragmentData> = [];
 
-    @serialize public var assets:ImmutableArray<EditorAsset> = [];
-
 /// Settings
 
     @serialize public var colorPickerHsluv:Bool = false;
 
-    @serialize public var paletteColors:ImmutableArray<Color> = [];/*(() -> {
-        var res = [];
-        for (i in 0...40)
-            res.push(Color.random());
-        return res;
-    })();*/
+    @serialize public var paletteColors:ImmutableArray<Color> = [];
 
 /// UI info
 
@@ -38,6 +33,37 @@ class ProjectData extends Model {
     public function new() {
 
         super();
+
+    }
+
+    public function clear() {
+
+        title = 'New Project';
+
+        clearFragments();
+
+        colorPickerHsluv = false;
+
+        paletteColors = [];
+
+    }
+
+    function clearFragments() {
+        
+        var prevFragments = fragments;
+        selectedFragmentIndex = -1;
+        fragments = [];
+        for (fragment in prevFragments) {
+            fragment.destroy();
+        }
+
+    }
+
+    override function destroy() {
+
+        super.destroy();
+
+        clearFragments();
 
     }
 
