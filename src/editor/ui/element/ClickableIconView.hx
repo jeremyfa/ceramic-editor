@@ -4,6 +4,8 @@ class ClickableIconView extends EntypoIconView {
 
     @event function click();
 
+    @event function longPress();
+
     public function new() {
 
         super();
@@ -15,6 +17,11 @@ class ClickableIconView extends EntypoIconView {
         click.onClick(this, () -> {
             emitClick();
         });
+
+        var longPress = new LongPress(info -> {
+            emitLongPress();
+        }, click);
+        component('longPress', longPress);
 
         onPointerDown(this, _ -> {
             transform.ty = 1;

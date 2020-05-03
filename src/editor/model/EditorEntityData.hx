@@ -52,6 +52,7 @@ class EditorEntityData extends Model {
 
         var result:Dynamic<String> = {};
 
+        var entityComponents = this.entityComponents;
         for (key in entityComponents.keys()) {
             Reflect.setField(result, key, entityComponents.get(key));
         }
@@ -66,6 +67,7 @@ class EditorEntityData extends Model {
 
         json.id = entityId;
         json.entity = entityClass;
+        json.isVisual = Std.is(this, EditorVisualData);
 
         if (Lambda.count(entityComponents) > 0) {
             json.components = {};
@@ -80,6 +82,39 @@ class EditorEntityData extends Model {
         }
 
         return json;
+
+    }
+
+    public function fromJson(json:Dynamic):Void {
+
+        if (!Validate.identifier(json.id))
+            throw 'Invalid entity id';
+        entityId = json.id;
+
+        if (!Validate.nonEmptyString(json.entity))
+            throw 'Invalid entity type';
+        entityClass = json.entity;
+
+        if (json.components != null) {
+            var parsedComponents = new Map<String,String>();
+            for (key in Reflect.fields(json.components)) {
+                var value:Dynamic = Reflect.field(json.components, key);
+                if (!Validate.nonEmptyString(value))
+                    throw 'Invalid component';
+                parsedComponents.set(key, value);
+            }
+            entityComponents = cast parsedComponents;
+        }
+        else {
+            entityComponents = cast new Map<String,String>();
+        }
+
+        if (json.props != null) {
+            for (key in Reflect.fields(json.props)) {
+                var value:Dynamic = Reflect.field(json.props, key);
+                props.set(key, value);
+            }
+        }
 
     }
 

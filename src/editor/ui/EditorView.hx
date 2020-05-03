@@ -69,24 +69,28 @@ class EditorView extends View implements Observable {
             settingsButton.onClick(this, () -> {
                 model.saveProject();
             });
+            settingsButton.onLongPress(this, () -> {
+                model.saveProject(true);
+            });
             leftSideMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
-            settingsButton.icon = TRASH;
+            settingsButton.icon = FOLDER;
+            settingsButton.viewSize(fill(), h);
+            settingsButton.pointSize = s - 2;
+            settingsButton.tooltip('Open project...');
+            settingsButton.onClick(this, () -> {
+                model.openProject();
+            });
+            leftSideMenu.add(settingsButton);
+            
+            var settingsButton = new ClickableIconView();
+            settingsButton.icon = DOC;
             settingsButton.viewSize(fill(), h);
             settingsButton.pointSize = s;
-            settingsButton.tooltip('Clear project');
+            settingsButton.tooltip('New project');
             settingsButton.onClick(this, () -> {
-                Confirmation.confirm(
-                    'Clear project?',
-                    'Any unsaved change will be lost.\nDo you want to continue?',
-                    true,
-                    confirmed -> {
-                        if (confirmed) {
-                            model.project.clear();
-                        }
-                    }
-                );
+                model.newProject();
             });
             leftSideMenu.add(settingsButton);
             

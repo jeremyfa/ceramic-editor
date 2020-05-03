@@ -4,7 +4,7 @@ import haxe.iterators.DynamicAccessIterator;
 import haxe.DynamicAccess;
 import tracker.SerializeModel;
 
-class ProjectData extends Model {
+class EditorProjectData extends Model {
 
 /// Main data
 
@@ -94,7 +94,6 @@ class ProjectData extends Model {
         //
         var fragment = new EditorFragmentData();
         fragment.fragmentId = 'FRAGMENT_$i';
-        fragment.name = 'Fragment $i';
         fragment.width = 800;
         fragment.height = 600;
 
@@ -169,6 +168,65 @@ class ProjectData extends Model {
         json.fragments = jsonFragments;
 
         return json;
+
+    }
+
+    public function fromJson(json:Dynamic):Void {
+
+        if (!Validate.nonEmptyString(json.title))
+            throw 'Invalid project title';
+
+        title = json.title;
+
+        if (json.paletteColors != null) {
+            if (!Validate.colorArray(json.paletteColors))
+                throw 'Invalid project palette';
+            
+            paletteColors = json.paletteColors;
+        }
+        else {
+            paletteColors = [];
+        }
+
+        if (json.colorPickerHsluv != null) {
+            if (!Validate.boolean(json.colorPickerHsluv))
+                throw 'Invalid project hsluv state';
+            
+            colorPickerHsluv = json.colorPickerHsluv;
+        }
+        else {
+            colorPickerHsluv = false;
+        }
+
+        if (json.fragments != null) {
+            if (!Validate.array(json.fragments))
+                throw 'Invalid project fragments';
+
+            var jsonFragments:Array<Dynamic> = json.fragments;
+            var parsedFragments = [];
+            for (jsonFragment in jsonFragments) {
+                var fragment = new EditorFragmentData();
+                fragment.fromJson(jsonFragment);
+                parsedFragments.push(fragment);
+            }
+            fragments = cast parsedFragments;
+        }
+        else {
+            fragments = [];
+        }
+
+        if (json.selectedFragmentIndex != null) {
+            if (!Validate.int(json.selectedFragmentIndex))
+                throw 'Invalid project selected fragment index';
+
+            selectedFragmentIndex = json.selectedFragmentIndex;
+        }
+        else {
+            selectedFragmentIndex = -1;
+        }
+        if (selectedFragmentIndex >= fragments.length || selectedFragmentIndex < -1) {
+            selectedFragmentIndex = -1;
+        }
 
     }
 

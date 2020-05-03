@@ -13,7 +13,7 @@ import ceramic.SpinePlugin;
 #end
 
 /** Turns the app into an editor. */
-class Editor extends Entity {
+class Editor extends Entity implements Observable {
 
     public static var editor(default,null):Editor = null;
 
@@ -39,9 +39,13 @@ class Editor extends Entity {
 
 /// Internal properties
 
+    @observe var pendingFile:String = null;
+
     var renders:Int = 0;
 
     var options:EditorOptions;
+
+    @owner var dropFile:DropFile;
 
 /// Internal statics
 
@@ -72,6 +76,11 @@ class Editor extends Entity {
         settings.title = 'Ceramic Editor';
 
         app.onceReady(this, loadAssets);
+
+        dropFile = new DropFile();
+        dropFile.onDropFile(this, filePath -> {
+            pendingFile = filePath;
+        });
 
     }
 
@@ -406,6 +415,7 @@ class Editor extends Entity {
         app.flushImmediate();
 
         autorun(updateWindow);
+        autorun(handlePendingFile);
         
     }
 
@@ -440,6 +450,21 @@ class Editor extends Entity {
 
         // Update window title
         settings.title = model.project.title + (projectUnsaved ? ' *' : '');
+
+    }
+
+    function handlePendingFile() {
+
+        var pendingFile = this.pendingFile;
+
+        unobserve();
+
+        if (pendingFile!= null) {
+            this.pendingFile = null;
+            model.openProject(pendingFile);
+        }
+
+        reobserve();
 
     }
 

@@ -10,11 +10,6 @@ class EditorFragmentData extends Model {
     @serialize public var fragmentId:String;
 
     /**
-     * Fragment name
-     */
-    @serialize public var name:String;
-
-    /**
      * Fragment width
      */
     @serialize public var width:Int;
@@ -37,6 +32,8 @@ class EditorFragmentData extends Model {
     @serialize public var items:ImmutableArray<EditorEntityData> = [];
 
     @serialize public var selectedItemIndex:Int = -1;
+
+    @serialize public var fragmentComponents:Map<String, String> = new Map();
 
     public var selectedItem(get,set):EditorEntityData;
     function get_selectedItem():EditorEntityData {
@@ -132,7 +129,9 @@ class EditorFragmentData extends Model {
 
 /// Computed fragment data
 
-    @observe public var fragmentDataWithoutItems(default,null):FragmentData = null;
+    @observe public var fragmentDataWithoutItems(default, null):FragmentData = null;
+
+    @observe public var freezeEditorChanges(default, null):Int = 0;
 
 /// Lifecycle
 
@@ -184,7 +183,6 @@ class EditorFragmentData extends Model {
 
         fragmentDataWithoutItems = {
             id: null,
-            name: null,
             width: 0.0,
             height: 0.0,
             data: {},
@@ -205,7 +203,6 @@ class EditorFragmentData extends Model {
         reobserve();
 
         fragmentDataWithoutItems.id = this.fragmentId;
-        fragmentDataWithoutItems.name = this.name;
         fragmentDataWithoutItems.width = this.width;
         fragmentDataWithoutItems.height = this.height;
 
@@ -332,16 +329,58 @@ class EditorFragmentData extends Model {
 
     }
 
+    public function toFragmentData():FragmentData {
+
+        return {
+            id: fragmentId,
+            data: null, // TODO?
+            width: width,
+            height: height,
+            components: fragmentComponentsToDynamic(),
+            items: fragmentItems()
+        };
+        
+    }
+
+    public function fragmentComponentsToDynamic():Dynamic<String> {
+
+        var result:Dynamic<String> = {};
+
+        var fragmentComponents = this.fragmentComponents;
+        for (key in fragmentComponents.keys()) {
+            Reflect.setField(result, key, fragmentComponents.get(key));
+        }
+
+        return result;
+
+    }
+
+    public function fragmentItems():Array<FragmentItem> {
+
+        var result = [];
+        for (item in items) {
+            result.push(item.toFragmentItem());
+        }
+        return result;
+
+    }
+
     public function toJson():Dynamic {
 
         var json:Dynamic = {};
 
         json.id = fragmentId;
-        json.name = name;
         json.width = width;
         json.height = height;
         json.bundle = bundle;
         json.selectedItemIndex = selectedItemIndex;
+
+        if (Lambda.count(fragmentComponents) > 0) {
+            json.components = {};
+            for (key => val in fragmentComponents) {
+                Reflect.setField(json.components, key, val);
+            }
+        }
 
         var jsonItems = [];
         for (item in items) {
@@ -350,6 +389,72 @@ class EditorFragmentData extends Model {
         json.items = jsonItems;
 
         return json;
+
+    }
+
+    public function fromJson(json:Dynamic):Void {
+
+        if (!Validate.identifier(json.id))
+            throw 'Invalid fragment id';
+        fragmentId = json.id;
+
+        if (!Validate.intDimension(json.width))
+            throw 'Invalid fragment width';
+        width = json.width;
+
+        if (!Validate.intDimension(json.height))
+            throw 'Invalid fragment height';
+        height = json.height;
+
+        if (json.bundle != null) {
+            if (!Validate.nonEmptyString(json.bundle))
+                throw 'Invalid fragment bundle';
+
+            bundle = json.bundle;
+        }
+        else {
+            bundle = null;
+        }
+
+        if (json.components != null) {
+            var parsedComponents = new Map<String,String>();
+            for (key in Reflect.fields(json.components)) {
+                var value:Dynamic = Reflect.field(json.components, key);
+                if (!Validate.nonEmptyString(value))
+                    throw 'Invalid component';
+                parsedComponents.set(key, value);
+            }
+            fragmentComponents = cast parsedComponents;
+        }
+        else {
+            fragmentComponents = cast new Map<String,String>();
+        }
+
+        if (json.items != null) {
+            if (!Validate.array(json.items))
+                throw 'Invalid project items';
+
+            var jsonItems:Array<Dynamic> = json.items;
+            var parsedItems = [];
+            for (jsonItem in jsonItems) {
+                var item:EditorEntityData;
+                if (jsonItem.isVisual) {
+                    item = new EditorVisualData();
+                }
+                else {
+                    item = new EditorEntityData();
+                }
+                item.fragmentData = this;
+                item.fromJson(jsonItem);
+                parsedItems.push(item);
+            }
+            items = cast parsedItems;
+        }
+        else {
+            items = [];
+        }
+        
+        json.selectedItemIndex = selectedItemIndex;
 
     }
 

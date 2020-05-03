@@ -1,8 +1,8 @@
 app:
-    package: mycompany.Editor
+    package: ceramic.Editor
     name: Editor
-    displayName: Editor
-    author: My Company
+    displayName: Ceramic Editor
+    author: Jeremy Faivre
     version: '1.0'
 
     #libs:
