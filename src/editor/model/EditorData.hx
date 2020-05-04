@@ -33,6 +33,8 @@ class EditorData extends Model {
 
     @observe public var statusMessage(default, null):String = null;
 
+    @observe public var loading(default, null):Int = 0;
+
     var clearStatusMessageDelay:Void->Void = null;
     
     var ignoreUnsaved:Int = 0;
@@ -43,7 +45,7 @@ class EditorData extends Model {
 
         super();
 
-        this.loadFromKey('editor');
+        //this.loadFromKey('editor');
         this.autoSaveAsKey('editor');
 
         history = new History();
@@ -89,17 +91,21 @@ class EditorData extends Model {
                 true,
                 confirmed -> {
                     if (confirmed) {
+                        incrementLoading();
                         projectPath = null;
                         project.clear();
-                        markProjectNoUnsaved();
+                        markProjectNotUnsaved();
+                        scheduleDecrementLoading();
                     }
                 }
             );
         }
         else {
+            incrementLoading();
             projectPath = null;
             project.clear();
-            markProjectNoUnsaved();
+            markProjectNotUnsaved();
+            scheduleDecrementLoading();
         }
 
     }
@@ -113,12 +119,14 @@ class EditorData extends Model {
                 true,
                 confirmed -> {
                     if (confirmed) {
+                        incrementLoading();
                         if (file != null) {
                             openProjectFromFilePath(file);
                         }
                         else {
                             openProjectDialog();
                         }
+                        scheduleDecrementLoading();
                     }
                 }
             );
@@ -150,13 +158,16 @@ class EditorData extends Model {
 
         log.debug('open: $file');
         try {
+            incrementLoading();
             var json = Json.parse(Files.getContent(file));
             projectPath = null;
             project.clear();
             project.fromJson(json);
             projectPath = file;
             project.title = Path.withoutExtension(Path.withoutDirectory(file));
-            markProjectNoUnsaved();
+            markProjectNotUnsaved();
+            status('Using project from path: $projectPath');
+            scheduleDecrementLoading();
         }
         catch (e:Dynamic) {
             Message.message(
@@ -172,7 +183,8 @@ class EditorData extends Model {
 
         if (projectPath != null && !forceSaveAs) {
             Files.saveContent(projectPath, Json.stringify(project.toJson(), null, '    '));
-            markProjectNoUnsaved();
+            markProjectNotUnsaved();
+            status('Project saved at path: $projectPath');
         }
         else {
             Dialogs.saveFile('Save project', [{
@@ -183,14 +195,15 @@ class EditorData extends Model {
                     project.title = Path.withoutExtension(Path.withoutDirectory(file));
                     Files.saveContent(file, Json.stringify(project.toJson(), null, '    '));
                     projectPath = file;
-                    markProjectNoUnsaved();
+                    markProjectNotUnsaved();
+                    status('Project saved at path: $projectPath');
                 }
             });
         }
 
     }
 
-    function markProjectNoUnsaved() {
+    function markProjectNotUnsaved() {
 
         projectUnsaved = false;
         ignoreUnsaved++;
@@ -232,7 +245,7 @@ class EditorData extends Model {
 
     function bindFragmentData(fragmentData:EditorFragmentData) {
 
-        if (fragmentData.freezeEditorChanges > 0)
+        if (loading == 0 && fragmentData.freezeEditorChanges > 0)
             return;
 
         var fragmentId = fragmentData.fragmentId;
@@ -260,6 +273,22 @@ class EditorData extends Model {
         unobserve();
 
         reobserve();
+
+    }
+
+    function incrementLoading() {
+
+        loading++;
+
+    }
+
+    function scheduleDecrementLoading() {
+        
+        app.onceUpdate(this, _ -> {
+            app.onceUpdate(this, _ -> {
+                loading--;
+            });
+        });
 
     }
 

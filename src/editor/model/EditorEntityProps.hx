@@ -45,8 +45,9 @@ class EditorEntityProps extends Model {
                 if (fragmentValue != null) {
                     value = fragmentValue.value;
                 }
-                else
+                else {
                     value = null;
+                }
             }
 
             Reflect.setField(result, key, value);

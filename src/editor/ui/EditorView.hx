@@ -1,5 +1,6 @@
 package editor.ui;
 
+import haxe.Json;
 using editor.components.Tooltip;
 
 class EditorView extends View implements Observable {
@@ -119,10 +120,6 @@ class EditorView extends View implements Observable {
             statusText.content = message != null ? message : '';
         });
         bottomBar.add(statusText);
-        
-        Timer.delay(this, 2.0, () -> {
-            model.status('Welcome to ceramic editor!');
-        });
 
         // Fragment
         editedFragment = new Fragment({
@@ -158,7 +155,10 @@ class EditorView extends View implements Observable {
         autorun(updateStyle);
 
         // Keyboard shortcuts
-        app.onKeyDown(this, handleKeyDown);
+        bindKeyBindings();
+
+        // Touchable state
+        autorun(updateTouchable);
 
     }
 
@@ -260,6 +260,9 @@ class EditorView extends View implements Observable {
 
     function updateFragmentItems() {
 
+        if (model.loading > 0)
+            return;
+
         var selectedFragment = model.project.selectedFragment;
         var prevSelectedFragment = this.prevSelectedFragment; // Used for invalidation
 
@@ -271,7 +274,7 @@ class EditorView extends View implements Observable {
                 var entityId = item.entityId;
                 toCheck.push(entityId);
                 var fragmentItem = item.toFragmentItem();
-                trace('PUT ITEM $entityId');
+                //trace('PUT ITEM $entityId');
                 editedFragment.putItem(fragmentItem);
             }
             // Remove missing items
@@ -285,7 +288,7 @@ class EditorView extends View implements Observable {
             }
             if (toRemove != null) {
                 for (id in toRemove) {
-                    trace('REMOVE ITEM $id');
+                    //trace('REMOVE ITEM $id');
                     editedFragment.removeItem(id);
                 }
             }
@@ -467,24 +470,93 @@ class EditorView extends View implements Observable {
             model.project.selectedFragment.selectedItem = null;
 
     }
+
+    function bindKeyBindings() {
+
+        app.onKeyDown(this, handleKeyDown);
+
+        var keyBindings = new KeyBindings();
+
+        keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_C)], () -> {
+            log.debug('COPY');
+            var selectedItem = getSelectedItemIfFocusedInFragment();
+            if (selectedItem != null) {
+                app.backend.clipboard.setText('{"ceramic-editor":{"entity":' + Json.stringify(selectedItem.toJson()) + '}}');
+            }
+        });
+
+        keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_V)], () -> {
+            var clipboardText = app.backend.clipboard.getText();
+            log.debug('PASTE $clipboardText');
+            if (clipboardText != null && clipboardText.startsWith('{"ceramic-editor":')) {
+                try {
+                    var parsed:Dynamic = Reflect.field(Json.parse(clipboardText), 'ceramic-editor');
+                    if (parsed.entity != null) {
+                        if (FieldManager.manager.focusedField == null && popup.contentView == null) {
+                            var fragment = model.project.selectedFragment;
+                            if (fragment != null) {
+                                var item:EditorEntityData;
+                                if (parsed.entity.isVisual) {
+                                    item = new EditorVisualData();
+                                }
+                                else {
+                                    item = new EditorEntityData();
+                                }
+                                item.fragmentData = fragment;
+                                parsed.entity.props.x = fragment.width * 0.5;
+                                parsed.entity.props.y = fragment.height * 0.5;
+                                item.fromJson(parsed.entity);
+                                fragment.addEntityData(item);
+                                fragment.selectedItem = item;
+                            }
+                        }
+                    }
+                }
+                catch (e:Dynamic) {
+                    log.error('PASTE ERROR $e');
+                }
+            }
+        });
+
+        onDestroy(keyBindings, function(_) {
+            keyBindings.destroy();
+            keyBindings = null;
+        });
+
+    }
     
     function handleKeyDown(key:Key) {
 
         if (key.scanCode == ScanCode.BACKSPACE) {
             var fragment = model.project.selectedFragment;
             if (fragment != null) {
-                var selectedItem = fragment.selectedItem;
+                var selectedItem = getSelectedItemIfFocusedInFragment();
                 if (selectedItem != null) {
-                    if (FieldManager.manager.focusedField == null && popup.contentView == null) {
-                        fragment.removeItem(selectedItem);
-                        app.onceUpdate(this, _ -> {
-                            selectedItem.destroy();
-                            selectedItem = null;
-                        });
-                    }
+                    fragment.removeItem(selectedItem);
+                    app.onceUpdate(this, _ -> {
+                        selectedItem.destroy();
+                        selectedItem = null;
+                    });
                 }
             }
         }
+
+    }
+
+    function getSelectedItemIfFocusedInFragment():Null<EditorEntityData> {
+
+        var fragment = model.project.selectedFragment;
+
+        if (fragment != null) {
+            var selectedItem = fragment.selectedItem;
+            if (selectedItem != null) {
+                if (FieldManager.manager.focusedField == null && popup.contentView == null) {
+                    return selectedItem;
+                }
+            }
+        }
+
+        return null;
 
     }
 
@@ -509,6 +581,12 @@ class EditorView extends View implements Observable {
 
         statusText.color = theme.lightTextColor;
         statusText.font = theme.mediumFont;
+
+    }
+
+    function updateTouchable() {
+
+        this.touchable = model.loading == 0;
 
     }
 

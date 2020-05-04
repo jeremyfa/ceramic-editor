@@ -2,6 +2,8 @@ package editor.utils;
 
 class TextUtils {
 
+    static var RE_PREFIXED = ~/^(.*?)([0-9]+)$/;
+
     public static function toFieldLabel(str:String):String {
 
         var result = new StringBuf();
@@ -70,6 +72,19 @@ class TextUtils {
 
         return res.toString();
 
+    }
+
+    public static function getPrefix(str:String):String {
+
+        if (RE_PREFIXED.match(str)) {
+            trace('MATCH PREFIXED');
+            str = RE_PREFIXED.matched(1);
+        }
+        while (str.length > 0 && str.charAt(str.length - 1) == '_') {
+            str = str.substring(0, str.length - 1);
+        }
+        return str;
+        
     }
 
 }

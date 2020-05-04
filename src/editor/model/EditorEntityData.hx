@@ -83,9 +83,10 @@ class EditorEntityData extends Model {
 
         if (fragmentData != null) {
             fragmentData.freezeEditorChanges++;
+            var _fragmentData = fragmentData;
             Timer.delay(fragmentData, 0.5, () -> {
-                if (fragmentData.freezeEditorChanges > 0)
-                    fragmentData.freezeEditorChanges--;
+                if (_fragmentData.freezeEditorChanges > 0)
+                    _fragmentData.freezeEditorChanges--;
             });
         }
 

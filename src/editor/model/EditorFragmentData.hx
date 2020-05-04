@@ -244,7 +244,7 @@ class EditorFragmentData extends Model {
 
         // Compute visual id
         var i = 0;
-        while (visualById('VISUAL_$i') != null) {
+        while (get('VISUAL_$i') != null) {
             i++;
         }
 
@@ -288,6 +288,34 @@ class EditorFragmentData extends Model {
         model.history.step();
 
         return visual;
+
+    }
+    
+    public function computeAvailableId(targetId:String):String {
+
+        if (get(targetId) != null) {
+            var prefix = TextUtils.getPrefix(targetId);
+            if (prefix == null || prefix.length == 0)
+                prefix = 'ITEM';
+            var i = 0;
+            while (get(prefix + '_' + i) != null) {
+                i++;
+            }
+            return prefix + '_' + i;
+        }
+        else {
+            return targetId;
+        }
+
+    }
+
+    public function addEntityData(entityData:EditorEntityData):Void {
+
+        entityData.entityId = computeAvailableId(entityData.entityId);
+
+        var items = [].concat(this.items.mutable);
+        items.push(entityData);
+        this.items = cast items;
 
     }
 
