@@ -43,7 +43,7 @@ class EditorData extends Model {
 
         super();
 
-        //this.loadFromKey('editor');
+        this.loadFromKey('editor');
         this.autoSaveAsKey('editor');
 
         history = new History();
@@ -243,8 +243,13 @@ class EditorData extends Model {
         if (value == null) {
             value = new EditorValue();
             var newFragments = new Map<String,EditorValue>();
+            var existingIds = new Map<String,Bool>();
+            for (existingFragment in project.fragments) {
+                existingIds.set(existingFragment.fragmentId, true);
+            }
             for (key => val in this.fragments.mutable) {
-                newFragments.set(key, val);
+                if (existingIds.exists(key))
+                    newFragments.set(key, val);
             }
             newFragments.set(fragmentId, value);
             this.fragments = cast newFragments;

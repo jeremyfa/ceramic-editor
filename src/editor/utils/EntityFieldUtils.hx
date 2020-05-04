@@ -23,13 +23,23 @@ class EntityFieldUtils {
         }
         else if (type == 'ceramic.Texture') {
             return createEditableSelectField(options, item, name, () -> {
-                return editor.model.images;
+                return model.images;
             }, 'no texture');
         }
         else if (type == 'ceramic.BitmapFont') {
             return createEditableSelectField(options, item, name, () -> {
-                return editor.model.fonts;
+                return model.fonts;
             });
+        }
+        else if (type == 'ceramic.FragmentData') {
+            return createEditableSelectField(options, item, name, () -> {
+                var items = [];
+                var fragments = model.fragments;
+                for (key in fragments.keys())
+                    items.push(key);
+                items.sort(TextUtils.compareStrings);
+                return items;
+            }, 'no data');
         }
         else if (options.options != null) {
             return createEditableSelectField(options, item, name, () -> {
@@ -296,15 +306,27 @@ class EntityFieldUtils {
 
     }
 
-    public static function createEditableSelectField(options:Dynamic, item:EditorEntityData, name:String, getter:Void->ImmutableArray<String>, ?nullValueText:String) {
+    public static function createEditableSelectField(options:Dynamic, item:EditorEntityData, name:String, getter:Void->ImmutableArray<Dynamic>, ?nullValueText:String) {
 
+        var rawList:ImmutableArray<Dynamic> = null;
         var fieldView = new SelectFieldView();
         fieldView.nullValueText = nullValueText;
         fieldView.setValue = function(field, value) {
-            item.props.set(name, value);
+            if (rawList.length > 0 && !Std.is(rawList[0], String)) {
+                for (listItem in rawList) {
+                    if (listItem[0] == value) {
+                        item.props.set(name, listItem[1]);
+                        break;
+                    }
+                }
+            }
+            else {
+                item.props.set(name, value);
+            }
         };
         fieldView.autorun(function() {
             var value:Dynamic = item.props.get(name);
+            trace('SET VALUE $value');
             if (Std.is(value, String)) {
                 fieldView.value = value;
             }
@@ -313,7 +335,17 @@ class EntityFieldUtils {
             }
         });
         fieldView.autorun(function() {
-            fieldView.list = getter();
+            rawList = getter();
+            if (rawList.length > 0 && !Std.is(rawList[0], String)) {
+                var list:Array<String> = [];
+                for (listItem in rawList) {
+                    list.push(listItem[0]);
+                }
+                fieldView.list = cast list;
+            }
+            else {
+                fieldView.list = cast rawList;
+            }
         });
         return fieldView;
 

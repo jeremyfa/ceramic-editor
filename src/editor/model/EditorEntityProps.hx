@@ -1,7 +1,7 @@
 package editor.model;
 
 /** A map model that wraps every value into their own model object to make them observable. */
-class EditorProps extends Model {
+class EditorEntityProps extends Model {
 
     @serialize var values:Map<String,EditorValue> = new Map();
 
@@ -25,6 +25,8 @@ class EditorProps extends Model {
         
         var result:Dynamic<Dynamic> = {};
         var implicitSize = this.implicitSize;
+        var entityData = this.entityData;
+        var model = editor.model;
 
         for (key in values.keys()) {
             // Skip width & height if size is implicit
@@ -36,6 +38,17 @@ class EditorProps extends Model {
                 continue;
 
             var value = get(key);
+
+            // Fetch real fragment data
+            if (entityData != null && entityData.typeOfProp(key) == 'ceramic.FragmentData') {
+                var fragmentValue = model != null ? model.fragments.get(value) : null;
+                if (fragmentValue != null) {
+                    value = fragmentValue.value;
+                }
+                else
+                    value = null;
+            }
+
             Reflect.setField(result, key, value);
         }
 
@@ -73,6 +86,11 @@ class EditorProps extends Model {
             model.history.step();
             reobserve();
         }
+
+        unobserve();
+        if (entityData != null)
+            entityData.freezeEditorChanges();
+        reobserve();
 
     }
 

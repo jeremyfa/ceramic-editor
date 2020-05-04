@@ -8,9 +8,21 @@ class EditorEntityData extends Model {
 
     @serialize public var entityComponents:Map<String, String> = new Map();
 
-    @serialize public var props:EditorProps = new EditorProps();
+    @serialize public var props:EditorEntityProps = new EditorEntityProps();
 
     @observe public var fragmentData:EditorFragmentData = null;
+
+    @compute public function editableType():EditableType {
+        return editor.getEditableType(entityClass);
+    }
+
+    @compute public function fieldTypes():ImmutableMap<String,String> {
+        var map = new Map<String,String>();
+        for (field in editableType.fields) {
+            map.set(field.name, field.type);
+        }
+        return map;
+    }
 
     public function new() {
 
@@ -37,6 +49,12 @@ class EditorEntityData extends Model {
 
     }
 
+    public function typeOfProp(key:String):String {
+
+        return fieldTypes.get(key);
+
+    }
+
     public function toFragmentItem():FragmentItem {
         
         return {
@@ -58,6 +76,18 @@ class EditorEntityData extends Model {
         }
 
         return result;
+
+    }
+
+    public function freezeEditorChanges():Void {
+
+        if (fragmentData != null) {
+            fragmentData.freezeEditorChanges++;
+            Timer.delay(fragmentData, 0.5, () -> {
+                if (fragmentData.freezeEditorChanges > 0)
+                    fragmentData.freezeEditorChanges--;
+            });
+        }
 
     }
 

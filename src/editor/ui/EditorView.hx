@@ -378,7 +378,12 @@ class EditorView extends View implements Observable {
                 var value = Reflect.field(props, key);
 
                 unobserve();
-                item.props.set(key, value);
+                if (item.typeOfProp(key) == 'ceramic.FragmentData') {
+                    item.props.set(key, value != null ? value.id : null);
+                }
+                else {
+                    item.props.set(key, value);
+                }
                 reobserve();
             }
         }

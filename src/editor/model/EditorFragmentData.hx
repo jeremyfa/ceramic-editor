@@ -131,6 +131,7 @@ class EditorFragmentData extends Model {
 
     @observe public var fragmentDataWithoutItems(default, null):FragmentData = null;
 
+    @:allow(editor.model.EditorEntityData)
     @observe public var freezeEditorChanges(default, null):Int = 0;
 
 /// Lifecycle

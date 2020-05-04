@@ -230,7 +230,7 @@ class SelectFieldView extends FieldView implements Observable {
 
     function listHeight() {
 
-        return Math.min(ITEM_HEIGHT * list.length, MAX_LIST_HEIGHT);
+        return Math.min(ITEM_HEIGHT * (list.length + (nullValueText != null ? 1 : 0)), MAX_LIST_HEIGHT);
 
     }
 
