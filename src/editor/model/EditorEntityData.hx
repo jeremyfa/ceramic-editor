@@ -92,6 +92,12 @@ class EditorEntityData extends Model {
 
     }
 
+    public function editorChangesFrozen():Bool {
+
+        return (fragmentData != null && fragmentData.freezeEditorChanges > 0);
+
+    }
+
     public function toJson():Dynamic {
 
         var json:Dynamic = {};

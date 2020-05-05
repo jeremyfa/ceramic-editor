@@ -244,7 +244,8 @@ class EditorFragmentData extends Model {
 
         // Compute visual id
         var i = 0;
-        while (get('VISUAL_$i') != null) {
+        var prefix = TextUtils.uppercasePrefixFromClass(entityClass);
+        while (get(prefix + '_' + i) != null) {
             i++;
         }
 
@@ -252,7 +253,7 @@ class EditorFragmentData extends Model {
         //
         var visual = new EditorVisualData();
         visual.fragmentData = this;
-        visual.entityId = 'VISUAL_$i';
+        visual.entityId = prefix + '_' + i;
         visual.entityClass = entityClass;
 
         var maxDepth = 0.0;
@@ -360,7 +361,13 @@ class EditorFragmentData extends Model {
 
     public function toFragmentData():FragmentData {
 
-        return {
+        if (model.isFragmentIdUsed(fragmentId)) {
+            return null;
+        }
+
+        model.pushUsedFragmentId(fragmentId);
+
+        var result:FragmentData = {
             id: fragmentId,
             data: null, // TODO?
             width: width,
@@ -368,6 +375,10 @@ class EditorFragmentData extends Model {
             components: fragmentComponentsToDynamic(),
             items: fragmentItems()
         };
+
+        model.popUsedFragmentId();
+
+        return result;
         
     }
 

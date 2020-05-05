@@ -87,4 +87,16 @@ class TextUtils {
         
     }
 
+    public static function uppercasePrefixFromClass(className:String):String {
+
+        var parts = className.split('.');
+        var str = parts[parts.length-1];
+        str = Utils.camelCaseToUpperCase(str);
+        while (str.length > 0 && str.charAt(str.length - 1) == '_') {
+            str = str.substring(0, str.length - 1);
+        }
+        return str;
+
+    }
+
 }

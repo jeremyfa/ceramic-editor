@@ -41,11 +41,16 @@ class EditorData extends Model {
 
     var fragmentAutoruns:Array<Autorun> = null;
 
+    /**
+     * Internal mapping used to prevent circular references when walking through nested fragment data
+     */
+    var referencedFragmentIds:Array<String> = [];
+
     public function new() {
 
         super();
 
-        //this.loadFromKey('editor');
+        this.loadFromKey('editor');
         this.autoSaveAsKey('editor');
 
         history = new History();
@@ -289,6 +294,69 @@ class EditorData extends Model {
                 loading--;
             });
         });
+
+    }
+
+    inline public function pushUsedFragmentId(fragmentId:String) {
+        
+        referencedFragmentIds.push(fragmentId);
+
+    }
+
+    inline public function popUsedFragmentId():String {
+        
+        return referencedFragmentIds.pop();
+
+    }
+
+    inline public function isFragmentIdUsed(fragmentId:String):Bool {
+
+        return referencedFragmentIds.indexOf(fragmentId) != -1;
+
+    }
+
+    public function canReferenceFragmentId(fragmentId:String, ?fragmentData:FragmentData):Bool {
+
+        if (isFragmentIdUsed(fragmentId))
+            return false;
+
+        pushUsedFragmentId(fragmentId);
+
+        if (fragmentData == null) {
+            var fragmentValue:EditorValue = fragments.get(fragmentId);
+            if (fragmentValue != null) {
+                fragmentData = fragmentValue.value;
+            }
+        }
+
+        if (fragmentData != null) {
+            if (fragmentData.items != null) {
+                var items = fragmentData.items;
+                for (i in 0...items.length) {
+                    var item = items[i];
+                    if (item.entity == 'ceramic.Fragment') {
+                        var props:Dynamic = item.props;
+                        if (props != null) {
+                            var fragmentData:FragmentData = props.fragmentData;
+                            if (fragmentData != null) {
+                                var fragmentId:String = fragmentData.id;
+                                if (fragmentId != null) {
+                                    var canReference = canReferenceFragmentId(fragmentId, fragmentData);
+                                    if (!canReference) {
+                                        popUsedFragmentId();
+                                        return false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        popUsedFragmentId();
+
+        return true;
 
     }
 

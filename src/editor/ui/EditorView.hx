@@ -266,17 +266,28 @@ class EditorView extends View implements Observable {
         var selectedFragment = model.project.selectedFragment;
         var prevSelectedFragment = this.prevSelectedFragment; // Used for invalidation
 
+        unobserve();
+
         var toCheck = [];
 
         if (selectedFragment != null) {
             // Add or update items
+            reobserve();
             for (item in selectedFragment.items) {
                 var entityId = item.entityId;
+                unobserve();
                 toCheck.push(entityId);
+                model.pushUsedFragmentId(selectedFragment.fragmentId);
+                reobserve();
                 var fragmentItem = item.toFragmentItem();
+                unobserve();
+                trace('fragmentItem(${selectedFragment.fragmentId}): ' + fragmentItem);
+                model.popUsedFragmentId();
                 //trace('PUT ITEM $entityId');
                 editedFragment.putItem(fragmentItem);
+                reobserve();
             }
+            unobserve();
             // Remove missing items
             var toRemove = null;
             for (fragmentItem in editedFragment.items) {

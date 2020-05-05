@@ -326,7 +326,6 @@ class EntityFieldUtils {
         };
         fieldView.autorun(function() {
             var value:Dynamic = item.props.get(name);
-            trace('SET VALUE $value');
             if (Std.is(value, String)) {
                 fieldView.value = value;
             }

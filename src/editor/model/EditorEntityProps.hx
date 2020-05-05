@@ -37,17 +37,41 @@ class EditorEntityProps extends Model {
             if (key.startsWith('_tmp_'))
                 continue;
 
-            var value = get(key);
+            var value:Dynamic = get(key);
 
             // Fetch real fragment data
             if (entityData != null && entityData.typeOfProp(key) == 'ceramic.FragmentData') {
-                var fragmentValue = model != null ? model.fragments.get(value) : null;
-                if (fragmentValue != null) {
-                    value = fragmentValue.value;
+                var fragmentId:String = value;
+                unobserve();
+                if (fragmentId != null && model.canReferenceFragmentId(fragmentId)) {
+                    reobserve();
+                    var fragmentValue = model != null ? model.fragments.get(value) : null;
+                    if (fragmentValue != null) {
+                        value = fragmentValue.value;
+                    }
+                    else {
+                        value = null;
+                    }
                 }
                 else {
+                    reobserve();
                     value = null;
                 }
+                /*
+                if (model.isFragmentIdUsed(fragmentId)) {
+                    reobserve();
+                    value = null;
+                }
+                else {
+                    reobserve();
+                    var fragmentValue = model != null ? model.fragments.get(value) : null;
+                    if (fragmentValue != null) {
+                        value = fragmentValue.value;
+                    }
+                    else {
+                        value = null;
+                    }
+                }*/
             }
 
             Reflect.setField(result, key, value);

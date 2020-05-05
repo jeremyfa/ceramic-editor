@@ -59,7 +59,7 @@ class VisualCellDataSource implements CollectionViewDataSource {
                 return;
 
             cell.title = visualData.entityId;
-            cell.subTitle = 'default';
+            cell.subTitle = visualData.entityClass;
             cell.selected = (cell.itemIndex == model.project.selectedFragment.selectedVisualIndex);
 
         });
