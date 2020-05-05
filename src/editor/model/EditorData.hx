@@ -61,7 +61,9 @@ class EditorData extends Model {
                 projectUnsaved = true;
         });
 
-        autorun(updateFragments);
+        app.oncePostFlushImmediate(() -> {
+            autorun(updateFragments);
+        });
 
     }
 

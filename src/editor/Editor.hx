@@ -158,9 +158,12 @@ class Editor extends Entity implements Observable {
 
         initModel();
 
-        bindKeyBindings();
-
-        initView();
+        app.onceUpdate(this, _ -> {
+            
+            bindKeyBindings();
+    
+            initView();
+        });
 
     }
 
