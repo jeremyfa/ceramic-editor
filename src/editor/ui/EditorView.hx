@@ -15,6 +15,8 @@ class EditorView extends View implements Observable {
 
     var leftSideMenu:ColumnLayout;
 
+    var topBar:RowLayout;
+
     var bottomBar:RowLayout;
 
     var editedFragment:Fragment = null;
@@ -35,15 +37,35 @@ class EditorView extends View implements Observable {
 
     function init() {
 
+        // Fragment
+        editedFragment = new Fragment({
+            assets: editor.contentAssets,
+            editedItems: true
+        });
+        editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
+        editedFragment.onPointerDown(this, (_) -> deselectItems());
+        editedFragment.depth = 1;
+        add(editedFragment);
+
+        topBar = new RowLayout();
+        topBar.padding(0, 6);
+        topBar.depth = 2;
+        add(topBar);
+
+        bottomBar = new RowLayout();
+        bottomBar.padding(0, 6);
+        bottomBar.depth = 3;
+        add(bottomBar);
+
         // Panels tabs
         panelTabsView = new PanelTabsView();
-        panelTabsView.depth = 3;
+        panelTabsView.depth = 4;
         add(panelTabsView);
 
         // Left side menu
         leftSideMenu = new ColumnLayout();
+        leftSideMenu.depth = 5;
         leftSideMenu.padding(6, 0);
-        leftSideMenu.depth = 4;
         {
             var h = 34;
             var s = 20;
@@ -104,16 +126,13 @@ class EditorView extends View implements Observable {
         }
         add(leftSideMenu);
 
-        bottomBar = new RowLayout();
-        bottomBar.padding(0, 6);
-        add(bottomBar);
-
         statusText = new TextView();
         statusText.preRenderedSize = 20;
         statusText.pointSize = 11;
         statusText.align = LEFT;
         statusText.verticalAlign = CENTER;
         statusText.viewSize(auto(), fill());
+        statusText.depth = 6;
         statusText.autorun(() -> {
             var message = model.statusMessage;
             unobserve();
@@ -121,26 +140,16 @@ class EditorView extends View implements Observable {
         });
         bottomBar.add(statusText);
 
-        // Fragment
-        editedFragment = new Fragment({
-            assets: editor.contentAssets,
-            editedItems: true
-        });
-        editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
-        editedFragment.depth = 1;
-        editedFragment.onPointerDown(this, (_) -> deselectItems());
-        add(editedFragment);
-
         // Fragment area
         fragmentOverlay = new Quad();
         fragmentOverlay.transparent = true;
-        fragmentOverlay.depth = 2;
+        fragmentOverlay.depth = 7;
         editedFragment.clip = fragmentOverlay;
         add(fragmentOverlay);
 
         // Popup
         popup = new PopupView();
-        popup.depth = 4;
+        popup.depth = 8;
         add(popup);
 
         autorun(updateTabs);
@@ -167,8 +176,9 @@ class EditorView extends View implements Observable {
         var leftSideMenuWidth = 40;
         var panelsTabsWidth = 300;
         var bottomBarHeight = 18;
+        var topBarHeight = 25;
         var availableFragmentWidth = width - panelsTabsWidth - leftSideMenuWidth;
-        var availableFragmentHeight = height - bottomBarHeight;
+        var availableFragmentHeight = height - bottomBarHeight - topBarHeight;
 
         panelTabsView.viewSize(panelsTabsWidth, height);
         panelTabsView.computeSize(panelsTabsWidth, height, ViewLayoutMask.FIXED, true);
@@ -188,7 +198,7 @@ class EditorView extends View implements Observable {
             ));
             editedFragment.pos(
                 leftSideMenuWidth + availableFragmentWidth * 0.5,
-                availableFragmentHeight * 0.5
+                topBarHeight + availableFragmentHeight * 0.5
             );
         }
 
@@ -201,6 +211,11 @@ class EditorView extends View implements Observable {
         popup.anchor(0.5, 0.5);
         popup.pos(width * 0.5, height * 0.5);
         popup.size(width, height);
+
+        topBar.viewSize(availableFragmentWidth, topBarHeight);
+        topBar.computeSize(availableFragmentWidth, topBarHeight, ViewLayoutMask.FIXED, true);
+        topBar.applyComputedSize();
+        topBar.pos(leftSideMenuWidth, 0);
 
         bottomBar.viewSize(availableFragmentWidth, bottomBarHeight);
         bottomBar.computeSize(availableFragmentWidth, bottomBarHeight, ViewLayoutMask.FIXED, true);
@@ -281,7 +296,6 @@ class EditorView extends View implements Observable {
                 reobserve();
                 var fragmentItem = item.toFragmentItem();
                 unobserve();
-                trace('fragmentItem(${selectedFragment.fragmentId}): ' + fragmentItem);
                 model.popUsedFragmentId();
                 //trace('PUT ITEM $entityId');
                 editedFragment.putItem(fragmentItem);
@@ -529,6 +543,16 @@ class EditorView extends View implements Observable {
             }
         });
 
+        keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_S)], () -> {
+            log.debug('SAVE');
+            model.saveProject();
+        });
+
+        keyBindings.bind([CMD_OR_CTRL, SHIFT, KEY(KeyCode.KEY_S)], () -> {
+            log.debug('SAVE AS');
+            model.saveProject(true);
+        });
+
         onDestroy(keyBindings, function(_) {
             keyBindings.destroy();
             keyBindings = null;
@@ -576,7 +600,7 @@ class EditorView extends View implements Observable {
         color = theme.windowBackgroundColor;
 
         leftSideMenu.transparent = false;
-        leftSideMenu.color = theme.mediumBackgroundColor;
+        leftSideMenu.color = theme.lightBackgroundColor;
         leftSideMenu.borderRightSize = 1;
         leftSideMenu.borderRightColor = theme.darkBorderColor;
         leftSideMenu.borderPosition = INSIDE;
@@ -584,8 +608,14 @@ class EditorView extends View implements Observable {
         editedFragment.transparent = false;
         editedFragment.color = theme.darkBackgroundColor;
 
+        topBar.transparent = false;
+        topBar.color = theme.lightBackgroundColor;
+        topBar.borderBottomSize = 1;
+        topBar.borderBottomColor = theme.darkBorderColor;
+        topBar.borderPosition = INSIDE;
+
         bottomBar.transparent = false;
-        bottomBar.color = theme.mediumBackgroundColor;
+        bottomBar.color = theme.lightBackgroundColor;
         bottomBar.borderTopSize = 1;
         bottomBar.borderTopColor = theme.darkBorderColor;
         bottomBar.borderPosition = INSIDE;
