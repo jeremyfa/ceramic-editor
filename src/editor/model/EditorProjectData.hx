@@ -20,6 +20,12 @@ class EditorProjectData extends Model {
 
     @serialize public var paletteColors:ImmutableArray<Color> = [];
 
+/// Computed data
+
+    @compute public function defaultBundle():String {
+        return TextUtils.slugify(title);
+    }
+
 /// UI info
 
     @serialize public var selectedFragmentIndex:Int = -1;

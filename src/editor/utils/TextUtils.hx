@@ -1,8 +1,13 @@
 package editor.utils;
 
+@:allow(editor.utils.SanitizeTextField)
 class TextUtils {
 
-    static var RE_PREFIXED = ~/^(.*?)([0-9]+)$/;
+    static final RE_PREFIXED = ~/^(.*?)([0-9]+)$/;
+
+    static final RE_SPACES = ~/\s+/;
+
+    static final RE_SLUG_UNSAFE = ~/[$*+~.()'"!\\:@\?§]/g;
 
     public static function toFieldLabel(str:String):String {
 
@@ -95,6 +100,18 @@ class TextUtils {
         while (str.length > 0 && str.charAt(str.length - 1) == '_') {
             str = str.substring(0, str.length - 1);
         }
+        return str;
+
+    }
+
+    public static function slugify(str:String):String {
+
+        str = RE_SPACES.replace(str, '_');
+        str = Slug.encode(str, {
+            lower: false,
+            replacement: '_',
+            remove: RE_SLUG_UNSAFE
+        });
         return str;
 
     }

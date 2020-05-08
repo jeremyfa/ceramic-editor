@@ -54,15 +54,16 @@ class FragmentCellDataSource implements CollectionViewDataSource {
 
         cell.autorun(function() {
 
-            var fragment = model.project.fragments[cell.itemIndex];
+            var project = model.project;
+            var fragment = project.fragments[cell.itemIndex];
             if (fragment == null)
                 return;
 
             var bundle = fragment.bundle;
 
             cell.title = fragment.fragmentId;
-            cell.subTitle = bundle != null ? bundle : 'default';
-            cell.selected = (cell.itemIndex == model.project.selectedFragmentIndex);
+            cell.subTitle = bundle != null ? bundle + '.fragments' : project.defaultBundle + '.fragments';
+            cell.selected = (cell.itemIndex == project.selectedFragmentIndex);
 
         });
 

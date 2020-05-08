@@ -4,11 +4,11 @@ using StringTools;
 
 class SanitizeTextField {
 
-    static final RE_SPACES = ~/\s+/;
-
     static final RE_NUMERIC_PREFIX = ~/^[0-9]+/;
 
-    static final RE_SLUG_UNSAFE = ~/[$*+~.()'"!\\:@\?§]/g;
+    static final RE_SPACES = TextUtils.RE_SPACES;
+
+    static final RE_SLUG_UNSAFE = TextUtils.RE_SLUG_UNSAFE;
 
     public static function setTextValueToInt(minValue:Int, maxValue:Int) {
         

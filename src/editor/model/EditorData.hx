@@ -2,6 +2,8 @@ package editor.model;
 
 import tracker.Autorun;
 import haxe.Json;
+import haxe.DynamicAccess;
+
 using tracker.SaveModel;
 using tracker.History;
 
@@ -191,7 +193,7 @@ class EditorData extends Model {
     public function saveProject(forceSaveAs:Bool = false) {
 
         if (projectPath != null && !forceSaveAs) {
-            Files.saveContent(projectPath, Json.stringify(project.toJson(projectPath), null, '    '));
+            Files.saveContent(projectPath, Json.stringify(project.toJson(projectPath), null, '  '));
             markProjectNotUnsaved();
             status('Project saved at path: $projectPath');
         }
@@ -202,7 +204,7 @@ class EditorData extends Model {
                 if (file != null) {
                     trace('Save as file: $file');
                     project.title = Path.withoutExtension(Path.withoutDirectory(file));
-                    Files.saveContent(file, Json.stringify(project.toJson(file), null, '    '));
+                    Files.saveContent(file, Json.stringify(project.toJson(file), null, '  '));
                     projectPath = file;
                     markProjectNotUnsaved();
                     status('Project saved at path: $projectPath');
@@ -366,11 +368,67 @@ class EditorData extends Model {
 
     public function exportFragments():Void {
 
-        var json = project.toJson(projectPath);
-        
-        // TODO
+        var output:Map<String,DynamicAccess<FragmentData>> = new Map();
 
-        log.debug('EXPORT FRAGMENTS');
+        var exportPath = project.exportPath;
+        if (exportPath == null) {
+            if (projectPath == null) {
+                Message.message(
+                    'Error',
+                    'Failed to resolve export path',
+                    true
+                );
+                return;
+            }
+            exportPath = Path.directory(projectPath);
+        }
+
+        var defaultBundle = project.defaultBundle;
+
+        for (fragment in project.fragments) {
+
+            var bundle = fragment.bundle;
+            var fragmentId = fragment.fragmentId;
+            var fragmentData = fragment.toFragmentData();
+
+            if (bundle == null) {
+                bundle = defaultBundle;
+            }
+
+            var exportBundlePath = Path.join([exportPath, bundle]) + '.fragments';
+
+            var bundleOutput = output.get(exportBundlePath);
+            if (bundleOutput == null) {
+                bundleOutput = {};
+                output.set(exportBundlePath, bundleOutput);
+            }
+            bundleOutput.set(fragmentId, fragmentData);
+
+        }
+
+        try {
+            for (exportBundlePath in output.keys()) {
+                // Create directories if needed
+                if (!Files.exists(exportBundlePath)) {
+                    Files.createDirectory(Path.directory(exportBundlePath));
+                }
+                else if (!Files.isDirectory(Path.directory(exportBundlePath))) {
+                    log.error('Cannot write fragment bundle at path $exportBundlePath because it is not inside a directory!');
+                    continue;
+                }
+
+                // Save file
+                Files.saveContent(
+                    exportBundlePath,
+                    Json.stringify(output.get(exportBundlePath), null, '  ')
+                );
+            }
+
+            status('Exported fragments at path: $exportPath');
+        }
+        catch (e:Dynamic) {
+            log.error('Failed to export fragment bundles: $e');
+        }
 
     }
 
