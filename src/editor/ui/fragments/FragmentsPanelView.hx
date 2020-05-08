@@ -76,16 +76,12 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         add(form);
 
         (function() {
-            var item = new LabeledFieldView(new TextFieldView());
+            var item = new LabeledFieldView(null);
             item.label = 'Id';
-            item.field.setTextValue = SanitizeTextField.setTextValueToIdentifier;
-            item.field.setValue = function(field, value) {
+            item.autorun(() -> {
                 var fragment = model.project.selectedFragment;
-                if (fragment != null) fragment.fragmentId = value;
-            };
-            autorun(function() {
-                var fragment = model.project.selectedFragment;
-                if (fragment != null) item.field.textValue = fragment.fragmentId;
+                unobserve();
+                item.field = EditorFieldUtils.createEditableFragmentIdField(fragment);
             });
             form.add(item);
         })();
@@ -138,6 +134,8 @@ class FragmentsPanelView extends LinearLayout implements Observable {
                 if (fragment != null) fragment.bundle = null;
             };
             item.field.setValue = function(field, value) {
+                if (value == '')
+                    value = null;
                 var fragment = model.project.selectedFragment;
                 if (fragment != null) fragment.bundle = value;
             };

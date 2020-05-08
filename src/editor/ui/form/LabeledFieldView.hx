@@ -12,8 +12,17 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
 
     public var field(default,set):T;
     function set_field(field:T):T {
+        if (this.field == field)
+            return field;
+        if (this.field != null) {
+            this.field.destroy();
+        }
         this.field = field;
-        invalidateDisabled();
+        if (field != null) {
+            field.viewSize(fill(), auto());
+            add(field);
+            invalidateDisabled();
+        }
         return field;
     }
 
@@ -47,8 +56,6 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
         add(labelText);
 
         this.field = field;
-        field.viewSize(fill(), auto());
-        add(field);
 
         autorun(updateDisabled);
         autorun(updateLabel);

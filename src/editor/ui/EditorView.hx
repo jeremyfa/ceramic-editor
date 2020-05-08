@@ -25,6 +25,8 @@ class EditorView extends View implements Observable {
 
     var statusText:TextView;
 
+    var fragmentTitleText:TextView;
+
 /// Lifecycle
 
     public function new() {
@@ -50,6 +52,15 @@ class EditorView extends View implements Observable {
         topBar = new RowLayout();
         topBar.padding(0, 6);
         topBar.depth = 2;
+        {
+            fragmentTitleText = new TextView();
+            fragmentTitleText.viewSize(fill(), fill());
+            fragmentTitleText.align = CENTER;
+            fragmentTitleText.verticalAlign = CENTER;
+            fragmentTitleText.preRenderedSize = 20;
+            fragmentTitleText.pointSize = 13;
+            topBar.add(fragmentTitleText);
+        }
         add(topBar);
 
         bottomBar = new RowLayout();
@@ -255,11 +266,13 @@ class EditorView extends View implements Observable {
             unobserve();
             editedFragment.active = false;
             editedFragment.fragmentData = null;
+            fragmentTitleText.content = '';
             reobserve();
         }
         else {
             var copied = Reflect.copy(selectedFragment.fragmentDataWithoutItems);
             unobserve();
+            fragmentTitleText.content = selectedFragment.fragmentId;
             if (prevSelectedFragment != selectedFragment) {
                 trace('this is a new fragment being loaded, reset items');
                 copied.items = [];
@@ -622,6 +635,9 @@ class EditorView extends View implements Observable {
 
         statusText.color = theme.lightTextColor;
         statusText.font = theme.mediumFont;
+
+        fragmentTitleText.color = theme.lightTextColor;
+        fragmentTitleText.font = theme.boldFont;
 
     }
 

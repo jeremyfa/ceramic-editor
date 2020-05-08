@@ -1,6 +1,6 @@
 package editor.utils;
 
-class EntityFieldUtils {
+class EditorFieldUtils {
 
     public static function createEditableField(editableType:EditableType, field:EditableTypeField, item:EditorEntityData):FieldView {
 
@@ -253,6 +253,74 @@ class EntityFieldUtils {
             }
             else if (!wasFocused && isFocused) {
                 valueOnFocus = item.entityId;
+            }
+            wasFocused = isFocused;
+            reobserve();
+        });
+        fieldView.onDestroy(item, function(_) {
+            if (wasFocused) {
+                if (valueOnFocus != null) {
+                    applyChange();
+                }
+            }
+        });
+        return fieldView;
+
+    }
+
+    public static function createEditableFragmentIdField(item:EditorFragmentData) {
+        
+        var fieldView = new TextFieldView(TEXT);
+        fieldView.setTextValue = SanitizeTextField.setTextValueToIdentifier;
+        fieldView.setValue = function(field, value) {
+            fieldView.textValue = value;
+        };
+        var valueOnFocus = null;
+        fieldView.autorun(function() {
+            fieldView.textValue = item.fragmentId;
+            valueOnFocus = item.fragmentId;
+        });
+        valueOnFocus = null;
+        var wasFocused = fieldView.focused;
+        inline function applyChange() {
+            var value = fieldView.textValue;
+            if (value == '') {
+                // Empty value, restore previous value
+                fieldView.setValue(fieldView, valueOnFocus);
+                fieldView.textValue = valueOnFocus;
+            }
+            else if (model != null && model.project != null) {
+                var itemForId = model.project.fragmentById(value);
+                if (itemForId != null && itemForId != item) {
+                    log.warning('Ignoring value: $value (duplicate fragment id in model)');
+                    
+                    fieldView.setValue(fieldView, valueOnFocus);
+                    fieldView.textValue = valueOnFocus;
+                }
+                else {
+                    if (item.fragmentId != value) {
+                        item.fragmentId = value;
+                        model.history.step();
+                    }
+                }
+            }
+            else {
+                if (item.fragmentId != value) {
+                    item.fragmentId = value;
+                    model.history.step();
+                }
+            }
+        }
+        fieldView.autorun(function() {
+            var isFocused = fieldView.focused;
+            unobserve();
+            if (wasFocused && !isFocused) {
+                if (valueOnFocus != null) {
+                    applyChange();
+                }
+            }
+            else if (!wasFocused && isFocused) {
+                valueOnFocus = item.fragmentId;
             }
             wasFocused = isFocused;
             reobserve();
