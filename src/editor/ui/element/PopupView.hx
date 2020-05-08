@@ -99,6 +99,22 @@ class PopupView extends View implements Observable {
         autorun(updateContentView);
         autorun(updateStyle);
 
+        initKeyBindings();
+
+    }
+
+    function initKeyBindings() {
+
+        var keyBindings = new KeyBindings();
+        onDestroy(this, _ -> {
+            keyBindings.destroy();
+        });
+
+        keyBindings.bind([SCAN(ScanCode.ESCAPE)], () -> {
+            if (active && cancelable)
+                emitCancel();
+        });
+
     }
 
     override function layout() {

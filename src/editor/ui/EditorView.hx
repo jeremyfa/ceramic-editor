@@ -85,7 +85,10 @@ class EditorView extends View implements Observable {
             settingsButton.icon = COG;
             settingsButton.viewSize(fill(), h);
             settingsButton.pointSize = s;
-            settingsButton.tooltip('Settings');
+            settingsButton.tooltip('Project Settings');
+            settingsButton.onClick(this, () -> {
+                model.location = SETTINGS;
+            });
             leftSideMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
@@ -132,7 +135,10 @@ class EditorView extends View implements Observable {
             settingsButton.icon = PUBLISH;
             settingsButton.viewSize(fill(), h);
             settingsButton.pointSize = s - 2;
-            settingsButton.tooltip('Export fragments');
+            settingsButton.tooltip('Export Fragments');
+            settingsButton.onClick(this, () -> {
+                model.exportFragments();
+            });
             leftSideMenu.add(settingsButton);
         }
         add(leftSideMenu);
@@ -348,8 +354,11 @@ class EditorView extends View implements Observable {
     function updatePopupContentView() {
 
         var pendingChoice = model.pendingChoice;
+        var location = model.location;
 
         unobserve();
+
+        popup.reset();
 
         if (pendingChoice != null) {
             popup.title = pendingChoice.title;
@@ -361,8 +370,13 @@ class EditorView extends View implements Observable {
                 });
             }
         }
-        else {
-            popup.reset();
+        else if (location == SETTINGS) {
+            popup.title = 'Project Settings';
+            popup.contentView = new ProjectSettingsView();
+            popup.cancelable = true;
+            popup.onCancel(popup.contentView, () -> {
+                model.location = DEFAULT;
+            });
         }
 
         reobserve();
@@ -376,8 +390,6 @@ class EditorView extends View implements Observable {
         visual.component('editable', editable);
 
         editable.onSelect(this, function(visual) {
-
-            trace('ON SELECT ${visual != null}');
             
             var fragmentData = model.project.selectedFragment;
             var entityData = fragmentData.get(visual.id);

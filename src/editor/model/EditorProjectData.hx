@@ -12,6 +12,8 @@ class EditorProjectData extends Model {
 
     @serialize public var fragments:ImmutableArray<EditorFragmentData> = [];
 
+    @serialize public var exportPath:String = null;
+
 /// Settings
 
     @serialize public var colorPickerHsluv:Bool = false;
@@ -151,7 +153,9 @@ class EditorProjectData extends Model {
 
     }
 
-    public function toJson():Dynamic {
+    public function toJson(projectPath:String):Dynamic {
+
+        var projectDir = projectPath != null ? Path.directory(projectPath) : null;
 
         var json:Dynamic = {};
 
@@ -160,6 +164,18 @@ class EditorProjectData extends Model {
         json.paletteColors = paletteColors;
         json.colorPickerHsluv = colorPickerHsluv;
         json.selectedFragmentIndex = selectedFragmentIndex;
+
+        if (exportPath != null) {
+            if (projectDir != null) {
+                json.exportPath = Files.getRelativePath(exportPath, projectDir);
+            }
+            else {
+                json.exportPath = exportPath;
+            }
+        }
+        else {
+            json.exportPath = null;
+        }
 
         var jsonFragments = [];
         for (fragment in fragments) {
@@ -171,10 +187,12 @@ class EditorProjectData extends Model {
 
     }
 
-    public function fromJson(json:Dynamic):Void {
+    public function fromJson(json:Dynamic, projectPath:String):Void {
 
         if (!Validate.nonEmptyString(json.title))
             throw 'Invalid project title';
+
+        var projectDir = projectPath != null ? Path.directory(projectPath) : null;
 
         title = json.title;
 
@@ -196,6 +214,19 @@ class EditorProjectData extends Model {
         }
         else {
             colorPickerHsluv = false;
+        }
+
+        if (json.exportPath != null) {
+            var exportPathStr:String = json.exportPath;
+            if (projectDir != null && !Path.isAbsolute(exportPathStr)) {
+                exportPath = Path.join([projectDir, exportPathStr]);
+            }
+            else {
+                exportPath = exportPathStr;
+            }
+        }
+        else {
+            exportPath = null;
         }
 
         if (json.fragments != null) {

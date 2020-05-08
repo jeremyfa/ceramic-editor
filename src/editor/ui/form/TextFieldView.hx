@@ -1,5 +1,7 @@
 package editor.ui.form;
 
+import ceramic.Dialogs;
+
 using StringTools;
 using unifill.Unifill;
 
@@ -41,7 +43,8 @@ class TextFieldView extends FieldView implements Observable {
     public var multiline(default,set):Bool = false;
     function set_multiline(multiline:Bool):Bool {
         this.multiline = multiline;
-        editText.multiline = multiline;
+        if (editText != null)
+            editText.multiline = multiline;
         return multiline;
     }
 
@@ -103,20 +106,55 @@ class TextFieldView extends FieldView implements Observable {
         placeholderView.maxLineDiff = -1;
         layers.add(placeholderView);
 
-        editText = new EditText(theme.focusedFieldSelectionColor, theme.lightTextColor);
-        editText.container = this;
-        textView.text.component('editText', editText);
-        editText.onUpdate(this, updateFromEditText);
-        editText.onStop(this, handleStopEditText);
+        switch kind {
+            case TEXT | NUMERIC:
+                editText = new EditText(theme.focusedFieldSelectionColor, theme.lightTextColor);
+                editText.container = this;
+                textView.text.component('editText', editText);
+                editText.onUpdate(this, updateFromEditText);
+                editText.onStop(this, handleStopEditText);
+            case PATH(title):
+                editText = null;
+                onPointerDown(this, _ -> {
+                    focus();
+                    app.onceUpdate(this, _ -> {
+                        app.onceUpdate(this, _ -> {
+                            Dialogs.openDirectory(title != null ? title : 'Select directory', path -> {
+                                trace('PATH: $path');
+                                if (path != null) {
+                                    setTextValue(this, path);
+                                }
+                            });
+                        });
+                    });
+                });
+            case FILE(title, filters):
+                editText = null;
+                onPointerDown(this, _ -> {
+                    focus();
+                    app.onceUpdate(this, _ -> {
+                        app.onceUpdate(this, _ -> {
+                            Dialogs.openFile(title != null ? title : 'Select file', filters, path -> {
+                                trace('FILE: $path');
+                                if (path != null) {
+                                    setTextValue(this, path);
+                                }
+                            });
+                        });
+                    });
+                });
+        }
 
         autorun(updateStyle);
         autorun(updateFromTextValue);
         autorun(updatePlaceholder);
 
-        onDisabledChange(this, (disabled, _) -> {
-            trace('disabled: ' + disabled);
-            editText.disabled = disabled;
-        });
+        if (editText != null) {
+            onDisabledChange(this, (disabled, _) -> {
+                trace('disabled: ' + disabled);
+                editText.disabled = disabled;
+            });
+        }
 
         bindKeyBindings();
 
@@ -128,8 +166,11 @@ class TextFieldView extends FieldView implements Observable {
 
         super.focus();
 
-        if (!disabled)
-            editText.focus();
+        if (!disabled) {
+            if (editText != null) {
+                editText.focus();
+            }
+        }
         
     }
 
@@ -146,7 +187,9 @@ class TextFieldView extends FieldView implements Observable {
     function updateFromTextValue() {
 
         var displayedText = textValue;
-        editText.updateText(displayedText);
+
+        if (editText != null)
+            editText.updateText(displayedText);
 
         textView.content = displayedText;
 
@@ -292,5 +335,9 @@ enum TextFieldKind {
     TEXT;
 
     NUMERIC;
+
+    PATH(?title:String);
+
+    FILE(?title:String, ?filters:Array<DialogsFileFilter>);
 
 }

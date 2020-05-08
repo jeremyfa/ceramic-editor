@@ -81,7 +81,9 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             item.autorun(() -> {
                 var fragment = model.project.selectedFragment;
                 unobserve();
-                item.field = EditorFieldUtils.createEditableFragmentIdField(fragment);
+                if (fragment != null) {
+                    item.field = EditorFieldUtils.createEditableFragmentIdField(fragment);
+                }
             });
             form.add(item);
         })();

@@ -35,6 +35,8 @@ class EditorData extends Model {
 
     @observe public var loading(default, null):Int = 0;
 
+    @observe public var location:EditorLocation = DEFAULT;
+
     var clearStatusMessageDelay:Void->Void = null;
     
     var ignoreUnsaved:Int = 0;
@@ -169,7 +171,7 @@ class EditorData extends Model {
             var json = Json.parse(Files.getContent(file));
             projectPath = null;
             project.clear();
-            project.fromJson(json);
+            project.fromJson(json, file);
             projectPath = file;
             project.title = Path.withoutExtension(Path.withoutDirectory(file));
             markProjectNotUnsaved();
@@ -189,7 +191,7 @@ class EditorData extends Model {
     public function saveProject(forceSaveAs:Bool = false) {
 
         if (projectPath != null && !forceSaveAs) {
-            Files.saveContent(projectPath, Json.stringify(project.toJson(), null, '    '));
+            Files.saveContent(projectPath, Json.stringify(project.toJson(projectPath), null, '    '));
             markProjectNotUnsaved();
             status('Project saved at path: $projectPath');
         }
@@ -200,7 +202,7 @@ class EditorData extends Model {
                 if (file != null) {
                     trace('Save as file: $file');
                     project.title = Path.withoutExtension(Path.withoutDirectory(file));
-                    Files.saveContent(file, Json.stringify(project.toJson(), null, '    '));
+                    Files.saveContent(file, Json.stringify(project.toJson(file), null, '    '));
                     projectPath = file;
                     markProjectNotUnsaved();
                     status('Project saved at path: $projectPath');
@@ -359,6 +361,16 @@ class EditorData extends Model {
         popUsedFragmentId();
 
         return true;
+
+    }
+
+    public function exportFragments():Void {
+
+        var json = project.toJson(projectPath);
+        
+        // TODO
+
+        log.debug('EXPORT FRAGMENTS');
 
     }
 
