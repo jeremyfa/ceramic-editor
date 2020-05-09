@@ -389,16 +389,18 @@ class EditorView extends View implements Observable {
 
         visual.component('editable', editable);
 
-        editable.onSelect(this, function(visual) {
+        editable.onSelect(this, function(visual, fromPointer) {
             
             var fragmentData = model.project.selectedFragment;
             var entityData = fragmentData.get(visual.id);
             fragmentData.selectedItem = entityData;
 
-            // // Ensure we are on Visuals tab
-            // var selectedIndex = panelTabsView.tabViews.tabs.indexOf('Visuals');
-            // if (selectedIndex != -1)
-            //     panelTabsView.tabViews.selectedIndex = selectedIndex;
+            if (fromPointer) {
+                // Ensure we are on Visuals tab
+                var selectedIndex = panelTabsView.tabViews.tabs.indexOf('Visuals');
+                if (selectedIndex != -1)
+                    panelTabsView.tabViews.selectedIndex = selectedIndex;
+            }
 
         });
 

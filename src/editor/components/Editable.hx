@@ -16,7 +16,7 @@ class Editable extends Entity implements Component {
 
     static var _point:Point = new Point(0, 0);
 
-    @event function select(visual:Visual);
+    @event function select(visual:Visual, selectFromPointer:Bool);
 
     @event function change(visual:Visual, changed:Dynamic);
 
@@ -63,7 +63,7 @@ class Editable extends Entity implements Component {
 
 /// Public API
 
-    public function select() {
+    public function select(selectFromPointer:Bool = false) {
 
         /*
         editor.send({
@@ -88,7 +88,7 @@ class Editable extends Entity implements Component {
             if (activeEditable == this) {
                 activeEditable = null;
 
-                emitSelect(null);
+                emitSelect(null, false);
                 // Set selected item
                 /*
                 editor.send({
@@ -122,7 +122,7 @@ class Editable extends Entity implements Component {
             value: entity.id
         });
         */
-        emitSelect(entity);
+        emitSelect(entity, selectFromPointer);
 
     }
 
@@ -150,7 +150,7 @@ class Editable extends Entity implements Component {
     function handleDown(info:TouchInfo) {
 
         // Ensure this item is selected
-        select();
+        select(true);
 
         // Start dragging
         var parent = entity.parent;

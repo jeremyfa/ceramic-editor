@@ -50,6 +50,12 @@ class VisualsPanelView extends LinearLayout implements Observable {
                         collectionView.scroller.scrollToBounds();
                     });
                 }
+                else {
+                    collectionView.layoutDirty = true;
+                    collectionView.onceLayout(this, function() {
+                        collectionView.scroller.scrollToBounds();
+                    });
+                }
             }
         });
 
@@ -58,6 +64,39 @@ class VisualsPanelView extends LinearLayout implements Observable {
             title.active = active;
             collectionView.active = active;
         });
+
+        var prevSelectedVisualIndex = -1;
+        autorun(function() {
+            var selectedFragment = model.project.selectedFragment;
+            var selectedVisualIndex = selectedFragment != null ? selectedFragment.selectedVisualIndex : -1;
+            unobserve();
+            if (selectedVisualIndex != prevSelectedVisualIndex) {
+                prevSelectedVisualIndex = selectedVisualIndex;
+                if (selectedVisualIndex != -1) {
+                    app.oncePostFlushImmediate(() -> {
+                        if (destroyed)
+                            return;
+                        scrollToSelectedVisual(collectionView);
+                        app.onceUpdate(collectionView, _ -> {
+                            scrollToSelectedVisual(collectionView);
+                            app.onceUpdate(collectionView, _ -> {
+                                scrollToSelectedVisual(collectionView);
+                            });
+                        });
+                    });
+                }
+            }
+        });
+
+    }
+
+    function scrollToSelectedVisual(collectionView:CollectionView) {
+
+        var selectedFragment = model.project.selectedFragment;
+        var selectedVisualIndex = selectedFragment != null ? selectedFragment.selectedVisualIndex : -1;
+        if (selectedVisualIndex != -1) {
+            collectionView.scrollToItem(selectedVisualIndex);
+        }
 
     }
 

@@ -26,6 +26,8 @@ class CellView extends LinearLayout implements Observable {
 
     var subTitleTextView:TextView;
 
+    var clearScrollDelay:Void->Void = null;
+
     @observe var hover:Bool = false;
 
     @observe var appliedHoverItemIndex:Int = -1;
@@ -67,8 +69,6 @@ class CellView extends LinearLayout implements Observable {
         onPointerOut(this, function(_) hover = false);
 
     }
-
-/// Internal
 
     function updateTitle() {
 

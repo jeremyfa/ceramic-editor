@@ -36,7 +36,7 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         add(collectionView);
 
         var prevLength = 0;
-        var auto = autorun(function() {
+        autorun(function() {
             var length = model.project.fragments.length;
             unobserve();
             if (length != prevLength) {
@@ -55,6 +55,12 @@ class FragmentsPanelView extends LinearLayout implements Observable {
                         collectionView.scroller.scrollToBounds();
                     });
                 }
+                else {
+                    collectionView.layoutDirty = true;
+                    collectionView.onceLayout(this, function() {
+                        collectionView.scroller.scrollToBounds();
+                    });
+                }
             }
         });
 
@@ -63,6 +69,37 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             title.active = active;
             collectionView.active = active;
         });
+
+        var prevSelectedFragmentIndex = -1;
+        autorun(function() {
+            var selectedFragmentIndex = model.project.selectedFragmentIndex;
+            unobserve();
+            if (selectedFragmentIndex != prevSelectedFragmentIndex) {
+                prevSelectedFragmentIndex = selectedFragmentIndex;
+                if (selectedFragmentIndex != -1) {
+                    app.oncePostFlushImmediate(() -> {
+                        if (destroyed)
+                            return;
+                        scrollToSelectedFragment(collectionView);
+                        app.onceUpdate(collectionView, _ -> {
+                            scrollToSelectedFragment(collectionView);
+                            app.onceUpdate(collectionView, _ -> {
+                                scrollToSelectedFragment(collectionView);
+                            });
+                        });
+                    });
+                }
+            }
+        });
+
+    }
+
+    function scrollToSelectedFragment(collectionView:CollectionView) {
+
+        var selectedFragmentIndex = model.project.selectedFragmentIndex;
+        if (selectedFragmentIndex != -1) {
+            collectionView.scrollToItem(selectedFragmentIndex);
+        }
 
     }
 
