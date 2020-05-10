@@ -107,25 +107,49 @@ class VisualsPanelView extends LinearLayout implements Observable {
         title.content = 'Selected visual';
         add(title);
 
+        var layers = new LayersLayout();
+        layers.viewSize(fill(), fill());
+
+        var background = new RowLayout();
+        background.viewSize(fill(), fill());
+        layers.add(background);
+
+        var formBackground = new View();
+        formBackground.transparent = false;
+        formBackground.color = Color.RED;
+        formBackground.viewSize(fill(), fill());
+        background.add(formBackground);
+
+        var scrollbarBackground = new View();
+        scrollbarBackground.transparent = false;
+        scrollbarBackground.viewSize(12, fill());
+        background.add(scrollbarBackground);
+
+        background.autorun(() -> {
+            formBackground.color = theme.mediumBackgroundColor;
+            scrollbarBackground.color = theme.darkBackgroundColor;
+        });
+
         var container = new ColumnLayout();
         container.paddingRight = 12;
 
         var form = new FormLayout();
+
         container.add(form);
+        layers.add(container);
 
         var scroll = new ScrollingLayout(container, true);
         scroll.scroller.scrollbar = new Scrollbar();
-        scroll.autorun(() -> {
-            scroll.transparent = false;
-            scroll.color = theme.darkBackgroundColor;
-        });
+        scroll.transparent = true;
         scroll.viewSize(fill(), fill());
-        add(scroll);
+
+        layers.add(scroll);
+        add(layers);
 
         autorun(function() {
             var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
             title.active = active;
-            scroll.active = active;
+            layers.active = active;
             form.clear();
             scroll.scroller.scrollTo(scroll.scroller.scrollX, 0);
 

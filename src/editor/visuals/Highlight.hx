@@ -7,6 +7,8 @@ import ceramic.Point;
 import ceramic.TouchInfo;
 import ceramic.Shortcuts.*;
 
+using ceramic.Extensions;
+
 enum HighlightCorner {
     TOP_LEFT;
     TOP_RIGHT;
@@ -15,6 +17,8 @@ enum HighlightCorner {
 }
 
 class Highlight extends Visual {
+
+    static var _point:Point = new Point(0, 0);
 
 /// Events
 
@@ -38,6 +42,8 @@ class Highlight extends Visual {
 
     public var anchorCrossHBar = new View();
 
+    public var pointHandles:Array<View> = [];
+
     public var topDistance(default,null):Float;
 
     public var rightDistance(default,null):Float;
@@ -47,6 +53,10 @@ class Highlight extends Visual {
     public var leftDistance(default,null):Float;
 
     var wrappedVisual:Visual = null;
+
+    var wrappedPoints:Array<Float> = null;
+
+    var localPoints:Array<Float> = [];
 
     var borderTop = new Quad();
 
@@ -104,7 +114,36 @@ class Highlight extends Visual {
         borderLeft.color = color;
         anchorCrossVBar.color = color;
         anchorCrossHBar.color = color;
+        for (i in 0...pointHandles.length) {
+            pointHandles[i].color = color;
+        }
         return color;
+    }
+
+    public var cornersActive(default, set):Bool = true;
+    function set_cornersActive(cornersActive:Bool):Bool {
+        cornerTopLeft.active = cornersActive;
+        cornerTopRight.active = cornersActive;
+        cornerBottomLeft.active = cornersActive;
+        cornerBottomRight.active = cornersActive;
+        return cornersActive;
+    }
+
+    public var bordersActive(default, set):Bool = true;
+    function set_bordersActive(cornersActive:Bool):Bool {
+        borderTop.active = cornersActive;
+        borderRight.active = cornersActive;
+        borderBottom.active = cornersActive;
+        borderLeft.active = cornersActive;
+        return cornersActive;
+    }
+
+    public var pointHandleSize(default,set):Float = 8;
+    function set_pointHandleSize(pointHandleSize:Float):Float {
+        if (this.pointHandleSize == pointHandleSize) return pointHandleSize;
+        this.pointHandleSize = pointHandleSize;
+        updatePointHandles();
+        return pointHandleSize;
     }
 
 /// Lifecycle
@@ -235,8 +274,11 @@ class Highlight extends Visual {
     public function wrapVisual(visual:Visual):Void {
 
         wrappedVisual = visual;
-        doWrapVisual(visual);
-        contentDirty = true;
+
+        if (visual != null) {
+            doWrapVisual(visual);
+            contentDirty = true;
+        }
 
     }
 
@@ -261,6 +303,45 @@ class Highlight extends Visual {
 
     }
 
+    /**
+     * Note: should be called AFTER wrapVisual(), not before.
+     * @param points 
+     */
+    public function wrapPoints(points:Array<Float>) {
+
+        wrappedPoints = points;
+        if (points != null) {
+            doWrapPoints(points);
+            contentDirty = true;
+        }
+
+    }
+
+    function doWrapPoints(points:Array<Float>) {
+
+        if (wrappedVisual == null || wrappedVisual.destroyed)
+            return;
+
+        var i = 0;
+        while (i * 2 < points.length) {
+            var pointX = points[i * 2];
+            var pointY = points[i * 2 + 1];
+            wrappedVisual.visualToScreen(pointX, pointY, _point);
+            this.screenToVisual(_point.x, _point.y, _point);
+            localPoints[i * 2] = _point.x;
+            localPoints[i * 2 + 1] = _point.y;
+            i++;
+        }
+
+        if (localPoints.length > points.length)
+            localPoints.setArrayLength(points.length);
+
+        updatePointHandles();
+
+    }
+
+/// Internal
+
     override function computeContent() {
 
         if (wrappedVisual != null) {
@@ -272,11 +353,13 @@ class Highlight extends Visual {
             }
         }
 
+        if (wrappedPoints != null) {
+            doWrapPoints(wrappedPoints);
+        }
+
         contentDirty = false;
 
     }
-
-/// Internal
 
     function updateCornersAndBorders() {
 
@@ -343,6 +426,41 @@ class Highlight extends Visual {
         borderLeft.anchor(0, 0.5);
         borderLeft.pos(pointBottomLeft.x, pointBottomLeft.y);
         borderLeft.rotation = r;
+
+    }
+
+    function updatePointHandles() {
+
+        var i = 0;
+        while (i * 2 < localPoints.length) {
+            var handle = pointHandles[i];
+            
+            if (handle == null) {
+                handle = new View();
+                handle.depth = 2;
+                handle.borderColor = Color.WHITE;
+                handle.borderPosition = INSIDE;
+                handle.borderSize = 1;
+                handle.color = color;
+                handle.size(pointHandleSize, pointHandleSize);
+                pointHandles[i] = handle;
+                add(handle);
+            }
+
+            var pointX = localPoints[i * 2];
+            var pointY = localPoints[i * 2 + 1];
+
+            handle.pos(pointX, pointY);
+            handle.anchor(0.5, 0.5);
+            handle.size(pointHandleSize, pointHandleSize);
+
+            i++;
+        }
+
+        while (localPoints.length * 2 < pointHandles.length) {
+            var handle = pointHandles.pop();
+            handle.destroy();
+        }
 
     }
 

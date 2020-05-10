@@ -12,6 +12,8 @@ import ceramic.Shortcuts.*;
 
 import editor.visuals.Highlight;
 
+using ceramic.Extensions;
+
 class Editable extends Entity implements Component {
 
     static var _point:Point = new Point(0, 0);
@@ -105,7 +107,13 @@ class Editable extends Entity implements Component {
         highlight.pos(0, 0);
         highlight.depth = 500;
         highlight.transform = new Transform();
-        highlight.wrapVisual(entity);
+        wrapVisual(entity);
+
+        var entityOptions = EntityOptions.get(entity);
+        if (entityOptions.highlightPoints != null) {
+            highlight.bordersActive = false;
+            highlight.cornersActive = false;
+        }
 
         highlight.onCornerDown(this, handleCornerDown);
         highlight.onCornerOver(this, handleCornerOver);
@@ -141,7 +149,7 @@ class Editable extends Entity implements Component {
 
         if (activeEditable != this) return;
 
-        highlight.wrapVisual(entity);
+        wrapVisual(entity);
 
     }
 
@@ -311,7 +319,7 @@ class Editable extends Entity implements Component {
                         }
 
                         entity.skewX = newSkewX;
-                        highlight.wrapVisual(entity);
+                        wrapVisual(entity);
 
                         // Is it better?
                         var dist = distanceMain();
@@ -324,7 +332,7 @@ class Editable extends Entity implements Component {
 
                     // Apply best transform
                     entity.skewX = bestSkewX;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
 
                     if (best == -1) {
                         skewStep *= 0.6;
@@ -334,7 +342,7 @@ class Editable extends Entity implements Component {
                 // Snap to `common` skews?
                 if (shiftPressed) {
                     entity.skewX = Math.round(entity.skewX / 22.5) * 22.5;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
                 }
             }
             else if (yKeyPressed) {
@@ -366,7 +374,7 @@ class Editable extends Entity implements Component {
                         }
 
                         entity.skewY = newSkewY;
-                        highlight.wrapVisual(entity);
+                        wrapVisual(entity);
 
                         // Is it better?
                         var dist = distanceMain();
@@ -379,7 +387,7 @@ class Editable extends Entity implements Component {
 
                     // Apply best transform
                     entity.skewY = bestSkewY;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
 
                     if (best == -1) {
                         skewStep *= 0.6;
@@ -389,7 +397,7 @@ class Editable extends Entity implements Component {
                 // Snap to `common` skews?
                 if (shiftPressed) {
                     entity.skewY = Math.round(entity.skewY / 22.5) * 22.5;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
                 }
             }
             else if (rKeyPressed) {
@@ -421,7 +429,7 @@ class Editable extends Entity implements Component {
                         }
 
                         entity.rotation = newRotation;
-                        highlight.wrapVisual(entity);
+                        wrapVisual(entity);
 
                         // Is it better?
                         var dist = distanceMain();
@@ -434,7 +442,7 @@ class Editable extends Entity implements Component {
 
                     // Apply best transform
                     entity.rotation = bestRotation;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
 
                     if (best == -1) {
                         rotateStep *= 0.6;
@@ -444,7 +452,7 @@ class Editable extends Entity implements Component {
                 // Snap to `common` angles?
                 if (shiftPressed) {
                     entity.rotation = Math.round(entity.rotation / 22.5) * 22.5;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
                 }
             }
             else if (wKeyPressed) {
@@ -477,7 +485,7 @@ class Editable extends Entity implements Component {
                         }
 
                         entity.scaleX = newScaleX;
-                        highlight.wrapVisual(entity);
+                        wrapVisual(entity);
 
                         // Is it better?
                         var dist = distanceMain();
@@ -490,7 +498,7 @@ class Editable extends Entity implements Component {
 
                     // Apply best transform
                     entity.scaleX = bestScaleX;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
 
                     if (best == -1) {
                         scaleStep *= 0.9;
@@ -500,7 +508,7 @@ class Editable extends Entity implements Component {
                 // Round scales?
                 if (shiftPressed) {
                     entity.scaleX = Math.round(entity.scaleX * 10) / 10;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
                 }
 
             }
@@ -534,7 +542,7 @@ class Editable extends Entity implements Component {
                         }
 
                         entity.scaleY = newScaleY;
-                        highlight.wrapVisual(entity);
+                        wrapVisual(entity);
 
                         // Is it better?
                         var dist = distanceMain();
@@ -547,7 +555,7 @@ class Editable extends Entity implements Component {
 
                     // Apply best transform
                     entity.scaleY = bestScaleY;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
 
                     if (best == -1) {
                         scaleStep *= 0.9;
@@ -557,7 +565,7 @@ class Editable extends Entity implements Component {
                 // Round scales?
                 if (shiftPressed) {
                     entity.scaleY = Math.round(entity.scaleY * 10) / 10;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
                 }
 
             }
@@ -598,7 +606,7 @@ class Editable extends Entity implements Component {
 
                         entity.scaleX = newScaleX;
                         entity.scaleY = newScaleY;
-                        highlight.wrapVisual(entity);
+                        wrapVisual(entity);
 
                         // Is it better?
                         var dist = distanceMain();
@@ -613,7 +621,7 @@ class Editable extends Entity implements Component {
                     // Apply best transform
                     entity.scaleX = bestScaleX;
                     entity.scaleY = bestScaleY;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
 
                     if (best == -1) {
                         scaleStep *= 0.9;
@@ -624,7 +632,7 @@ class Editable extends Entity implements Component {
                 if (shiftPressed) {
                     entity.scaleX = Math.round(entity.scaleX * 10) / 10;
                     entity.scaleY = Math.round(entity.scaleY * 10) / 10;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
                 }
 
                 // Keep aspect ratio?
@@ -632,7 +640,7 @@ class Editable extends Entity implements Component {
                     var bestScaleX = entity.scaleX;
                     entity.scaleX = bestScaleX;
                     entity.scaleY = bestScaleX * scaleRatio;
-                    highlight.wrapVisual(entity);
+                    wrapVisual(entity);
                 }
             }
             
@@ -719,6 +727,22 @@ class Editable extends Entity implements Component {
     function handleCornerOut(corner:HighlightCorner, info:TouchInfo) {
 
         //
+
+    }
+
+    function wrapVisual(visual:Visual) {
+
+        if (highlight != null) {
+            highlight.wrapVisual(visual);
+
+            var options = EntityOptions.get(visual);
+            if (options != null) {
+                if (options.highlightPoints != null) {
+                    var points:Array<Float> = visual.getProperty(options.highlightPoints);
+                    highlight.wrapPoints(points);
+                }
+            }
+        }
 
     }
 
