@@ -1,5 +1,7 @@
 package editor.ui.element;
 
+import editor.visuals.Scrollbar;
+
 class CellCollectionView extends CollectionView implements Observable {
 
     @observe public var scrolling(default,null):Bool = false;
@@ -11,12 +13,13 @@ class CellCollectionView extends CollectionView implements Observable {
         super();
 
         viewSize(fill(), fill());
-        transparent = true;
+        transparent = false;
         contentView.transparent = true;
         contentView.borderPosition = OUTSIDE;
         borderPosition = INSIDE;
         clip = this;
         scroller.allowPointerOutside = false;
+        scroller.scrollbar = new Scrollbar();
 
         #if !(ios || android)
         scroller.dragEnabled = false;
@@ -59,7 +62,7 @@ class CellCollectionView extends CollectionView implements Observable {
         }
         else {
             transparent = false;
-            color = theme.mediumBackgroundColor;
+            color = theme.darkBackgroundColor;
             borderSize = 0;
             contentView.borderTopSize = 1;
             borderBottomSize = 1;

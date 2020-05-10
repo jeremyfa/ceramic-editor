@@ -1,6 +1,7 @@
 package editor.ui.visuals;
 
 import editor.utils.TextUtils;
+import editor.visuals.Scrollbar;
 
 class VisualsPanelView extends LinearLayout implements Observable {
 
@@ -106,9 +107,18 @@ class VisualsPanelView extends LinearLayout implements Observable {
         title.content = 'Selected visual';
         add(title);
 
-        var form = new FormLayout();
+        var container = new ColumnLayout();
+        container.paddingRight = 12;
 
-        var scroll = new ScrollingLayout(form, true);
+        var form = new FormLayout();
+        container.add(form);
+
+        var scroll = new ScrollingLayout(container, true);
+        scroll.scroller.scrollbar = new Scrollbar();
+        scroll.autorun(() -> {
+            scroll.transparent = false;
+            scroll.color = theme.darkBackgroundColor;
+        });
         scroll.viewSize(fill(), fill());
         add(scroll);
 

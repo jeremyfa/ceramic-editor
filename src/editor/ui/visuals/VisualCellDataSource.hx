@@ -16,7 +16,7 @@ class VisualCellDataSource implements CollectionViewDataSource {
     /** Get the item frame at the requested index. */
     public function collectionViewItemFrameAtIndex(collectionView:CollectionView, itemIndex:Int, frame:CollectionViewItemFrame):Void {
 
-        frame.width = collectionView.width;
+        frame.width = collectionView.width - 12;
         frame.height = 39;
 
     }
