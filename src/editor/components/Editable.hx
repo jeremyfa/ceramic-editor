@@ -28,8 +28,6 @@ class Editable extends Entity implements Component {
 
     var entity:Visual;
 
-    //var fragment:Fragment;
-
     var point:Point = { x: 0, y: 0 };
 
     var xKeyPressed:Bool = false;
@@ -38,18 +36,22 @@ class Editable extends Entity implements Component {
     var wKeyPressed:Bool = false;
     var hKeyPressed:Bool = false;
     var aKeyPressed:Bool = false;
+    var sKeyPressed:Bool = false;
+    var leftShiftPressed:Bool = false;
+    var rightShiftPressed:Bool = false;
     var shiftPressed:Bool = false;
 
     function new() {
         
         super();
-        //this.fragment = fragment;
 
     }
 
     function bindAsComponent() {
 
         entity.onPointerDown(this, handleDown);
+
+        bindKeyboard();
 
     }
 
@@ -84,8 +86,6 @@ class Editable extends Entity implements Component {
         highlight.onceDestroy(this, function(_) {
 
             highlight.offCornerDown(handleCornerDown);
-            highlight.offCornerOver(handleCornerOver);
-            highlight.offCornerOut(handleCornerOut);
 
             if (activeEditable == this) {
                 activeEditable = null;
@@ -110,14 +110,15 @@ class Editable extends Entity implements Component {
         wrapVisual(entity);
 
         var entityOptions = EntityOptions.get(entity);
+
+        highlight.onCornerDown(this, handleCornerDown);
+
         if (entityOptions.highlightPoints != null) {
             highlight.bordersActive = false;
             highlight.cornersActive = false;
-        }
 
-        highlight.onCornerDown(this, handleCornerDown);
-        highlight.onCornerOver(this, handleCornerOver);
-        highlight.onCornerOut(this, handleCornerOut);
+            highlight.onPointHandleDown(this, handlePointHandleDown);
+        }
 
         editor.view.fragmentOverlay.add(highlight);
 
@@ -150,6 +151,81 @@ class Editable extends Entity implements Component {
         if (activeEditable != this) return;
 
         wrapVisual(entity);
+
+    }
+
+/// Keyboard
+
+    function bindKeyboard() {
+
+        // Keyboard events
+        app.onKeyDown(this, function(key) {
+
+            if (key.keyCode == KeyCode.LSHIFT) {
+                leftShiftPressed = true;
+            }
+            else if (key.keyCode == KeyCode.RSHIFT) {
+                rightShiftPressed = true;
+            }
+            else if (key.keyCode == KeyCode.KEY_R) {
+                rKeyPressed = true;
+            }
+            else if (key.keyCode == KeyCode.KEY_A) {
+                aKeyPressed = true;
+            }
+            else if (key.keyCode == KeyCode.KEY_X) {
+                xKeyPressed = true;
+            }
+            else if (key.keyCode == KeyCode.KEY_Y) {
+                yKeyPressed = true;
+            }
+            else if (key.keyCode == KeyCode.KEY_W) {
+                wKeyPressed = true;
+            }
+            else if (key.keyCode == KeyCode.KEY_H) {
+                hKeyPressed = true;
+            }
+            else if (key.keyCode == KeyCode.KEY_S) {
+                sKeyPressed = true;
+            }
+
+            shiftPressed = leftShiftPressed || rightShiftPressed;
+
+        });
+
+        app.onKeyUp(this, function(key) {
+
+            if (key.keyCode == KeyCode.LSHIFT) {
+                leftShiftPressed = false;
+            }
+            else if (key.keyCode == KeyCode.RSHIFT) {
+                rightShiftPressed = false;
+            }
+            else if (key.keyCode == KeyCode.KEY_R) {
+                rKeyPressed = false;
+            }
+            else if (key.keyCode == KeyCode.KEY_A) {
+                aKeyPressed = false;
+            }
+            else if (key.keyCode == KeyCode.KEY_X) {
+                xKeyPressed = false;
+            }
+            else if (key.keyCode == KeyCode.KEY_Y) {
+                yKeyPressed = false;
+            }
+            else if (key.keyCode == KeyCode.KEY_W) {
+                wKeyPressed = false;
+            }
+            else if (key.keyCode == KeyCode.KEY_H) {
+                hKeyPressed = false;
+            }
+            else if (key.keyCode == KeyCode.KEY_S) {
+                sKeyPressed = false;
+            }
+
+            shiftPressed = leftShiftPressed || rightShiftPressed;
+
+        });
 
     }
 
@@ -340,7 +416,7 @@ class Editable extends Entity implements Component {
                 }
 
                 // Snap to `common` skews?
-                if (shiftPressed) {
+                if (sKeyPressed) {
                     entity.skewX = Math.round(entity.skewX / 22.5) * 22.5;
                     wrapVisual(entity);
                 }
@@ -395,7 +471,7 @@ class Editable extends Entity implements Component {
                 }
 
                 // Snap to `common` skews?
-                if (shiftPressed) {
+                if (sKeyPressed) {
                     entity.skewY = Math.round(entity.skewY / 22.5) * 22.5;
                     wrapVisual(entity);
                 }
@@ -450,7 +526,7 @@ class Editable extends Entity implements Component {
                 }
 
                 // Snap to `common` angles?
-                if (shiftPressed) {
+                if (sKeyPressed) {
                     entity.rotation = Math.round(entity.rotation / 22.5) * 22.5;
                     wrapVisual(entity);
                 }
@@ -506,7 +582,7 @@ class Editable extends Entity implements Component {
                 }
 
                 // Round scales?
-                if (shiftPressed) {
+                if (sKeyPressed) {
                     entity.scaleX = Math.round(entity.scaleX * 10) / 10;
                     wrapVisual(entity);
                 }
@@ -563,7 +639,7 @@ class Editable extends Entity implements Component {
                 }
 
                 // Round scales?
-                if (shiftPressed) {
+                if (sKeyPressed) {
                     entity.scaleY = Math.round(entity.scaleY * 10) / 10;
                     wrapVisual(entity);
                 }
@@ -629,14 +705,14 @@ class Editable extends Entity implements Component {
                 }
 
                 // Round scales?
-                if (shiftPressed) {
+                if (sKeyPressed) {
                     entity.scaleX = Math.round(entity.scaleX * 10) / 10;
                     entity.scaleY = Math.round(entity.scaleY * 10) / 10;
                     wrapVisual(entity);
                 }
 
                 // Keep aspect ratio?
-                if (aKeyPressed) {
+                if (shiftPressed) {
                     var bestScaleX = entity.scaleX;
                     entity.scaleX = bestScaleX;
                     entity.scaleY = bestScaleX * scaleRatio;
@@ -670,8 +746,6 @@ class Editable extends Entity implements Component {
             while (rotation >= 360) rotation -= 360;
             entity.rotation = Math.round(rotation * 100) / 100.0;
 
-            log.debug('SEND VISUAL CHANGE');
-
             emitChange(entity, {
                 x: entity.x,
                 y: entity.y,
@@ -682,51 +756,11 @@ class Editable extends Entity implements Component {
                 rotation: entity.rotation
             });
 
-            /*
-            // Update pos & scale on react side
-            editor.send({
-                type: 'set/ui.selectedItem.x',
-                value: entity.x
-            });
-            editor.send({
-                type: 'set/ui.selectedItem.y',
-                value: entity.y
-            });
-            editor.send({
-                type: 'set/ui.selectedItem.scaleX',
-                value: entity.scaleX
-            });
-            editor.send({
-                type: 'set/ui.selectedItem.scaleY',
-                value: entity.scaleY
-            });
-            editor.send({
-                type: 'set/ui.selectedItem.skewX',
-                value: entity.skewX
-            });
-            editor.send({
-                type: 'set/ui.selectedItem.skewY',
-                value: entity.skewY
-            });
-            editor.send({
-                type: 'set/ui.selectedItem.rotation',
-                value: entity.rotation
-            });
-            */
-
         });
 
     }
 
-    function handleCornerOver(corner:HighlightCorner, info:TouchInfo) {
-
-        //
-
-    }
-
-    function handleCornerOut(corner:HighlightCorner, info:TouchInfo) {
-
-        //
+    function handlePointHandleDown(index:Int, info:TouchInfo) {
 
     }
 

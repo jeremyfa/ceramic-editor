@@ -28,6 +28,12 @@ class Highlight extends Visual {
 
     @event function cornerOut(corner:HighlightCorner, info:TouchInfo);
 
+    @event function pointHandleDown(index:Int, info:TouchInfo);
+
+    @event function pointHandleOver(index:Int, info:TouchInfo);
+
+    @event function pointHandleOut(index:Int, info:TouchInfo);
+
 /// Properties
 
     public var cornerTopLeft = new View();
@@ -443,6 +449,17 @@ class Highlight extends Visual {
                 handle.borderSize = 1;
                 handle.color = color;
                 handle.size(pointHandleSize, pointHandleSize);
+                (function(index) {
+                    handle.onPointerDown(this, function(info) {
+                        emitPointHandleDown(i, info);
+                    });
+                    handle.onPointerOver(this, function(info) {
+                        emitPointHandleOver(i, info);
+                    });
+                    handle.onPointerOut(this, function(info) {
+                        emitPointHandleOut(i, info);
+                    });
+                })(i);
                 pointHandles[i] = handle;
                 add(handle);
             }
