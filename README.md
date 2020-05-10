@@ -2,7 +2,7 @@
 
 An editor for [ceramic](https://github.com/ceramic-engine/ceramic) made with ceramic.
 
-⚠️ Under active development!
+⚠️ **Under active development!**
 
 ### Made for ceramic, but usable with other frameworks
 
