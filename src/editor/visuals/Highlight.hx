@@ -176,7 +176,9 @@ class Highlight extends Visual {
             emitCornerOut(BOTTOM_RIGHT, info);
         });
 
-        color = 0xFF0000;
+        autorun(() -> {
+            color = theme.highlightColor;
+        });
 
         updateCornersAndBorders();
 

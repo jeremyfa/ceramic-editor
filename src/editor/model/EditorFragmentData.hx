@@ -273,13 +273,12 @@ class EditorFragmentData extends Model {
         visual.props.set('visible', true);
         visual.props.set('touchable', true);
 
-        // Specific cases
-        if (entityClass == 'ceramic.Text') {
-            visual.props.set('content', visual.entityId);
-        }
-        else if (entityClass == 'ceramic.Quad') {
-            visual.props.set('width', 100);
-            visual.props.set('height', 100);
+        var clazz = Type.resolveClass(entityClass);
+        if (clazz != null) {
+            if (Reflect.hasField(clazz, 'editorSetupEntity')) {
+                var setup = Reflect.field(clazz, 'editorSetupEntity');
+                setup(visual);
+            }
         }
 
         var items = [].concat(this.items.mutable);

@@ -48,7 +48,9 @@ class EditorTheme extends Model {
 
 /// Selection
 
-    @observe public var selectionBorderColor:Color = Color.RED;
+    @observe public var selectionBorderColor:Color = 0x4392E0;
+
+    @observe public var highlightColor:Color = 0x4392E0;
 
 /// Field
 

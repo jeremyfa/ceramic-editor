@@ -16,6 +16,8 @@ import ceramic.InitSettings;
 import ceramic.Shortcuts.*;
 import editor.Editor;
 
+import ceramic.Shape;
+
 import editor.ui.form.SelectFieldView;
 
 /** Minimal project to bootstrap default ceramic editor canvas. */
@@ -29,8 +31,7 @@ class Project {
 
         #if editor
         new Editor(settings, {
-            //assets: DefinesMacro.getDefine('assets_path')
-            //assets: '/Users/jeremyfa/Developer/clicktube/assets'
+            assets: DefinesMacro.getDefine('assets_path')
         });
         #end
 
