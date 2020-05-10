@@ -26,17 +26,17 @@ class Highlight extends Visual {
 
 /// Properties
 
-    public var cornerTopLeft = new Quad();
+    public var cornerTopLeft = new View();
 
-    public var cornerTopRight = new Quad();
+    public var cornerTopRight = new View();
 
-    public var cornerBottomLeft = new Quad();
+    public var cornerBottomLeft = new View();
 
-    public var cornerBottomRight = new Quad();
+    public var cornerBottomRight = new View();
 
-    public var anchorCrossVBar = new Quad();
+    public var anchorCrossVBar = new View();
 
-    public var anchorCrossHBar = new Quad();
+    public var anchorCrossHBar = new View();
 
     public var topDistance(default,null):Float;
 
@@ -74,7 +74,7 @@ class Highlight extends Visual {
         return cornerSize;
     }
 
-    public var borderSize(default,set):Float = 2;
+    public var borderSize(default,set):Float = 1;
     function set_borderSize(borderSize:Float):Float {
         if (this.borderSize == borderSize) return borderSize;
         this.borderSize = borderSize;
@@ -82,7 +82,7 @@ class Highlight extends Visual {
         return borderSize;
     }
 
-    public var crossWidth(default,set):Float = 2;
+    public var crossWidth(default,set):Float = 1;
     function set_crossWidth(crossWidth:Float):Float {
         if (this.crossWidth == crossWidth) return crossWidth;
         this.crossWidth = crossWidth;
@@ -119,12 +119,38 @@ class Highlight extends Visual {
         cornerTopRight.depth = 2;
         cornerBottomLeft.depth = 2;
         cornerBottomRight.depth = 2;
+
+        cornerTopLeft.borderColor = Color.WHITE;
+        cornerTopRight.borderColor = Color.WHITE;
+        cornerBottomLeft.borderColor = Color.WHITE;
+        cornerBottomRight.borderColor = Color.WHITE;
+
+        cornerTopLeft.borderPosition = INSIDE;
+        cornerTopRight.borderPosition = INSIDE;
+        cornerBottomLeft.borderPosition = INSIDE;
+        cornerBottomRight.borderPosition = INSIDE;
+
+        cornerTopLeft.borderSize = 1;
+        cornerTopRight.borderSize = 1;
+        cornerBottomLeft.borderSize = 1;
+        cornerBottomRight.borderSize = 1;
+
         borderTop.depth = 1.5;
         borderRight.depth = 1.5;
         borderBottom.depth = 1.5;
         borderLeft.depth = 1.5;
         anchorCrossVBar.depth = 1.75;
         anchorCrossHBar.depth = 1.75;
+
+        /*
+        anchorCrossVBar.borderRightSize = crossWidth * 0.5;
+        anchorCrossVBar.borderPosition = INSIDE;
+        anchorCrossVBar.borderRightColor = Color.WHITE;
+
+        anchorCrossHBar.borderTopSize = crossWidth * 0.5;
+        anchorCrossHBar.borderPosition = INSIDE;
+        anchorCrossHBar.borderTopColor = Color.WHITE;
+        */
 
         add(cornerTopLeft);
         add(cornerTopRight);
@@ -256,11 +282,11 @@ class Highlight extends Visual {
 
         anchorCrossVBar.anchor(0.5, 0.5);
         anchorCrossVBar.pos(pointAnchor.x, pointAnchor.y);
-        anchorCrossVBar.size(8, crossWidth);
+        anchorCrossVBar.size(crossWidth, 8);
 
         anchorCrossHBar.anchor(0.5, 0.5);
         anchorCrossHBar.pos(pointAnchor.x, pointAnchor.y);
-        anchorCrossHBar.size(crossWidth, 8);
+        anchorCrossHBar.size(8, crossWidth);
 
         cornerTopLeft.size(cornerSize, cornerSize);
         cornerTopLeft.anchor(0.5, 0.5);
