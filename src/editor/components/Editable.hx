@@ -114,7 +114,7 @@ class Editable extends Entity implements Component {
         highlight.onCornerDown(this, handleCornerDown);
 
         if (entityOptions.highlightPoints != null) {
-            highlight.bordersActive = false;
+            //highlight.bordersActive = false;
             highlight.cornersActive = false;
 
             highlight.onPointHandleDown(this, handlePointHandleDown);
@@ -761,6 +761,160 @@ class Editable extends Entity implements Component {
     }
 
     function handlePointHandleDown(index:Int, info:TouchInfo) {
+
+        trace('point handle down $index');
+            
+        var translateTests = [
+            -1, -1,
+            -1, 0,
+            -1, 1,
+            0, -1,
+            0, 1,
+            1, -1,
+            1, 0,
+            1, 1
+        ];
+
+        var points:Array<Float> = null;
+
+        var options = EntityOptions.get(entity);
+        if (options != null) {
+            if (options.highlightPoints != null) {
+                points = entity.getProperty(options.highlightPoints);
+            }
+        }
+
+        if (points == null) {
+            log.error('Invalid points property!');
+            return;
+        }
+
+        var originalPoints:Array<Float> = [].concat(points);
+
+        var pointStartX = points[index * 2];
+        var pointStartY = points[index * 2 + 1];
+        entity.visualToScreen(pointStartX, pointStartY, _point);
+        var pointStartScreenX = _point.x;
+        var pointStartScreenY = _point.y;
+        var startX = info.x;
+        var startY = info.y;
+
+        wrapVisual(entity);
+
+        inline function distanceMain() {
+            var handle = highlight.pointHandles[index];
+            highlight.visualToScreen(handle.x, handle.y, _point);
+            var a = screen.pointerX - _point.x;
+            var b = screen.pointerY - _point.y;
+            return Math.sqrt(a * a + b * b);
+        }
+
+        function onPointerMove(info:TouchInfo) {
+
+            var moveStep = 16.0;
+            var n = 0;
+            var best = -1;
+
+            while (n++ < 100) {
+
+                for (j in 0...points.length) {
+                    originalPoints[j] = points[j];
+                }
+
+                best = -1;
+                var pointX = points[index * 2];
+                var pointY = points[index * 2 + 1];
+                var bestDistance = distanceMain();
+                var bestPointX = pointX;
+                var bestPointY = pointY;
+
+                var i = 0;
+                while (i * 2 < translateTests.length) {
+                    var testX = translateTests[i * 2] * moveStep;
+                    var testY = translateTests[i * 2 + 1] * moveStep;
+
+                    for (j in 0...originalPoints.length) {
+                        points[j] = originalPoints[j];
+                    }
+
+                    points[index * 2] = pointX + testX;
+                    points[index * 2 + 1] = pointY + testY;
+                    entity.contentDirty = true;
+                    @:privateAccess entity.computeContent();
+                    wrapVisual(entity);
+
+                    // Is it better?
+                    var dist = distanceMain();
+                    if (dist < bestDistance) {
+                        bestDistance = dist;
+                        best = i;
+                        bestPointX = points[index * 2];
+                        bestPointY = points[index * 2 + 1];
+                    }
+                    
+                    i++;
+                }
+
+                // Apply best transform
+                points[index * 2] = bestPointX;
+                points[index * 2 + 1] = bestPointY;
+                entity.contentDirty = true;
+                @:privateAccess entity.computeContent();
+                wrapVisual(entity);
+
+                if (best == -1) {
+                    moveStep *= 0.5;
+                }
+            }
+
+        }
+
+        screen.onPointerMove(this, onPointerMove);
+        screen.oncePointerUp(this, function(info) {
+            screen.offPointerMove(onPointerMove);
+
+            // Adjust points?
+            /*
+            var minX = 999999999.0;
+            var minY = 999999999.0;
+            var i = 0;
+            while (i * 2 < points.length) {
+                var pointX = points[i * 2];
+                var pointY = points[i * 2 + 1];
+
+                if (pointX < minX)
+                    minX = pointX;
+
+                if (pointY < minY)
+                    minY = pointY;
+
+                i++;
+            }
+
+            if (minX == 999999999.0)
+                minX = 0;
+
+            if (minY == 999999999.0)
+                minY = 0;
+
+            if (minX != 0 || minY != 0) {
+                i = 0;
+                while (i * 2 < points.length) {
+                    var pointX = points[i * 2];
+                    var pointY = points[i * 2 + 1];
+                    points[i * 2] = pointX - minX;
+                    points[i * 2 + 1] = pointY - minY;
+
+                    i++;
+                }
+
+                entity.contentDirty = true;
+                @:privateAccess entity.computeContent();
+                wrapVisual(entity);
+            }
+            */
+
+        });
 
     }
 

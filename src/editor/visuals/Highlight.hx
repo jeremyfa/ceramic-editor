@@ -449,7 +449,7 @@ class Highlight extends Visual {
                 handle.borderSize = 1;
                 handle.color = color;
                 handle.size(pointHandleSize, pointHandleSize);
-                (function(index) {
+                (function(i) {
                     handle.onPointerDown(this, function(info) {
                         emitPointHandleDown(i, info);
                     });
