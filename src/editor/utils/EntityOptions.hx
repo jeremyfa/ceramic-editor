@@ -8,6 +8,8 @@ class EntityOptions {
 
     public var highlightMaxPoints:Int = -1;
 
+    public var highlightMovePointsToZero:Bool = false;
+
     static var cache = new Map<String,EntityOptions>();
 
     private function new() {}
@@ -30,6 +32,8 @@ class EntityOptions {
                             result.highlightMinPoints = info.highlightMinPoints;
                         if (info.highlightMaxPoints != null)
                             result.highlightMaxPoints = info.highlightMaxPoints;
+                        if (info.highlightMovePointsToZero != null)
+                            result.highlightMovePointsToZero = info.highlightMovePointsToZero;
                     }
                 }
                 cache.set(className, result);

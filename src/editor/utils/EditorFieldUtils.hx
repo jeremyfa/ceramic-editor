@@ -12,7 +12,7 @@ class EditorFieldUtils {
         if (options.slider != null) {
             return createEditableSliderField(options, item, name);
         }
-        else if (type == 'String' || type == 'Float' || type == 'Int') {
+        else if (type == 'String' || type == 'Float' || type == 'Int' || type == 'Array<Float>') {
             return createEditableTextField(options, item, name, type);
         }
         else if (type == 'Bool') {
@@ -161,6 +161,13 @@ class EditorFieldUtils {
                 fieldView.textValue = '' + value;
             };
         }
+        else if (type == 'Array<Float>') {
+            fieldView.multiline = true;
+            fieldView.setEmptyValue = function(field) {
+                item.props.set(name, []);
+                fieldView.textValue = '';
+            };
+        }
         else {
             if (options != null && options.multiline) {
                 fieldView.multiline = true;
@@ -169,26 +176,59 @@ class EditorFieldUtils {
                 fieldView.setTextValue = SanitizeTextField.setTextValueToIdentifier;
             }
         }
-        fieldView.setValue = function(field, value) {
-            if (temporize) {
-                item.props.set(tmpName, value);
-            }
-            else {
-                item.props.set(name, value);
-            }
-        };
-        fieldView.autorun(function() {
-            var value:Dynamic = item.props.get(name);
-            if (item.props.exists(tmpName)) {
-                value = item.props.get(tmpName);
-            }
-            if (value == null) {
-                fieldView.textValue = '';
-            }
-            else {
-                fieldView.textValue = '' + value;
-            }
-        });
+        if (type == 'Array<Float>') {
+            fieldView.setValue = function(field, value) {
+                var strArray:Array<String> = value.split(' ');
+                var array:Array<Float> = [];
+                for (i in 0...strArray.length) {
+                    var val = Std.parseFloat(strArray[i]);
+                    if (val != null && !Math.isNaN(val))
+                        array.push(val);
+                    else
+                        array.push(0);
+                }
+                if (temporize) {
+                    item.props.set(tmpName, array);
+                }
+                else {
+                    item.props.set(name, array);
+                }
+            };
+            fieldView.autorun(function() {
+                var value:Array<Float> = item.props.get(name);
+                if (item.props.exists(tmpName)) {
+                    value = item.props.get(tmpName);
+                }
+                if (value == null) {
+                    fieldView.textValue = '';
+                }
+                else {
+                    fieldView.textValue = '' + value.join(' ');
+                }
+            });
+        }
+        else {
+            fieldView.setValue = function(field, value) {
+                if (temporize) {
+                    item.props.set(tmpName, value);
+                }
+                else {
+                    item.props.set(name, value);
+                }
+            };
+            fieldView.autorun(function() {
+                var value:Dynamic = item.props.get(name);
+                if (item.props.exists(tmpName)) {
+                    value = item.props.get(tmpName);
+                }
+                if (value == null) {
+                    fieldView.textValue = '';
+                }
+                else {
+                    fieldView.textValue = '' + value;
+                }
+            });
+        }
         if (name == 'width' || name == 'height') {
             fieldView.autorun(function() {
                 var implicitSize = item.props.implicitSize;

@@ -16,6 +16,8 @@ using ceramic.Extensions;
 
 class Editable extends Entity implements Component {
 
+    @:noCompletion public static var canSkipRender:Bool = false;
+
     static var _point:Point = new Point(0, 0);
 
     @event function select(visual:Visual, selectFromPointer:Bool);
@@ -41,7 +43,7 @@ class Editable extends Entity implements Component {
     var rightShiftPressed:Bool = false;
     var shiftPressed:Bool = false;
 
-    function new() {
+    public function new() {
         
         super();
 
@@ -114,7 +116,7 @@ class Editable extends Entity implements Component {
         highlight.onCornerDown(this, handleCornerDown);
 
         if (entityOptions.highlightPoints != null) {
-            //highlight.bordersActive = false;
+            highlight.bordersActive = false;
             highlight.cornersActive = false;
 
             highlight.onPointHandleDown(this, handlePointHandleDown);
@@ -811,6 +813,8 @@ class Editable extends Entity implements Component {
 
         function onPointerMove(info:TouchInfo) {
 
+            canSkipRender = true;
+
             var moveStep = 16.0;
             var n = 0;
             var best = -1;
@@ -840,7 +844,7 @@ class Editable extends Entity implements Component {
                     points[index * 2] = pointX + testX;
                     points[index * 2 + 1] = pointY + testY;
                     entity.contentDirty = true;
-                    @:privateAccess entity.computeContent();
+                    entity.computeContent();
                     wrapVisual(entity);
 
                     // Is it better?
@@ -856,16 +860,21 @@ class Editable extends Entity implements Component {
                 }
 
                 // Apply best transform
-                points[index * 2] = bestPointX;
-                points[index * 2 + 1] = bestPointY;
+                points[index * 2] = Math.round(bestPointX * 1000) / 1000;
+                points[index * 2 + 1] = Math.round(bestPointY * 1000) / 1000;
                 entity.contentDirty = true;
-                @:privateAccess entity.computeContent();
+                entity.computeContent();
                 wrapVisual(entity);
 
                 if (best == -1) {
                     moveStep *= 0.5;
                 }
             }
+
+            canSkipRender = false;
+            entity.contentDirty = true;
+            entity.computeContent();
+            wrapVisual(entity);
 
         }
 
@@ -874,45 +883,56 @@ class Editable extends Entity implements Component {
             screen.offPointerMove(onPointerMove);
 
             // Adjust points?
-            /*
-            var minX = 999999999.0;
-            var minY = 999999999.0;
-            var i = 0;
-            while (i * 2 < points.length) {
-                var pointX = points[i * 2];
-                var pointY = points[i * 2 + 1];
-
-                if (pointX < minX)
-                    minX = pointX;
-
-                if (pointY < minY)
-                    minY = pointY;
-
-                i++;
-            }
-
-            if (minX == 999999999.0)
-                minX = 0;
-
-            if (minY == 999999999.0)
-                minY = 0;
-
-            if (minX != 0 || minY != 0) {
-                i = 0;
+            if (options.highlightMovePointsToZero) {
+                var minX = 999999999.0;
+                var minY = 999999999.0;
+                var i = 0;
                 while (i * 2 < points.length) {
                     var pointX = points[i * 2];
                     var pointY = points[i * 2 + 1];
-                    points[i * 2] = pointX - minX;
-                    points[i * 2 + 1] = pointY - minY;
-
+    
+                    if (pointX < minX)
+                        minX = pointX;
+    
+                    if (pointY < minY)
+                        minY = pointY;
+    
                     i++;
                 }
-
-                entity.contentDirty = true;
-                @:privateAccess entity.computeContent();
-                wrapVisual(entity);
+    
+                if (minX == 999999999.0)
+                    minX = 0;
+    
+                if (minY == 999999999.0)
+                    minY = 0;
+    
+                if (minX != 0 || minY != 0) {
+                    i = 0;
+                    while (i * 2 < points.length) {
+                        var pointX = points[i * 2];
+                        var pointY = points[i * 2 + 1];
+                        points[i * 2] = Math.round((pointX - minX) * 1000) / 1000;
+                        points[i * 2 + 1] = Math.round((pointY - minY) * 1000) / 1000;
+    
+                        i++;
+                    }
+                }
             }
-            */
+
+            entity.setProperty(options.highlightPoints, [].concat(entity.getProperty(options.highlightPoints)));
+            entity.contentDirty = true;
+            entity.computeContent();
+            wrapVisual(entity);
+
+            var changes:Dynamic = {
+                x: entity.x,
+                y: entity.y,
+                width: entity.width,
+                height: entity.height
+            };
+            Reflect.setField(changes, options.highlightPoints, entity.getProperty(options.highlightPoints));
+            log.debug('emitChanges $changes');
+            emitChange(entity, changes);
 
         });
 

@@ -98,7 +98,7 @@ class Highlight extends Visual {
         return borderSize;
     }
 
-    public var crossWidth(default,set):Float = 1;
+    public var crossWidth(default,set):Float = 2;
     function set_crossWidth(crossWidth:Float):Float {
         if (this.crossWidth == crossWidth) return crossWidth;
         this.crossWidth = crossWidth;
