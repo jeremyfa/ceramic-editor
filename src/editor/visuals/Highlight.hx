@@ -474,7 +474,7 @@ class Highlight extends Visual {
             i++;
         }
 
-        while (localPoints.length * 2 < pointHandles.length) {
+        while (localPoints.length < pointHandles.length * 2) {
             var handle = pointHandles.pop();
             handle.destroy();
         }

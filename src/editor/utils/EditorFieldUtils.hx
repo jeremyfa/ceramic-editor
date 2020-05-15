@@ -123,8 +123,6 @@ class EditorFieldUtils {
             ? NUMERIC
             : TEXT
         );
-        var temporize:Bool = options != null && options.temporize;
-        var tmpName:String = temporize ? '_tmp_' + name : null;
         var minValue:Float = -999999999;
         var maxValue:Float = 999999999;
         if (options.min != null) {
@@ -177,6 +175,11 @@ class EditorFieldUtils {
             }
         }
         if (type == 'Array<Float>') {
+            var isPoints = (options.points == true);
+            var minItems = 0;
+            if (options.minItems != null)
+                minItems = options.minItems;
+            var extra:Null<Float> = null;
             fieldView.setValue = function(field, value) {
                 var strArray:Array<String> = value.split(' ');
                 var array:Array<Float> = [];
@@ -184,43 +187,35 @@ class EditorFieldUtils {
                     var val = Std.parseFloat(strArray[i]);
                     if (val != null && !Math.isNaN(val))
                         array.push(val);
-                    else
-                        array.push(0);
                 }
-                if (temporize) {
-                    item.props.set(tmpName, array);
+                while (array.length < minItems) {
+                    array.push(0);
+                }
+                if (isPoints && array.length % 2 == 1) {
+                    extra = array.pop();
                 }
                 else {
-                    item.props.set(name, array);
+                    extra = null;
                 }
+                item.props.set(name, array);
             };
             fieldView.autorun(function() {
                 var value:Array<Float> = item.props.get(name);
-                if (item.props.exists(tmpName)) {
-                    value = item.props.get(tmpName);
-                }
+                unobserve();
                 if (value == null) {
                     fieldView.textValue = '';
                 }
                 else {
-                    fieldView.textValue = '' + value.join(' ');
+                    fieldView.textValue = '' + value.join(' ') + (extra != null ? ' ' + extra : '') + (fieldView.textValue.endsWith(' ') ? ' ' : '');
                 }
             });
         }
         else {
             fieldView.setValue = function(field, value) {
-                if (temporize) {
-                    item.props.set(tmpName, value);
-                }
-                else {
-                    item.props.set(name, value);
-                }
+                item.props.set(name, value);
             };
             fieldView.autorun(function() {
                 var value:Dynamic = item.props.get(name);
-                if (item.props.exists(tmpName)) {
-                    value = item.props.get(tmpName);
-                }
                 if (value == null) {
                     fieldView.textValue = '';
                 }

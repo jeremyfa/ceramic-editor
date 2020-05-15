@@ -20,6 +20,7 @@ app:
         - ceramic_assert
         - editor_debug_item_update
         - experimental_serialize
+        #- ceramic_debug_layout
         #- ceramic_debug_draw
         #- ceramic_debug_multitexture
         #- ceramic_no_multitexture

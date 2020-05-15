@@ -33,10 +33,6 @@ class EditorEntityProps extends Model {
             if (implicitSize && (key == 'width' || key == 'height'))
                 continue;
 
-            // Skip temporary keys
-            if (key.startsWith('_tmp_'))
-                continue;
-
             var value:Dynamic = get(key);
 
             // Fetch real fragment data
