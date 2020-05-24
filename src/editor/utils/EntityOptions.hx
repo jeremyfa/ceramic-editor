@@ -22,9 +22,9 @@ class EntityOptions {
             var result = cache.get(className);
             if (result == null) {
                 result = new EntityOptions();
-                if (Reflect.hasField(clazz, 'editorEntityOptions')) {
-                    var method = Reflect.field(clazz, 'editorEntityOptions');
-                    var info:Dynamic = method();
+                var editableType = editor.getEditableType(className);
+                if (editableType != null && editableType.meta != null && editableType.meta.editable != null && Std.is(editableType.meta.editable, Array)) {
+                    var info:Dynamic = editableType.meta.editable[0];
                     if (info != null) {
                         if (info.highlightPoints != null)
                             result.highlightPoints = info.highlightPoints;
