@@ -52,6 +52,8 @@ class EditorTheme extends Model {
 
     @observe public var highlightColor:Color = 0x4392E0;
 
+    @observe public var highlightPendingColor:Color = 0xFE5134;
+
 /// Field
 
     @observe public var focusedFieldSelectionColor:Color = 0x3073C6;

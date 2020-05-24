@@ -14,7 +14,7 @@ import editor.visuals.Highlight;
 
 using ceramic.Extensions;
 
-class Editable extends Entity implements Component {
+class Editable extends Entity implements Component implements Observable {
 
     @:noCompletion public static var canSkipRender:Bool = false;
 
@@ -41,7 +41,8 @@ class Editable extends Entity implements Component {
     var sKeyPressed:Bool = false;
     var leftShiftPressed:Bool = false;
     var rightShiftPressed:Bool = false;
-    var shiftPressed:Bool = false;
+
+    @observe var shiftPressed:Bool = false;
 
     public function new() {
         
@@ -120,6 +121,11 @@ class Editable extends Entity implements Component {
             highlight.cornersActive = false;
 
             highlight.onPointHandleDown(this, handlePointHandleDown);
+            highlight.onPointSegmentsOver(this, handlePointSegmentsOver);
+            highlight.onPointSegmentsOut(this, handlePointSegmentsOut);
+            highlight.onPointSegmentsDown(this, handlePendingPointHandleDown);
+            highlight.onPendingPointHandleDown(this, handlePendingPointHandleDown);
+            onShiftPressedChange(this, handleShiftPressedChange);
         }
 
         editor.view.fragmentOverlay.add(highlight);
@@ -765,17 +771,6 @@ class Editable extends Entity implements Component {
     function handlePointHandleDown(index:Int, info:TouchInfo) {
 
         trace('point handle down $index');
-            
-        var translateTests = [
-            -1, -1,
-            -1, 0,
-            -1, 1,
-            0, -1,
-            0, 1,
-            1, -1,
-            1, 0,
-            1, 1
-        ];
 
         var points:Array<Float> = null;
 
@@ -788,6 +783,37 @@ class Editable extends Entity implements Component {
 
         if (points == null) {
             log.error('Invalid points property!');
+            return;
+        }
+            
+        var translateTests = [
+            -1, -1,
+            -1, 0,
+            -1, 1,
+            0, -1,
+            0, 1,
+            1, -1,
+            1, 0,
+            1, 1
+        ];
+
+        if (shiftPressed) {
+            if (options != null) {
+                if (options.highlightMinPoints != null) {
+                    points = entity.getProperty(options.highlightPoints);
+
+                    // Reached min number of points?
+                    if (points.length <= 0 || points.length <= options.highlightMinPoints * 2) {
+                        log.warning('Cannot remove point!');
+                    }
+                    else {
+                        var copy = [].concat(points);
+                        copy.splice(index * 2, 2);
+                        entity.setProperty(options.highlightPoints, copy);
+                        applyPointChanges();
+                    }
+                }
+            }
             return;
         }
 
@@ -882,59 +908,228 @@ class Editable extends Entity implements Component {
         screen.oncePointerUp(this, function(info) {
             screen.offPointerMove(onPointerMove);
 
-            // Adjust points?
-            if (options.highlightMovePointsToZero) {
-                var minX = 999999999.0;
-                var minY = 999999999.0;
-                var i = 0;
+            applyPointChanges();
+        });
+
+    }
+
+    function applyPointChanges() {
+
+        var points:Array<Float> = null;
+
+        var options = EntityOptions.get(entity);
+        if (options != null) {
+            if (options.highlightPoints != null) {
+                points = entity.getProperty(options.highlightPoints);
+            }
+        }
+
+        if (points == null) {
+            log.error('Invalid points property!');
+            return;
+        }
+
+        // Adjust points?
+        if (options.highlightMovePointsToZero) {
+            var minX = 999999999.0;
+            var minY = 999999999.0;
+            var i = 0;
+            while (i * 2 < points.length) {
+                var pointX = points[i * 2];
+                var pointY = points[i * 2 + 1];
+
+                if (pointX < minX)
+                    minX = pointX;
+
+                if (pointY < minY)
+                    minY = pointY;
+
+                i++;
+            }
+
+            if (minX == 999999999.0)
+                minX = 0;
+
+            if (minY == 999999999.0)
+                minY = 0;
+
+            if (minX != 0 || minY != 0) {
+                i = 0;
                 while (i * 2 < points.length) {
                     var pointX = points[i * 2];
                     var pointY = points[i * 2 + 1];
-    
-                    if (pointX < minX)
-                        minX = pointX;
-    
-                    if (pointY < minY)
-                        minY = pointY;
-    
+                    points[i * 2] = Math.round((pointX - minX) * 1000) / 1000;
+                    points[i * 2 + 1] = Math.round((pointY - minY) * 1000) / 1000;
+
                     i++;
                 }
-    
-                if (minX == 999999999.0)
-                    minX = 0;
-    
-                if (minY == 999999999.0)
-                    minY = 0;
-    
-                if (minX != 0 || minY != 0) {
-                    i = 0;
-                    while (i * 2 < points.length) {
-                        var pointX = points[i * 2];
-                        var pointY = points[i * 2 + 1];
-                        points[i * 2] = Math.round((pointX - minX) * 1000) / 1000;
-                        points[i * 2 + 1] = Math.round((pointY - minY) * 1000) / 1000;
-    
-                        i++;
-                    }
-                }
+            }
+        }
+
+        entity.setProperty(options.highlightPoints, [].concat(entity.getProperty(options.highlightPoints)));
+        entity.contentDirty = true;
+        entity.computeContent();
+        wrapVisual(entity);
+
+        var changes:Dynamic = {
+            x: entity.x,
+            y: entity.y,
+            width: entity.width,
+            height: entity.height
+        };
+        Reflect.setField(changes, options.highlightPoints, entity.getProperty(options.highlightPoints));
+        emitChange(entity, changes);
+
+    }
+
+    var pointerBetweenPointHandles:Bool = false;
+
+    var insertPointAtIndex:Int = -1;
+
+    function handlePointSegmentsOver(info:TouchInfo) {
+
+        pointerBetweenPointHandles = true;
+        if (shiftPressed)
+            highlightBetweenHandles(true);
+
+        screen.onPointerMove(this, handlePointSegmentsMove);
+
+    }
+
+    function handlePointSegmentsOut(info:TouchInfo):Void {
+
+        screen.offPointerMove(handlePointSegmentsMove);
+        pointerBetweenPointHandles = false;
+        highlightBetweenHandles(false);
+
+    }
+
+    function handlePointSegmentsMove(info:TouchInfo) {
+
+        highlightBetweenHandles(shiftPressed && pointerBetweenPointHandles);
+
+    }
+
+    function handlePendingPointHandleDown(info:TouchInfo) {
+
+        var points:Array<Float> = null;
+        var options = EntityOptions.get(entity);
+        if (options != null) {
+            if (options.highlightPoints != null) {
+                points = entity.getProperty(options.highlightPoints);
+            }
+        }
+
+        if (points == null) {
+            log.error('Invalid points property!');
+            return;
+        }
+
+        if (shiftPressed && pointerBetweenPointHandles && insertPointAtIndex != -1) {
+            var copy:Array<Float> = [];
+            var i = 0;
+            while (i <= insertPointAtIndex) {
+                copy.push(points[i * 2]);
+                copy.push(points[i * 2 + 1]);
+                i++;
+            }
+            highlight.visualToScreen(highlight.pendingPointHandleX, highlight.pendingPointHandleY, _point);
+            entity.screenToVisual(_point.x, _point.y, _point);
+            copy.push(_point.x);
+            copy.push(_point.y);
+            var n = i * 2;
+            while (n < points.length) {
+                copy.push(points[n]);
+                n++;
             }
 
-            entity.setProperty(options.highlightPoints, [].concat(entity.getProperty(options.highlightPoints)));
-            entity.contentDirty = true;
-            entity.computeContent();
-            wrapVisual(entity);
+            entity.setProperty(options.highlightPoints, copy);
+            applyPointChanges();
+        }
 
-            var changes:Dynamic = {
-                x: entity.x,
-                y: entity.y,
-                width: entity.width,
-                height: entity.height
-            };
-            Reflect.setField(changes, options.highlightPoints, entity.getProperty(options.highlightPoints));
-            log.debug('emitChanges $changes');
-            emitChange(entity, changes);
+    }
 
-        });
+    function handleShiftPressedChange(pressed:Bool, wasPressed:Bool):Void {
+
+        if (pointerBetweenPointHandles && pressed)
+            highlightBetweenHandles(true);
+        else
+            highlightBetweenHandles(false);
+
+    }
+
+    function highlightBetweenHandles(doHighlight:Bool):Void {
+
+        if (highlight == null)
+            return;
+
+        var options = EntityOptions.get(entity);
+        if (options != null) {
+            if (options.highlightMaxPoints != null && options.highlightMaxPoints != -1) {
+                var points:Array<Float> = entity.getProperty(options.highlightPoints);
+                if (points == null) {
+                    log.error('Invalid points property!');
+                    return;
+                }
+
+                // Reached max number of points?
+                if (points.length >= options.highlightMaxPoints * 2)
+                    doHighlight = false;
+            }
+        }
+        else
+            return;
+
+        // Source: https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+        inline function sqr(x:Float):Float {
+            return x * x;
+        }
+        inline function dist2(vx:Float, vy:Float, wx:Float, wy:Float):Float {
+            return sqr(vx - wx) + sqr(vy - wy);
+        }
+        function segmentDist(px:Float, py:Float, vx:Float, vy:Float, wx:Float, wy:Float):Float {
+          var l2 = dist2(vx, vy, wx, wy);
+          if (l2 == 0) return dist2(px, py, vx, vy);
+          var t = ((px - vx) * (wx - vx) + (py - vy) * (wy - vy)) / l2;
+          t = Math.max(0, Math.min(1, t));
+          return dist2(px, py, vx + t * (wx - vx), vy + t * (wy - vy));
+        }
+
+        var pointHandles = highlight.pointHandles;
+        if (doHighlight && pointHandles != null && pointHandles.length >= 2) {
+            highlight.screenToVisual(screen.pointerX, screen.pointerY, _point);
+            var bestIndex = -1;
+            var bestDistance:Float = 999999999;
+            for (i in 0...pointHandles.length) {
+                var handle0 = pointHandles[i];
+                var handle1 = pointHandles[i == pointHandles.length - 1 ? 0 : i + 1];
+                var dist = segmentDist(_point.x, _point.y, handle0.x, handle0.y, handle1.x, handle1.y);
+                if (bestDistance > dist) {
+                    bestDistance = dist;
+                    bestIndex = i;
+                }
+            }
+            if (bestIndex != -1) {
+                insertPointAtIndex = bestIndex;
+                var handle0 = pointHandles[bestIndex];
+                var handle1 = pointHandles[bestIndex == pointHandles.length - 1 ? 0 : bestIndex + 1];
+                var distance0 = Math.abs(_point.x - handle0.x);
+                var distance1 = Math.abs(_point.x - handle1.x);
+                if (Math.abs(handle0.y - handle1.y) > Math.abs(handle0.x - handle1.x)) {
+                    distance0 = Math.abs(_point.y - handle0.y);
+                    distance1 = Math.abs(_point.y - handle1.y);
+                }
+                highlight.pendingPointHandleX = (handle0.x * distance1 + handle1.x * distance0) / (distance0 + distance1);
+                highlight.pendingPointHandleY = (handle0.y * distance1 + handle1.y * distance0) / (distance0 + distance1);
+                highlight.pendingPointHandleActive = true;
+            }
+            else {
+                highlight.pendingPointHandleActive = false;
+            }
+        }
+        else {
+            highlight.pendingPointHandleActive = false;
+        }
 
     }
 

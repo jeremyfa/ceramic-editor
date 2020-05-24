@@ -34,6 +34,14 @@ class Highlight extends Visual {
 
     @event function pointHandleOut(index:Int, info:TouchInfo);
 
+    @event function pointSegmentsDown(info:TouchInfo);
+
+    @event function pointSegmentsOver(info:TouchInfo);
+
+    @event function pointSegmentsOut(info:TouchInfo);
+
+    @event function pendingPointHandleDown(info:TouchInfo);
+
 /// Properties
 
     public var cornerTopLeft = new View();
@@ -49,6 +57,10 @@ class Highlight extends Visual {
     public var anchorCrossHBar = new View();
 
     public var pointHandles:Array<View> = [];
+
+    public var pendingPointHandle:View = null;
+
+    public var pointSegments:Line = null;
 
     public var topDistance(default,null):Float;
 
@@ -106,8 +118,17 @@ class Highlight extends Visual {
         return crossWidth;
     }
 
+    public var pendingColor(default,set):Color;
+    function set_pendingColor(pendingColor:Color):Color {
+        this.pendingColor = pendingColor;
+        if (pendingPointHandle != null) {
+            pendingPointHandle.color = pendingColor;
+        }
+        return pendingColor;
+    }
+
     public var color(default,set):Color;
-    function set_color(color:Int):Int {
+    function set_color(color:Color):Color {
         if (this.color == color) return color;
         this.color = color;
         cornerTopLeft.color = color;
@@ -150,6 +171,33 @@ class Highlight extends Visual {
         this.pointHandleSize = pointHandleSize;
         updatePointHandles();
         return pointHandleSize;
+    }
+
+    public var pendingPointHandleActive(default,set):Bool = false;
+    function set_pendingPointHandleActive(pendingPointHandleActive:Bool):Bool {
+        if (this.pendingPointHandleActive != pendingPointHandleActive) {
+            this.pendingPointHandleActive = pendingPointHandleActive;
+            updatePendingPointHandle();
+        }
+        return pendingPointHandleActive;
+    }
+
+    public var pendingPointHandleX(default,set):Float = 0;
+    function set_pendingPointHandleX(pendingPointHandleX:Float):Float {
+        if (this.pendingPointHandleX != pendingPointHandleX) {
+            this.pendingPointHandleX = pendingPointHandleX;
+            updatePendingPointHandle();
+        }
+        return pendingPointHandleX;
+    }
+
+    public var pendingPointHandleY(default,set):Float = 0;
+    function set_pendingPointHandleY(pendingPointHandleY:Float):Float {
+        if (this.pendingPointHandleY != pendingPointHandleY) {
+            this.pendingPointHandleY = pendingPointHandleY;
+            updatePendingPointHandle();
+        }
+        return pendingPointHandleY;
     }
 
 /// Lifecycle
@@ -249,6 +297,7 @@ class Highlight extends Visual {
 
         autorun(() -> {
             color = theme.highlightColor;
+            pendingColor = theme.highlightPendingColor;
         });
 
         updateCornersAndBorders();
@@ -343,6 +392,7 @@ class Highlight extends Visual {
             localPoints.setArrayLength(points.length);
 
         updatePointHandles();
+        updatePointSegments();
 
     }
 
@@ -479,6 +529,66 @@ class Highlight extends Visual {
             handle.destroy();
         }
 
+    }
+
+    function updatePendingPointHandle() {
+
+        if (pendingPointHandleActive) {
+            if (pendingPointHandle == null) {
+                pendingPointHandle = new View();
+                pendingPointHandle.depth = 2;
+                pendingPointHandle.borderColor = Color.WHITE;
+                pendingPointHandle.borderPosition = INSIDE;
+                pendingPointHandle.borderSize = 1;
+                pendingPointHandle.color = pendingColor;
+                pendingPointHandle.size(pointHandleSize, pointHandleSize);
+                pendingPointHandle.anchor(0.5, 0.5);
+                pendingPointHandle.onPointerDown(this, emitPendingPointHandleDown);
+                add(pendingPointHandle);
+            }
+            pendingPointHandle.active = true;
+            pendingPointHandle.pos(pendingPointHandleX, pendingPointHandleY);
+        }
+        else {
+            if (pendingPointHandle != null) {
+                pendingPointHandle.active = false;
+            }
+        }
+
+    }
+
+    function updatePointSegments() {
+
+        if (pointSegments == null) {
+            pointSegments = new Line();
+            pointSegments.complexHit = true;
+            pointSegments.thickness = 24;
+            pointSegments.color = Color.WHITE;
+            pointSegments.alpha = 0;
+            pointSegments.points = [];
+            pointSegments.depth = 1.75;
+            pointSegments.onPointerDown(this, emitPointSegmentsDown);
+            pointSegments.onPointerOver(this, emitPointSegmentsOver);
+            pointSegments.onPointerOut(this, emitPointSegmentsOut);
+            add(pointSegments);
+        }
+
+        for (i in 0...localPoints.length) {
+            pointSegments.points[i] = localPoints[i];
+        }
+        var len = localPoints.length;
+        if (len >= 2) {
+            pointSegments.points[len] = localPoints[0];
+            pointSegments.points[len + 1] = localPoints[1];
+        }
+
+        if (pointSegments.points.length > len + 2) {
+            pointSegments.points.setArrayLength(len + 2);
+        }
+
+        pointSegments.contentDirty = true;
+        pointSegments.computeContent();
+        
     }
 
 }
