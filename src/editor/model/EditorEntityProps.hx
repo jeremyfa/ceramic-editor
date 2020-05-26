@@ -90,6 +90,17 @@ class EditorEntityProps extends Model {
         var prevValue = get(key);
         if (prevValue != value)
             shouldScheduleStep = true;
+
+        // TODO cache?
+        var editableType = editor.getEditableType(entityData.entityClass);
+        if (editableType.meta != null && editableType.meta.editable != null && Std.is(editableType.meta.editable, Array)) {
+            var editableMeta:Dynamic = editableType.meta.editable[0];
+            if (editableMeta != null && editableMeta.disable != null) {
+                var list:Array<String> = editableMeta.disable;
+                if (list.indexOf(key) != -1)
+                    return;
+            }
+        }
         reobserve();
 
         if (values.exists(key)) {

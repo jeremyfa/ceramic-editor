@@ -25,15 +25,15 @@ class EntityOptions {
                 var editableType = editor.getEditableType(className);
                 if (editableType != null && editableType.meta != null && editableType.meta.editable != null && Std.is(editableType.meta.editable, Array)) {
                     var info:Dynamic = editableType.meta.editable[0];
-                    if (info != null) {
-                        if (info.highlightPoints != null)
-                            result.highlightPoints = info.highlightPoints;
-                        if (info.highlightMinPoints != null)
-                            result.highlightMinPoints = info.highlightMinPoints;
-                        if (info.highlightMaxPoints != null)
-                            result.highlightMaxPoints = info.highlightMaxPoints;
-                        if (info.highlightMovePointsToZero != null)
-                            result.highlightMovePointsToZero = info.highlightMovePointsToZero;
+                    if (info != null && info.highlight != null) {
+                        if (info.highlight.points != null)
+                            result.highlightPoints = info.highlight.points;
+                        if (info.highlight.minPoints != null)
+                            result.highlightMinPoints = info.highlight.minPoints;
+                        if (info.highlight.maxPoints != null)
+                            result.highlightMaxPoints = info.highlight.maxPoints;
+                        if (info.highlight.movePointsToZero != null)
+                            result.highlightMovePointsToZero = info.highlight.movePointsToZero;
                     }
                 }
                 cache.set(className, result);

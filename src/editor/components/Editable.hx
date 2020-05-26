@@ -273,7 +273,7 @@ class Editable extends Entity implements Component implements Observable {
             screen.offPointerMove(onPointerMove);
 
             entity.x = Math.round(entity.x);
-            entity.y = Math.round(entity.y); 
+            entity.y = Math.round(entity.y);
 
             /*
             // Update pos on react side
@@ -770,8 +770,6 @@ class Editable extends Entity implements Component implements Observable {
 
     function handlePointHandleDown(index:Int, info:TouchInfo) {
 
-        trace('point handle down $index');
-
         var points:Array<Float> = null;
 
         var options = EntityOptions.get(entity);
@@ -813,8 +811,17 @@ class Editable extends Entity implements Component implements Observable {
                         applyPointChanges();
                     }
                 }
+                else {
+                    log.warning('min points null');
+                }
+            }
+            else {
+                log.warning('options null');
             }
             return;
+        }
+        else {
+            log.warning('shift not pressed');
         }
 
         var originalPoints:Array<Float> = [].concat(points);
@@ -1035,8 +1042,8 @@ class Editable extends Entity implements Component implements Observable {
             }
             highlight.visualToScreen(highlight.pendingPointHandleX, highlight.pendingPointHandleY, _point);
             entity.screenToVisual(_point.x, _point.y, _point);
-            copy.push(_point.x);
-            copy.push(_point.y);
+            copy.push(Math.round(_point.x * 1000) / 1000);
+            copy.push(Math.round(_point.y * 1000) / 1000);
             var n = i * 2;
             while (n < points.length) {
                 copy.push(points[n]);
@@ -1050,6 +1057,10 @@ class Editable extends Entity implements Component implements Observable {
     }
 
     function handleShiftPressedChange(pressed:Bool, wasPressed:Bool):Void {
+
+        if (highlight.pointSegments != null) {
+            highlight.pointSegments.touchable = pressed;
+        }
 
         if (pointerBetweenPointHandles && pressed)
             highlightBetweenHandles(true);
@@ -1143,6 +1154,9 @@ class Editable extends Entity implements Component implements Observable {
                 if (options.highlightPoints != null) {
                     var points:Array<Float> = visual.getProperty(options.highlightPoints);
                     highlight.wrapPoints(points);
+                    if (highlight.pointSegments != null) {
+                        highlight.pointSegments.touchable = shiftPressed;
+                    }
                 }
             }
         }

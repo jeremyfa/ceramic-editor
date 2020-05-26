@@ -175,7 +175,22 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
         var usedGroups:Map<String,Bool> = new Map();
 
+        var disabledFields:Map<String, Bool> = null;
+        if (editableType.meta != null && editableType.meta.editable != null && Std.is(editableType.meta.editable, Array)) {
+            var editableMeta:Dynamic = editableType.meta.editable[0];
+            if (editableMeta != null && editableMeta.disable != null) {
+                var list:Array<String> = editableMeta.disable;
+                disabledFields = new Map();
+                for (item in list) {
+                    disabledFields.set(item, true);
+                }
+            }
+        }
+
         inline function createFieldView(field:EditableTypeField) {
+
+            if (disabledFields != null && disabledFields.exists(field.name))
+                return null;
 
             var editableMeta:Dynamic = field.meta.editable != null ? field.meta.editable[0] : null;
 

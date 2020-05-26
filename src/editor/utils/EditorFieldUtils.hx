@@ -12,7 +12,7 @@ class EditorFieldUtils {
         if (options.slider != null) {
             return createEditableSliderField(options, item, name);
         }
-        else if (type == 'String' || type == 'Float' || type == 'Int' || type == 'Array<Float>') {
+        else if (type == 'String' || type == 'Float' || type == 'Int' || type == 'Array<Float>' || type == 'Array<Int>') {
             return createEditableTextField(options, item, name, type);
         }
         else if (type == 'Bool') {
@@ -159,7 +159,7 @@ class EditorFieldUtils {
                 fieldView.textValue = '' + value;
             };
         }
-        else if (type == 'Array<Float>') {
+        else if (type == 'Array<Float>' || type == 'Array<Int>') {
             fieldView.multiline = true;
             fieldView.setEmptyValue = function(field) {
                 item.props.set(name, []);
@@ -184,7 +184,43 @@ class EditorFieldUtils {
                 var strArray:Array<String> = value.split(' ');
                 var array:Array<Float> = [];
                 for (i in 0...strArray.length) {
-                    var val = Std.parseFloat(strArray[i]);
+                    var val:Null<Float> = Std.parseFloat(strArray[i]);
+                    if (val != null && !Math.isNaN(val))
+                        array.push(val);
+                }
+                while (array.length < minItems) {
+                    array.push(0);
+                }
+                if (isPoints && array.length % 2 == 1) {
+                    extra = array.pop();
+                }
+                else {
+                    extra = null;
+                }
+                item.props.set(name, array);
+            };
+            fieldView.autorun(function() {
+                var value:Array<Float> = item.props.get(name);
+                unobserve();
+                if (value == null) {
+                    fieldView.textValue = '';
+                }
+                else {
+                    fieldView.textValue = '' + value.join(' ') + (extra != null ? ' ' + extra : '') + (fieldView.textValue.endsWith(' ') ? ' ' : '');
+                }
+            });
+        }
+        else if (type == 'Array<Int>') {
+            var isPoints = (options.points == true);
+            var minItems = 0;
+            if (options.minItems != null)
+                minItems = options.minItems;
+            var extra:Null<Int> = null;
+            fieldView.setValue = function(field, value) {
+                var strArray:Array<String> = value.split(' ');
+                var array:Array<Int> = [];
+                for (i in 0...strArray.length) {
+                    var val:Null<Int> = Std.parseInt(strArray[i]);
                     if (val != null && !Math.isNaN(val))
                         array.push(val);
                 }
