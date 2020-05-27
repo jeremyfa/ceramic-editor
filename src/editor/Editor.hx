@@ -182,6 +182,28 @@ class Editor extends Entity implements Observable {
 
     }
 
+    public function getEditableMeta(entityClass:String, ?key:String):Dynamic {
+
+        var editableType = getEditableType(entityClass);
+        if (editableType == null)
+            return null;
+        
+        if (editableType.meta != null && editableType.meta.editable != null && Std.is(editableType.meta.editable, Array)) {
+            var editableMeta:Dynamic = editableType.meta.editable[0];
+            if (editableMeta == null)
+                return null;
+            if (key != null) {
+                return Reflect.field(editableMeta, key);
+            }
+            else {
+                return editableMeta;
+            }
+        }
+
+        return null;
+
+    }
+
     public function computeLists(model:EditorData) {
 
         // Images
@@ -273,6 +295,24 @@ class Editor extends Entity implements Observable {
         }
         databases.sort(TextUtils.compareStrings);
         model.databases = cast databases;
+
+        // Shaders
+        var shaders:Array<String> = [];
+        if (contentAssets.runtimeAssets != null) {
+            for (item in contentAssets.runtimeAssets.getNames('shader')) {
+                shaders.push(item.name);
+            }
+        }
+        else {
+            for (key in Reflect.fields(Shaders)) {
+                var value:Dynamic = Reflect.field(Shaders, key);
+                if (value != null && Std.is(value, String) && value.startsWith('shader:')) {
+                    shaders.push(value.substring(7));
+                }
+            }
+        }
+        shaders.sort(TextUtils.compareStrings);
+        model.shaders = cast shaders;
 
         // Custom assets
         var customAssets:DynamicAccess<Dynamic> = {};

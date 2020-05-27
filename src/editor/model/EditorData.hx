@@ -29,6 +29,8 @@ class EditorData extends Model {
 
     @observe public var databases:ImmutableArray<String> = [];
 
+    @observe public var shaders:ImmutableArray<String> = [];
+
     @observe public var fragments:ImmutableMap<String,EditorValue> = new Map();
 
     @observe public var pendingChoice:EditorPendingChoice = null;

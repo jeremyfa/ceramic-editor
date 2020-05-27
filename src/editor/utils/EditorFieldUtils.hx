@@ -26,6 +26,11 @@ class EditorFieldUtils {
                 return model.images;
             }, 'no texture');
         }
+        else if (type == 'ceramic.Shader') {
+            return createEditableSelectField(options, item, name, () -> {
+                return model.shaders;
+            }, 'default shader');
+        }
         else if (type == 'ceramic.BitmapFont') {
             return createEditableSelectField(options, item, name, () -> {
                 return model.fonts;

@@ -797,7 +797,7 @@ class Editable extends Entity implements Component implements Observable {
 
         if (shiftPressed) {
             if (options != null) {
-                if (options.highlightMinPoints != null) {
+                if (options.highlightMinPoints >= 0) {
                     points = entity.getProperty(options.highlightPoints);
 
                     // Reached min number of points?
@@ -811,17 +811,8 @@ class Editable extends Entity implements Component implements Observable {
                         applyPointChanges();
                     }
                 }
-                else {
-                    log.warning('min points null');
-                }
-            }
-            else {
-                log.warning('options null');
             }
             return;
-        }
-        else {
-            log.warning('shift not pressed');
         }
 
         var originalPoints:Array<Float> = [].concat(points);
@@ -1076,7 +1067,7 @@ class Editable extends Entity implements Component implements Observable {
 
         var options = EntityOptions.get(entity);
         if (options != null) {
-            if (options.highlightMaxPoints != null && options.highlightMaxPoints != -1) {
+            if (options.highlightMaxPoints >= 0) {
                 var points:Array<Float> = entity.getProperty(options.highlightPoints);
                 if (points == null) {
                     log.error('Invalid points property!');
@@ -1086,6 +1077,10 @@ class Editable extends Entity implements Component implements Observable {
                 // Reached max number of points?
                 if (points.length >= options.highlightMaxPoints * 2)
                     doHighlight = false;
+            }
+            else {
+                // Adding points is forbidden
+                doHighlight = false;
             }
         }
         else

@@ -176,14 +176,11 @@ class VisualsPanelView extends LinearLayout implements Observable {
         var usedGroups:Map<String,Bool> = new Map();
 
         var disabledFields:Map<String, Bool> = null;
-        if (editableType.meta != null && editableType.meta.editable != null && Std.is(editableType.meta.editable, Array)) {
-            var editableMeta:Dynamic = editableType.meta.editable[0];
-            if (editableMeta != null && editableMeta.disable != null) {
-                var list:Array<String> = editableMeta.disable;
-                disabledFields = new Map();
-                for (item in list) {
-                    disabledFields.set(item, true);
-                }
+        var list:Array<String> = editor.getEditableMeta(visual.entityClass, 'disable');
+        if (list != null) {
+            disabledFields = new Map();
+            for (item in list) {
+                disabledFields.set(item, true);
             }
         }
 
@@ -271,6 +268,38 @@ class VisualsPanelView extends LinearLayout implements Observable {
                     //item.paddingRight = 4;
                     form.add(item);
                 }
+            }
+        }
+
+        var helpers:Array<Dynamic> = editor.getEditableMeta(visual.entityClass, 'helpers');
+        if (helpers != null && helpers.length > 0) {
+
+            var spacing = new View();
+            spacing.transparent = true;
+            spacing.viewSize(fill(), 8);
+            form.add(spacing);
+
+            var container = new ColumnLayout();
+            container.itemSpacing = 4;
+            container.paddingTop = 8;
+            container.borderTopSize = 1;
+            container.borderPosition = OUTSIDE;
+            container.autorun(() -> {
+                container.borderTopColor = theme.mediumBorderColor;
+            });
+            form.add(container);
+
+            for (helper in helpers) {
+                ((helper:Dynamic) -> {
+    
+                    var button = new Button();
+                    button.content = helper.name;
+                    button.onClick(this, function() {
+                        log.debug('RUN HELPER ${helper.method}');
+                    });
+                    container.add(button);
+
+                })(helper);
             }
         }
 
