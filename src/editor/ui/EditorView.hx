@@ -252,10 +252,10 @@ class EditorView extends View implements Observable {
         var selectedName = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
 
         if (selectedFragment == null) {
-            panelTabsView.tabViews.tabs = ['Fragments', 'Assets'];
+            panelTabsView.tabViews.tabs = ['Elements'];
         }
         else {
-            panelTabsView.tabViews.tabs = ['Visuals', 'Fragments', 'Assets'];
+            panelTabsView.tabViews.tabs = ['Visuals', 'Elements'];
         }
 
         // Restore selected tab name on new tab list
@@ -453,8 +453,8 @@ class EditorView extends View implements Observable {
 
         var contentViewClass:Class<View> = switch (selectedName) {
             case 'Visuals': VisualsPanelView;
-            case 'Fragments': FragmentsPanelView;
-            case 'Assets': null;
+            case 'Elements': EditableElementsPanelView;
+            //case 'Assets': null;
             default: null;
         }
         var prevContentViewClass = null;

@@ -1,8 +1,8 @@
-package editor.ui.fragments;
+package editor.ui.editables;
 
 using StringTools;
 
-class FragmentsPanelView extends LinearLayout implements Observable {
+class EditableElementsPanelView extends LinearLayout implements Observable {
 
 /// Internal properties
 
@@ -15,7 +15,7 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         super();
 
         initAllFragmentsSection();
-        initSelectedFragmentSection();
+        initSelectedEditableSection();
         initAddFragmentButton();
 
         autorun(updateStyle);
@@ -28,7 +28,7 @@ class FragmentsPanelView extends LinearLayout implements Observable {
         title.content = 'All fragments';
         add(title);
 
-        var dataSource = new FragmentCellDataSource();
+        var dataSource = new EditableElementCellDataSource();
 
         var collectionView = new CellCollectionView();
         collectionView.viewSize(fill(), percent(25));
@@ -70,21 +70,21 @@ class FragmentsPanelView extends LinearLayout implements Observable {
             collectionView.active = active;
         });
 
-        var prevSelectedFragmentIndex = -1;
+        var prevSelectedEditableIndex = -1;
         autorun(function() {
-            var selectedFragmentIndex = model.project.selectedFragmentIndex;
+            var selectedEditableIndex = model.project.selectedEditableIndex;
             unobserve();
-            if (selectedFragmentIndex != prevSelectedFragmentIndex) {
-                prevSelectedFragmentIndex = selectedFragmentIndex;
-                if (selectedFragmentIndex != -1) {
+            if (selectedEditableIndex != prevSelectedEditableIndex) {
+                prevSelectedEditableIndex = selectedEditableIndex;
+                if (selectedEditableIndex != -1) {
                     app.oncePostFlushImmediate(() -> {
                         if (destroyed)
                             return;
-                        scrollToSelectedFragment(collectionView);
+                        scrollToSelectedEditable(collectionView);
                         app.onceUpdate(collectionView, _ -> {
-                            scrollToSelectedFragment(collectionView);
+                            scrollToSelectedEditable(collectionView);
                             app.onceUpdate(collectionView, _ -> {
-                                scrollToSelectedFragment(collectionView);
+                                scrollToSelectedEditable(collectionView);
                             });
                         });
                     });
@@ -94,16 +94,16 @@ class FragmentsPanelView extends LinearLayout implements Observable {
 
     }
 
-    function scrollToSelectedFragment(collectionView:CollectionView) {
+    function scrollToSelectedEditable(collectionView:CollectionView) {
 
-        var selectedFragmentIndex = model.project.selectedFragmentIndex;
-        if (selectedFragmentIndex != -1) {
-            collectionView.scrollToItem(selectedFragmentIndex);
+        var selectedEditableIndex = model.project.selectedEditableIndex;
+        if (selectedEditableIndex != -1) {
+            collectionView.scrollToItem(selectedEditableIndex);
         }
 
     }
 
-    function initSelectedFragmentSection() {
+    function initSelectedEditableSection() {
 
         var title = new SectionTitleView();
         title.content = 'Selected fragment';

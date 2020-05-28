@@ -1,6 +1,6 @@
-package editor.ui.fragments;
+package editor.ui.editables;
 
-class FragmentCellDataSource implements CollectionViewDataSource {
+class EditableElementCellDataSource implements CollectionViewDataSource {
 
     public function new() {
 
@@ -9,7 +9,7 @@ class FragmentCellDataSource implements CollectionViewDataSource {
     /** Get the number of elements. */
     public function collectionViewSize(collectionView:CollectionView):Int {
 
-        return model.project.fragments.length;
+        return model.project.editables.length;
 
     }
 
@@ -55,15 +55,22 @@ class FragmentCellDataSource implements CollectionViewDataSource {
         cell.autorun(function() {
 
             var project = model.project;
-            var fragment = project.fragments[cell.itemIndex];
-            if (fragment == null)
+            var editable = project.editables[cell.itemIndex];
+            if (editable == null)
                 return;
 
-            var bundle = fragment.bundle;
+            cell.selected = (cell.itemIndex == project.selectedEditableIndex);
 
-            cell.title = fragment.fragmentId;
-            cell.subTitle = bundle != null ? bundle + '.fragments' : project.defaultBundle + '.fragments';
-            cell.selected = (cell.itemIndex == project.selectedFragmentIndex);
+            if (Std.is(editable, EditorFragmentData)) {
+                var fragment:EditorFragmentData = cast editable;
+                var bundle = fragment.bundle;
+    
+                cell.title = fragment.fragmentId;
+                cell.subTitle = bundle != null ? bundle + '.fragments' : project.defaultBundle + '.fragments';
+            }
+            else if (Std.is(editable, EditorTilemapData)) {
+                // TODO
+            }
 
         });
 
@@ -71,7 +78,7 @@ class FragmentCellDataSource implements CollectionViewDataSource {
         cell.component('click', click);
         click.onClick(cell, function() {
 
-            model.project.selectedFragmentIndex = cell.itemIndex;
+            model.project.selectedEditableIndex = cell.itemIndex;
 
         });
 

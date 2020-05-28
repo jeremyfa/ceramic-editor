@@ -1,6 +1,6 @@
 package editor.model;
 
-class EditorFragmentData extends Model {
+class EditorFragmentData extends EditorEditableElementData {
 
 /// Main data
 

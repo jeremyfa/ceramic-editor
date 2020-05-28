@@ -12,6 +12,28 @@ class EditorProjectData extends Model {
 
     @serialize public var fragments:ImmutableArray<EditorFragmentData> = [];
 
+    @serialize public var tilemaps:ImmutableArray<EditorTilemapData> = [];
+
+    @compute public function editables():ImmutableArray<EditorEditableElementData> {
+        var result:Array<EditorEditableElementData> = [];
+        var fragments = this.fragments;
+        for (i in 0...fragments.length) {
+            result.push(fragments[i]);
+        }
+        var tilemaps = this.tilemaps;
+        for (i in 0...tilemaps.length) {
+            result.push(tilemaps[i]);
+        }
+        return cast result;
+    }
+
+    /*
+    @serialize public var scripts:ImmutableArray<EditorScriptData> = [];
+
+
+    @serialize public var tilesets:ImmutableArray<Tileset> = [];
+    */
+
     @serialize public var exportPath:String = null;
 
 /// Settings
@@ -28,15 +50,21 @@ class EditorProjectData extends Model {
 
 /// UI info
 
-    @serialize public var selectedFragmentIndex:Int = -1;
+    @serialize public var selectedEditableIndex:Int = -1;
 
     public var selectedFragment(get,set):EditorFragmentData;
     function get_selectedFragment():EditorFragmentData {
-        if (selectedFragmentIndex == -1) return null;
-        return fragments[selectedFragmentIndex];
+        if (selectedEditableIndex == -1) return null;
+        var item = editables[selectedEditableIndex];
+        if (item != null && Std.is(item, EditorFragmentData)) {
+            return cast item;
+        }
+        else {
+            return null;
+        }
     }
     function set_selectedFragment(selectedFragment:EditorFragmentData):EditorFragmentData {
-        selectedFragmentIndex = fragments.indexOf(selectedFragment);
+        selectedEditableIndex = editables.indexOf(selectedFragment);
         return selectedFragment;
     }
 
@@ -50,7 +78,7 @@ class EditorProjectData extends Model {
 
         title = 'New Project';
 
-        clearFragments();
+        clearEditables();
 
         colorPickerHsluv = false;
 
@@ -58,13 +86,17 @@ class EditorProjectData extends Model {
 
     }
 
-    function clearFragments() {
+    function clearEditables() {
         
-        var prevFragments = fragments;
-        selectedFragmentIndex = -1;
+        var prevEditables = this.editables;
+
+        selectedEditableIndex = -1;
+        
         fragments = [];
-        for (fragment in prevFragments) {
-            fragment.destroy();
+        tilemaps = [];
+
+        for (editable in prevEditables) {
+            editable.destroy();
         }
 
     }
@@ -73,7 +105,7 @@ class EditorProjectData extends Model {
 
         super.destroy();
 
-        clearFragments();
+        clearEditables();
 
     }
 
@@ -169,7 +201,7 @@ class EditorProjectData extends Model {
 
         json.paletteColors = paletteColors;
         json.colorPickerHsluv = colorPickerHsluv;
-        json.selectedFragmentIndex = selectedFragmentIndex;
+        json.selectedEditableIndex = selectedEditableIndex;
 
         if (exportPath != null) {
             if (projectDir != null) {
@@ -252,17 +284,17 @@ class EditorProjectData extends Model {
             fragments = [];
         }
 
-        if (json.selectedFragmentIndex != null) {
-            if (!Validate.int(json.selectedFragmentIndex))
-                throw 'Invalid project selected fragment index';
+        if (json.selectedEditableIndex != null) {
+            if (!Validate.int(json.selectedEditableIndex))
+                throw 'Invalid project selected editable index';
 
-            selectedFragmentIndex = json.selectedFragmentIndex;
+            selectedEditableIndex = json.selectedEditableIndex;
         }
         else {
-            selectedFragmentIndex = -1;
+            selectedEditableIndex = -1;
         }
-        if (selectedFragmentIndex >= fragments.length || selectedFragmentIndex < -1) {
-            selectedFragmentIndex = -1;
+        if (selectedEditableIndex >= editables.length || selectedEditableIndex < -1) {
+            selectedEditableIndex = -1;
         }
 
     }
