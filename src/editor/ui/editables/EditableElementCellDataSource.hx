@@ -78,7 +78,12 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
         cell.component('click', click);
         click.onClick(cell, function() {
 
-            model.project.selectedEditableIndex = cell.itemIndex;
+            if (model.project.selectedEditableIndex != cell.itemIndex) {
+                model.project.selectedEditableIndex = cell.itemIndex;
+            }
+            else {
+                model.project.selectedEditableIndex = -1;
+            }
 
         });
 
