@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+    <style>
+        html, body {
+            background-color: #1E1E1E;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #container {
+            background-color: #1E1E1E;
+            display: block;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container"></div>
+
+<script src="monaco-editor/min/vs/loader.js"></script>
+<script>
+    var didInitMonaco = false;
+    function initMonaco(content, extraLibs, log, emitChange) {
+        if (didInitMonaco) return;
+        didInitMonaco = true;
+        
+        require.config({ paths: { 'vs': 'monaco-editor/min/vs' }});
+        require(['vs/editor/editor.main'], function() {
+            // validation settings
+            monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                noSemanticValidation: false,
+                noSyntaxValidation: true,
+                noSuggestionDiagnostics: true
+            });
+            // extra libraries
+            if (extraLibs) {
+                for (i = 0; i < extraLibs.length; i++) {
+                    monaco.languages.typescript.javascriptDefaults.addExtraLib(extraLibs[i]);
+                }
+            }
+            // compiler options
+            monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+                noLib: true,
+                target: monaco.languages.typescript.ScriptTarget.ES6,
+                allowNonTsExtensions: true
+            });
+            var editor = monaco.editor.create(document.getElementById('container'), {
+                value: content,
+                language: 'javascript',
+                automaticLayout: true,
+                wordWrap: true,
+                minimap: {
+                    enabled : false
+                },
+                theme: "vs-dark"
+            });
+
+            var shouldSubmitChanges = false;
+            editor.getModel().onDidChangeContent(function(e) {
+                shouldSubmitChanges = true;
+            });
+
+            setInterval(function() {
+                if (shouldSubmitChanges) {
+                    shouldSubmitChanges = false;
+                    emitChange(editor.getModel().getLinesContent());
+                }
+            }, 500);
+        });
+    }
+</script>
+</body>
+</html>
