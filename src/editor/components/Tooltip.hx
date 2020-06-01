@@ -70,12 +70,12 @@ class Tooltip extends Visual implements Component implements Observable {
         entity.onPointerOver(this, _ -> {
             active = true;
 
-            var gap = 16;
+            var gap = 24;
 
             entity.visualToScreen(entity.width * 0.5, entity.height * 0.5, _point);
             if (parent != null)
                 parent.screenToVisual(_point.x, _point.y, _point);
-            pos(gap + _point.x, _point.y);
+            pos(_point.x, gap + _point.y);
         });
 
         entity.onPointerOut(this, _ -> {
@@ -89,19 +89,19 @@ class Tooltip extends Visual implements Component implements Observable {
         text.content = this.content;
 
         var pad = 6;
-        var triangleWidth = 5;
+        var triangleSize = 5;
+        var offsetX = -(text.width + pad * 2) * 0.5;
 
-        text.pos(triangleWidth + pad, pad);
+        text.pos(offsetX + pad, triangleSize + pad);
 
         size(text.width + pad * 2, text.height + pad * 2);
 
         bubble.size(width, height);
-        bubble.pos(triangleWidth, 0);
+        bubble.pos(offsetX, triangleSize);
 
         bubbleTriangle.anchor(0.5, 1);
-        bubbleTriangle.size(8, triangleWidth);
-        bubbleTriangle.rotation = -90;
-        bubbleTriangle.pos(triangleWidth, height * 0.5);
+        bubbleTriangle.size(8, triangleSize);
+        bubbleTriangle.pos(0, triangleSize);
 
     }
 

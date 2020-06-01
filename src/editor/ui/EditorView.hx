@@ -9,23 +9,21 @@ class EditorView extends View implements Observable {
 
     @observe public var panelTabsView:PanelTabsView;
 
-    @observe var prevSelectedFragment:EditorFragmentData = null;
-
-    public var fragmentOverlay(default, null):Quad;
-
-    var leftSideMenu:ColumnLayout;
-
-    var topBar:RowLayout;
+    var editorMenu:RowLayout;
 
     var bottomBar:RowLayout;
-
-    var editedFragment:Fragment = null;
 
     var popup:PopupView = null;
 
     var statusText:TextView;
 
-    var fragmentTitleText:TextView;
+    var leftSpacerView:View;
+
+    var leftSpacerBorder:View;
+
+    public var fragmentEditorView(default, null):FragmentEditorView;
+
+    //var monacoEditorView:MonacoEditorView;
 
 /// Lifecycle
 
@@ -39,61 +37,45 @@ class EditorView extends View implements Observable {
 
     function init() {
 
-        // Fragment
-        editedFragment = new Fragment({
-            assets: editor.contentAssets,
-            editedItems: true
-        });
-        editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
-        editedFragment.onPointerDown(this, (_) -> deselectItems());
-        editedFragment.depth = 1;
-        add(editedFragment);
-
-        topBar = new RowLayout();
-        topBar.padding(0, 6);
-        topBar.depth = 2;
-        {
-            fragmentTitleText = new TextView();
-            fragmentTitleText.viewSize(fill(), fill());
-            fragmentTitleText.align = CENTER;
-            fragmentTitleText.verticalAlign = CENTER;
-            fragmentTitleText.preRenderedSize = 20;
-            fragmentTitleText.pointSize = 13;
-            topBar.add(fragmentTitleText);
-        }
-        add(topBar);
-
         bottomBar = new RowLayout();
         bottomBar.padding(0, 6);
         bottomBar.depth = 3;
         add(bottomBar);
 
+        leftSpacerView = new View();
+        leftSpacerView.depth = 4;
+        add(leftSpacerView);
+
+        leftSpacerBorder = new View();
+        leftSpacerBorder.depth = 4;
+        add(leftSpacerBorder);
+
         // Panels tabs
         panelTabsView = new PanelTabsView();
-        panelTabsView.depth = 4;
+        panelTabsView.depth = 5;
         add(panelTabsView);
 
         // Left side menu
-        leftSideMenu = new ColumnLayout();
-        leftSideMenu.depth = 5;
-        leftSideMenu.padding(6, 0);
+        editorMenu = new RowLayout();
+        editorMenu.depth = 6;
+        editorMenu.padding(0, 6, 0, 12);
         {
-            var h = 34;
+            var w = 38;
             var s = 20;
 
             var settingsButton = new ClickableIconView();
             settingsButton.icon = COG;
-            settingsButton.viewSize(fill(), h);
+            settingsButton.viewSize(w, fill());
             settingsButton.pointSize = s;
-            settingsButton.tooltip('Project Settings');
+            settingsButton.tooltip('Settings');
             settingsButton.onClick(this, () -> {
                 model.location = SETTINGS;
             });
-            leftSideMenu.add(settingsButton);
+            editorMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
             settingsButton.icon = FLOPPY;
-            settingsButton.viewSize(fill(), h);
+            settingsButton.viewSize(w, fill());
             settingsButton.pointSize = s;
             settingsButton.autorun(() -> {
                 if (model.projectPath == null) {
@@ -109,39 +91,39 @@ class EditorView extends View implements Observable {
             settingsButton.onLongPress(this, () -> {
                 model.saveProject(true);
             });
-            leftSideMenu.add(settingsButton);
+            editorMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
             settingsButton.icon = FOLDER;
-            settingsButton.viewSize(fill(), h);
+            settingsButton.viewSize(w, fill());
             settingsButton.pointSize = s - 2;
             settingsButton.tooltip('Open project...');
             settingsButton.onClick(this, () -> {
                 model.openProject();
             });
-            leftSideMenu.add(settingsButton);
+            editorMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
             settingsButton.icon = DOC;
-            settingsButton.viewSize(fill(), h);
+            settingsButton.viewSize(w, fill());
             settingsButton.pointSize = s;
             settingsButton.tooltip('New project');
             settingsButton.onClick(this, () -> {
                 model.newProject();
             });
-            leftSideMenu.add(settingsButton);
+            editorMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
             settingsButton.icon = PUBLISH;
-            settingsButton.viewSize(fill(), h);
+            settingsButton.viewSize(w, fill());
             settingsButton.pointSize = s - 2;
-            settingsButton.tooltip('Export Fragments');
+            settingsButton.tooltip('Export');
             settingsButton.onClick(this, () -> {
                 model.exportFragments();
             });
-            leftSideMenu.add(settingsButton);
+            editorMenu.add(settingsButton);
         }
-        add(leftSideMenu);
+        add(editorMenu);
 
         statusText = new TextView();
         statusText.preRenderedSize = 20;
@@ -149,7 +131,7 @@ class EditorView extends View implements Observable {
         statusText.align = LEFT;
         statusText.verticalAlign = CENTER;
         statusText.viewSize(auto(), fill());
-        statusText.depth = 6;
+        statusText.depth = 7;
         statusText.autorun(() -> {
             var message = model.statusMessage;
             unobserve();
@@ -157,25 +139,25 @@ class EditorView extends View implements Observable {
         });
         bottomBar.add(statusText);
 
-        // Fragment area
-        fragmentOverlay = new Quad();
-        fragmentOverlay.transparent = true;
-        fragmentOverlay.depth = 7;
-        editedFragment.clip = fragmentOverlay;
-        add(fragmentOverlay);
+        // Fragment editor view
+        fragmentEditorView = new FragmentEditorView(this);
+        fragmentEditorView.depth = 8;
+        add(fragmentEditorView);
 
         // Popup
         popup = new PopupView();
-        popup.depth = 8;
+        popup.depth = 9;
         add(popup);
 
+        /*
+        monacoEditorView = new MonacoEditorView();
+        monacoEditorView.depth = 10;
+        add(monacoEditorView);
+        */
+
         autorun(updateTabs);
-        autorun(updateEditedFragment);
         autorun(updateTabsContentView);
         autorun(updatePopupContentView);
-        autorun(updateFragmentItems);
-
-        autorun(() -> updateSelectedEditable(true));
 
         // Styles
         autorun(updateStyle);
@@ -190,54 +172,51 @@ class EditorView extends View implements Observable {
 
     override function layout() {
         
-        var leftSideMenuWidth = 40;
+        var editorMenuHeight = 40;
         var panelsTabsWidth = 300;
         var bottomBarHeight = 18;
-        var topBarHeight = 25;
-        var availableFragmentWidth = width - panelsTabsWidth - leftSideMenuWidth;
-        var availableFragmentHeight = height - bottomBarHeight - topBarHeight;
+        var leftSpacerSize = 6;
+        var availableFragmentWidth = width - panelsTabsWidth - leftSpacerSize;
+        var availableFragmentHeight = height - bottomBarHeight - editorMenuHeight;
 
-        panelTabsView.viewSize(panelsTabsWidth, height);
-        panelTabsView.computeSize(panelsTabsWidth, height, ViewLayoutMask.FIXED, true);
+        leftSpacerView.size(leftSpacerSize, height);
+        leftSpacerView.pos(0, 0);
+
+        leftSpacerBorder.size(1, availableFragmentHeight);
+        leftSpacerBorder.pos(leftSpacerSize, editorMenuHeight);
+
+        panelTabsView.viewSize(panelsTabsWidth, height - editorMenuHeight);
+        panelTabsView.computeSize(panelsTabsWidth, height - editorMenuHeight, ViewLayoutMask.FIXED, true);
         panelTabsView.applyComputedSize();
-        panelTabsView.pos(width - panelTabsView.width, 0);
+        panelTabsView.pos(width - panelTabsView.width, editorMenuHeight);
 
-        leftSideMenu.viewSize(leftSideMenuWidth, height);
-        leftSideMenu.computeSize(leftSideMenuWidth, height, ViewLayoutMask.FIXED, true);
-        leftSideMenu.applyComputedSize();
-        leftSideMenu.pos(0, 0);
+        editorMenu.viewSize(width, editorMenuHeight);
+        editorMenu.computeSize(width, editorMenuHeight, ViewLayoutMask.FIXED, true);
+        editorMenu.applyComputedSize();
+        editorMenu.pos(0, 0);
 
-        if (editedFragment.width > 0 && editedFragment.height > 0) {
-            editedFragment.anchor(0.5, 0.5);
-            editedFragment.scale(Math.min(
-                availableFragmentWidth / editedFragment.width,
-                availableFragmentHeight / editedFragment.height
-            ));
-            editedFragment.pos(
-                leftSideMenuWidth + availableFragmentWidth * 0.5,
-                topBarHeight + availableFragmentHeight * 0.5
-            );
-        }
-
-        fragmentOverlay.pos(
-            editedFragment.x - availableFragmentWidth * 0.5,
-            editedFragment.y - availableFragmentHeight * 0.5
-        );
-        fragmentOverlay.size(availableFragmentWidth, availableFragmentHeight);
+        fragmentEditorView.size(availableFragmentWidth, availableFragmentHeight);
+        fragmentEditorView.pos(leftSpacerSize, editorMenuHeight);
 
         popup.anchor(0.5, 0.5);
         popup.pos(width * 0.5, height * 0.5);
         popup.size(width, height);
 
-        topBar.viewSize(availableFragmentWidth, topBarHeight);
-        topBar.computeSize(availableFragmentWidth, topBarHeight, ViewLayoutMask.FIXED, true);
-        topBar.applyComputedSize();
-        topBar.pos(leftSideMenuWidth, 0);
-
-        bottomBar.viewSize(availableFragmentWidth, bottomBarHeight);
-        bottomBar.computeSize(availableFragmentWidth, bottomBarHeight, ViewLayoutMask.FIXED, true);
+        bottomBar.viewSize(availableFragmentWidth + leftSpacerSize, bottomBarHeight);
+        bottomBar.computeSize(availableFragmentWidth + leftSpacerSize, bottomBarHeight, ViewLayoutMask.FIXED, true);
         bottomBar.applyComputedSize();
-        bottomBar.pos(leftSideMenuWidth, height - bottomBarHeight);
+        bottomBar.pos(0, height - bottomBarHeight);
+
+        /*
+        monacoEditorView.pos(
+            fragmentOverlay.x,
+            fragmentOverlay.y
+        );
+        monacoEditorView.size(
+            fragmentOverlay.width,
+            fragmentOverlay.height
+        );
+        */
 
     }
 
@@ -252,102 +231,15 @@ class EditorView extends View implements Observable {
         var selectedName = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
 
         if (selectedFragment == null) {
-            panelTabsView.tabViews.tabs = ['Elements'];
+            panelTabsView.tabViews.tabs = ['Editables'];
         }
         else {
-            panelTabsView.tabViews.tabs = ['Visuals', 'Elements'];
+            panelTabsView.tabViews.tabs = ['Visuals', 'Editables'];
         }
 
         // Restore selected tab name on new tab list
         var selectedIndex = panelTabsView.tabViews.tabs.indexOf(selectedName);
         panelTabsView.tabViews.selectedIndex = selectedIndex != -1 ? selectedIndex : 0;
-
-    }
-
-    function updateEditedFragment() {
-
-        var selectedFragment = model.project.selectedFragment;
-
-        if (selectedFragment == null) {
-            unobserve();
-            editedFragment.active = false;
-            editedFragment.fragmentData = null;
-            fragmentTitleText.content = '';
-            reobserve();
-        }
-        else {
-            var copied = Reflect.copy(selectedFragment.fragmentDataWithoutItems);
-            unobserve();
-            fragmentTitleText.content = selectedFragment.fragmentId;
-            if (prevSelectedFragment != selectedFragment) {
-                trace('this is a new fragment being loaded, reset items');
-                copied.items = [];
-                prevSelectedFragment = selectedFragment;
-            }
-            trace('update fragment data');
-            editedFragment.active = true;
-            editedFragment.fragmentData = copied;
-            reobserve();
-        }
-
-    }
-
-    function updateFragmentItems() {
-
-        if (model.loading > 0)
-            return;
-
-        var selectedFragment = model.project.selectedFragment;
-        var prevSelectedFragment = this.prevSelectedFragment; // Used for invalidation
-
-        unobserve();
-
-        var toCheck = [];
-
-        if (selectedFragment != null) {
-            // Add or update items
-            reobserve();
-            for (item in selectedFragment.items) {
-                var entityId = item.entityId;
-                unobserve();
-                toCheck.push(entityId);
-                model.pushUsedFragmentId(selectedFragment.fragmentId);
-                reobserve();
-                var fragmentItem = item.toFragmentItem();
-                unobserve();
-                model.popUsedFragmentId();
-                //trace('PUT ITEM $entityId');
-                editedFragment.putItem(fragmentItem);
-                reobserve();
-            }
-            unobserve();
-            // Remove missing items
-            var toRemove = null;
-            for (fragmentItem in editedFragment.items) {
-                if (selectedFragment.get(fragmentItem.id) == null) {
-                    if (toRemove == null)
-                        toRemove = [];
-                    toRemove.push(fragmentItem.id);
-                }
-            }
-            if (toRemove != null) {
-                for (id in toRemove) {
-                    //trace('REMOVE ITEM $id');
-                    editedFragment.removeItem(id);
-                }
-            }
-        }
-
-        app.onceUpdate(this, (_) -> {
-            if (editedFragment != null) {
-                for (entityId in toCheck) {
-                    var entity = editedFragment.get(entityId);
-                    if (Std.is(entity, Visual) && !entity.hasComponent('editable')) {
-                        bindEditableVisualComponent(cast entity, editedFragment);
-                    }
-                }
-            }
-        });
 
     }
 
@@ -383,68 +275,6 @@ class EditorView extends View implements Observable {
 
     }
 
-    function bindEditableVisualComponent(visual:Visual, editedFragment:Fragment) {
-
-        var editable = new Editable();
-
-        visual.component('editable', editable);
-
-        editable.onSelect(this, function(visual, fromPointer) {
-            
-            var fragmentData = model.project.selectedFragment;
-            var entityData = fragmentData.get(visual.id);
-            fragmentData.selectedItem = entityData;
-
-            if (fromPointer) {
-                // Ensure we are on Visuals tab
-                var selectedIndex = panelTabsView.tabViews.tabs.indexOf('Visuals');
-                if (selectedIndex != -1)
-                    panelTabsView.tabViews.selectedIndex = selectedIndex;
-            }
-
-        });
-
-        editable.onChange(this, function(visual, changed) {
-
-            var fragmentData = model.project.selectedFragment;
-            var entityData = fragmentData.get(visual.id);
-            if (entityData != null) {
-                for (key in Reflect.fields(changed)) {
-                    var value = Reflect.field(changed, key);
-                    entityData.props.set(key, value);
-                }
-            }
-
-        });
-
-    }
-
-    function handleEditableItemUpdate(fragmentItem:FragmentItem) {
-
-        #if editor_debug_item_update
-        log.debug('ITEM UPDATED: ${fragmentItem.id} w=${fragmentItem.props.width} h=${fragmentItem.props.height}');
-        #end
-
-        var item = model.project.selectedFragment.get(fragmentItem.id);
-
-        var props = fragmentItem.props;
-        if (item != null && props != null) {
-            for (key in Reflect.fields(fragmentItem.props)) {
-                var value = Reflect.field(props, key);
-
-                unobserve();
-                if (item.typeOfProp(key) == 'ceramic.FragmentData') {
-                    item.props.set(key, value != null ? value.id : null);
-                }
-                else {
-                    item.props.set(key, value);
-                }
-                reobserve();
-            }
-        }
-
-    }
-
     function updateTabsContentView() {
 
         var selectedName = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
@@ -453,7 +283,7 @@ class EditorView extends View implements Observable {
 
         var contentViewClass:Class<View> = switch (selectedName) {
             case 'Visuals': VisualsPanelView;
-            case 'Elements': EditableElementsPanelView;
+            case 'Editables': EditableElementsPanelView;
             //case 'Assets': null;
             default: null;
         }
@@ -472,54 +302,6 @@ class EditorView extends View implements Observable {
                 panelTabsView.contentView = Type.createInstance(contentViewClass, []);
             }
         }
-
-    }
-
-    function updateSelectedEditable(runAfterUpdate:Bool) {
-
-        var selectedFragment = model.project.selectedFragment;
-        var selectedVisual = selectedFragment != null ? selectedFragment.selectedVisual : null;
-        var items = editedFragment.items;
-
-        unobserve();
-
-        for (item in items) {
-            var entity = editedFragment.get(item.id);
-            var editable:Editable = cast entity.component('editable');
-            if (editable != null) {
-                if (selectedVisual == null) {
-                    editable.deselect();
-                }
-                else if (entity.id == selectedVisual.entityId) {
-                    unobserve();
-                    editable.select();
-                    Editable.highlight.clip = fragmentOverlay;
-                    reobserve();
-                }
-            }
-        }
-
-        if (runAfterUpdate) {
-            // Somehow, this is needed because Fragment may need
-            // a whole update cycle to get updated properly,
-            // so we need to re-process selection after this update cycle
-            app.oncePostFlushImmediate(() -> {
-                updateSelectedEditable(false);
-                app.onceUpdate(this, _ -> {
-                    updateSelectedEditable(false);
-                    app.onceUpdate(this, _ -> updateSelectedEditable(false));
-                });
-            });
-        }
-
-        reobserve();
-
-    }
-
-    function deselectItems() {
-
-        if (model.project.selectedFragment != null)
-            model.project.selectedFragment.selectedItem = null;
 
     }
 
@@ -580,6 +362,16 @@ class EditorView extends View implements Observable {
             model.saveProject(true);
         });
 
+        keyBindings.bind([CMD_OR_CTRL, SHIFT, KEY(KeyCode.KEY_O)], () -> {
+            log.debug('OPEN');
+            model.openProject();
+        });
+
+        keyBindings.bind([CMD_OR_CTRL, SHIFT, KEY(KeyCode.KEY_N)], () -> {
+            log.debug('NEW PROJECT');
+            model.newProject();
+        });
+
         onDestroy(keyBindings, function(_) {
             keyBindings.destroy();
             keyBindings = null;
@@ -626,32 +418,17 @@ class EditorView extends View implements Observable {
 
         color = theme.windowBackgroundColor;
 
-        leftSideMenu.transparent = false;
-        leftSideMenu.color = theme.lightBackgroundColor;
-        leftSideMenu.borderRightSize = 1;
-        leftSideMenu.borderRightColor = theme.darkBorderColor;
-        leftSideMenu.borderPosition = INSIDE;
+        leftSpacerView.transparent = false;
+        leftSpacerView.color = theme.lightBackgroundColor;
 
-        editedFragment.transparent = false;
-        editedFragment.color = theme.darkBackgroundColor;
+        leftSpacerBorder.transparent = false;
+        leftSpacerBorder.color = theme.darkBorderColor;
 
-        topBar.transparent = false;
-        topBar.color = theme.lightBackgroundColor;
-        topBar.borderBottomSize = 1;
-        topBar.borderBottomColor = theme.darkBorderColor;
-        topBar.borderPosition = INSIDE;
-
-        bottomBar.transparent = false;
-        bottomBar.color = theme.lightBackgroundColor;
-        bottomBar.borderTopSize = 1;
-        bottomBar.borderTopColor = theme.darkBorderColor;
-        bottomBar.borderPosition = INSIDE;
-
-        statusText.color = theme.lightTextColor;
-        statusText.font = theme.mediumFont;
-
-        fragmentTitleText.color = theme.lightTextColor;
-        fragmentTitleText.font = theme.boldFont;
+        editorMenu.transparent = false;
+        editorMenu.color = theme.lightBackgroundColor;
+        editorMenu.borderBottomSize = 1;
+        editorMenu.borderBottomColor = theme.darkBorderColor;
+        editorMenu.borderPosition = INSIDE;
 
     }
 

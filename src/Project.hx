@@ -1,5 +1,9 @@
 package;
 
+#if !macro
+import ceramic.AllApi;
+#end
+
 import ceramic.Dialogs;
 import ceramic.macros.DefinesMacro;
 import ceramic.ImageAsset;
@@ -31,7 +35,9 @@ class Project {
 
         #if editor
         new Editor(settings, {
+            #if (cpp || (web && ceramic_use_electron))
             assets: DefinesMacro.getDefine('assets_path')
+            #end
         });
         #end
 

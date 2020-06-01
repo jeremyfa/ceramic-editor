@@ -14,7 +14,7 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
 
         super();
 
-        initAllFragmentsSection();
+        initAllEditablesSection();
         initSelectedEditableSection();
         initAddFragmentButton();
 
@@ -22,10 +22,10 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
 
     }
 
-    function initAllFragmentsSection() {
+    function initAllEditablesSection() {
 
         var title = new SectionTitleView();
-        title.content = 'All fragments';
+        title.content = 'All editables';
         add(title);
 
         var dataSource = new EditableElementCellDataSource();

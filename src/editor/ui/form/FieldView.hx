@@ -70,16 +70,14 @@ class FieldView extends LinearLayout {
 
 /// Internal
 
-    function getScrollingLayout():ScrollingLayout<FormLayout> {
+    function getScrollingLayout():ScrollingLayout<View> {
 
         var parent = this.parent;
 
         while (parent != null) {
             if (Std.is(parent, ScrollingLayout)) {
                 var scrollingLayout:ScrollingLayout<View> = cast parent;
-                if (Std.is(scrollingLayout.layoutView, FormLayout)) {
-                    return cast scrollingLayout;
-                }
+                return scrollingLayout;
             }
             parent = parent.parent;
         }

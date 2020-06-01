@@ -9,9 +9,14 @@ app:
     #    - spine-hx
     
     #spine: true
-    dialogs: true
+    plugins:
+        - dialogs
+    
+    hxml: |
+        --macro ceramic.macros.ExportApi.export()
 
     defines:
+        - ceramic_no_skip
         - editor
         - ceramic_use_electron
         - snow_web_use_electron_fs

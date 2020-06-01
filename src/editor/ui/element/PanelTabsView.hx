@@ -53,6 +53,8 @@ class PanelTabsView extends LinearLayout implements Observable {
 
         borderLeftSize = 1;
         borderLeftColor = theme.darkBorderColor;
+        borderRightSize = 1;
+        borderRightColor = theme.darkBorderColor;
 
     }
 

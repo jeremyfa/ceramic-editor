@@ -125,10 +125,10 @@ class Editable extends Entity implements Component implements Observable {
             highlight.onPointSegmentsOut(this, handlePointSegmentsOut);
             highlight.onPointSegmentsDown(this, handlePendingPointHandleDown);
             highlight.onPendingPointHandleDown(this, handlePendingPointHandleDown);
-            onShiftPressedChange(this, handleShiftPressedChange);
+            onShiftPressedChange(highlight, handleShiftPressedChange);
         }
 
-        editor.view.fragmentOverlay.add(highlight);
+        editor.view.fragmentEditorView.fragmentOverlay.add(highlight);
 
         app.onUpdate(this, update);
 

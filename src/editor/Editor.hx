@@ -69,8 +69,8 @@ class Editor extends Entity implements Observable {
 
         settings.antialiasing = 4;
         settings.background = 0x282828;
-        settings.targetWidth = 1024;
-        settings.targetHeight = 768;
+        settings.targetWidth = 1280;
+        settings.targetHeight = 720;
         settings.resizable = true;
         settings.scaling = FIT;
         settings.title = 'Ceramic Editor';
@@ -159,10 +159,12 @@ class Editor extends Entity implements Observable {
         initModel();
 
         app.onceUpdate(this, _ -> {
+            app.onceUpdate(this, _ -> {
             
-            bindKeyBindings();
+                bindKeyBindings();
     
-            initView();
+                initView();
+            });
         });
 
     }
@@ -468,10 +470,6 @@ class Editor extends Entity implements Observable {
 
         screen.onResize(this, function() {
 
-            settings.targetWidth = Std.int(screen.nativeWidth);
-            settings.targetHeight = Std.int(screen.nativeHeight);
-            settings.targetDensity = Std.int(screen.nativeDensity);
-
             layout();
 
         });
@@ -481,6 +479,10 @@ class Editor extends Entity implements Observable {
     }
 
     function layout() {
+
+        settings.targetWidth = Std.int(screen.nativeWidth);
+        settings.targetHeight = Std.int(screen.nativeHeight);
+        settings.targetDensity = Std.int(screen.nativeDensity);
 
         view.pos(0, 0);
         view.size(settings.targetWidth, settings.targetHeight);
