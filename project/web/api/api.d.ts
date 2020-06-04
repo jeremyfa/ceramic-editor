@@ -9,6 +9,8 @@ type Void = void;
 function trace(str: String): Void;
 
 const self: Entity;
+const entity: Entity;
+const visual: Visual;
 
 const app: App;
 const screen: Screen;
@@ -16,6 +18,37 @@ const audio: Audio;
 const settings: Settings;
 const collections: Collections;
 const log: Logger;
+
+interface Array<T> {
+    [index: number]: T;
+}
+
+var a: number;
+var b: number;
+var c: number;
+var d: number;
+var e: number;
+var f: number;
+var g: number;
+var h: number;
+var i: number;
+var j: number;
+var k: number;
+var l: number;
+var m: number;
+var n: number;
+var o: number;
+var p any;
+var q: number;
+var r: number;
+var s: number;
+var t: number;
+var u: number;
+var v: number;
+var w: number;
+var x: number;
+var y: number;
+var z: number;
 
 class Tracker {
     static backend: TrackerBackend;
@@ -481,11 +514,6 @@ class Utils {
 }
 
 type UInt8Array = snow.api.buffers.Uint8Array;
-
-interface TypeTest<T extends String> {
-    name?: T?;
-    stream?: Bool?;
-}
 
 class Tween extends Entity {
     constructor(owner: Entity?, easing: Easing, duration: Float, fromValue: Float, toValue: Float);
@@ -1576,6 +1604,8 @@ enum ScrollDirection {
     VERTICAL,
     HORIZONTAL
 }
+
+type ScriptContent = String;
 
 enum ScreenScaling {
     /** Screen width and height are automatically resized
@@ -3747,6 +3777,7 @@ class Entity implements Lazy, Events {
     constructor();
     data: Dynamic;
     id: String;
+    script: String;
     destroyed: Bool;
     /**destroy event*/
     onDestroy(owner: Entity?, handleEntity: ((entity: Entity) => Void)): Void;
@@ -4936,5 +4967,182 @@ class Math {
     static sin(v: Float): Float;
     static sqrt(v: Float): Float;
     static tan(v: Float): Float;
+}
+
+/**
+	An Array is a storage for values. You can access it using indexes or
+	with its API.
+
+	@see https://haxe.org/manual/std-Array.html
+	@see https://haxe.org/manual/lf-array-comprehension.html
+*/
+interface Array<T> {
+    /**
+		Creates a new Array.
+	*/
+    constructor();
+    /**
+		The length of `this` Array.
+	*/
+    length: Int;
+    /**
+		Returns a new Array by appending the elements of `a` to the elements of
+		`this` Array.
+
+		This operation does not modify `this` Array.
+
+		If `a` is the empty Array `[]`, a copy of `this` Array is returned.
+
+		The length of the returned Array is equal to the sum of `this.length`
+		and `a.length`.
+
+		If `a` is `null`, the result is unspecified.
+	*/
+    concat(a: Array<T>): Array<T>;
+    /**
+		Returns a string representation of `this` Array, with `sep` separating
+		each element.
+
+		The result of this operation is equal to `Std.string(this[0]) + sep +
+		Std.string(this[1]) + sep + ... + sep + Std.string(this[this.length-1])`
+
+		If `this` is the empty Array `[]`, the result is the empty String `""`.
+		If `this` has exactly one element, the result is equal to a call to
+		`Std.string(this[0])`.
+
+		If `sep` is null, the result is unspecified.
+	*/
+    join(sep: String): String;
+    /**
+		Removes the last element of `this` Array and returns it.
+
+		This operation modifies `this` Array in place.
+
+		If `this` has at least one element, `this.length` will decrease by 1.
+
+		If `this` is the empty Array `[]`, null is returned and the length
+		remains 0.
+	*/
+    pop(): T?;
+    /**
+		Adds the element `x` at the end of `this` Array and returns the new
+		length of `this` Array.
+
+		This operation modifies `this` Array in place.
+
+		`this.length` increases by 1.
+	*/
+    push(x: T): Int;
+    /**
+		Reverse the order of elements of `this` Array.
+
+		This operation modifies `this` Array in place.
+
+		If `this.length < 2`, `this` remains unchanged.
+	*/
+    reverse(): Void;
+    /**
+		Removes the first element of `this` Array and returns it.
+
+		This operation modifies `this` Array in place.
+
+		If `this` has at least one element, `this`.length and the index of each
+		remaining element is decreased by 1.
+
+		If `this` is the empty Array `[]`, `null` is returned and the length
+		remains 0.
+	*/
+    shift(): T?;
+    /**
+		Creates a shallow copy of the range of `this` Array, starting at and
+		including `pos`, up to but not including `end`.
+
+		This operation does not modify `this` Array.
+
+		The elements are not copied and retain their identity.
+
+		If `end` is omitted or exceeds `this.length`, it defaults to the end of
+		`this` Array.
+
+		If `pos` or `end` are negative, their offsets are calculated from the
+		end of `this` Array by `this.length + pos` and `this.length + end`
+		respectively. If this yields a negative value, 0 is used instead.
+
+		If `pos` exceeds `this.length` or if `end` is less than or equals
+		`pos`, the result is `[]`.
+	*/
+    slice(pos: Int, end?: Int?): Array<T>;
+    /**
+		Sorts `this` Array according to the comparison function `f`, where
+		`f(x,y)` returns 0 if x == y, a positive Int if x > y and a
+		negative Int if x < y.
+
+		This operation modifies `this` Array in place.
+
+		The sort operation is not guaranteed to be stable, which means that the
+		order of equal elements may not be retained. For a stable Array sorting
+		algorithm, `haxe.ds.ArraySort.sort()` can be used instead.
+
+		If `f` is null, the result is unspecified.
+	*/
+    sort(f: ((arg1: T, arg2: T) => Int)): Void;
+    /**
+		Removes `len` elements from `this` Array, starting at and including
+		`pos`, an returns them.
+
+		This operation modifies `this` Array in place.
+
+		If `len` is < 0 or `pos` exceeds `this`.length, an empty Array [] is
+		returned and `this` Array is unchanged.
+
+		If `pos` is negative, its value is calculated from the end	of `this`
+		Array by `this.length + pos`. If this yields a negative value, 0 is
+		used instead.
+
+		If the sum of the resulting values for `len` and `pos` exceed
+		`this.length`, this operation will affect the elements from `pos` to the
+		end of `this` Array.
+
+		The length of the returned Array is equal to the new length of `this`
+		Array subtracted from the original length of `this` Array. In other
+		words, each element of the original `this` Array either remains in
+		`this` Array or becomes an element of the returned Array.
+	*/
+    splice(pos: Int, len: Int): Array<T>;
+    /**
+		Returns a string representation of `this` Array.
+
+		The result will include the individual elements' String representations
+		separated by comma. The enclosing [ ] may be missing on some platforms,
+		use `Std.string()` to get a String representation that is consistent
+		across platforms.
+	*/
+    toString(): String;
+    /**
+		Adds the element `x` at the start of `this` Array.
+
+		This operation modifies `this` Array in place.
+
+		`this.length` and the index of each Array element increases by 1.
+	*/
+    unshift(x: T): Void;
+    /**
+		Returns position of the first occurrence of `x` in `this` Array, searching front to back.
+
+		If `x` is found by checking standard equality, the function returns its index.
+
+		If `x` is not found, the function returns -1.
+
+		If `fromIndex` is specified, it will be used as the starting index to search from,
+		otherwise search starts with zero index. If it is negative, it will be taken as the
+		offset from the end of `this` Array to compute the starting index. If given or computed
+		starting index is less than 0, the whole array will be searched, if it is greater than
+		or equal to the length of `this` Array, the function returns -1.
+	*/
+    indexOf(x: T, fromIndex?: Int?): Int;
+    /**
+		Returns an iterator of the Array values.
+	*/
+    iterator(): TAnonymous;
 }
 

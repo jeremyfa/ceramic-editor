@@ -5,8 +5,8 @@ app:
     author: Jeremy Faivre
     version: '1.0'
 
-    #libs:
-    #    - spine-hx
+    libs:
+        - hscript
     
     #spine: true
     plugins:
@@ -16,6 +16,10 @@ app:
         --macro ceramic.macros.ExportApi.export()
 
     defines:
+        - tracker_check_handlers
+        - ceramic_entity_script
+        - ceramic_check_event_handlers
+        - ceramic_no_strip_markers
         - ceramic_no_skip
         - editor
         - ceramic_use_electron

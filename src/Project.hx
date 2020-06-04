@@ -48,6 +48,36 @@ class Project {
     function ready() {
 
         /*
+        var quad = new ceramic.Quad();
+        quad.size(100, 100);
+        quad.color = Color.WHITE;
+        quad.depth = 9999;
+        quad.anchor(0.5, 0.5);
+        quad.pos(screen.width * 0.5, screen.height * 0.5);
+
+        var script1 = "
+app.onUpdate(self, delta -> {
+    entity.rotation = (entity.rotation + delta * 100) % 360;
+});
+";
+        var script2 = "
+app.onUpdate(self, delta -> {
+    entity.rotation = (entity.rotation - delta * 100) % 360;
+});
+";
+
+        quad.script = script1;
+        Timer.interval(null, 1.5, () -> {
+            if (quad.script == script1) {
+                quad.script = script2;
+            }
+            else {
+                quad.script = script1;
+            }
+        });
+        */
+
+        /*
         var shape = new Shape();
 
         shape.points = [

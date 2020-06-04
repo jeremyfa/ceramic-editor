@@ -12,6 +12,8 @@ class EditorProjectData extends Model {
 
     @serialize public var fragments:ImmutableArray<EditorFragmentData> = [];
 
+    @serialize public var scripts:ImmutableArray<EditorScriptData> = [];
+
     @serialize public var tilemaps:ImmutableArray<EditorTilemapData> = [];
 
     @compute public function editables():ImmutableArray<EditorEditableElementData> {
@@ -19,6 +21,10 @@ class EditorProjectData extends Model {
         var fragments = this.fragments;
         for (i in 0...fragments.length) {
             result.push(fragments[i]);
+        }
+        var scripts = this.scripts;
+        for (i in 0...scripts.length) {
+            result.push(scripts[i]);
         }
         var tilemaps = this.tilemaps;
         for (i in 0...tilemaps.length) {
@@ -52,6 +58,20 @@ class EditorProjectData extends Model {
 
     @serialize public var selectedEditableIndex:Int = -1;
 
+    @serialize public var lastSelectedFragmentIndex(default, null):Int = -1;
+
+    public var lastSelectedFragment(get,never):EditorFragmentData;
+    function get_lastSelectedFragment():EditorFragmentData {
+        if (lastSelectedFragmentIndex == -1) return null;
+        var item = fragments[lastSelectedFragmentIndex];
+        if (item != null) {
+            return item;
+        }
+        else {
+            return null;
+        }
+    }
+
     public var selectedFragment(get,set):EditorFragmentData;
     function get_selectedFragment():EditorFragmentData {
         if (selectedEditableIndex == -1) return null;
@@ -65,7 +85,39 @@ class EditorProjectData extends Model {
     }
     function set_selectedFragment(selectedFragment:EditorFragmentData):EditorFragmentData {
         selectedEditableIndex = editables.indexOf(selectedFragment);
+        lastSelectedFragmentIndex = fragments.indexOf(selectedFragment);
         return selectedFragment;
+    }
+
+    @serialize public var lastSelectedScriptIndex(default, null):Int = -1;
+
+    public var lastSelectedScript(get,never):EditorScriptData;
+    function get_lastSelectedScript():EditorScriptData {
+        if (lastSelectedScriptIndex == -1) return null;
+        var item = scripts[lastSelectedScriptIndex];
+        if (item != null) {
+            return item;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public var selectedScript(get,set):EditorScriptData;
+    function get_selectedScript():EditorScriptData {
+        if (selectedEditableIndex == -1) return null;
+        var item = editables[selectedEditableIndex];
+        if (item != null && Std.is(item, EditorScriptData)) {
+            return cast item;
+        }
+        else {
+            return null;
+        }
+    }
+    function set_selectedScript(selectedScript:EditorScriptData):EditorScriptData {
+        selectedEditableIndex = editables.indexOf(selectedScript);
+        lastSelectedScriptIndex = scripts.indexOf(selectedScript);
+        return selectedScript;
     }
 
     public function new() {
@@ -122,6 +174,17 @@ class EditorProjectData extends Model {
 
     }
 
+    public function scriptById(scriptId:String):EditorScriptData {
+
+        for (i in 0...scripts.length) {
+            var script = scripts[i];
+            if (script.scriptId == scriptId) return script;
+        }
+
+        return null;
+
+    }
+
     public function addFragment():EditorFragmentData {
 
         // Compute fragment id
@@ -144,6 +207,30 @@ class EditorProjectData extends Model {
         model.history.step();
 
         return fragment;
+
+    }
+
+    public function addScript():EditorScriptData {
+
+        // Compute fragment id
+        var i = 0;
+        while (scriptById('SCRIPT_$i') != null) {
+            i++;
+        }
+
+        // Create and add fragment data
+        //
+        var script = new EditorScriptData();
+        script.scriptId = 'SCRIPT_$i';
+        script.content = '';
+
+        var scripts = [].concat(this.scripts.mutable);
+        scripts.push(script);
+        this.scripts = cast scripts;
+
+        model.history.step();
+
+        return script;
 
     }
 

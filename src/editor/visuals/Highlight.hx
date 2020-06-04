@@ -62,6 +62,8 @@ class Highlight extends Visual {
 
     public var pointSegments:Line = null;
 
+    public var needsPointSegments:Bool = false;
+
     public var topDistance(default,null):Float;
 
     public var rightDistance(default,null):Float;
@@ -558,6 +560,9 @@ class Highlight extends Visual {
     }
 
     function updatePointSegments() {
+
+        if (!needsPointSegments)
+            return;
 
         if (pointSegments == null) {
             pointSegments = new Line();

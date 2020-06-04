@@ -36,38 +36,44 @@ class EditorEntityProps extends Model {
             var value:Dynamic = get(key);
 
             // Fetch real fragment data
-            if (entityData != null && entityData.typeOfProp(key) == 'ceramic.FragmentData') {
-                var fragmentId:String = value;
-                unobserve();
-                if (fragmentId != null && model.canReferenceFragmentId(fragmentId)) {
-                    reobserve();
-                    var fragmentValue = model != null ? model.fragments.get(value) : null;
-                    if (fragmentValue != null) {
-                        value = fragmentValue.value;
+            if (entityData != null) {
+                var propType = entityData.typeOfProp(key);
+                if (propType == 'ceramic.FragmentData') {
+                    var fragmentId:String = value;
+                    unobserve();
+                    if (fragmentId != null && model.canReferenceFragmentId(fragmentId)) {
+                        reobserve();
+                        var fragmentValue = model != null ? model.fragments.get(value) : null;
+                        if (fragmentValue != null) {
+                            value = fragmentValue.value;
+                        }
+                        else {
+                            value = null;
+                        }
                     }
                     else {
+                        reobserve();
                         value = null;
                     }
                 }
-                else {
-                    reobserve();
-                    value = null;
-                }
-                /*
-                if (model.isFragmentIdUsed(fragmentId)) {
-                    reobserve();
-                    value = null;
-                }
-                else {
-                    reobserve();
-                    var fragmentValue = model != null ? model.fragments.get(value) : null;
-                    if (fragmentValue != null) {
-                        value = fragmentValue.value;
+                else if (propType == 'ceramic.ScriptContent') {
+                    var scriptId:String = value;
+                    unobserve();
+                    if (scriptId != null) {
+                        reobserve();
+                        var scriptValue = model != null ? model.scripts.get(value) : null;
+                        if (scriptValue != null) {
+                            value = scriptValue.value;
+                        }
+                        else {
+                            value = null;
+                        }
                     }
                     else {
+                        reobserve();
                         value = null;
                     }
-                }*/
+                }
             }
 
             Reflect.setField(result, key, value);
@@ -97,8 +103,9 @@ class EditorEntityProps extends Model {
             var editableMeta:Dynamic = editableType.meta.editable[0];
             if (editableMeta != null && editableMeta.disable != null) {
                 var list:Array<String> = editableMeta.disable;
-                if (list.indexOf(key) != -1)
+                if (list.indexOf(key) != -1) {
                     return;
+                }
             }
         }
         reobserve();

@@ -29,6 +29,7 @@
 <script src="monaco-editor/min/vs/loader.js"></script>
 <script>
     var didInitMonaco = false;
+    var editor = null;
     function initMonaco(content, extraLibs, log, emitChange) {
         if (didInitMonaco) return;
         didInitMonaco = true;
@@ -39,7 +40,14 @@
             monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
                 noSemanticValidation: false,
                 noSyntaxValidation: true,
-                noSuggestionDiagnostics: true
+                noSuggestionDiagnostics: true,
+                diagnosticCodesToIgnore: [
+                    2318, // Cannot find global type A.
+                    2405, // The left-hand side of a 'for...in' statement must be of type A or 'any'..
+                    //2304, // Cannot find name A.
+                    2407, // The right-hand side of a 'for...in' statement must be of type A or 'any'..
+                    2339 // Property A does not exist on type B.
+                ]
             });
             // extra libraries
             if (extraLibs) {
@@ -53,7 +61,7 @@
                 target: monaco.languages.typescript.ScriptTarget.ES6,
                 allowNonTsExtensions: true
             });
-            var editor = monaco.editor.create(document.getElementById('container'), {
+            editor = monaco.editor.create(document.getElementById('container'), {
                 value: content,
                 language: 'javascript',
                 automaticLayout: true,
@@ -76,6 +84,16 @@
                 }
             }, 500);
         });
+    }
+    function setEditorContent(content) {
+        if (editor == null) {
+            setTimeout(function() {
+                setEditorContent(content);
+            }, 100);
+            return;
+        }
+
+        editor.getModel().setValue(content);
     }
 </script>
 </body>

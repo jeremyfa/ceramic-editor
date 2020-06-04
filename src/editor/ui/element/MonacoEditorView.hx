@@ -2,26 +2,60 @@ package editor.ui.element;
 
 class MonacoEditorView extends View implements Observable {
 
-#if web
+    static var _point:Point = new Point(0, 0);
 
     @observe public var content:String = '';
 
+#if web
+
     var iframe:Dynamic = null;
+
+    var iframeReady:Bool = false;
 
     override function set_x(x:Float):Float {
         if (this.x == x) return x;
         super.set_x(x);
-        if (iframe != null)
-            iframe.style.left = x + 'px';
+        if (iframe != null) {
+            visualToScreen(0, 0, _point);
+            iframe.style.left = _point.x + 'px';
+        }
         return x;
     }
 
     override function set_y(y:Float):Float {
         if (this.y == y) return y;
         super.set_y(y);
-        if (iframe != null)
-            iframe.style.left = y + 'px';
+        if (iframe != null) {
+            visualToScreen(0, 0, _point);
+            iframe.style.top = _point.y + 'px';
+        }
         return y;
+    }
+
+    override function set_visible(visible:Bool):Bool {
+        if (this.visible == visible) return visible;
+        this.visible = visible;
+        computeIframeVisibility();
+        return visible;
+    }
+
+    function computeIframeVisibility() {
+        if (iframe != null) {
+            if (visibilityDirty) {
+                computeVisibility();
+            }
+            if (computedVisible) {
+                visualToScreen(0, 0, _point);
+                iframe.style.left = _point.x + 'px';
+                iframe.style.top = _point.y + 'px';
+                iframe.style.display = 'block';
+            }
+            else {
+                iframe.style.left = '-9999px';
+                iframe.style.top = '-9999px';
+                iframe.style.display = 'none';
+            }
+        }
     }
 
     public function new() {
@@ -30,6 +64,22 @@ class MonacoEditorView extends View implements Observable {
 
         transparent = true;
         onPointerDown(this, _ -> {});
+
+        app.onUpdate(this, _ -> {
+            computeIframeVisibility();
+        });
+
+    }
+
+    override function destroy() {
+
+        super.destroy();
+
+        if (iframe != null) {
+            var document:Dynamic = untyped window.document;
+            document.body.removeChild(iframe);
+            iframe = null;
+        }
 
     }
 
@@ -51,6 +101,8 @@ class MonacoEditorView extends View implements Observable {
         iframe.setAttribute('height', '' + height);
         document.body.appendChild(iframe);
 
+        computeIframeVisibility();
+
     }
 
     function initMonaco() {
@@ -67,6 +119,8 @@ class MonacoEditorView extends View implements Observable {
                 extraLibs.push(dts);
 
             iframe.contentWindow.initMonaco(content, extraLibs, editorLog, handleChange);
+
+            iframeReady = true;
         });
 
     }
@@ -81,7 +135,23 @@ class MonacoEditorView extends View implements Observable {
 
         content = lines.join('\n');
 
-        trace('CHANGE $content');
+    }
+
+    public function setContent(content:String) {
+
+        if (this.content == content)
+            return;
+
+        this.content = content;
+
+        if (!iframeReady) {
+            app.onceUpdate(this, _ -> {
+                setContent(content);
+            });
+            return;
+        }
+        
+        iframe.contentWindow.setEditorContent(content);
 
     }
 

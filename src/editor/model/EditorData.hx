@@ -33,7 +33,11 @@ class EditorData extends Model {
 
     @observe public var fragments:ImmutableMap<String,EditorValue> = new Map();
 
+    @observe public var scripts:ImmutableMap<String,EditorValue> = new Map();
+
     @observe public var pendingChoice:EditorPendingChoice = null;
+
+    @observe public var pendingPrompt:EditorPendingPrompt = null;
 
     @observe public var statusMessage(default, null):String = null;
 
@@ -46,6 +50,8 @@ class EditorData extends Model {
     var ignoreUnsaved:Int = 0;
 
     var fragmentAutoruns:Array<Autorun> = null;
+
+    var scriptAutoruns:Array<Autorun> = null;
 
     /**
      * Internal mapping used to prevent circular references when walking through nested fragment data
@@ -69,6 +75,7 @@ class EditorData extends Model {
 
         app.oncePostFlushImmediate(() -> {
             autorun(updateFragments);
+            autorun(updateScripts);
         });
 
     }
@@ -289,6 +296,60 @@ class EditorData extends Model {
 
     }
 
+    function updateScripts() {
+
+        var project = this.project;
+        if (project == null)
+            return;
+
+        var projectScripts = project.scripts;
+        if (projectScripts == null)
+            return;
+
+        unobserve();
+
+        scriptAutoruns = [];
+
+        for (projectScript in projectScripts) {
+            scriptAutoruns.push(projectScript.autorun(function() {
+                bindScriptData(projectScript);
+            }));
+        }
+
+        reobserve();
+
+    }
+
+    function bindScriptData(scriptData:EditorScriptData) {
+
+        var scriptId = scriptData.scriptId;
+
+        unobserve();
+
+        var value = this.scripts.get(scriptId);
+        if (value == null) {
+            value = new EditorValue();
+            var newScripts = new Map<String,EditorValue>();
+            var existingIds = new Map<String,Bool>();
+            for (existingScript in project.scripts) {
+                existingIds.set(existingScript.scriptId, true);
+            }
+            for (key => val in this.scripts.mutable) {
+                if (existingIds.exists(key))
+                    newScripts.set(key, val);
+            }
+            newScripts.set(scriptId, value);
+            this.scripts = cast newScripts;
+        }
+
+        reobserve();
+        value.value = scriptData.content;
+        unobserve();
+
+        reobserve();
+
+    }
+
     function incrementLoading() {
 
         loading++;
@@ -430,6 +491,40 @@ class EditorData extends Model {
         }
         catch (e:Dynamic) {
             log.error('Failed to export fragment bundles: $e');
+        }
+
+    }
+
+    public function didRenameFragment(renamed:EditorFragmentData, prevId:String, newId:String) {
+
+        unobserve();
+
+        // Update fragment references
+        for (fragment in project.fragments) {
+            for (item in fragment.items) {
+                if (item.entityClass == 'ceramic.FragmentData') {
+                    var key:String = item.props.get('fragmentData');
+                    if (key != null && key == prevId) {
+                        item.props.set('fragmentData', newId);
+                    }
+                }
+            }
+        }
+
+        reobserve();
+
+    }
+
+    public function didRenameScript(renamed:EditorScriptData, prevId:String, newId:String) {
+
+        // Update script references
+        for (fragment in project.fragments) {
+            for (item in fragment.items) {
+                var key:String = item.props.get('script');
+                if (key != null && key == prevId) {
+                    item.props.set('script', newId);
+                }
+            }
         }
 
     }

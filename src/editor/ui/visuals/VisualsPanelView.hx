@@ -191,7 +191,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
             var editableMeta:Dynamic = field.meta.editable != null ? field.meta.editable[0] : null;
 
-            var fieldView = EditorFieldUtils.createEditableField(editableType, field, visual);
+            var fieldView = EntityFieldUtils.createEditableField(editableType, field, visual);
             if (fieldView != null) {
                 
                 var item = new LabeledFieldView(fieldView);
@@ -229,7 +229,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
         // Entity id
         {
-            var fieldView = EditorFieldUtils.createEditableEntityIdField(visual);
+            var fieldView = EntityFieldUtils.createEditableEntityIdField(visual);
             if (fieldView != null) {
                 
                 var item = new LabeledFieldView(fieldView);
@@ -296,6 +296,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
                     button.content = helper.name;
                     button.onClick(this, function() {
                         log.debug('RUN HELPER ${helper.method}');
+                        EntityHelpers.run(helper, visual);
                     });
                     container.add(button);
 

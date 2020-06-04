@@ -9,6 +9,7 @@
         "**/.git": true,
         "**/node_modules": true,
         "**/tmp": true,
-        "**/out": true
+        "**/out": true,
+        "project/web": true
     }
 }

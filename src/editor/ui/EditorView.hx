@@ -21,9 +21,13 @@ class EditorView extends View implements Observable {
 
     var leftSpacerBorder:View;
 
+    var editorsSeparator:View;
+
     public var fragmentEditorView(default, null):FragmentEditorView;
 
-    //var monacoEditorView:MonacoEditorView;
+    public var scriptEditorView(default, null):ScriptEditorView;
+
+    //var scriptEditorView:ScriptEditorView;
 
 /// Lifecycle
 
@@ -142,17 +146,33 @@ class EditorView extends View implements Observable {
         // Fragment editor view
         fragmentEditorView = new FragmentEditorView(this);
         fragmentEditorView.depth = 8;
+        autorun(() -> {
+            fragmentEditorView.selectedFragment = model.project.lastSelectedFragment;
+        });
         add(fragmentEditorView);
+
+        // Monaco editor view
+        scriptEditorView = new ScriptEditorView();
+        scriptEditorView.depth = 8;
+        autorun(() -> {
+            scriptEditorView.selectedScript = model.project.lastSelectedScript;
+        });
+        add(scriptEditorView);
+
+        editorsSeparator = new View();
+        editorsSeparator.active = false;
+        editorsSeparator.depth = 9;
+        add(editorsSeparator);
 
         // Popup
         popup = new PopupView();
-        popup.depth = 9;
+        popup.depth = 10;
         add(popup);
 
         /*
-        monacoEditorView = new MonacoEditorView();
-        monacoEditorView.depth = 10;
-        add(monacoEditorView);
+        scriptEditorView = new ScriptEditorView();
+        scriptEditorView.depth = 10;
+        add(scriptEditorView);
         */
 
         autorun(updateTabs);
@@ -176,13 +196,13 @@ class EditorView extends View implements Observable {
         var panelsTabsWidth = 300;
         var bottomBarHeight = 18;
         var leftSpacerSize = 6;
-        var availableFragmentWidth = width - panelsTabsWidth - leftSpacerSize;
-        var availableFragmentHeight = height - bottomBarHeight - editorMenuHeight;
+        var availableViewportWidth = width - panelsTabsWidth - leftSpacerSize - 2;
+        var availableViewportHeight = height - bottomBarHeight - editorMenuHeight;
 
         leftSpacerView.size(leftSpacerSize, height);
         leftSpacerView.pos(0, 0);
 
-        leftSpacerBorder.size(1, availableFragmentHeight);
+        leftSpacerBorder.size(1, availableViewportHeight);
         leftSpacerBorder.pos(leftSpacerSize, editorMenuHeight);
 
         panelTabsView.viewSize(panelsTabsWidth, height - editorMenuHeight);
@@ -195,24 +215,65 @@ class EditorView extends View implements Observable {
         editorMenu.applyComputedSize();
         editorMenu.pos(0, 0);
 
-        fragmentEditorView.size(availableFragmentWidth, availableFragmentHeight);
-        fragmentEditorView.pos(leftSpacerSize, editorMenuHeight);
+        var shouldDisplayScriptEditor = scriptEditorView.selectedScript != null;
+        var shouldDisplayFragmentEditor = fragmentEditorView.selectedFragment != null;
+        if (shouldDisplayScriptEditor && shouldDisplayFragmentEditor) {
+
+            var scriptEditorWidth = Math.min(650, availableViewportWidth * 0.5) - 1;
+
+            scriptEditorView.active = true;
+            scriptEditorView.size(scriptEditorWidth, availableViewportHeight);
+            scriptEditorView.pos(1 + leftSpacerSize, editorMenuHeight);
+
+            editorsSeparator.active = true;
+            editorsSeparator.pos(scriptEditorView.x + scriptEditorWidth, editorMenuHeight);
+            editorsSeparator.size(1, availableViewportHeight);
+
+            fragmentEditorView.active = true;
+            fragmentEditorView.size(availableViewportWidth - scriptEditorWidth - 1, availableViewportHeight);
+            fragmentEditorView.pos(1 + scriptEditorView.x + scriptEditorWidth, editorMenuHeight);
+        }
+        else if (shouldDisplayScriptEditor) {
+
+            editorsSeparator.active = false;
+
+            scriptEditorView.active = true;
+            scriptEditorView.size(availableViewportWidth, availableViewportHeight);
+            scriptEditorView.pos(1 + leftSpacerSize, editorMenuHeight);
+
+            fragmentEditorView.active = false;
+        }
+        else if (shouldDisplayFragmentEditor) {
+
+            editorsSeparator.active = false;
+
+            scriptEditorView.active = false;
+
+            fragmentEditorView.active = true;
+            fragmentEditorView.size(availableViewportWidth, availableViewportHeight);
+            fragmentEditorView.pos(1 + leftSpacerSize, editorMenuHeight);
+        }
+        else {
+            editorsSeparator.active = false;
+            scriptEditorView.active = false;
+            fragmentEditorView.active = false;
+        }
 
         popup.anchor(0.5, 0.5);
         popup.pos(width * 0.5, height * 0.5);
         popup.size(width, height);
 
-        bottomBar.viewSize(availableFragmentWidth + leftSpacerSize, bottomBarHeight);
-        bottomBar.computeSize(availableFragmentWidth + leftSpacerSize, bottomBarHeight, ViewLayoutMask.FIXED, true);
+        bottomBar.viewSize(availableViewportWidth + leftSpacerSize + 2, bottomBarHeight);
+        bottomBar.computeSize(availableViewportWidth + leftSpacerSize + 2, bottomBarHeight, ViewLayoutMask.FIXED, true);
         bottomBar.applyComputedSize();
         bottomBar.pos(0, height - bottomBarHeight);
 
         /*
-        monacoEditorView.pos(
+        scriptEditorView.pos(
             fragmentOverlay.x,
             fragmentOverlay.y
         );
-        monacoEditorView.size(
+        scriptEditorView.size(
             fragmentOverlay.width,
             fragmentOverlay.height
         );
@@ -246,6 +307,7 @@ class EditorView extends View implements Observable {
     function updatePopupContentView() {
 
         var pendingChoice = model.pendingChoice;
+        var pendingPrompt = model.pendingPrompt;
         var location = model.location;
 
         unobserve();
@@ -259,6 +321,16 @@ class EditorView extends View implements Observable {
             if (pendingChoice.cancelable) {
                 popup.onCancel(popup.contentView, () -> {
                     model.pendingChoice = null;
+                });
+            }
+        }
+        else if (pendingPrompt != null) {
+            popup.title = pendingPrompt.title;
+            popup.contentView = new PendingPromptContentView(pendingPrompt);
+            popup.cancelable = pendingPrompt.cancelable;
+            if (pendingPrompt.cancelable) {
+                popup.onCancel(popup.contentView, () -> {
+                    model.pendingPrompt = null;
                 });
             }
         }
@@ -424,11 +496,20 @@ class EditorView extends View implements Observable {
         leftSpacerBorder.transparent = false;
         leftSpacerBorder.color = theme.darkBorderColor;
 
+        editorsSeparator.transparent = false;
+        editorsSeparator.color = theme.darkBorderColor;
+
         editorMenu.transparent = false;
         editorMenu.color = theme.lightBackgroundColor;
         editorMenu.borderBottomSize = 1;
         editorMenu.borderBottomColor = theme.darkBorderColor;
         editorMenu.borderPosition = INSIDE;
+        
+        bottomBar.transparent = false;
+        bottomBar.color = theme.lightBackgroundColor;
+        bottomBar.borderTopSize = 1;
+        bottomBar.borderTopColor = theme.darkBorderColor;
+        bottomBar.borderPosition = INSIDE;
 
     }
 

@@ -106,13 +106,17 @@ class Editable extends Entity implements Component implements Observable {
             highlight = null;
         });
 
+        var entityOptions = EntityOptions.get(entity);
+        
+        if (entityOptions.highlightMaxPoints != entityOptions.highlightMinPoints) {
+            highlight.needsPointSegments = true;
+        }
+
         highlight.anchor(0, 0);
         highlight.pos(0, 0);
         highlight.depth = 500;
         highlight.transform = new Transform();
         wrapVisual(entity);
-
-        var entityOptions = EntityOptions.get(entity);
 
         highlight.onCornerDown(this, handleCornerDown);
 
@@ -976,6 +980,8 @@ class Editable extends Entity implements Component implements Observable {
             height: entity.height
         };
         Reflect.setField(changes, options.highlightPoints, entity.getProperty(options.highlightPoints));
+
+        log.debug('EMIT CHANGES ${entity.getProperty(options.highlightPoints).length}');
         emitChange(entity, changes);
 
     }

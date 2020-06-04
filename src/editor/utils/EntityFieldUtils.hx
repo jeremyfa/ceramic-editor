@@ -1,6 +1,6 @@
 package editor.utils;
 
-class EditorFieldUtils {
+class EntityFieldUtils {
 
     public static function createEditableField(editableType:EditableType, field:EditableTypeField, item:EditorEntityData):FieldView {
 
@@ -12,7 +12,7 @@ class EditorFieldUtils {
         if (options.slider != null) {
             return createEditableSliderField(options, item, name);
         }
-        else if (type == 'String' || type == 'Float' || type == 'Int' || type == 'Array<Float>' || type == 'Array<Int>') {
+        else if (type == 'String' || type == 'Float' || type == 'Int') {// || type == 'Array<Float>' || type == 'Array<Int>') {
             return createEditableTextField(options, item, name, type);
         }
         else if (type == 'Bool') {
@@ -45,6 +45,16 @@ class EditorFieldUtils {
                 items.sort(TextUtils.compareStrings);
                 return items;
             }, 'no data');
+        }
+        else if (type == 'ceramic.ScriptContent') {
+            return createEditableSelectField(options, item, name, () -> {
+                var items = [];
+                var scripts = model.scripts;
+                for (key in scripts.keys())
+                    items.push(key);
+                items.sort(TextUtils.compareStrings);
+                return items;
+            }, 'no script');
         }
         else if (options.options != null) {
             return createEditableSelectField(options, item, name, () -> {
@@ -375,14 +385,18 @@ class EditorFieldUtils {
                 }
                 else {
                     if (item.fragmentId != value) {
+                        var prevFragmentId = item.fragmentId;
                         item.fragmentId = value;
+                        model.didRenameFragment(item, prevFragmentId, item.fragmentId);
                         model.history.step();
                     }
                 }
             }
             else {
                 if (item.fragmentId != value) {
+                    var prevFragmentId = item.fragmentId;
                     item.fragmentId = value;
+                    model.didRenameFragment(item, prevFragmentId, item.fragmentId);
                     model.history.step();
                 }
             }
@@ -397,6 +411,78 @@ class EditorFieldUtils {
             }
             else if (!wasFocused && isFocused) {
                 valueOnFocus = item.fragmentId;
+            }
+            wasFocused = isFocused;
+            reobserve();
+        });
+        fieldView.onDestroy(item, function(_) {
+            if (wasFocused) {
+                if (valueOnFocus != null) {
+                    applyChange();
+                }
+            }
+        });
+        return fieldView;
+
+    }
+
+    public static function createEditableScriptIdField(item:EditorScriptData) {
+        
+        var fieldView = new TextFieldView(TEXT);
+        fieldView.setTextValue = SanitizeTextField.setTextValueToIdentifier;
+        fieldView.setValue = function(field, value) {
+            fieldView.textValue = value;
+        };
+        var valueOnFocus = null;
+        fieldView.autorun(function() {
+            fieldView.textValue = item.scriptId;
+            valueOnFocus = item.scriptId;
+        });
+        valueOnFocus = null;
+        var wasFocused = fieldView.focused;
+        inline function applyChange() {
+            var value = fieldView.textValue;
+            if (value == '') {
+                // Empty value, restore previous value
+                fieldView.setValue(fieldView, valueOnFocus);
+                fieldView.textValue = valueOnFocus;
+            }
+            else if (model != null && model.project != null) {
+                var itemForId = model.project.scriptById(value);
+                if (itemForId != null && itemForId != item) {
+                    log.warning('Ignoring value: $value (duplicate script id in model)');
+                    
+                    fieldView.setValue(fieldView, valueOnFocus);
+                    fieldView.textValue = valueOnFocus;
+                }
+                else {
+                    if (item.scriptId != value) {
+                        var prevScriptId = item.scriptId;
+                        item.scriptId = value;
+                        model.didRenameScript(item, prevScriptId, item.scriptId);
+                        model.history.step();
+                    }
+                }
+            }
+            else {
+                if (item.scriptId != value) {
+                    var prevScriptId = item.scriptId;
+                    item.scriptId = value;
+                    model.didRenameScript(item, prevScriptId, item.scriptId);
+                    model.history.step();
+                }
+            }
+        }
+        fieldView.autorun(function() {
+            var isFocused = fieldView.focused;
+            unobserve();
+            if (wasFocused && !isFocused) {
+                if (valueOnFocus != null) {
+                    applyChange();
+                }
+            }
+            else if (!wasFocused && isFocused) {
+                valueOnFocus = item.scriptId;
             }
             wasFocused = isFocused;
             reobserve();
@@ -459,7 +545,8 @@ class EditorFieldUtils {
             if (rawList.length > 0 && !Std.is(rawList[0], String)) {
                 for (listItem in rawList) {
                     if (listItem[0] == value) {
-                        item.props.set(name, listItem[1]);
+                        var toAssign = listItem[1];
+                        item.props.set(name, toAssign);
                         break;
                     }
                 }

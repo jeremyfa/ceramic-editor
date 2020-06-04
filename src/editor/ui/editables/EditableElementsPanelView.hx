@@ -6,7 +6,7 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
 
 /// Internal properties
 
-    var allFragmentsCollectionView:CellCollectionView;
+    var allEditablesCollectionView:CellCollectionView;
 
 /// Lifecycle
 
@@ -16,6 +16,7 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
 
         initAllEditablesSection();
         initSelectedEditableSection();
+        initSelectedScriptSection();
         initAddFragmentButton();
 
         autorun(updateStyle);
@@ -37,7 +38,7 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
 
         var prevLength = 0;
         autorun(function() {
-            var length = model.project.fragments.length;
+            var length = model.project.editables.length;
             unobserve();
             if (length != prevLength) {
                 var scrollToBottom = prevLength > 0 && length > prevLength;
@@ -65,7 +66,7 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
         });
 
         autorun(function() {
-            var active = model.project.fragments.length > 0;
+            var active = model.project.editables.length > 0;
             title.active = active;
             collectionView.active = active;
         });
@@ -116,10 +117,10 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
             var item = new LabeledFieldView(null);
             item.label = 'Id';
             item.autorun(() -> {
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 unobserve();
                 if (fragment != null) {
-                    item.field = EditorFieldUtils.createEditableFragmentIdField(fragment);
+                    item.field = EntityFieldUtils.createEditableFragmentIdField(fragment);
                 }
             });
             form.add(item);
@@ -130,15 +131,15 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
             item.label = 'Width';
             item.field.setTextValue = SanitizeTextField.setTextValueToInt(0, 999999999);
             item.field.setEmptyValue = function(field) {
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) fragment.width = 0;
             };
             item.field.setValue = function(field, value) {
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) fragment.width = value;
             };
             autorun(function() {
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) item.field.textValue = '' + fragment.width;
             });
             form.add(item);
@@ -149,15 +150,15 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
             item.label = 'Height';
             item.field.setTextValue = SanitizeTextField.setTextValueToInt(0, 999999999);
             item.field.setEmptyValue = function(field) {
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) fragment.height = 0;
             };
             item.field.setValue = function(field, value) {
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) fragment.height = value;
             };
             autorun(function() {
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) item.field.textValue = '' + fragment.height;
             });
             form.add(item);
@@ -169,24 +170,54 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
             item.field.placeholder = 'default';
             item.field.setTextValue = SanitizeTextField.setTextValueToIdentifier;
             item.field.setEmptyValue = function(field) {
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) fragment.bundle = null;
             };
             item.field.setValue = function(field, value) {
                 if (value == '')
                     value = null;
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) fragment.bundle = value;
             };
             autorun(function() {
-                var fragment = model.project.selectedFragment;
+                var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) item.field.textValue = fragment.bundle != null ? '' + fragment.bundle : '';
             });
             form.add(item);
         })();
 
         autorun(function() {
-            var active = model.project.selectedFragment != null;
+            var active = model.project.lastSelectedFragment != null;
+            title.active = active;
+            form.active = active;
+        });
+
+    }
+
+    function initSelectedScriptSection() {
+
+        var title = new SectionTitleView();
+        title.content = 'Selected script';
+        add(title);
+
+        var form = new FormLayout();
+        add(form);
+
+        (function() {
+            var item = new LabeledFieldView(null);
+            item.label = 'Id';
+            item.autorun(() -> {
+                var script = model.project.lastSelectedScript;
+                unobserve();
+                if (script != null) {
+                    item.field = EntityFieldUtils.createEditableScriptIdField(script);
+                }
+            });
+            form.add(item);
+        })();
+
+        autorun(function() {
+            var active = model.project.lastSelectedScript != null;
             title.active = active;
             form.active = active;
         });
@@ -208,8 +239,15 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
         });
         container.add(button);
 
+        var button = new Button();
+        button.content = 'Add script';
+        button.onClick(this, function() {
+            model.project.selectedScript = model.project.addScript();
+        });
+        container.add(button);
+
         autorun(function() {
-            separator.active = model.project.fragments.length > 0;
+            separator.active = model.project.editables.length > 0;
         });
 
     }

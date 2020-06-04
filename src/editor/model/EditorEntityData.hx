@@ -115,7 +115,8 @@ class EditorEntityData extends Model {
 
         json.props = {};
         for (key in props.keys()) {
-            Reflect.setField(json.props, key, props.get(key));
+            var propValue = props.get(key);
+            Reflect.setField(json.props, key, propValue);
         }
 
         return json;

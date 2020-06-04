@@ -59,18 +59,34 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
             if (editable == null)
                 return;
 
-            cell.selected = (cell.itemIndex == project.selectedEditableIndex);
+            var selected = (cell.itemIndex == project.selectedEditableIndex);
 
             if (Std.is(editable, EditorFragmentData)) {
                 var fragment:EditorFragmentData = cast editable;
                 var bundle = fragment.bundle;
+
+                if (!selected && project.lastSelectedFragment == fragment) {
+                    selected = true;
+                }
     
                 cell.title = fragment.fragmentId;
                 cell.subTitle = bundle != null ? bundle + '.fragments' : project.defaultBundle + '.fragments';
             }
+            else if (Std.is(editable, EditorScriptData)) {
+                var script:EditorScriptData = cast editable;
+
+                if (!selected && project.lastSelectedScript == script) {
+                    selected = true;
+                }
+
+                cell.title = script.scriptId;
+                cell.subTitle = 'script';
+            }
             else if (Std.is(editable, EditorTilemapData)) {
                 // TODO
             }
+
+            cell.selected = selected;
 
         });
 
@@ -79,9 +95,49 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
         click.onClick(cell, function() {
 
             if (model.project.selectedEditableIndex != cell.itemIndex) {
-                model.project.selectedEditableIndex = cell.itemIndex;
+
+                var editable = model.project.editables[cell.itemIndex];
+                if (Std.is(editable, EditorFragmentData)) {
+                    var fragment:EditorFragmentData = cast editable;
+                    if (model.project.lastSelectedFragment == fragment) {
+                        model.project.selectedEditableIndex = -1;
+                        model.project.selectedFragment = null;
+                    }
+                    else {
+                        model.project.selectedEditableIndex = cell.itemIndex;
+                        model.project.selectedFragment = fragment;
+                    }
+                }
+                else if (Std.is(editable, EditorScriptData)) {
+                    var script:EditorScriptData = cast editable;
+                    if (model.project.lastSelectedScript == script) {
+                        model.project.selectedEditableIndex = -1;
+                        model.project.selectedScript = null;
+                    }
+                    else {
+                        model.project.selectedEditableIndex = cell.itemIndex;
+                        model.project.selectedScript = script;
+                    }
+                }
+                else if (Std.is(editable, EditorTilemapData)) {
+                    // TODO
+                }
+
             }
             else {
+
+                var editable = model.project.editables[cell.itemIndex];
+                if (Std.is(editable, EditorFragmentData)) {
+                    model.project.selectedFragment = null;
+                }
+                else if (Std.is(editable, EditorScriptData)) {
+                    var script:EditorScriptData = cast editable;
+                    model.project.selectedScript = null;
+                }
+                else if (Std.is(editable, EditorTilemapData)) {
+                    // TODO
+                }
+
                 model.project.selectedEditableIndex = -1;
             }
 

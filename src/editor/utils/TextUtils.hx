@@ -47,6 +47,24 @@ class TextUtils {
         }
     }
 
+    public static function compareStringFirstEntries(aArray:Array<Dynamic>, bArray:Array<Dynamic>) {
+        var a:String = aArray[0];
+        var b:String = bArray[0];
+
+        a = a.toUpperCase();
+        b = b.toUpperCase();
+      
+        if (a < b) {
+          return -1;
+        }
+        else if (a > b) {
+          return 1;
+        }
+        else {
+          return 0;
+        }
+    }
+
     /** Transforms `SOME_IDENTIFIER` to `SomeIdentifier` */
     public static function upperCaseToCamelCase(input:String, firstLetterUppercase:Bool = true, ?between:String):String {
 

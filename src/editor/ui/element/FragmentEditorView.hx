@@ -1,14 +1,16 @@
 package editor.ui.element;
 
-class FragmentEditorView extends View {
+class FragmentEditorView extends View implements Observable {
 
     @observe var prevSelectedFragment:EditorFragmentData = null;
+
+    @observe public var selectedFragment:EditorFragmentData = null;
 
     public var fragmentOverlay(default, null):Quad;
 
     var editedFragment:Fragment = null;
 
-    var fragmentTitleText:TextView;
+    var titleText:TextView;
 
     var headerView:RowLayout;
 
@@ -34,13 +36,13 @@ class FragmentEditorView extends View {
         headerView.padding(0, 6);
         headerView.depth = 2;
         {
-            fragmentTitleText = new TextView();
-            fragmentTitleText.viewSize(fill(), fill());
-            fragmentTitleText.align = CENTER;
-            fragmentTitleText.verticalAlign = CENTER;
-            fragmentTitleText.preRenderedSize = 20;
-            fragmentTitleText.pointSize = 13;
-            headerView.add(fragmentTitleText);
+            titleText = new TextView();
+            titleText.viewSize(fill(), fill());
+            titleText.align = CENTER;
+            titleText.verticalAlign = CENTER;
+            titleText.preRenderedSize = 20;
+            titleText.pointSize = 13;
+            headerView.add(titleText);
         }
         add(headerView);
 
@@ -61,21 +63,32 @@ class FragmentEditorView extends View {
 
     }
 
+    public function getEntity(entityId:String):Null<Entity> {
+
+        var editedFragment = this.editedFragment;
+
+        if (editedFragment == null)
+            return null;
+
+        return editedFragment.get(entityId);
+
+    }
+
     function updateEditedFragment() {
 
-        var selectedFragment = model.project.selectedFragment;
+        var selectedFragment = this.selectedFragment;
 
         if (selectedFragment == null) {
             unobserve();
             editedFragment.active = false;
             editedFragment.fragmentData = null;
-            fragmentTitleText.content = '';
+            titleText.content = '';
             reobserve();
         }
         else {
             var copied = Reflect.copy(selectedFragment.fragmentDataWithoutItems);
             unobserve();
-            fragmentTitleText.content = selectedFragment.fragmentId;
+            titleText.content = selectedFragment.fragmentId;
             if (prevSelectedFragment != selectedFragment) {
                 trace('this is a new fragment being loaded, reset items');
                 copied.items = [];
@@ -94,7 +107,7 @@ class FragmentEditorView extends View {
         if (model.loading > 0)
             return;
 
-        var selectedFragment = model.project.selectedFragment;
+        var selectedFragment = this.selectedFragment;
         var prevSelectedFragment = this.prevSelectedFragment; // Used for invalidation
 
         unobserve();
@@ -154,7 +167,7 @@ class FragmentEditorView extends View {
         log.debug('ITEM UPDATED: ${fragmentItem.id} w=${fragmentItem.props.width} h=${fragmentItem.props.height}');
         #end
 
-        var item = model.project.selectedFragment.get(fragmentItem.id);
+        var item = this.selectedFragment.get(fragmentItem.id);
 
         var props = fragmentItem.props;
         if (item != null && props != null) {
@@ -162,8 +175,12 @@ class FragmentEditorView extends View {
                 var value = Reflect.field(props, key);
 
                 unobserve();
-                if (item.typeOfProp(key) == 'ceramic.FragmentData') {
+                var propType = item.typeOfProp(key);
+                if (propType == 'ceramic.FragmentData') {
                     item.props.set(key, value != null ? value.id : null);
+                }
+                else if (propType == 'ceramic.ScriptContent') {
+                    // Nothing to do here
                 }
                 else {
                     item.props.set(key, value);
@@ -176,14 +193,14 @@ class FragmentEditorView extends View {
 
     function deselectItems() {
 
-        if (model.project.selectedFragment != null)
-            model.project.selectedFragment.selectedItem = null;
+        if (this.selectedFragment != null)
+            this.selectedFragment.selectedItem = null;
 
     }
 
     function updateSelectedEditable(runAfterUpdate:Bool) {
 
-        var selectedFragment = model.project.selectedFragment;
+        var selectedFragment = this.selectedFragment;
         var selectedVisual = selectedFragment != null ? selectedFragment.selectedVisual : null;
         var items = editedFragment.items;
 
@@ -230,7 +247,7 @@ class FragmentEditorView extends View {
 
         editable.onSelect(this, function(visual, fromPointer) {
             
-            var fragmentData = model.project.selectedFragment;
+            var fragmentData = this.selectedFragment;
             var entityData = fragmentData.get(visual.id);
             fragmentData.selectedItem = entityData;
 
@@ -245,7 +262,7 @@ class FragmentEditorView extends View {
 
         editable.onChange(this, function(visual, changed) {
 
-            var fragmentData = model.project.selectedFragment;
+            var fragmentData = this.selectedFragment;
             var entityData = fragmentData.get(visual.id);
             if (entityData != null) {
                 for (key in Reflect.fields(changed)) {
@@ -302,9 +319,29 @@ class FragmentEditorView extends View {
         headerView.borderBottomColor = theme.darkBorderColor;
         headerView.borderPosition = INSIDE;
 
-        fragmentTitleText.color = theme.lightTextColor;
-        fragmentTitleText.font = theme.boldFont;
+        titleText.color = theme.lightTextColor;
+        titleText.font = theme.boldFont;
 
+    }
+
+    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float):Bool {
+
+        if (!hits(x, y)) {
+            return true;
+        }
+
+        return false;
+        
+    }
+
+    override function interceptPointerOver(hittingVisual:Visual, x:Float, y:Float):Bool {
+
+        if (!hits(x, y)) {
+            return true;
+        }
+
+        return false;
+        
     }
 
 }
