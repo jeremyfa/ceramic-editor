@@ -41,6 +41,8 @@ class EditorData extends Model {
 
     @observe public var statusMessage(default, null):String = null;
 
+    @observe public var statusColor(default, null):Color = Color.WHITE;
+
     @observe public var loading(default, null):Int = 0;
 
     @observe public var location:EditorLocation = DEFAULT;
@@ -78,22 +80,33 @@ class EditorData extends Model {
             autorun(updateScripts);
         });
 
+        Script.errorHandlers.push(handleScriptError);
+
     }
 
     override function destroy() {
 
         super.destroy();
 
+        Script.errorHandlers.remove(handleScriptError);
+
         trace('MODEL DESTROY');
         
     }
 
-    public function status(message:String, duration:Float = 60) {
+    function handleScriptError(error:String, line:Int, char:Int) {
+
+        status(error, Color.RED);
+
+    }
+
+    public function status(message:String, color:Color = Color.WHITE, duration:Float = 60) {
 
         if (clearStatusMessageDelay != null) {
             clearStatusMessageDelay();
         }
 
+        this.statusColor = color;
         this.statusMessage = message;
 
         clearStatusMessageDelay = Timer.delay(this, duration, () -> {

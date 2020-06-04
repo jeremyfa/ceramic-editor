@@ -138,8 +138,10 @@ class EditorView extends View implements Observable {
         statusText.depth = 7;
         statusText.autorun(() -> {
             var message = model.statusMessage;
+            var color = model.statusColor;
             unobserve();
             statusText.content = message != null ? message : '';
+            statusText.textColor = color;
         });
         bottomBar.add(statusText);
 
@@ -285,7 +287,7 @@ class EditorView extends View implements Observable {
 
     function updateTabs() {
 
-        var selectedFragment = model.project.selectedFragment;
+        var selectedFragment = model.project.lastSelectedFragment;
         unobserve();
 
         // Keep selected tab name
@@ -295,7 +297,7 @@ class EditorView extends View implements Observable {
             panelTabsView.tabViews.tabs = ['Editables'];
         }
         else {
-            panelTabsView.tabViews.tabs = ['Visuals', 'Editables'];
+            panelTabsView.tabViews.tabs = ['Entities', 'Editables'];
         }
 
         // Restore selected tab name on new tab list
@@ -354,7 +356,7 @@ class EditorView extends View implements Observable {
         unobserve();
 
         var contentViewClass:Class<View> = switch (selectedName) {
-            case 'Visuals': VisualsPanelView;
+            case 'Entities': VisualsPanelView;
             case 'Editables': EditableElementsPanelView;
             //case 'Assets': null;
             default: null;
@@ -454,7 +456,7 @@ class EditorView extends View implements Observable {
     function handleKeyDown(key:Key) {
 
         if (key.scanCode == ScanCode.BACKSPACE) {
-            var fragment = model.project.selectedFragment;
+            var fragment = model.project.lastSelectedFragment;
             if (fragment != null) {
                 var selectedItem = getSelectedItemIfFocusedInFragment();
                 if (selectedItem != null) {
@@ -471,13 +473,16 @@ class EditorView extends View implements Observable {
 
     function getSelectedItemIfFocusedInFragment():Null<EditorEntityData> {
 
-        var fragment = model.project.selectedFragment;
+        var fragment = model.project.lastSelectedFragment;
 
         if (fragment != null) {
             var selectedItem = fragment.selectedItem;
             if (selectedItem != null) {
-                if (FieldManager.manager.focusedField == null && popup.contentView == null) {
-                    return selectedItem;
+                if (FieldManager.manager.focusedField == null && popup.contentView == null && screen.focusedVisual != null) {
+                    var selectedTab = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
+                    if (selectedTab == 'Entities' || (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentEditorView))) {
+                        return selectedItem;
+                    }
                 }
             }
         }

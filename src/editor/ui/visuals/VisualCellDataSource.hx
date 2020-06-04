@@ -77,6 +77,10 @@ class VisualCellDataSource implements CollectionViewDataSource {
 
         });
 
+        cell.handleTrash = function() {
+            trace('TRASH!');
+        };
+
     }
 
 }

@@ -253,7 +253,7 @@ class FragmentEditorView extends View implements Observable {
 
             if (fromPointer) {
                 // Ensure we are on Visuals tab
-                var selectedIndex = editorView.panelTabsView.tabViews.tabs.indexOf('Visuals');
+                var selectedIndex = editorView.panelTabsView.tabViews.tabs.indexOf('Entities');
                 if (selectedIndex != -1)
                     editorView.panelTabsView.tabViews.selectedIndex = selectedIndex;
             }

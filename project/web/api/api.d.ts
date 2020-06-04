@@ -448,6 +448,7 @@ class Visual extends Entity {
      * @param step the depth step to use when increment depth for each child
      */
     autoChildrenDepth(start?: Float, step?: Float): Void;
+    hasIndirectParent(targetParent: Visual): Bool;
     add(visual: Visual): Void;
     remove(visual: Visual): Void;
     /** Returns `true` if the current visual contains this child.

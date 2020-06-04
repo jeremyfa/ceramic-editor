@@ -2,7 +2,7 @@ package editor.ui.element;
 
 using StringTools;
 
-class CellView extends LinearLayout implements Observable {
+class CellView extends LayersLayout implements Observable {
 
 /// Public properties
 
@@ -20,6 +20,8 @@ class CellView extends LinearLayout implements Observable {
 
     @observe public var displaysEmptyValue:Bool = false;
 
+    @observe public var handleTrash:Void->Void = null;
+
 /// Internal
 
     var titleTextView:TextView;
@@ -27,6 +29,8 @@ class CellView extends LinearLayout implements Observable {
     var subTitleTextView:TextView;
 
     var clearScrollDelay:Void->Void = null;
+
+    var columnLayout:ColumnLayout;
 
     @observe var hover:Bool = false;
 
@@ -38,10 +42,13 @@ class CellView extends LinearLayout implements Observable {
 
         super();
 
-        direction = VERTICAL;
-        align = CENTER;
+        columnLayout = new ColumnLayout();
+        columnLayout.align = CENTER;
+        columnLayout.itemSpacing = 1;
+        columnLayout.viewSize(fill(), auto());
+        add(columnLayout);
+
         borderBottomSize = 1;
-        itemSpacing = 1;
         borderPosition = INSIDE;
         transparent = false;
         
@@ -50,7 +57,7 @@ class CellView extends LinearLayout implements Observable {
         titleTextView.pointSize = 12;
         titleTextView.preRenderedSize = 20;
         titleTextView.viewSize(fill(), auto());
-        add(titleTextView);
+        columnLayout.add(titleTextView);
         
         subTitleTextView = new TextView();
         subTitleTextView.align = LEFT;
@@ -59,11 +66,12 @@ class CellView extends LinearLayout implements Observable {
         subTitleTextView.paddingLeft = 1;
         subTitleTextView.viewSize(fill(), auto());
         subTitleTextView.text.component('italicText', new ItalicText());
-        add(subTitleTextView);
+        columnLayout.add(subTitleTextView);
 
         autorun(updateTitle);
         autorun(updateSubTitle);
         autorun(updateStyle);
+        autorun(updateIcons);
 
         onPointerOver(this, function(_) hover = true);
         onPointerOut(this, function(_) hover = false);
@@ -102,13 +110,25 @@ class CellView extends LinearLayout implements Observable {
 
     }
 
+    function updateIcons() {
+
+        var displayTrash = handleTrash != null;
+
+        unobserve();
+
+        //
+
+        reobserve();
+
+    }
+
     function updateStyle() {
 
         if (inputStyle) {
-            padding(0, 6);
+            columnLayout.padding(6, 6);
         }
         else {
-            padding(0, 8);
+            columnLayout.padding(8, 8);
         }
 
         if (selected) {
