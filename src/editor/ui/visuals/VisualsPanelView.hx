@@ -34,7 +34,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
         var prevLength = 0;
         autorun(function() {
-            var length = model.project.selectedFragment != null ? model.project.selectedFragment.visuals.length : 0;
+            var length = model.project.lastSelectedFragment != null ? model.project.lastSelectedFragment.visuals.length : 0;
             if (length != prevLength) {
                 var scrollToBottom = prevLength > 0 && length > prevLength;
 
@@ -61,14 +61,14 @@ class VisualsPanelView extends LinearLayout implements Observable {
         });
 
         autorun(function() {
-            var active = model.project.selectedFragment != null && model.project.selectedFragment.visuals.length > 0;
+            var active = model.project.lastSelectedFragment != null && model.project.lastSelectedFragment.visuals.length > 0;
             title.active = active;
             collectionView.active = active;
         });
 
         var prevSelectedVisualIndex = -1;
         autorun(function() {
-            var selectedFragment = model.project.selectedFragment;
+            var selectedFragment = model.project.lastSelectedFragment;
             var selectedVisualIndex = selectedFragment != null ? selectedFragment.selectedVisualIndex : -1;
             unobserve();
             if (selectedVisualIndex != prevSelectedVisualIndex) {
@@ -93,7 +93,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
 
     function scrollToSelectedVisual(collectionView:CollectionView) {
 
-        var selectedFragment = model.project.selectedFragment;
+        var selectedFragment = model.project.lastSelectedFragment;
         var selectedVisualIndex = selectedFragment != null ? selectedFragment.selectedVisualIndex : -1;
         if (selectedVisualIndex != -1) {
             collectionView.scrollToItem(selectedVisualIndex);
@@ -146,15 +146,23 @@ class VisualsPanelView extends LinearLayout implements Observable {
         layers.add(scroll);
         add(layers);
 
+        var prevSelectedVisual = null;
         autorun(function() {
-            var active = model.project.selectedFragment != null && model.project.selectedFragment.selectedVisual != null;
+            var active = model.project.lastSelectedFragment != null && model.project.lastSelectedFragment.selectedVisual != null;
+            var visual = active ? model.project.lastSelectedFragment.selectedVisual : null;
+
+            // Needed when changing depth, triggering list sorting and invalidation
+            if (visual == prevSelectedVisual)
+                return;
+
+            prevSelectedVisual = visual;
+
             title.active = active;
             layers.active = active;
             form.clear();
             scroll.scroller.scrollTo(scroll.scroller.scrollX, 0);
 
             if (active) {
-                var visual = model.project.selectedFragment.selectedVisual;
                 var entityClass = visual.entityClass;
                 unobserve();
                 fillVisualForm(form, visual);
@@ -324,13 +332,13 @@ class VisualsPanelView extends LinearLayout implements Observable {
             choices.sort(TextUtils.compareStrings);
             Choice.choose('Add visual', choices, true, (index, text) -> {
                 log.debug('ADD VISUAL ' + choices[index]);
-                model.project.selectedFragment.selectedVisual = model.project.selectedFragment.addVisual(choices[index]);
+                model.project.lastSelectedFragment.selectedVisual = model.project.lastSelectedFragment.addVisual(choices[index]);
             });
         });
         container.add(button);
 
         autorun(function() {
-            separator.active = model.project.selectedFragment != null && model.project.selectedFragment.visuals.length > 0;
+            separator.active = model.project.lastSelectedFragment != null && model.project.lastSelectedFragment.visuals.length > 0;
         });
 
     }

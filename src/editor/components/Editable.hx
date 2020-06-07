@@ -321,6 +321,7 @@ class Editable extends Entity implements Component implements Observable {
             [-1, 0],
             [-1, 1]
         ];
+        var resizeTests = scaleTests;
         var rotateTests = [
             1,
             0,
@@ -365,6 +366,22 @@ class Editable extends Entity implements Component implements Observable {
         var startScaleY = entity.scaleY;
         var startSkewX = entity.skewX;
         var startSkewY = entity.skewY;
+        
+        var startWidth = entity.width;
+        var startHeight = entity.height;
+
+        var entityOptions = EntityOptions.get(entity);
+        
+        var resizeInsteadOfScale = false;
+        if (entityOptions.highlightResizeInsteadOfScale) {
+            resizeInsteadOfScale = true;
+        }
+        else if (entityOptions.highlightResizeInsteadOfScaleIfNull != null) {
+            resizeInsteadOfScale = Reflect.getProperty(entity, entityOptions.highlightResizeInsteadOfScaleIfNull) == null;
+        }
+        else if (entityOptions.highlightResizeInsteadOfScaleIfFalse != null) {
+            resizeInsteadOfScale = Reflect.getProperty(entity, entityOptions.highlightResizeInsteadOfScaleIfFalse) == false;
+        }
 
         entity.anchorKeepPosition(tmpAnchorX, tmpAnchorY);
 
@@ -389,6 +406,10 @@ class Editable extends Entity implements Component implements Observable {
                 entity.scaleY = startScaleY;
                 entity.rotation = startRotation;
                 entity.skewY = startSkewY;
+                if (resizeInsteadOfScale) {
+                    entity.width = startWidth;
+                    entity.height = startHeight;
+                }
 
                 while (n++ < 100) {
 
@@ -444,6 +465,10 @@ class Editable extends Entity implements Component implements Observable {
                 entity.scaleY = startScaleY;
                 entity.rotation = startRotation;
                 entity.skewX = startSkewX;
+                if (resizeInsteadOfScale) {
+                    entity.width = startWidth;
+                    entity.height = startHeight;
+                }
 
                 while (n++ < 100) {
 
@@ -499,6 +524,10 @@ class Editable extends Entity implements Component implements Observable {
                 entity.scaleY = startScaleY;
                 entity.skewX = startSkewX;
                 entity.skewY = startSkewY;
+                if (resizeInsteadOfScale) {
+                    entity.width = startWidth;
+                    entity.height = startHeight;
+                }
 
                 while (n++ < 100) {
 
@@ -554,6 +583,9 @@ class Editable extends Entity implements Component implements Observable {
                 entity.skewX = startSkewX;
                 entity.skewY = startSkewY;
                 entity.scaleY = startScaleY;
+                if (resizeInsteadOfScale) {
+                    entity.height = startHeight;
+                }
 
                 while (n++ < 100) {
 
@@ -611,6 +643,9 @@ class Editable extends Entity implements Component implements Observable {
                 entity.skewX = startSkewX;
                 entity.skewY = startSkewY;
                 entity.scaleX = startScaleX;
+                if (resizeInsteadOfScale) {
+                    entity.width = startWidth;
+                }
 
                 while (n++ < 100) {
 
@@ -656,6 +691,80 @@ class Editable extends Entity implements Component implements Observable {
                     wrapVisual(entity);
                 }
 
+            }
+            else if (resizeInsteadOfScale) {
+                // Size
+                var sizeStep = 16.0;
+                var n = 0;
+                var best = -1;
+
+                // Put other values as started
+                entity.rotation = startRotation;
+                entity.skewX = startSkewX;
+                entity.skewY = startSkewY;
+
+                while (n++ < 100) {
+
+                    // Scale the visual to make the corner point closer
+                    best = -1;
+                    var width = entity.width;
+                    var height = entity.height;
+                    var bestWidth = width;
+                    var bestHeight = height;
+                    var bestDistance = distanceMain();
+
+                    for (i in 0...resizeTests.length) {
+                        var test = resizeTests[i];
+
+                        var newWidth = width + switch(test[0]) {
+                            case 1: sizeStep;
+                            case -1: -sizeStep;
+                            default: 0;
+                        }
+                        var newHeight = height + switch(test[1]) {
+                            case 1: sizeStep;
+                            case -1: -sizeStep;
+                            default: 0;
+                        }
+
+                        entity.width = newWidth;
+                        entity.height = newHeight;
+                        wrapVisual(entity);
+
+                        // Is it better?
+                        var dist = distanceMain();
+                        if (dist < bestDistance) {
+                            bestDistance = dist;
+                            best = i;
+                            bestWidth = entity.width;
+                            bestHeight = entity.height;
+                        }
+                    }
+
+                    // Apply best transform
+                    entity.width = bestWidth;
+                    entity.height = bestHeight;
+                    wrapVisual(entity);
+
+                    if (best == -1) {
+                        sizeStep *= 0.9;
+                    }
+                }
+
+                // Round size?
+                if (sKeyPressed) {
+                    entity.width = Math.round(entity.width / 10) * 10;
+                    entity.height = Math.round(entity.height / 10) * 10;
+                    wrapVisual(entity);
+                }
+
+                // Keep aspect ratio?
+                if (shiftPressed && startWidth != 0) {
+                    var bestWidth = entity.width;
+                    entity.width = bestWidth;
+                    entity.height = (bestWidth / startWidth) * startHeight;
+                    wrapVisual(entity);
+                }
             }
             else {
                 // Scale
@@ -745,6 +854,10 @@ class Editable extends Entity implements Component implements Observable {
             entity.y = Math.round(entity.y);
             entity.scaleX = Math.round(entity.scaleX * 1000) / 1000.0;
             entity.scaleY = Math.round(entity.scaleY * 1000) / 1000.0;
+            if (resizeInsteadOfScale) {
+                entity.width = Math.round(entity.width);
+                entity.height = Math.round(entity.height);
+            }
             var skewX = entity.skewX;
             while (skewX <= -360) skewX += 360;
             while (skewX >= 360) skewX -= 360;
@@ -758,15 +871,28 @@ class Editable extends Entity implements Component implements Observable {
             while (rotation >= 360) rotation -= 360;
             entity.rotation = Math.round(rotation * 100) / 100.0;
 
-            emitChange(entity, {
-                x: entity.x,
-                y: entity.y,
-                scaleX: entity.scaleX,
-                scaleY: entity.scaleY,
-                skewX: entity.skewX,
-                skewY: entity.skewY,
-                rotation: entity.rotation
-            });
+            if (resizeInsteadOfScale) {
+                emitChange(entity, {
+                    x: entity.x,
+                    y: entity.y,
+                    width: entity.width,
+                    height: entity.height,
+                    skewX: entity.skewX,
+                    skewY: entity.skewY,
+                    rotation: entity.rotation
+                });
+            }
+            else {
+                emitChange(entity, {
+                    x: entity.x,
+                    y: entity.y,
+                    scaleX: entity.scaleX,
+                    scaleY: entity.scaleY,
+                    skewX: entity.skewX,
+                    skewY: entity.skewY,
+                    rotation: entity.rotation
+                });
+            }
 
         });
 
@@ -1116,7 +1242,7 @@ class Editable extends Entity implements Component implements Observable {
                 var handle0 = pointHandles[i];
                 var handle1 = pointHandles[i == pointHandles.length - 1 ? 0 : i + 1];
                 var dist = segmentDist(_point.x, _point.y, handle0.x, handle0.y, handle1.x, handle1.y);
-                if (bestDistance > dist) {
+                if (bestDistance >= dist) {
                     bestDistance = dist;
                     bestIndex = i;
                 }

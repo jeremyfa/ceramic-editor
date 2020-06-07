@@ -92,10 +92,10 @@ class EditorEntityProps extends Model {
     public function set(key:String, value:Dynamic):Void {
 
         unobserve();
-        var shouldScheduleStep = false;
+        var valueHasChanged = false;
         var prevValue = get(key);
         if (prevValue != value)
-            shouldScheduleStep = true;
+            valueHasChanged = true;
 
         // TODO cache?
         var editableType = editor.getEditableType(entityData.entityClass);
@@ -120,7 +120,14 @@ class EditorEntityProps extends Model {
             invalidateValues();
         }
 
-        if (shouldScheduleStep) {
+        unobserve();
+        if (valueHasChanged && key == 'depth' && Std.is(entityData, EditorVisualData)) {
+            var visualData:EditorVisualData = cast entityData;
+            visualData.depthDidChange();
+        }
+        reobserve();
+
+        if (valueHasChanged) {
             unobserve();
             model.history.step();
             reobserve();
@@ -176,6 +183,12 @@ class EditorEntityProps extends Model {
                 else if (editableMeta[0].implicitSizeUnlessNull != null) {
                     var field:String = editableMeta[0].implicitSizeUnlessNull;
                     if (get(field) != null) {
+                        return true;
+                    }
+                }
+                else if (editableMeta[0].implicitSizeUnlessTrue != null) {
+                    var field:String = editableMeta[0].implicitSizeUnlessTrue;
+                    if (get(field) != true) {
                         return true;
                     }
                 }

@@ -9,7 +9,7 @@ class VisualCellDataSource implements CollectionViewDataSource {
     /** Get the number of elements. */
     public function collectionViewSize(collectionView:CollectionView):Int {
 
-        return model.project.selectedFragment != null ? model.project.selectedFragment.visuals.length : 0;
+        return model.project.lastSelectedFragment != null ? model.project.lastSelectedFragment.visuals.length : 0;
 
     }
 
@@ -54,13 +54,13 @@ class VisualCellDataSource implements CollectionViewDataSource {
 
         cell.autorun(function() {
 
-            var visualData = model.project.selectedFragment.visuals[cell.itemIndex];
+            var visualData = model.project.lastSelectedFragment.visuals[cell.itemIndex];
             if (visualData == null)
                 return;
 
             cell.title = visualData.entityId;
             cell.subTitle = visualData.entityClass;
-            cell.selected = (cell.itemIndex == model.project.selectedFragment.selectedVisualIndex);
+            cell.selected = (cell.itemIndex == model.project.lastSelectedFragment.selectedVisualIndex);
 
         });
 
@@ -68,18 +68,44 @@ class VisualCellDataSource implements CollectionViewDataSource {
         cell.component('click', click);
         click.onClick(cell, function() {
 
-            if (model.project.selectedFragment.selectedVisualIndex != cell.itemIndex) {
-                model.project.selectedFragment.selectedVisualIndex = cell.itemIndex;
+            if (model.project.lastSelectedFragment.selectedVisualIndex != cell.itemIndex) {
+                model.project.lastSelectedFragment.selectedVisualIndex = cell.itemIndex;
             }
             else {
-                model.project.selectedFragment.selectedVisualIndex = -1;
+                model.project.lastSelectedFragment.selectedVisualIndex = -1;
             }
 
         });
 
+        CellDragDrop.bindCellDragDrop(cell, click);
+
         cell.handleTrash = function() {
-            trace('TRASH!');
+            var visualData = model.project.lastSelectedFragment.visuals[cell.itemIndex];
+            if (visualData == null)
+                return;
+            model.project.lastSelectedFragment.removeItem(visualData);
         };
+
+        cell.locked = false;
+        cell.handleLock = function() {
+            cell.locked = !cell.locked;
+        };
+
+        /*
+        cell.handleUp = function() {
+            var visualData = model.project.lastSelectedFragment.visuals[cell.itemIndex];
+            if (visualData == null)
+                return;
+            model.project.lastSelectedFragment.moveVisualUpInList(visualData);
+        };
+
+        cell.handleDown = function() {
+            var visualData = model.project.lastSelectedFragment.visuals[cell.itemIndex];
+            if (visualData == null)
+                return;
+            model.project.lastSelectedFragment.moveVisualDownInList(visualData);
+        };
+        */
 
     }
 

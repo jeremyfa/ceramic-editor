@@ -1,5 +1,7 @@
 package editor.model;
 
+import haxe.ds.ArraySort;
+
 class EditorFragmentData extends EditorEditableElementData {
 
 /// Main data
@@ -34,6 +36,8 @@ class EditorFragmentData extends EditorEditableElementData {
     @serialize public var selectedItemIndex:Int = -1;
 
     @serialize public var fragmentComponents:Map<String, String> = new Map();
+
+    var lockSortItems:Bool = false;
 
     public var selectedItem(get,set):EditorEntityData;
     function get_selectedItem():EditorEntityData {
@@ -283,7 +287,7 @@ class EditorFragmentData extends EditorEditableElementData {
 
         var items = [].concat(this.items.mutable);
         items.push(visual);
-        this.items = cast items;
+        this.items = cast sortItemsArray(items);
 
         model.history.step();
 
@@ -315,7 +319,7 @@ class EditorFragmentData extends EditorEditableElementData {
 
         var items = [].concat(this.items.mutable);
         items.push(entityData);
-        this.items = cast items;
+        this.items = cast sortItemsArray(items);
 
     }
 
@@ -494,6 +498,149 @@ class EditorFragmentData extends EditorEditableElementData {
         }
         
         json.selectedItemIndex = selectedItemIndex;
+
+    }
+
+    public function moveVisualUpInList(visual:EditorVisualData) {
+
+        var items = this.items;
+
+        var visualDepth:Float = visual.props.get('depth');
+
+        lockSortItems = true;
+
+        var visualIndex = items.indexOf(visual);
+        if (visualIndex > 0) {
+            var i = visualIndex - 1;
+            while (i >= 0) {
+                var entity = items[i];
+                if (Std.is(entity, EditorVisualData)) {
+                    var aVisual:EditorVisualData = cast entity;
+                    var aVisualDepth:Float = aVisual.props.get('depth');
+                    if (aVisualDepth < visualDepth) {
+                        aVisual.props.set('depth', visualDepth);
+                        visual.props.set('depth', aVisualDepth);
+                    }
+                    else {
+                        visual.props.set('depth', aVisualDepth - 0.001);
+                    }
+                    break;
+                }
+                i--;
+            }
+        }
+
+        lockSortItems = false;
+
+        normalizeVisualsDepth();
+
+    }
+
+    public function moveVisualDownInList(visual:EditorVisualData) {
+
+        var items = this.items;
+
+        var visualDepth:Float = visual.props.get('depth');
+
+        lockSortItems = true;
+
+        var visualIndex = items.indexOf(visual);
+        if (visualIndex < items.length - 1) {
+            var i = visualIndex + 1;
+            while (i < items.length) {
+                var entity = items[i];
+                if (Std.is(entity, EditorVisualData)) {
+                    var aVisual:EditorVisualData = cast entity;
+                    var aVisualDepth:Float = aVisual.props.get('depth');
+                    if (aVisualDepth > visualDepth) {
+                        aVisual.props.set('depth', visualDepth);
+                        visual.props.set('depth', aVisualDepth);
+                    }
+                    else {
+                        visual.props.set('depth', aVisualDepth + 0.001);
+                    }
+                    break;
+                }
+                i++;
+            }
+        }
+
+        lockSortItems = false;
+
+        normalizeVisualsDepth();
+
+    }
+
+    public function normalizeVisualsDepth() {
+
+        sortItems();
+
+        lockSortItems = true;
+
+        var startDepth:Float = 1;
+        var itemsCopy = [].concat(this.items.mutable);
+        for (item in itemsCopy) {
+            if (Std.is(item, EditorVisualData)) {
+                item.props.set('depth', startDepth++);
+            }
+        }
+
+        lockSortItems = false;
+
+    }
+
+    public function sortItems() {
+
+        if (lockSortItems)
+            return;
+
+        var prevSelectedItem = this.selectedItem;
+
+        var newItems = [].concat(this.items.mutable);
+        this.items = cast sortItemsArray(newItems);
+
+        this.selectedItem = prevSelectedItem;
+
+    }
+
+    static function sortItemsArray(items:Array<EditorEntityData>):Array<EditorEntityData> {
+
+        ArraySort.sort(items, compareItems);
+        return items;
+
+    }
+
+    static function compareItems(itemA:EditorEntityData, itemB:EditorEntityData) {
+        
+        var isVisualA = Std.is(itemA, EditorVisualData);
+        var isVisualB = Std.is(itemB, EditorVisualData);
+
+        if (isVisualA && isVisualB) {
+            var depthA:Float = 1.0 * itemA.props.get('depth');
+            var depthB:Float = 1.0 * itemB.props.get('depth');
+            trace('compare visuals ${itemA.entityId}=$depthA ${itemB.entityId}=$depthB');
+            if (depthA > depthB)
+                return 1;
+            else if (depthA < depthB)
+                return -1;
+            else
+                return TextUtils.compareStrings(itemA.entityId, itemB.entityId);
+        }
+        else {
+            trace('compare anything');
+            if (isVisualA) {
+                return 1;
+            }
+            else if (isVisualB) {
+                return -1;
+            }
+            else if (itemA.entityClass != itemB.entityClass) {
+                return TextUtils.compareStrings(itemA.entityClass, itemB.entityClass);
+            }
+            else {
+                return TextUtils.compareStrings(itemA.entityId, itemB.entityId);
+            }
+        }
 
     }
 

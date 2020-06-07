@@ -68,6 +68,9 @@ class Tooltip extends Visual implements Component implements Observable {
         active = false;
 
         entity.onPointerOver(this, _ -> {
+            if (screen.isPointerDown)
+                return;
+            
             active = true;
 
             var gap = 24;

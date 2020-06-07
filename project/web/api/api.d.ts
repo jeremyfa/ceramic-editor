@@ -6,7 +6,7 @@ type String = string;
 type Dynamic = any;
 type Void = void;
 
-function trace(str: String): Void;
+function trace(msg: any): Void;
 
 const self: Entity;
 const entity: Entity;
@@ -205,13 +205,15 @@ class EventDispatcher {
 
 /** Fire and listen to dynamic events. Works similarly to static events, but dynamic.
     If you can know the event names at compile time, using static events (`@event function myEvent();`) is preferred. */
-class DynamicEvents<T> extends Entity {
+class DynamicEvents<T> extends Entity implements Component {
     constructor();
     emit(event: T, args?: Array<Dynamic>?): Void;
     on(event: T, owner: Entity?, cb: Dynamic): Void;
     once(event: T, owner: Entity?, cb: Dynamic): Void;
     off(event: T, cb?: Dynamic?): Void;
     listens(event: T): Bool;
+    entity: Entity;
+    initializerName: String;
 }
 
 class Autorun extends Entity {
@@ -449,6 +451,7 @@ class Visual extends Entity {
      */
     autoChildrenDepth(start?: Float, step?: Float): Void;
     hasIndirectParent(targetParent: Visual): Bool;
+    firstParentWithClass<T>(clazz: Class<T>): T;
     add(visual: Visual): Void;
     remove(visual: Visual): Void;
     /** Returns `true` if the current visual contains this child.
@@ -3078,6 +3081,7 @@ type LineCap = polyline.StrokeCap;
 /** Display lines composed of multiple segments, curves... */
 class Line extends Mesh {
     constructor();
+    static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
     /** Line points.
         Note: when editing array content without reassigning it,
         `contentDirty` must be set to `true` to let the line being updated accordingly. */
@@ -3585,12 +3589,13 @@ class FragmentContext {
 }
 
 /** A fragment is a group of visuals rendered from data (.fragment file) */
-class Fragment extends Quad {
+class Fragment extends ceramic.Layer {
     constructor(context: FragmentContext);
     entities: Array<Entity>;
     items: Array<TAnonymous>;
     context: FragmentContext;
     fragmentData: TAnonymous;
+    resizable: Bool;
     pendingLoads: Int;
     /**ready event*/
     onReady(owner: Entity?, handle: (() => Void)): Void;
@@ -3779,6 +3784,7 @@ class Entity implements Lazy, Events {
     data: Dynamic;
     id: String;
     script: String;
+    events: DynamicEvents<String>;
     destroyed: Bool;
     /**destroy event*/
     onDestroy(owner: Entity?, handleEntity: ((entity: Entity) => Void)): Void;

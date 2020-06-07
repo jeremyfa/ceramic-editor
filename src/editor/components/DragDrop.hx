@@ -128,6 +128,15 @@ class DragDrop extends Entity implements Component implements Observable {
             dragging = false;
         }
 
+        if (draggingVisual != null) {
+            if (releaseDraggingVisual != null) {
+                releaseDraggingVisual(draggingVisual);
+            }
+            else {
+                draggingVisual = null;
+            }
+        }
+
     }
 
     function updateDrag(pointerX:Float, pointerY:Float) {

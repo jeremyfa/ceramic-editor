@@ -16,6 +16,7 @@ app:
         --macro ceramic.macros.ExportApi.export()
 
     defines:
+        - ceramic_entity_dynamic_events
         - tracker_check_handlers
         - ceramic_entity_script
         - ceramic_check_event_handlers

@@ -16,6 +16,10 @@ class EditorTheme extends Model {
 
     @observe public var darkerTextColor:Color = 0x555555;
 
+/// Icon colors
+
+    @observe public var iconColor:Color = 0xFFFFFF;
+
 /// Text fonts
 
     public var mediumFont(get,never):BitmapFont;

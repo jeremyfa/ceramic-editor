@@ -297,7 +297,7 @@ class EditorView extends View implements Observable {
             panelTabsView.tabViews.tabs = ['Editables'];
         }
         else {
-            panelTabsView.tabViews.tabs = ['Entities', 'Editables'];
+            panelTabsView.tabViews.tabs = ['Visuals', 'Editables'];
         }
 
         // Restore selected tab name on new tab list
@@ -356,7 +356,7 @@ class EditorView extends View implements Observable {
         unobserve();
 
         var contentViewClass:Class<View> = switch (selectedName) {
-            case 'Entities': VisualsPanelView;
+            case 'Visuals': VisualsPanelView;
             case 'Editables': EditableElementsPanelView;
             //case 'Assets': null;
             default: null;
@@ -480,7 +480,7 @@ class EditorView extends View implements Observable {
             if (selectedItem != null) {
                 if (FieldManager.manager.focusedField == null && popup.contentView == null && screen.focusedVisual != null) {
                     var selectedTab = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
-                    if (selectedTab == 'Entities' || (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentEditorView))) {
+                    if (selectedTab == 'Visuals' || (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentEditorView))) {
                         return selectedItem;
                     }
                 }

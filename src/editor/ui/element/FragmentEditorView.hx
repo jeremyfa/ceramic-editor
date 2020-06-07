@@ -28,7 +28,7 @@ class FragmentEditorView extends View implements Observable {
             editedItems: true
         });
         editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
-        editedFragment.onPointerDown(this, (_) -> deselectItems());
+        onPointerDown(this, (_) -> deselectItems());
         editedFragment.depth = 1;
         add(editedFragment);
 
@@ -253,7 +253,7 @@ class FragmentEditorView extends View implements Observable {
 
             if (fromPointer) {
                 // Ensure we are on Visuals tab
-                var selectedIndex = editorView.panelTabsView.tabViews.tabs.indexOf('Entities');
+                var selectedIndex = editorView.panelTabsView.tabViews.tabs.indexOf('Visuals');
                 if (selectedIndex != -1)
                     editorView.panelTabsView.tabViews.selectedIndex = selectedIndex;
             }
