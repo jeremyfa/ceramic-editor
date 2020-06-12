@@ -100,7 +100,6 @@ class TextUtils {
     public static function getPrefix(str:String):String {
 
         if (RE_PREFIXED.match(str)) {
-            trace('MATCH PREFIXED');
             str = RE_PREFIXED.matched(1);
         }
         while (str.length > 0 && str.charAt(str.length - 1) == '_') {

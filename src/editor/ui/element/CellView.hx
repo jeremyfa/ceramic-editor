@@ -1,9 +1,12 @@
 package editor.ui.element;
 
 using StringTools;
+using ceramic.VisualTransition;
 using editor.components.Tooltip;
 
 class CellView extends LayersLayout implements Observable {
+
+    static var _notVisibleTransform:Transform = null;
 
 /// Public properties
 
@@ -23,9 +26,13 @@ class CellView extends LayersLayout implements Observable {
 
     @observe public var locked:Bool = false;
 
+    @observe public var kindIcon:Null<Entypo> = null;
+
     @observe public var handleTrash:Void->Void = null;
 
     @observe public var handleLock:Void->Void = null;
+
+    @observe public var handleDuplicate:Void->Void = null;
 
     /*
     @observe public var handleUp:Void->Void = null;
@@ -45,8 +52,19 @@ class CellView extends LayersLayout implements Observable {
 
     var iconsView:RowLayout = null;
 
-    @:noCompletion
-    public var targetTy:Float = 0;
+    var dragTargetTy:Float = 0;
+
+    var dragDrop:DragDrop;
+
+    var dragAutoScroll:Float = 0;
+
+    var dragStartScrollY:Float = 0;
+
+    var draggingCellDragY:Float = 0;
+
+    var draggingCell:CellView = null;
+
+    var dragOnItemIndex:Int = -1;
 
     @observe var hover:Bool = false;
 
@@ -130,9 +148,11 @@ class CellView extends LayersLayout implements Observable {
 
         var displayTrash = handleTrash != null;
         var displayLock = handleLock != null;
+        var displayDuplicate = handleDuplicate != null;
         //var displayUp = handleUp != null;
         //var displayDown = handleDown != null;
-        var displayAnyIcon = displayTrash || displayLock;// || displayUp || displayDown;
+        var displayKindIcon = kindIcon != null;
+        var displayAnyIcon = displayTrash || displayLock || displayKindIcon;// || displayUp || displayDown;
 
         unobserve();
 
@@ -150,6 +170,28 @@ class CellView extends LayersLayout implements Observable {
             var w = 21;
             var s = 14;
 
+            if (displayKindIcon) {
+                titleTextView.paddingLeft = 22;
+                subTitleTextView.paddingLeft = 22;
+
+                var iconView = new EntypoIconView();
+                iconView.icon = kindIcon;
+                iconView.viewSize(25, fill());
+                iconView.pointSize = 20;
+                iconView.paddingLeft = 2;
+                columnLayout.add(iconView);
+
+                iconsView.add(iconView);
+
+                var filler = new View();
+                filler.transparent = true;
+                filler.viewSize(fill(), fill());
+                iconsView.add(filler);
+            }
+            else {
+                titleTextView.paddingLeft = 0;
+                subTitleTextView.paddingLeft = 0;
+            }
             /*
             if (displayUp || displayDown) {
                 titleTextView.paddingLeft = 16;
@@ -190,6 +232,16 @@ class CellView extends LayersLayout implements Observable {
             }
             */
 
+            if (displayDuplicate) {
+                var iconView = new ClickableIconView();
+                iconView.icon = DOCS;
+                iconView.tooltip('Duplicate');
+                iconView.viewSize(w, fill());
+                iconView.pointSize = s;
+                iconView.onClick(this, handleDuplicate);
+                iconsView.add(iconView);
+            }
+
             if (displayLock) {
                 var iconView = new ClickableIconView();
                 iconView.autorun(() -> {
@@ -212,10 +264,10 @@ class CellView extends LayersLayout implements Observable {
                 iconsView.add(iconView);
             }
         }
-        /*else {
+        else {
             titleTextView.paddingLeft = 0;
             subTitleTextView.paddingLeft = 0;
-        }*/
+        }
 
         reobserve();
 
@@ -243,6 +295,14 @@ class CellView extends LayersLayout implements Observable {
                 borderLeftSize = 2;
                 borderRightSize = 0;
             }
+        }
+        else if (locked && !inputStyle) {
+            alpha = 1;
+            transparent = false;
+            borderLeftSize = 0;
+            borderRightSize = 0;
+
+            color = theme.darkBackgroundColor;
         }
         else {
             alpha = 1;
@@ -279,10 +339,16 @@ class CellView extends LayersLayout implements Observable {
             }
         }
 
-        titleTextView.textColor = theme.lightTextColor;
-        titleTextView.font = theme.mediumFont;
+        if (locked) {
+            titleTextView.textColor = Color.interpolate(theme.lightTextColor, color, 0.4);
+            subTitleTextView.textColor = Color.interpolate(theme.darkTextColor, color, 0.4);
+        }
+        else {
+            titleTextView.textColor = theme.lightTextColor;
+            subTitleTextView.textColor = theme.darkTextColor;
+        }
 
-        subTitleTextView.textColor = theme.darkTextColor;
+        titleTextView.font = theme.mediumFont;
         subTitleTextView.font = theme.mediumFont;
 
         borderBottomColor = theme.mediumBorderColor;
@@ -298,7 +364,31 @@ class CellView extends LayersLayout implements Observable {
 
     }
 
-    public function cloneForDragDrop():CellView {
+/// Drag & Drop
+
+    public function bindDragDrop(?click:Click, handleDrop:(itemIndex:Int)->Void) {
+
+        if (_notVisibleTransform == null) {
+            _notVisibleTransform = new Transform();
+            _notVisibleTransform.translate(-99999999, -99999999);
+        }
+
+        dragDrop = new DragDrop(click,
+            createDraggingVisual,
+            releaseDraggingVisual
+        );
+        this.component('dragDrop', dragDrop);
+        dragDrop.onDraggingChange(this, function(dragging:Bool, wasDragging:Bool) {
+            if (wasDragging && !dragging) {
+                handleDrop(dragOnItemIndex);
+            }
+            handleDragChange(dragging, wasDragging);
+        });
+        dragDrop.autorun(updateFromDrag);
+
+    }
+
+    function cloneForDragDrop():CellView {
 
         var cloned = new CellView();
 
@@ -311,8 +401,179 @@ class CellView extends LayersLayout implements Observable {
         cloned.locked = locked;
         cloned.handleTrash = handleTrash;
         cloned.handleLock = handleLock;
+        cloned.handleDuplicate = handleDuplicate;
 
         return cloned;
+
+    }
+
+    function createDraggingVisual():Visual {
+
+        var visual = this.cloneForDragDrop();
+
+        visual.touchable = false;
+        visual.depth = 9999;
+        visual.viewSize(this.width, this.height);
+        visual.computeSize(this.width, this.height, ViewLayoutMask.FIXED, true);
+        visual.applyComputedSize();
+        visual.pos(this.x, this.y);
+        this.parent.add(visual);
+
+        return visual;
+
+    }
+
+    function releaseDraggingVisual(visual:Visual) {
+
+        visual.destroy();
+
+    }
+
+    function handleDragChange(dragging:Bool, wasDragging:Bool) {
+        if (dragging == wasDragging)
+            return;
+
+        if (dragging) {
+            dragAutoScroll = 0;
+            draggingCellDragY = 0;
+            this.transform = _notVisibleTransform;
+            var scroller = firstParentWithClass(Scroller);
+            if (scroller != null) {
+                dragStartScrollY = scroller.scrollY;
+            }
+
+            app.onUpdate(dragDrop, scrollFromDragIfNeeded);
+        }
+        else {
+            dragAutoScroll = 0;
+            this.transform = null;
+            var parent = this.parent;
+            for (child in parent.children) {
+                if (child != this && Std.is(child, CellView)) {
+                    var otherCell:CellView = cast child;
+                    otherCell.transition(0.0, props -> {
+                        props.transform = null;
+                    });
+                }
+            }
+
+            app.offUpdate(scrollFromDragIfNeeded);
+        }
+    }
+
+    function updateFromDrag() {
+
+        var dragging = dragDrop.dragging;
+        draggingCellDragY = dragDrop.dragY;
+
+        unobserve();
+
+        if (dragging) {
+
+            // Move other thiss from drag
+            //
+
+            var dragExtra = 0.0;
+            var scroller = this.firstParentWithClass(Scroller);
+            if (scroller != null) {
+                dragExtra = scroller.scrollY - dragStartScrollY;
+            }
+
+            draggingCell = cast dragDrop.draggingVisual;
+            draggingCell.pos(this.x, this.y + draggingCellDragY + dragExtra);
+
+            updateOtherCellsFromDrag();
+
+            // Scroll container if reaching bounds with drag
+            //
+            var scroller = this.firstParentWithClass(Scroller);
+            if (scroller != null) {
+                if (this.y + this.height + draggingCellDragY + dragExtra > scroller.height + scroller.scrollY) {
+                    dragAutoScroll = (this.y + this.height + draggingCellDragY + dragExtra) - (scroller.height + scroller.scrollY);
+                }
+                else if (this.y + draggingCellDragY + dragExtra < scroller.scrollY) {
+                    dragAutoScroll = (this.y + draggingCellDragY + dragExtra) - scroller.scrollY;
+                }
+                else {
+                    dragAutoScroll = 0;
+                }
+            }
+        }
+
+        reobserve();
+
+    }
+
+    function updateOtherCellsFromDrag() {
+
+        var thisStep = this.height;
+        var transitionDuration = 0.1;
+
+        dragOnItemIndex = this.itemIndex;
+
+        var parent = this.parent;
+        for (child in parent.children) {
+            if (child != this && Std.is(child, CellView)) {
+                var otherCell:CellView = cast child;
+                if (otherCell.transform == null) {
+                    otherCell.transform = new Transform();
+                }
+                var prevTargetTy = otherCell.dragTargetTy;
+                var dragTargetTy = prevTargetTy;
+                if (this.itemIndex > otherCell.itemIndex) {
+                    if (draggingCell.y < otherCell.y + otherCell.height * 0.5) {
+                        if (dragOnItemIndex > otherCell.itemIndex)
+                            dragOnItemIndex = otherCell.itemIndex;
+                        dragTargetTy = thisStep;
+                    }
+                    else {
+                        dragTargetTy = 0;
+                    }
+                }
+                else if (this.itemIndex < otherCell.itemIndex) {
+                    if (draggingCell.y > otherCell.y - otherCell.height * 0.5) {
+                        if (dragOnItemIndex < otherCell.itemIndex)
+                            dragOnItemIndex = otherCell.itemIndex;
+                        dragTargetTy = -thisStep;
+                    }
+                    else {
+                        dragTargetTy = 0;
+                    }
+                }
+                else {
+                    dragTargetTy = 0;
+                }
+                if (dragTargetTy != prevTargetTy) {
+                    otherCell.dragTargetTy = dragTargetTy;
+                    otherCell.transition(transitionDuration, props -> {
+                        props.transform.ty = dragTargetTy;
+                        props.transform.changedDirty = true;
+                    });
+                }
+            }
+        }
+
+    }
+
+    function scrollFromDragIfNeeded(delta:Float) {
+
+        if (dragAutoScroll != 0) {
+            var scroller = this.firstParentWithClass(Scroller);
+            if (scroller != null) {
+                var prevScrollY = scroller.scrollY;
+                scroller.scrollY += dragAutoScroll * delta * 10;
+                scroller.scrollToBounds();
+
+                if (scroller.scrollY != prevScrollY) {
+                    if (draggingCell != null) {
+                        var dragExtra = scroller.scrollY - dragStartScrollY;
+                        draggingCell.pos(this.x, this.y + draggingCellDragY + dragExtra);
+                    }
+
+                    updateOtherCellsFromDrag();
+                }
+            }
+        }
 
     }
 

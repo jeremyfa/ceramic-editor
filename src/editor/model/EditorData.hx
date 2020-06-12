@@ -177,6 +177,8 @@ class EditorData extends Model {
 
     function openProjectDialog() {
 
+        log.debug('open project dialog');
+
         Dialogs.openFile('Open project', [{
             name: 'Ceramic project', extensions: ['ceramic']
         }], file -> {
@@ -324,9 +326,11 @@ class EditorData extends Model {
         scriptAutoruns = [];
 
         for (projectScript in projectScripts) {
-            scriptAutoruns.push(projectScript.autorun(function() {
-                bindScriptData(projectScript);
-            }));
+            if (projectScript != null) {
+                scriptAutoruns.push(projectScript.autorun(function() {
+                    bindScriptData(projectScript);
+                }));
+            }
         }
 
         reobserve();

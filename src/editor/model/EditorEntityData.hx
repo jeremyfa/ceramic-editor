@@ -8,6 +8,19 @@ class EditorEntityData extends Model {
 
     @serialize public var entityComponents:Map<String, String> = new Map();
 
+    @serialize public var locked(default, set):Bool = false;
+    function set_locked(locked:Bool):Bool {
+        if (this.locked != locked) {
+            this.locked = locked;
+            if (locked && fragmentData != null && fragmentData.selectedItem == this) {
+                fragmentData.selectedItem = null;
+            }
+            if (model != null)
+                model.history.step();
+        }
+        return locked;
+    }
+
     @serialize public var props:EditorEntityProps = new EditorEntityProps();
 
     @observe public var fragmentData:EditorFragmentData = null;
@@ -105,6 +118,7 @@ class EditorEntityData extends Model {
         json.id = entityId;
         json.entity = entityClass;
         json.isVisual = Std.is(this, EditorVisualData);
+        json.locked = locked;
 
         if (Lambda.count(entityComponents) > 0) {
             json.components = {};
@@ -132,6 +146,15 @@ class EditorEntityData extends Model {
         if (!Validate.nonEmptyString(json.entity))
             throw 'Invalid entity type';
         entityClass = json.entity;
+
+        if (json.locked != null) {
+            if (!Validate.boolean(json.locked))
+                throw 'Invalid locked type';
+            locked = json.locked;
+        }
+        else {
+            locked = false;
+        }
 
         if (json.components != null) {
             var parsedComponents = new Map<String,String>();

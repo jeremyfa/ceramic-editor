@@ -28,6 +28,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
         var dataSource = new VisualCellDataSource();
 
         var collectionView = new CellCollectionView();
+        collectionView.itemsBehavior = LAZY;
         collectionView.viewSize(fill(), percent(25));
         collectionView.dataSource = dataSource;
         add(collectionView);
@@ -36,12 +37,12 @@ class VisualsPanelView extends LinearLayout implements Observable {
         autorun(function() {
             var length = model.project.lastSelectedFragment != null ? model.project.lastSelectedFragment.visuals.length : 0;
             if (length != prevLength) {
-                var scrollToBottom = prevLength > 0 && length > prevLength;
+                //var scrollToBottom = false;//prevLength > 0 && length > prevLength;
 
                 prevLength = length;
                 collectionView.reloadData();
 
-                if (scrollToBottom) {
+                /*if (scrollToBottom) {
                     collectionView.layoutDirty = true;
                     collectionView.onceLayout(this, function() {
                         collectionView.scroller.scrollTo(
@@ -51,12 +52,12 @@ class VisualsPanelView extends LinearLayout implements Observable {
                         collectionView.scroller.scrollToBounds();
                     });
                 }
-                else {
+                else {*/
                     collectionView.layoutDirty = true;
                     collectionView.onceLayout(this, function() {
                         collectionView.scroller.scrollToBounds();
                     });
-                }
+                //}
             }
         });
 
@@ -67,12 +68,17 @@ class VisualsPanelView extends LinearLayout implements Observable {
         });
 
         var prevSelectedVisualIndex = -1;
+        var prevSelectListSize = -1;
+        var prevSelectedFragment = null;
         autorun(function() {
             var selectedFragment = model.project.lastSelectedFragment;
             var selectedVisualIndex = selectedFragment != null ? selectedFragment.selectedVisualIndex : -1;
+            var selectListSize = selectedFragment != null ? selectedFragment.visuals.length : -1;
             unobserve();
-            if (selectedVisualIndex != prevSelectedVisualIndex) {
+            if (selectedVisualIndex != prevSelectedVisualIndex || prevSelectListSize != selectListSize || prevSelectedFragment != selectedFragment) {
                 prevSelectedVisualIndex = selectedVisualIndex;
+                prevSelectListSize = selectListSize;
+                prevSelectedFragment = selectedFragment;
                 if (selectedVisualIndex != -1) {
                     app.oncePostFlushImmediate(() -> {
                         if (destroyed)
@@ -152,7 +158,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
             var visual = active ? model.project.lastSelectedFragment.selectedVisual : null;
 
             // Needed when changing depth, triggering list sorting and invalidation
-            if (visual == prevSelectedVisual)
+            if (visual == prevSelectedVisual && visual != null)
                 return;
 
             prevSelectedVisual = visual;

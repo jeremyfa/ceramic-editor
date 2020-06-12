@@ -6,6 +6,8 @@ class MonacoEditorView extends View implements Observable {
 
     @observe public var content:String = '';
 
+    public var didUndoOrRedo:Bool = false;
+
 #if web
 
     var iframe:Dynamic = null;
@@ -118,7 +120,16 @@ class MonacoEditorView extends View implements Observable {
             if (dts != null)
                 extraLibs.push(dts);
 
-            iframe.contentWindow.initMonaco(content, extraLibs, editorLog, handleChange);
+            iframe.contentWindow.initMonaco(
+                content,
+                extraLibs,
+                editorLog,
+                handleChange,
+                handleSave,
+                handleSaveAs,
+                handleUndo,
+                handleRedo
+            );
 
             iframeReady = true;
         });
@@ -131,9 +142,34 @@ class MonacoEditorView extends View implements Observable {
 
     }
 
-    function handleChange(lines:Array<String>) {
+    function handleChange(lines:Array<String>, didUndoOrRedo:Bool) {
 
         content = lines.join('\n');
+        this.didUndoOrRedo = didUndoOrRedo;
+
+    }
+
+    function handleSave() {
+
+        model.saveProject();
+
+    }
+
+    function handleSaveAs() {
+
+        model.saveProject(true);
+
+    }
+
+    function handleUndo() {
+
+        //
+
+    }
+
+    function handleRedo() {
+
+        //
 
     }
 

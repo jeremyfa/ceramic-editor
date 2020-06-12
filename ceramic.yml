@@ -6,7 +6,7 @@ app:
     version: '1.0'
 
     libs:
-        - hscript
+        - arcade
     
     #spine: true
     plugins:
@@ -18,17 +18,19 @@ app:
     defines:
         - ceramic_entity_dynamic_events
         - tracker_check_handlers
+        - ceramic_check_handlers
         - ceramic_entity_script
         - ceramic_check_event_handlers
         - ceramic_no_strip_markers
         - ceramic_no_skip
+        - ceramic_arcade_physics
         - editor
         - ceramic_use_electron
         - snow_web_use_electron_fs
         - snow_web_use_electron_pngjs
         - js-source-map
         - ceramic_assert
-        - editor_debug_item_update
+        #- editor_debug_item_update
         - experimental_serialize
         #- ceramic_debug_layout
         #- ceramic_debug_draw

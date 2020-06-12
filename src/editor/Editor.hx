@@ -33,6 +33,8 @@ class Editor extends Entity implements Observable {
 
     public var view:EditorView;
 
+    public var playView:EditorPlayView;
+
     public var editableTypes:ImmutableArray<EditableType> = [];
 
     public var editableVisuals:ImmutableArray<EditableType> = [];
@@ -466,7 +468,7 @@ class Editor extends Entity implements Observable {
 
     function initView() {
 
-        view = new EditorView();
+        autorun(updateView);
 
         screen.onResize(this, function() {
 
@@ -475,6 +477,17 @@ class Editor extends Entity implements Observable {
         });
 
         layout();
+
+        /*
+        Timer.interval(this, 3.0, function() {
+            switch model.location {
+                case PLAY(fragmentId):
+                    model.location = DEFAULT;
+                default:
+                    model.location = PLAY('FRAGMENT_0');
+            }
+        });
+        */
         
     }
 
@@ -484,8 +497,44 @@ class Editor extends Entity implements Observable {
         settings.targetHeight = Std.int(screen.nativeHeight);
         settings.targetDensity = Std.int(screen.nativeDensity);
 
-        view.pos(0, 0);
-        view.size(settings.targetWidth, settings.targetHeight);
+        if (view != null) {
+            view.pos(0, 0);
+            view.size(settings.targetWidth, settings.targetHeight);
+        }
+
+        if (playView != null) {
+            playView.pos(0, 0);
+            playView.size(settings.targetWidth, settings.targetHeight);
+        }
+
+    }
+
+    function updateView() {
+
+        var location = model.location;
+
+        unobserve();
+
+        if (view != null) {
+            view.destroy();
+            view = null;
+        }
+        if (playView != null) {
+            playView.destroy();
+            playView != null;
+        }
+
+        var location = model.location;
+        switch location {
+            case PLAY(fragmentId):
+                playView = new EditorPlayView();
+            default:
+                view = new EditorView();
+        }
+
+        layout();
+
+        reobserve();
 
     }
 

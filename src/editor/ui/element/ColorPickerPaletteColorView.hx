@@ -23,12 +23,6 @@ class ColorPickerPaletteColorView extends View implements Observable {
     public var dragging(get, never):Bool;
     inline function get_dragging():Bool return dragDrop.dragging;
 
-    public var dragX(get, never):Float;
-    inline function get_dragX():Float return dragDrop.dragX;
-
-    public var dragY(get, never):Float;
-    inline function get_dragY():Float return dragDrop.dragY;
-
     @:allow(editor.ui.element.ColorPickerView)
     static final PALETTE_COLOR_SIZE = 14.0;
 
@@ -71,8 +65,8 @@ class ColorPickerPaletteColorView extends View implements Observable {
     function updateStyle() {
 
         if (dragging) {
-            transform.tx = dragX;
-            transform.ty = dragY;
+            transform.tx = dragDrop.dragX;
+            transform.ty = dragDrop.dragY;
             transform.changedDirty = true;
         }
         else if (click.pressed) {
@@ -126,12 +120,6 @@ class ColorPickerPaletteColorView extends View implements Observable {
         if (wasDragging && !dragging) {
             emitDrop(this);
         }
-
-    }
-
-    public function drag(pointerX:Float, pointerY:Float) {
-
-        dragDrop.drag(pointerX, pointerY);
 
     }
 

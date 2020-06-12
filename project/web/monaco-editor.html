@@ -30,7 +30,16 @@
 <script>
     var didInitMonaco = false;
     var editor = null;
-    function initMonaco(content, extraLibs, log, emitChange) {
+    function initMonaco(
+        content,
+        extraLibs,
+        log,
+        emitChange,
+        emitSave,
+        emitSaveAs,
+        emitUndo,
+        emitRedo
+    ) {
         if (didInitMonaco) return;
         didInitMonaco = true;
         
@@ -74,6 +83,60 @@
                 theme: "vs-dark"
             });
 
+            editor.addAction({
+                id: 'save',
+                label: 'Save',
+                keybindings: [
+                    monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S)
+                ],
+                run: function(ed) {
+                    emitSave();
+                    return null;
+                }
+            });
+
+            editor.addAction({
+                id: 'save-as',
+                label: 'Save As',
+                keybindings: [
+                    monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_S)
+                ],
+                run: function(ed) {
+                    emitSaveAs();
+                    return null;
+                }
+            });
+
+            var didUndoOrRedo = false;
+
+            editor.addAction({
+                id: 'undo',
+                label: 'Undo',
+                keybindings: [
+                    monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_Z)
+                ],
+                run: function(ed) {
+                    didUndoOrRedo = true;
+                    emitUndo();
+                    editor.getModel().undo();
+                    return null;
+                }
+            });
+
+            editor.addAction({
+                id: 'redo',
+                label: 'Redo',
+                keybindings: [
+                    monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KEY_Z)
+                ],
+                run: function(ed) {
+                    didUndoOrRedo = true;
+                    emitRedo();
+                    editor.getModel().redo();
+                    return null;
+                }
+            });
+
             var shouldSubmitChanges = false;
             editor.getModel().onDidChangeContent(function(e) {
                 shouldSubmitChanges = true;
@@ -82,7 +145,8 @@
             setInterval(function() {
                 if (shouldSubmitChanges) {
                     shouldSubmitChanges = false;
-                    emitChange(editor.getModel().getLinesContent());
+                    emitChange(editor.getModel().getLinesContent(), didUndoOrRedo);
+                    didUndoOrRedo = false;
                 }
             }, 500);
         });

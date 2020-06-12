@@ -108,7 +108,7 @@ class EditorView extends View implements Observable {
             editorMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
-            settingsButton.icon = DOC;
+            settingsButton.icon = WINDOW;
             settingsButton.viewSize(w, fill());
             settingsButton.pointSize = s;
             settingsButton.tooltip('New project');
@@ -118,7 +118,7 @@ class EditorView extends View implements Observable {
             editorMenu.add(settingsButton);
             
             var settingsButton = new ClickableIconView();
-            settingsButton.icon = PUBLISH;
+            settingsButton.icon = DOWNLOAD;
             settingsButton.viewSize(w, fill());
             settingsButton.pointSize = s - 2;
             settingsButton.tooltip('Export');
@@ -126,6 +126,75 @@ class EditorView extends View implements Observable {
                 model.exportFragments();
             });
             editorMenu.add(settingsButton);
+
+            var filler = new RowSeparator();
+            filler.viewSize(16, fill());
+            editorMenu.add(filler);
+
+            var settingsButton = new ClickableIconView();
+            settingsButton.icon = REPLY;
+            settingsButton.viewSize(w, fill());
+            settingsButton.pointSize = s;
+            settingsButton.tooltip('Undo');
+            settingsButton.onClick(this, () -> {
+                model.history.undo();
+            });
+            editorMenu.add(settingsButton);
+
+            var settingsButton = new ClickableIconView();
+            settingsButton.icon = FORWARD;
+            settingsButton.viewSize(w, fill());
+            settingsButton.pointSize = s;
+            settingsButton.tooltip('Redo');
+            settingsButton.onClick(this, () -> {
+                model.history.redo();
+            });
+            editorMenu.add(settingsButton);
+
+            var filler = new RowSeparator();
+            filler.viewSize(16, fill());
+            editorMenu.add(filler);
+
+            var settingsButton = new ClickableIconView();
+            settingsButton.icon = TO_START;
+            settingsButton.viewSize(w, fill());
+            settingsButton.pointSize = s;
+            settingsButton.tooltip('Reset');
+            var playButton = settingsButton;
+            playButton.autorun(() -> {
+                playButton.disabled = (model.project.lastSelectedFragment == null);
+            });
+            settingsButton.onClick(this, () -> {
+                fragmentEditorView.resetFragment();
+            });
+            editorMenu.add(settingsButton);
+
+            var settingsButton = new ClickableIconView();
+            settingsButton.icon = PLAY;
+            settingsButton.viewSize(w, fill());
+            settingsButton.pointSize = s;
+            settingsButton.tooltip('Play');
+            var playButton = settingsButton;
+            playButton.autorun(() -> {
+                playButton.disabled = (model.project.lastSelectedFragment == null);
+            });
+            settingsButton.onClick(this, () -> {
+                if (model.location == DEFAULT && model.project.lastSelectedFragment != null) {
+                    model.location = PLAY(model.project.lastSelectedFragment.fragmentId);
+                    function handlePlayEscape(key:Key) {
+                        if (key.scanCode == ScanCode.ESCAPE) {
+                            app.offKeyDown(handlePlayEscape);
+                            model.location = DEFAULT;
+                        }
+                    }
+                    app.onKeyDown(null, handlePlayEscape);
+                }
+            });
+            editorMenu.add(settingsButton);
+
+            var filler = new RowSeparator();
+            filler.viewSize(16, fill());
+            editorMenu.add(filler);
         }
         add(editorMenu);
 
@@ -345,6 +414,13 @@ class EditorView extends View implements Observable {
             });
         }
 
+        if (popup.contentView != null) {
+            scriptEditorView.hideMonacoEditor = true;
+        }
+        else {
+            scriptEditorView.hideMonacoEditor = false;
+        }
+
         reobserve();
 
     }
@@ -397,11 +473,12 @@ class EditorView extends View implements Observable {
             var clipboardText = app.backend.clipboard.getText();
             log.debug('PASTE $clipboardText');
             if (clipboardText != null && clipboardText.startsWith('{"ceramic-editor":')) {
+                trace('do try');
                 try {
                     var parsed:Dynamic = Reflect.field(Json.parse(clipboardText), 'ceramic-editor');
                     if (parsed.entity != null) {
                         if (FieldManager.manager.focusedField == null && popup.contentView == null) {
-                            var fragment = model.project.selectedFragment;
+                            var fragment = model.project.lastSelectedFragment;
                             if (fragment != null) {
                                 var item:EditorEntityData;
                                 if (parsed.entity.isVisual) {
@@ -417,11 +494,20 @@ class EditorView extends View implements Observable {
                                 fragment.addEntityData(item);
                                 fragment.selectedItem = item;
                             }
+                            else {
+                                log.warning('Failed to paste entity: no selected fragment');
+                            }
                         }
+                        else {
+                            log.warning('Failed to paste entity: focus not matching');
+                        }
+                    }
+                    else {
+                        log.warning('Failed to parse clipboard text: no entity class');
                     }
                 }
                 catch (e:Dynamic) {
-                    log.error('PASTE ERROR $e');
+                    log.error('Failed to parse clipboard text: $e');
                 }
             }
         });

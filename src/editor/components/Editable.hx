@@ -72,13 +72,6 @@ class Editable extends Entity implements Component implements Observable {
 
     public function select(selectFromPointer:Bool = false) {
 
-        /*
-        editor.send({
-            type: 'set/ui.fragmentTab',
-            value: 'visuals'
-        });
-        */
-
         if (activeEditable == this) return;
         activeEditable = this;
         
@@ -94,13 +87,6 @@ class Editable extends Entity implements Component implements Observable {
                 activeEditable = null;
 
                 emitSelect(null, false);
-                // Set selected item
-                /*
-                editor.send({
-                    type: 'set/ui.selectedItemId',
-                    value: null
-                });
-                */
             }
             app.offUpdate(update);
             highlight = null;
@@ -137,12 +123,6 @@ class Editable extends Entity implements Component implements Observable {
         app.onUpdate(this, update);
 
         // Set selected item
-        /*
-        editor.send({
-            type: 'set/ui.selectedItemId',
-            value: entity.id
-        });
-        */
         emitSelect(entity, selectFromPointer);
 
     }
@@ -379,8 +359,8 @@ class Editable extends Entity implements Component implements Observable {
         else if (entityOptions.highlightResizeInsteadOfScaleIfNull != null) {
             resizeInsteadOfScale = Reflect.getProperty(entity, entityOptions.highlightResizeInsteadOfScaleIfNull) == null;
         }
-        else if (entityOptions.highlightResizeInsteadOfScaleIfFalse != null) {
-            resizeInsteadOfScale = Reflect.getProperty(entity, entityOptions.highlightResizeInsteadOfScaleIfFalse) == false;
+        else if (entityOptions.highlightResizeInsteadOfScaleIfTrue != null) {
+            resizeInsteadOfScale = Reflect.getProperty(entity, entityOptions.highlightResizeInsteadOfScaleIfTrue) == true;
         }
 
         entity.anchorKeepPosition(tmpAnchorX, tmpAnchorY);

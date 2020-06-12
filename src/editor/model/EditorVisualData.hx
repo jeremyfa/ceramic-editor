@@ -18,8 +18,6 @@ class EditorVisualData extends EditorEntityData {
 
     public function depthDidChange() {
 
-        log.debug('DEPTH DID CHANGE');
-
         if (fragmentData != null) {
             fragmentData.sortItems();
         }

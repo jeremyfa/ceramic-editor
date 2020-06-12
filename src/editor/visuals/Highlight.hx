@@ -86,6 +86,8 @@ class Highlight extends Visual {
 
     var borderLeft = new Quad();
 
+    //var selectShape = new Mesh();
+
     public var pointTopLeft(default,null) = new Point();
 
     public var pointTopRight(default,null) = new Point();
@@ -230,6 +232,8 @@ class Highlight extends Visual {
         cornerBottomLeft.borderSize = 1;
         cornerBottomRight.borderSize = 1;
 
+        //selectShape.depth = 1.25;
+
         borderTop.depth = 1.5;
         borderRight.depth = 1.5;
         borderBottom.depth = 1.5;
@@ -251,6 +255,7 @@ class Highlight extends Visual {
         add(cornerTopRight);
         add(cornerBottomLeft);
         add(cornerBottomRight);
+        //add(selectShape);
         add(borderTop);
         add(borderRight);
         add(borderBottom);
@@ -296,6 +301,13 @@ class Highlight extends Visual {
         cornerBottomRight.onPointerOut(this, function(info) {
             emitCornerOut(BOTTOM_RIGHT, info);
         });
+
+        /*
+        selectShape.grid(1, 1, 1, 1);
+        selectShape.color = Color.WHITE;
+        selectShape.pos(0, 0);
+        selectShape.alpha = 0.5;
+        */
 
         autorun(() -> {
             color = theme.highlightColor;
@@ -484,6 +496,17 @@ class Highlight extends Visual {
         borderLeft.anchor(0, 0.5);
         borderLeft.pos(pointBottomLeft.x, pointBottomLeft.y);
         borderLeft.rotation = r;
+        
+        /*
+        selectShape.vertices[0] = pointTopLeft.x;
+        selectShape.vertices[1] = pointTopLeft.y;
+        selectShape.vertices[2] = pointTopRight.x;
+        selectShape.vertices[3] = pointTopRight.y;
+        selectShape.vertices[4] = pointBottomLeft.x;
+        selectShape.vertices[5] = pointBottomLeft.y;
+        selectShape.vertices[6] = pointBottomRight.x;
+        selectShape.vertices[7] = pointBottomRight.y;
+        */
 
     }
 

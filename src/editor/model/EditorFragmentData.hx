@@ -22,6 +22,27 @@ class EditorFragmentData extends EditorEditableElementData {
     @serialize public var height:Int;
 
     /**
+     * Scaling when fragment is viewed fullscreen
+     */
+    @serialize public var screenScaling:ScreenScaling = FIT;
+
+    /**
+     * Whether the fragment is transparent or not
+     */
+    @serialize public var transparent:Bool = true;
+
+    /**
+     * Whether the fragment's background overflows its whole container area
+     * when it is a root fragment / fullscreen fragment
+     */
+    @serialize public var overflow:Bool = false;
+
+    /**
+     * Background color (if not transparent)
+     */
+    @serialize public var color:Color = Color.BLACK;
+
+    /**
      * The bundle name this fragment belongs to.
      * A fragment bundle is a file where one ore more fragments are saved together.
      * An empty value with save fragments into default bundle.
@@ -190,6 +211,8 @@ class EditorFragmentData extends EditorEditableElementData {
             id: null,
             width: 0.0,
             height: 0.0,
+            color: Color.BLACK,
+            transparent: true,
             data: {},
             components: {}
         };
@@ -210,6 +233,8 @@ class EditorFragmentData extends EditorEditableElementData {
         fragmentDataWithoutItems.id = this.fragmentId;
         fragmentDataWithoutItems.width = this.width;
         fragmentDataWithoutItems.height = this.height;
+        fragmentDataWithoutItems.color = this.color;
+        fragmentDataWithoutItems.transparent = this.transparent;
 
         unobserve();
         invalidateFragmentDataWithoutItems();
@@ -269,8 +294,8 @@ class EditorFragmentData extends EditorEditableElementData {
         visual.props.set('y', Math.round(height / 2));
         visual.props.set('depth', maxDepth + 1);
         visual.props.set('depthRange', 1);
-        visual.props.set('anchorX', 0.5);
-        visual.props.set('anchorY', 0.5);
+        visual.props.set('anchorX', 0);
+        visual.props.set('anchorY', 0);
         visual.props.set('scaleX', 1);
         visual.props.set('scaleY', 1);
         visual.props.set('alpha', 1);
@@ -292,6 +317,45 @@ class EditorFragmentData extends EditorEditableElementData {
         model.history.step();
 
         return visual;
+
+    }
+
+    public function duplicateItem(item:EditorEntityData):Void {
+
+        lockSortItems = true;
+
+        var jsonItem = item.toJson();
+
+        // Compute duplicated id
+        var i = 0;
+        var prefix = TextUtils.getPrefix(item.entityId);
+        while (get(prefix + '_' + i) != null) {
+            i++;
+        }
+        jsonItem.id = prefix + '_' + i;
+
+        // Create instance
+        var duplicatedItem:EditorEntityData;
+        if (jsonItem.isVisual) {
+            duplicatedItem = new EditorVisualData();
+        }
+        else {
+            duplicatedItem = new EditorEntityData();
+        }
+        duplicatedItem.fragmentData = this;
+        duplicatedItem.fromJson(jsonItem);
+        duplicatedItem.props.set('depth', item.props.get('depth') + 0.001);
+
+        var items = [].concat(this.items.mutable);
+        items.insert(items.indexOf(item) + 1, duplicatedItem);
+        this.items = cast items;
+
+        duplicatedItem.locked = false;
+        selectedItem = duplicatedItem;
+
+        lockSortItems = false;
+
+        normalizeVisualsDepth();
 
     }
     
@@ -353,6 +417,10 @@ class EditorFragmentData extends EditorEditableElementData {
         }
 
         if (didRemove) {
+            if (selectedItem == item) {
+                selectedItem = null;
+            }
+
             items = cast newItems;
 
             model.history.step();
@@ -375,6 +443,8 @@ class EditorFragmentData extends EditorEditableElementData {
             data: null, // TODO?
             width: width,
             height: height,
+            color: color,
+            transparent: transparent,
             components: fragmentComponentsToDynamic(),
             items: fragmentItems()
         };
@@ -416,6 +486,9 @@ class EditorFragmentData extends EditorEditableElementData {
         json.width = width;
         json.height = height;
         json.bundle = bundle;
+        json.color = color;
+        json.overflow = overflow;
+        json.transparent = transparent;
         json.selectedItemIndex = selectedItemIndex;
 
         if (Lambda.count(fragmentComponents) > 0) {
@@ -452,11 +525,37 @@ class EditorFragmentData extends EditorEditableElementData {
         if (json.bundle != null) {
             if (!Validate.nonEmptyString(json.bundle))
                 throw 'Invalid fragment bundle';
-
             bundle = json.bundle;
         }
         else {
             bundle = null;
+        }
+
+        if (json.color != null) {
+            if (!Validate.int(json.color))
+                throw 'Invalid fragment color';
+            color = json.color;
+        }
+        else {
+            color = Color.BLACK;
+        }
+
+        if (json.transparent != null) {
+            if (!Validate.boolean(json.transparent))
+                throw 'Invalid fragment transparent';
+            transparent = json.transparent;
+        }
+        else {
+            transparent = true;
+        }
+
+        if (json.overflow != null) {
+            if (!Validate.boolean(json.overflow))
+                throw 'Invalid fragment overflow';
+            overflow = json.overflow;
+        }
+        else {
+            overflow = false;
         }
 
         if (json.components != null) {
@@ -564,6 +663,30 @@ class EditorFragmentData extends EditorEditableElementData {
                 i++;
             }
         }
+
+        lockSortItems = false;
+
+        normalizeVisualsDepth();
+
+    }
+
+    public function moveVisualAboveVisual(visual:EditorVisualData, otherVisual:EditorVisualData) {
+
+        lockSortItems = true;
+
+        visual.props.set('depth', otherVisual.props.get('depth') + 0.001);
+
+        lockSortItems = false;
+
+        normalizeVisualsDepth();
+
+    }
+
+    public function moveVisualBelowVisual(visual:EditorVisualData, otherVisual:EditorVisualData) {
+
+        lockSortItems = true;
+
+        visual.props.set('depth', otherVisual.props.get('depth') - 0.001);
 
         lockSortItems = false;
 

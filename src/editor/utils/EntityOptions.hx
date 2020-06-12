@@ -14,7 +14,7 @@ class EntityOptions {
 
     public var highlightResizeInsteadOfScaleIfNull:String = null;
 
-    public var highlightResizeInsteadOfScaleIfFalse:String = null;
+    public var highlightResizeInsteadOfScaleIfTrue:String = null;
 
     static var cache = new Map<String,EntityOptions>();
 
@@ -32,7 +32,6 @@ class EntityOptions {
                 if (editableType != null && editableType.meta != null && editableType.meta.editable != null && Std.is(editableType.meta.editable, Array)) {
                     var info:Dynamic = editableType.meta.editable[0];
                     if (info != null) {
-                        var checkImplicitSizeForResize = true;
                         if (info.highlight != null) {
                             if (info.highlight.points != null)
                                 result.highlightPoints = info.highlight.points;
@@ -42,29 +41,17 @@ class EntityOptions {
                                 result.highlightMaxPoints = info.highlight.maxPoints;
                             if (info.highlight.movePointsToZero != null)
                                 result.highlightMovePointsToZero = info.highlight.movePointsToZero;
-                            if (info.highlight.resizeInsteadOfScale != true) {
-                                result.highlightResizeInsteadOfScale = info.highlight.resizeInsteadOfScale;
-                                var checkImplicitSizeForResize = false;
-                            }
-                            if (info.highlight.resizeInsteadOfScaleIfNull != true) {
-                                result.highlightResizeInsteadOfScaleIfNull = info.highlight.resizeInsteadOfScaleIfNull;
-                                var checkImplicitSizeForResize = false;
-                            }
-                            if (info.highlight.resizeInsteadOfScaleIfFalse != true) {
-                                result.highlightResizeInsteadOfScaleIfFalse = info.highlight.resizeInsteadOfScaleIfFalse;
-                                var checkImplicitSizeForResize = false;
-                            }
                         }
-                        if (checkImplicitSizeForResize) {
-                            if (info.implicitSize == true) {
-                                result.highlightResizeInsteadOfScale = true;
-                            }
-                            else if (info.implicitSizeUnlessNull != null) {
-                                result.highlightResizeInsteadOfScaleIfNull = info.implicitSizeUnlessNull;
-                            }
-                            else if (info.implicitSizeUnlessFalse != null) {
-                                result.highlightResizeInsteadOfScaleIfFalse = info.implicitSizeUnlessFalse;
-                            }
+                        if (info.implicitSize == true) {
+                            result.highlightResizeInsteadOfScale = false;
+                        }
+                        else if (info.implicitSizeUnlessNull != null) {
+                            result.highlightResizeInsteadOfScale = false;
+                            result.highlightResizeInsteadOfScaleIfNull = info.implicitSizeUnlessNull;
+                        }
+                        else if (info.implicitSizeUnlessTrue != null) {
+                            result.highlightResizeInsteadOfScale = false;
+                            result.highlightResizeInsteadOfScaleIfTrue = info.implicitSizeUnlessTrue;
                         }
                     }
                 }

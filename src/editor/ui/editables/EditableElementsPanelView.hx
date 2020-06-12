@@ -164,6 +164,53 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
             form.add(item);
         })();
 
+        var inGroup:Array<Dynamic> = [];
+
+        (function() {
+            var item = new LabeledFieldView(new BooleanFieldView());
+            item.label = 'Transparent';
+            item.field.setValue = function(field, value) {
+                var fragment = model.project.lastSelectedFragment;
+                if (fragment != null) fragment.transparent = value;
+            };
+            item.field.autorun(function() {
+                var fragment = model.project.lastSelectedFragment;
+                if (fragment != null) item.field.value = fragment.transparent;
+            });
+            inGroup.push(item);
+        })();
+
+        (function() {
+            var item = new LabeledFieldView(new BooleanFieldView());
+            item.label = 'Overflow';
+            item.field.setValue = function(field, value) {
+                var fragment = model.project.lastSelectedFragment;
+                if (fragment != null) fragment.overflow = value;
+            };
+            item.field.autorun(function() {
+                var fragment = model.project.lastSelectedFragment;
+                if (fragment != null) item.field.value = fragment.overflow;
+            });
+            inGroup.push(item);
+        })();
+
+        var group = new LabeledFieldGroupView(inGroup);
+        form.add(group);
+
+        (function() {
+            var item = new LabeledFieldView(new ColorFieldView());
+            item.label = 'Color';
+            item.field.setValue = function(field, value) {
+                var fragment = model.project.lastSelectedFragment;
+                if (fragment != null) fragment.color = value;
+            };
+            item.field.autorun(function() {
+                var fragment = model.project.lastSelectedFragment;
+                if (fragment != null) item.field.value = fragment.color;
+            });
+            form.add(item);
+        })();
+
         (function() {
             var item = new LabeledFieldView(new TextFieldView());
             item.label = 'Bundle';
@@ -179,9 +226,9 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
                 var fragment = model.project.lastSelectedFragment;
                 if (fragment != null) fragment.bundle = value;
             };
-            autorun(function() {
+            item.autorun(function() {
                 var fragment = model.project.lastSelectedFragment;
-                if (fragment != null) item.field.textValue = fragment.bundle != null ? '' + fragment.bundle : '';
+                if (fragment != null && !fragment.destroyed) item.field.textValue = fragment.bundle != null ? '' + fragment.bundle : '';
             });
             form.add(item);
         })();
@@ -209,7 +256,7 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
             item.autorun(() -> {
                 var script = model.project.lastSelectedScript;
                 unobserve();
-                if (script != null) {
+                if (script != null && !script.destroyed) {
                     item.field = EntityFieldUtils.createEditableScriptIdField(script);
                 }
             });

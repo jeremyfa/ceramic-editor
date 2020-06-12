@@ -4,6 +4,15 @@ class ScriptEditorView extends View implements Observable {
 
     @observe public var selectedScript:EditorScriptData;
 
+    public var hideMonacoEditor(default, set):Bool = false;
+    function set_hideMonacoEditor(hideMonacoEditor:Bool):Bool {
+        if (this.hideMonacoEditor != hideMonacoEditor) {
+            this.hideMonacoEditor = hideMonacoEditor;
+            layoutDirty = true;
+        }
+        return hideMonacoEditor;
+    }
+
     var monaco:MonacoEditorView;
 
     var headerView:RowLayout;
@@ -37,7 +46,12 @@ class ScriptEditorView extends View implements Observable {
         monaco.onContentChange(this, (newContent, prevContent) -> {
             var selectedScript = this.selectedScript;
             if (selectedScript != null) {
-                selectedScript.content = newContent;
+                if (selectedScript.content != newContent) {
+                    selectedScript.content = newContent;
+                    if (!monaco.didUndoOrRedo) {
+                        model.history.step();
+                    }
+                }
             }
         });
 
@@ -50,8 +64,12 @@ class ScriptEditorView extends View implements Observable {
         unobserve();
 
         if (selectedScript != null) {
-            titleText.content = selectedScript.scriptId;
-            monaco.setContent(selectedScript.content);
+            reobserve();
+            var scriptId = selectedScript.scriptId;
+            var scriptContent = selectedScript.content;
+            unobserve();
+            titleText.content = scriptId;
+            monaco.setContent(scriptContent);
             monaco.active = true;
         }
         else {
@@ -68,7 +86,7 @@ class ScriptEditorView extends View implements Observable {
 
         var headerViewHeight = 25;
 
-        monaco.pos(0, headerViewHeight);
+        monaco.pos(hideMonacoEditor ? -9999 : 0, hideMonacoEditor ? -9999 : headerViewHeight);
         monaco.size(width, height - headerViewHeight);
 
         headerView.viewSize(width, headerViewHeight);

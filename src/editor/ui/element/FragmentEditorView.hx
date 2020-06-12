@@ -6,9 +6,13 @@ class FragmentEditorView extends View implements Observable {
 
     @observe public var selectedFragment:EditorFragmentData = null;
 
+    @observe var resettingFragment:Bool = false;
+
+    @observe var editedFragment:Fragment = null;
+
     public var fragmentOverlay(default, null):Quad;
 
-    var editedFragment:Fragment = null;
+    var fragmentBackground(default, null):Quad;
 
     var titleText:TextView;
 
@@ -21,20 +25,17 @@ class FragmentEditorView extends View implements Observable {
         super();
 
         this.editorView = editorView;
+        color = theme.windowBackgroundColor;
 
-        // Fragment
-        editedFragment = new Fragment({
-            assets: editor.contentAssets,
-            editedItems: true
-        });
-        editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
-        onPointerDown(this, (_) -> deselectItems());
-        editedFragment.depth = 1;
-        add(editedFragment);
+        // Fragment background
+        fragmentBackground = new Quad();
+        fragmentBackground.transparent = false;
+        fragmentBackground.depth = 1;
+        add(fragmentBackground);
 
         headerView = new RowLayout();
         headerView.padding(0, 6);
-        headerView.depth = 2;
+        headerView.depth = 3;
         {
             titleText = new TextView();
             titleText.viewSize(fill(), fill());
@@ -50,8 +51,10 @@ class FragmentEditorView extends View implements Observable {
         fragmentOverlay = new Quad();
         fragmentOverlay.transparent = true;
         fragmentOverlay.depth = 8;
-        editedFragment.clip = fragmentOverlay;
         add(fragmentOverlay);
+
+        // Fragment
+        createEditedFragment();
 
         autorun(updateEditedFragment);
         autorun(updateFragmentItems);
@@ -74,9 +77,38 @@ class FragmentEditorView extends View implements Observable {
 
     }
 
+    public function resetFragment() {
+
+        if (resettingFragment)
+            return;
+
+        createEditedFragment();
+
+    }
+
+    function createEditedFragment() {
+
+        if (editedFragment != null) {
+            editedFragment.destroy();
+            editedFragment = null;
+        }
+
+        editedFragment = new Fragment({
+            assets: editor.contentAssets,
+            editedItems: true
+        });
+        editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
+        onPointerDown(this, (_) -> deselectItems());
+        editedFragment.depth = 2;
+        add(editedFragment);
+        editedFragment.clip = fragmentOverlay;
+
+    }
+
     function updateEditedFragment() {
 
         var selectedFragment = this.selectedFragment;
+        var editedFragment = this.editedFragment;
 
         if (selectedFragment == null) {
             unobserve();
@@ -87,16 +119,32 @@ class FragmentEditorView extends View implements Observable {
         }
         else {
             var copied = Reflect.copy(selectedFragment.fragmentDataWithoutItems);
+            var transparent = selectedFragment.transparent;
+            var overflow = selectedFragment.overflow;
+            var color = selectedFragment.color;
             unobserve();
             titleText.content = selectedFragment.fragmentId;
             if (prevSelectedFragment != selectedFragment) {
+                #if ceramic_editor_debug_fragment
                 trace('this is a new fragment being loaded, reset items');
+                #end
                 copied.items = [];
                 prevSelectedFragment = selectedFragment;
             }
+            #if ceramic_editor_debug_fragment
             trace('update fragment data');
+            #end
             editedFragment.active = true;
             editedFragment.fragmentData = copied;
+            //editedFragment.transparent = transparent;
+            //editedFragment.color = color;
+            if (overflow) {
+                this.color = transparent ? theme.darkBackgroundColor : color;
+            }
+            else {
+                this.color = theme.windowBackgroundColor;
+            }
+            fragmentBackground.transparent = !transparent;
             reobserve();
         }
 
@@ -109,6 +157,7 @@ class FragmentEditorView extends View implements Observable {
 
         var selectedFragment = this.selectedFragment;
         var prevSelectedFragment = this.prevSelectedFragment; // Used for invalidation
+        var editedFragment = this.editedFragment;
 
         unobserve();
 
@@ -293,6 +342,16 @@ class FragmentEditorView extends View implements Observable {
             );
         }
 
+        fragmentBackground.anchor(0.5, 0.5);
+        fragmentBackground.pos(
+            editedFragment.x,
+            editedFragment.y
+        );
+        fragmentBackground.size(
+            editedFragment.width * editedFragment.scaleX,
+            editedFragment.height * editedFragment.scaleY
+        );
+
         fragmentOverlay.pos(
             editedFragment.x - availableFragmentWidth * 0.5,
             editedFragment.y - availableFragmentHeight * 0.5
@@ -308,10 +367,7 @@ class FragmentEditorView extends View implements Observable {
 
     function updateStyle() {
 
-        color = theme.windowBackgroundColor;
-
-        editedFragment.transparent = false;
-        editedFragment.color = theme.darkBackgroundColor;
+        fragmentBackground.color = theme.darkBackgroundColor;
 
         headerView.transparent = false;
         headerView.color = theme.lightBackgroundColor;
@@ -326,8 +382,29 @@ class FragmentEditorView extends View implements Observable {
 
     override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float):Bool {
 
+        // Forbid touch outside fragment editor bounds
         if (!hits(x, y)) {
             return true;
+        }
+        
+        // Forbid touch on locked visuals
+        var hittingEntityData:EditorEntityData = null;
+        if (model.project.lastSelectedFragment != null && editedFragment != null && editedFragment.entities.indexOf(hittingVisual) != -1) {
+            hittingEntityData = model.project.lastSelectedFragment.get(hittingVisual.id);
+            if (hittingEntityData != null && hittingEntityData.locked) {
+                return true;
+            }
+        }
+
+        // If selected visual still hits, do not allow touch on another visual
+        if (model.project.lastSelectedFragment != null && editedFragment != null && hittingEntityData != null) {
+            var selectedVisualData = model.project.lastSelectedFragment.selectedVisual;
+            if (selectedVisualData != null) {
+                var selectedVisual:Visual = cast editedFragment.get(selectedVisualData.entityId);
+                if (selectedVisual != null && selectedVisual != hittingVisual && selectedVisual.hits(x, y)) {
+                    return true;
+                }
+            }
         }
 
         return false;

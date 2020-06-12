@@ -55,8 +55,8 @@ class ColorPickerView extends LayersLayout implements Observable {
             return -1;
         }
 
-        var dragX = draggingColorPreview.offsetX + draggingColorPreview.dragX;
-        var dragY = draggingColorPreview.offsetY + draggingColorPreview.dragY;
+        var dragX = draggingColorPreview.offsetX + draggingColorPreview.dragDrop.dragX;
+        var dragY = draggingColorPreview.offsetY + draggingColorPreview.dragDrop.dragY;
 
         var bestIndex = -1;
         var bestDistance = 999999999.0;
@@ -491,8 +491,6 @@ class ColorPickerView extends LayersLayout implements Observable {
     }
 
     public function setColorFromHSLuv(h:Float, s:Float, l:Float) {
-
-        log.debug('setColorFromHSLuv($h, $s, $l)');
 
         updatingColor++;
 

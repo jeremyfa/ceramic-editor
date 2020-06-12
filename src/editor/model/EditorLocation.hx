@@ -6,4 +6,6 @@ enum EditorLocation {
 
     SETTINGS;
 
+    PLAY(fragmentId:String);
+
 }

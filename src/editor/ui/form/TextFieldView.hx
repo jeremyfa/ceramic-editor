@@ -151,7 +151,6 @@ class TextFieldView extends FieldView implements Observable {
 
         if (editText != null) {
             onDisabledChange(this, (disabled, _) -> {
-                trace('disabled: ' + disabled);
                 editText.disabled = disabled;
             });
         }

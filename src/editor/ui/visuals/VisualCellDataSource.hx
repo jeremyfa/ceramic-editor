@@ -60,6 +60,7 @@ class VisualCellDataSource implements CollectionViewDataSource {
 
             cell.title = visualData.entityId;
             cell.subTitle = visualData.entityClass;
+            cell.locked = visualData.locked;
             cell.selected = (cell.itemIndex == model.project.lastSelectedFragment.selectedVisualIndex);
 
         });
@@ -67,6 +68,9 @@ class VisualCellDataSource implements CollectionViewDataSource {
         var click = new Click();
         cell.component('click', click);
         click.onClick(cell, function() {
+
+            if (cell.locked)
+                return;
 
             if (model.project.lastSelectedFragment.selectedVisualIndex != cell.itemIndex) {
                 model.project.lastSelectedFragment.selectedVisualIndex = cell.itemIndex;
@@ -77,7 +81,23 @@ class VisualCellDataSource implements CollectionViewDataSource {
 
         });
 
-        CellDragDrop.bindCellDragDrop(cell, click);
+        cell.bindDragDrop(click, function(itemIndex) {
+            if (itemIndex != cell.itemIndex) {
+                var visualData = model.project.lastSelectedFragment.visuals[cell.itemIndex];
+                if (visualData == null)
+                    return;
+                var otherVisualData = model.project.lastSelectedFragment.visuals[itemIndex];
+                if (otherVisualData == null)
+                    return;
+
+                if (itemIndex > cell.itemIndex) {
+                    model.project.lastSelectedFragment.moveVisualAboveVisual(visualData, otherVisualData);
+                }
+                else {
+                    model.project.lastSelectedFragment.moveVisualBelowVisual(visualData, otherVisualData);
+                }
+            }
+        });
 
         cell.handleTrash = function() {
             var visualData = model.project.lastSelectedFragment.visuals[cell.itemIndex];
@@ -86,9 +106,18 @@ class VisualCellDataSource implements CollectionViewDataSource {
             model.project.lastSelectedFragment.removeItem(visualData);
         };
 
-        cell.locked = false;
         cell.handleLock = function() {
-            cell.locked = !cell.locked;
+            var visualData = model.project.lastSelectedFragment.visuals[cell.itemIndex];
+            if (visualData == null)
+                return;
+            visualData.locked = !visualData.locked;
+        };
+
+        cell.handleDuplicate = function() {
+            var visualData = model.project.lastSelectedFragment.visuals[cell.itemIndex];
+            if (visualData == null)
+                return;
+            model.project.lastSelectedFragment.duplicateItem(visualData);
         };
 
         /*

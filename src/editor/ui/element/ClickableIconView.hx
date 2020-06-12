@@ -4,6 +4,8 @@ class ClickableIconView extends EntypoIconView {
 
     @observe var hover:Bool = false;
 
+    @observe public var disabled:Bool = false;
+
     @observe public var hoverStyle:Bool = true;
 
     @event function click();
@@ -44,13 +46,22 @@ class ClickableIconView extends EntypoIconView {
             hover = false;
         });
 
+        autorun(() -> {
+            touchable = !disabled;
+        });
         autorun(updateStyle);
 
     }
 
     function updateStyle() {
 
-        textColor = hover || !hoverStyle ? theme.iconColor : Color.interpolate(theme.mediumBackgroundColor, theme.iconColor, 0.7);
+        var textColor = hover || !hoverStyle ? theme.iconColor : Color.interpolate(theme.mediumBackgroundColor, theme.iconColor, 0.7);
+
+        if (disabled) {
+            textColor = Color.interpolate(textColor, theme.darkBackgroundColor, 0.5);
+        }
+
+        this.textColor = textColor;
 
     }
 

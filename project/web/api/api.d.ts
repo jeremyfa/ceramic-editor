@@ -8,9 +8,11 @@ type Void = void;
 
 function trace(msg: any): Void;
 
+type AnyVisual = Visual & Text & Mesh & Quad;
+
 const self: Entity;
 const entity: Entity;
-const visual: Visual;
+const visual: AnyVisual;
 
 const app: App;
 const screen: Screen;
@@ -165,6 +167,8 @@ class History extends Entity implements Component {
      * Record a step in the undo stack
      */
     step(): Void;
+    disable(): Void;
+    enable(): Void;
     /**
      * Undo last step, if any
      */
@@ -256,6 +260,284 @@ class Autorun extends Entity {
     unbindEvents(): Void;
 }
 
+class RotateFrame {
+    static NONE: Int;
+    static ROTATE_90: Int;
+}
+
+/** A typed (mouse) button id */
+class MouseButton {
+    /** No mouse buttons */
+    static NONE: Int;
+    /** Left mouse button */
+    static LEFT: Int;
+    /** Middle mouse button */
+    static MIDDLE: Int;
+    /** Right mouse button */
+    static RIGHT: Int;
+    /** Extra button pressed (4) */
+    static EXTRA1: Int;
+    /** Extra button pressed (5) */
+    static EXTRA2: Int;
+}
+
+class MeshColorMapping {
+    /** Map a single color to the whole mesh. */
+    static MESH: Int;
+    /** Map a color to each indice. */
+    static INDICES: Int;
+    /** Map a color to each vertex. */
+    static VERTICES: Int;
+}
+
+class Flags {
+    static getBool(flags: Int, bit: Int): Bool;
+    static setBoolAndGetFlags(flags: Int, bit: Int, bool: Bool): Int;
+}
+
+class DebugRendering {
+    static DEFAULT: Int;
+    static WIREFRAME: Int;
+}
+
+/**
+ * Class representing a color, based on Int. Provides a variety of methods for creating and converting colors.
+ *
+ * Colors can be written as Ints. This means you can pass a hex value such as
+ * 0x123456 to a function expecting a Color, and it will automatically become a Color "object".
+ * Similarly, Colors may be treated as Ints.
+ *
+ * Note that when using properties of a Color other than RGB, the values are ultimately stored as
+ * RGB values, so repeatedly manipulating HSB/HSL/CMYK values may result in a gradual loss of precision.
+ */
+class Color {
+    static NONE: Color;
+    static WHITE: Color;
+    static GRAY: Color;
+    static BLACK: Color;
+    static GREEN: Color;
+    static LIME: Color;
+    static YELLOW: Color;
+    static ORANGE: Color;
+    static RED: Color;
+    static PURPLE: Color;
+    static BLUE: Color;
+    static BROWN: Color;
+    static PINK: Color;
+    static MAGENTA: Color;
+    static CYAN: Color;
+    /**
+     * Generate a random color (away from white or black)
+     * @return The color as a Color
+     */
+    static random(minSatutation?: Float, minBrightness?: Float): Color;
+    /**
+     * Create a color from the least significant four bytes of an Int
+     *
+     * @param    value And Int with bytes in the format 0xRRGGBB
+     * @return    The color as a Color
+     */
+    static fromInt(value: Int): Color;
+    /**
+     * Generate a color from integer RGB values (0 to 255)
+     *
+     * @param red    The red value of the color from 0 to 255
+     * @param green    The green value of the color from 0 to 255
+     * @param blue    The green value of the color from 0 to 255
+     * @return The color as a Color
+     */
+    static fromRGB(red: Int, green: Int, blue: Int): Color;
+    /**
+     * Generate a color from float RGB values (0 to 1)
+     *
+     * @param red    The red value of the color from 0 to 1
+     * @param green    The green value of the color from 0 to 1
+     * @param blue    The green value of the color from 0 to 1
+     * @return The color as a Color
+     */
+    static fromRGBFloat(red: Float, green: Float, blue: Float): Color;
+    /**
+     * Generate a color from CMYK values (0 to 1)
+     *
+     * @param cyan        The cyan value of the color from 0 to 1
+     * @param magenta    The magenta value of the color from 0 to 1
+     * @param yellow    The yellow value of the color from 0 to 1
+     * @param black        The black value of the color from 0 to 1
+     * @return The color as a Color
+     */
+    static fromCMYK(cyan: Float, magenta: Float, yellow: Float, black: Float): Color;
+    /**
+     * Generate a color from HSB (aka HSV) components.
+     *
+     * @param    hue            A number between 0 and 360, indicating position on a color strip or wheel.
+     * @param    saturation    A number between 0 and 1, indicating how colorful or gray the color should be.  0 is gray, 1 is vibrant.
+     * @param    brightness    (aka value) A number between 0 and 1, indicating how bright the color should be.  0 is black, 1 is full bright.
+     * @return    The color as a Color
+     */
+    static fromHSB(hue: Float, saturation: Float, brightness: Float): Color;
+    /**
+     * Generate a color from HSL components.
+     *
+     * @param    hue            A number between 0 and 360, indicating position on a color strip or wheel.
+     * @param    saturation    A number between 0 and 1, indicating how colorful or gray the color should be.  0 is gray, 1 is vibrant.
+     * @param    lightness    A number between 0 and 1, indicating the lightness of the color
+     * @return    The color as a Color
+     */
+    static fromHSL(hue: Float, saturation: Float, lightness: Float): Color;
+    /**
+     * Parses a `String` and returns a `Color` or `null` if the `String` couldn't be parsed.
+     *
+     * Examples (input -> output in hex):
+     *
+     * - `0x00FF00`    -> `0x00FF00`
+     * - `#0000FF`     -> `0x0000FF`
+     * - `GRAY`        -> `0x808080`
+     * - `blue`        -> `0x0000FF`
+     *
+     * @param    str     The string to be parsed
+     * @return    A `Color` or `null` if the `String` couldn't be parsed
+     */
+    static fromString(str: String): Color?;
+    /**
+     * Get HSB color wheel values in an array which will be 360 elements in size
+     *
+     * @return    HSB color wheel as Array of Colors
+     */
+    static getHSBColorWheel(): Array<Color>;
+    /**
+     * Get an interpolated color based on two different colors.
+     *
+     * @param     color1 The first color
+     * @param     color2 The second color
+     * @param     factor value from 0 to 1 representing how much to shift color1 toward color2
+     * @return    The interpolated color
+     */
+    static interpolate(color1: Color, color2: Color, factor?: Float): Color;
+    /**
+     * Create a gradient from one color to another
+     *
+     * @param color1 The color to shift from
+     * @param color2 The color to shift to
+     * @param steps How many colors the gradient should have
+     * @param ease An optional easing function, such as those provided in FlxEase
+     * @return An array of colors of length steps, shifting from color1 to color2
+     */
+    static gradient(color1: Color, color2: Color, steps: Int, ease?: ((arg1: Float) => Float)?): Array<Color>;
+    /**
+     * Multiply the RGB channels of two Colors
+     */
+    static multiply(lhs: Color, rhs: Color): Color;
+    /**
+     * Add the RGB channels of two Colors
+     */
+    static add(lhs: Color, rhs: Color): Color;
+    /**
+     * Subtract the RGB channels of one Color from another
+     */
+    static subtract(lhs: Color, rhs: Color): Color;
+    /**
+     * Return a String representation of the color in the format
+     *
+     * @param prefix Whether to include "0x" prefix at start of string
+     * @return    A string of length 10 in the format 0xAARRGGBB
+     */
+    static toHexString(color: Color, prefix?: Bool): String;
+    /**
+     * Return a String representation of the color in the format #RRGGBB
+     *
+     * @return    A string of length 7 in the format #RRGGBB
+     */
+    static toWebString(color: Color): String;
+    /**
+     * Get a string of color information about this color
+     *
+     * @return A string containing information about this color
+     */
+    static getColorInfo(color: Color): String;
+    /**
+     * Get a darkened version of this color
+     *
+     * @param    factor value from 0 to 1 of how much to progress toward black.
+     * @return     A darkened version of this color
+     */
+    static getDarkened(color: Color, factor?: Float): Color;
+    /**
+     * Get a lightened version of this color
+     *
+     * @param    factor value from 0 to 1 of how much to progress toward white.
+     * @return     A lightened version of this color
+     */
+    static getLightened(color: Color, factor?: Float): Color;
+    /**
+     * Get the inversion of this color
+     *
+     * @return The inversion of this color
+     */
+    static getInverted(color: Color): Color;
+    /**
+     * Get the hue of the color in degrees (from 0 to 359)
+     */
+    static hue(color: Color): Float;
+    /**
+     * Get the saturation of the color (from 0 to 1)
+     */
+    static saturation(color: Color): Float;
+    /**
+     * Get the brightness (aka value) of the color (from 0 to 1)
+     */
+    static brightness(color: Color): Float;
+    /**
+     * Get the lightness of the color (from 0 to 1)
+     */
+    static lightness(color: Color): Float;
+    static red(color: Color): Int;
+    static green(color: Color): Int;
+    static blue(color: Color): Int;
+    static redFloat(color: Color): Float;
+    static greenFloat(color: Color): Float;
+    static blueFloat(color: Color): Float;
+    /**
+     * Generate a color from HSLuv components.
+     *
+     * @param    hue            A number between 0 and 360, indicating position on a color strip or wheel.
+     * @param    saturation    A number between 0 and 1, indicating how colorful or gray the color should be.  0 is gray, 1 is vibrant.
+     * @param    lightness    A number between 0 and 1, indicating the lightness of the color
+     * @return    The color as a Color
+     */
+    static fromHSLuv(hue: Float, saturation: Float, lightness: Float): Color;
+    /**
+     * Get HSLuv components from the color instance.
+     *
+     * @param result A pre-allocated array to store the result into.
+     * @return    The HSLuv components as a float array
+     */
+    static getHSLuv(color: Color, result?: Array<Float>?): Array<Float>;
+}
+
+class Blending {
+    /** Automatic/default blending in ceramic. Internally, this translates to premultiplied alpha blending as textures
+        are already transformed for this blending at asset copy phase, except in some situations (render to texture) where
+        ceramic may use some more specific blendings as needed. */
+    static AUTO: Int;
+    /** Explicit premultiplied alpha blending */
+    static PREMULTIPLIED_ALPHA: Int;
+    /** Additive blending */
+    static ADD: Int;
+    /** Set blending */
+    static SET: Int;
+    /** Blending used by ceramic when rendering to texture. */
+    static RENDER_TO_TEXTURE: Int;
+    /** Traditional alpha blending. This should only be used on very specific cases. Used instead of `NORMAL` blending
+        when the visual is drawing a RenderTexture. */
+    static ALPHA: Int;
+}
+
+/** RGBA Color stored as integer.
+    Can be decomposed to Color/Int (RGB) + Float (A) and
+    constructed from Color/Int (RGB) + Float (A). */
+class AlphaColor {
+}
+
 class WatchDirectory extends Entity {
     constructor(updateInterval?: Float);
     /**directoryChange event*/
@@ -289,11 +571,58 @@ class VisualNapePhysics extends Entity {
 }
 
 class VisualArcadePhysics extends Entity {
-    constructor();
+    constructor(x: Float, y: Float, width: Float, height: Float, rotation: Float);
+    static fromBody(body: arcade.Body): VisualArcadePhysics;
+    /** Dispatched when this visual body collides with another body. */
+    onCollideBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: arcade.Body) => Void)): Void;
+    /** Dispatched when this visual body collides with another body. */
+    onceCollideBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: arcade.Body) => Void)): Void;
+    /** Dispatched when this visual body collides with another body. */
+    offCollideBody(handleVisualBody?: ((visual: Visual, body: arcade.Body) => Void)?): Void;
+    /** Dispatched when this visual body collides with another body. */
+    listensCollideBody(): Bool;
+    /** Dispatched when this visual body overlaps with another body. */
+    onOverlapBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: arcade.Body) => Void)): Void;
+    /** Dispatched when this visual body overlaps with another body. */
+    onceOverlapBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: arcade.Body) => Void)): Void;
+    /** Dispatched when this visual body overlaps with another body. */
+    offOverlapBody(handleVisualBody?: ((visual: Visual, body: arcade.Body) => Void)?): Void;
+    /** Dispatched when this visual body overlaps with another body. */
+    listensOverlapBody(): Bool;
+    /** Dispatched when this visual body collides with another visual's body. */
+    onCollide(owner: Entity?, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
+    /** Dispatched when this visual body collides with another visual's body. */
+    onceCollide(owner: Entity?, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
+    /** Dispatched when this visual body collides with another visual's body. */
+    offCollide(handleVisual1Visual2?: ((visual1: Visual, visual2: Visual) => Void)?): Void;
+    /** Dispatched when this visual body collides with another visual's body. */
+    listensCollide(): Bool;
+    /** Dispatched when this visual body overlaps with another visual's body. */
+    onOverlap(owner: Entity?, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
+    /** Dispatched when this visual body overlaps with another visual's body. */
+    onceOverlap(owner: Entity?, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
+    /** Dispatched when this visual body overlaps with another visual's body. */
+    offOverlap(handleVisual1Visual2?: ((visual1: Visual, visual2: Visual) => Void)?): Void;
+    /** Dispatched when this visual body overlaps with another visual's body. */
+    listensOverlap(): Bool;
+    /** Dispatched when this visual body collides with the world bounds. */
+    onWorldBounds(owner: Entity?, handleVisualUpDownLeftRight: ((visual: Visual, up: Bool, down: Bool, left: Bool, right: Bool) => Void)): Void;
+    /** Dispatched when this visual body collides with the world bounds. */
+    onceWorldBounds(owner: Entity?, handleVisualUpDownLeftRight: ((visual: Visual, up: Bool, down: Bool, left: Bool, right: Bool) => Void)): Void;
+    /** Dispatched when this visual body collides with the world bounds. */
+    offWorldBounds(handleVisualUpDownLeftRight?: ((visual: Visual, up: Bool, down: Bool, left: Bool, right: Bool) => Void)?): Void;
+    /** Dispatched when this visual body collides with the world bounds. */
+    listensWorldBounds(): Bool;
+    visual: Visual;
+    body: arcade.Body;
+    world: arcade.World;
+    destroy(): Void;
+    unbindEvents(): Void;
 }
 
 class Visual extends Entity {
     constructor();
+    static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
     /**pointerDown event*/
     onPointerDown(owner: Entity?, handleInfo: ((info: TouchInfo) => Void)): Void;
     /**pointerDown event*/
@@ -342,6 +671,139 @@ class Visual extends Entity {
     offBlur(handle?: (() => Void)?): Void;
     /**Does it listen to blur event*/
     listensBlur(): Bool;
+    /** The arcade physics body bound to this visual. */
+    arcade: VisualArcadePhysics;
+    /** Init arcade physics (body) bound to this visual. */
+    initArcadePhysics(world?: arcade.World?): VisualArcadePhysics;
+    /** The arcade physics body linked to this visual */
+    body: arcade.Body;
+    /** Allow this visual to be rotated by arcade physics, via `angularVelocity`, etc... */
+    allowRotation: Bool;
+    /** An immovable visual will not receive any impacts from other visual bodies. **Two** immovable visuas can't separate or exchange momentum and will pass through each other. */
+    immovable: Bool;
+    /** The x velocity, or rate of change the visual position. Measured in points per second. */
+    velocityX: Float;
+    /** The y velocity, or rate of change the visual position. Measured in points per second. */
+    velocityY: Float;
+    /** The velocity, or rate of change the visual position. Measured in points per second. */
+    velocity(velocityX: Float, velocityY: Float): Void;
+    /** The maximum x velocity that the visual can reach. */
+    maxVelocityX: Float;
+    /** The maximum y velocity that the visual can reach. */
+    maxVelocityY: Float;
+    /** The maximum velocity that the visual can reach. */
+    maxVelocity(maxVelocityX: Float, maxVelocityY: Float): Void;
+    /** The x acceleration is the rate of change of the x velocity. Measured in points per second squared. */
+    accelerationX: Float;
+    /** The y acceleration is the rate of change of the y velocity. Measured in points per second squared. */
+    accelerationY: Float;
+    /** The acceleration is the rate of change of the y velocity. Measured in points per second squared. */
+    acceleration(accelerationX: Float, accelerationY: Float): Void;
+    /** Allow this visual to be influenced by drag */
+    allowDrag: Bool;
+    /** The x drag is the rate of reduction of the x velocity, kind of deceleration. Measured in points per second squared. */
+    dragX: Float;
+    /** The y drag is the rate of reduction of the y velocity, kind of deceleration. Measured in points per second squared. */
+    dragY: Float;
+    /** The drag is the rate of reduction of the velocity, kind of deceleration. Measured in points per second squared. */
+    drag(dragX: Float, dragY: Float): Void;
+    /** The x elasticity of the visual when colliding. `bounceX = 1` means full rebound, `bounceX = 0.5` means 50% rebound velocity. */
+    bounceX: Float;
+    /** The y elasticity of the visual when colliding. `bounceY = 1` means full rebound, `bounceY = 0.5` means 50% rebound velocity. */
+    bounceY: Float;
+    /** The elasticity of the visual when colliding. `1` means full rebound, `0.5` means 50% rebound velocity. */
+    bounce(bounceX: Float, bounceY: Float): Void;
+    /** Enable or disable world bounds specific bounce value with `worldBounceX` and `worldBounceY`.
+        Disabled by default, meaning `bounceX` and `bounceY` are used by default. */
+    useWorldBounce: Bool;
+    /** The x elasticity of the visual when colliding with world bounds. Ignored if `useWorldBounce` is `false` (`bounceX` used instead). */
+    worldBounceX: Float;
+    /** The y elasticity of the visual when colliding with world bounds. Ignored if `useWorldBounce` is `false` (`bounceY` used instead). */
+    worldBounceY: Float;
+    /** The elasticity of the visual when colliding with world bounds. Ignored if `useWorldBounce` is `false` (`bounceY` used instead). */
+    worldBounce(worldBounceX: Float, worldBounceY: Float): Void;
+    /** The maximum x delta per frame. `0` (default) means no maximum delta. */
+    maxDeltaX: Float;
+    /** The maximum y delta per frame. `0` (default) means no maximum delta. */
+    maxDeltaY: Float;
+    /** The maxDelta, or rate of change the visual position. Measured in points per second. */
+    maxDelta(maxDeltaX: Float, maxDeltaY: Float): Void;
+    /** Allow this visual to be influenced by gravity, either world or local. */
+    allowGravity: Bool;
+    /** This visual's local y gravity, **added** to any world gravity, unless `allowGravity` is set to false. */
+    gravityX: Float;
+    /** This visual's local x gravity, **added** to any world gravity, unless `allowGravity` is set to false. */
+    gravityY: Float;
+    /** This visual's local gravity, **added** to any world gravity, unless `allowGravity` is set to false. */
+    gravity(gravityX: Float, gravityY: Float): Void;
+    /** If this visual is `immovable` and moving, and another visual body is 'riding' this one, this is the amount of motion the riding body receives on x axis. */
+    frictionX: Float;
+    /** If this visual is `immovable` and moving, and another visual body is 'riding' this one, this is the amount of motion the riding body receives on y axis. */
+    frictionY: Float;
+    /** If this visual is `immovable` and moving, and another visual body is 'riding' this one, this is the amount of motion the riding body receives on x & y axis. */
+    friction(frictionX: Float, frictionY: Float): Void;
+    /** The angular velocity is the rate of change of the visual's rotation. It is measured in degrees per second. */
+    angularVelocity: Float;
+    /** The maximum angular velocity in degrees per second that the visual can reach. */
+    maxAngularVelocity: Float;
+    /** The angular acceleration is the rate of change of the angular velocity. Measured in degrees per second squared. */
+    angularAcceleration: Float;
+    /** The angular drag is the rate of reduction of the angular velocity. Measured in degrees per second squared. */
+    angularDrag: Float;
+    /** The mass of the visual's body. When two bodies collide their mass is used in the calculation to determine the exchange of velocity. */
+    mass: Float;
+    /** The speed of the visual's body (read only). Equal to the magnitude of the velocity. */
+    speed: Float;
+    /** Whether the physics system should update the visual's position and rotation based on its velocity, acceleration, drag, and gravity. */
+    moves: Bool;
+    /** When this visual's body collides with another, the amount of overlap (x axis) is stored here. */
+    overlapX: Float;
+    /** When this visual's body collides with another, the amount of overlap (y axis) is stored here. */
+    overlapY: Float;
+    /** If a visual's body is overlapping with another body, but neither of them are moving (maybe they spawned on-top of each other?) this is set to `true`. */
+    embedded: Bool;
+    /** A visual body can be set to collide against the world bounds automatically and rebound back into the world if this is set to true. Otherwise it will leave the world. */
+    collideWorldBounds: Bool;
+    /** Dispatched when this visual body collides with another visual's body. */
+    onCollide(owner: Entity, handleVisual1Visual2: ((arg1: Visual, arg2: Visual) => Void)): Void;
+    /** Dispatched when this visual body collides with another visual's body. */
+    onceCollide(owner: Entity, handleVisual1Visual2: ((arg1: Visual, arg2: Visual) => Void)): Void;
+    /** Dispatched when this visual body collides with another visual's body. */
+    offCollide(handleVisual1Visual2?: ((arg1: Visual, arg2: Visual) => Void)?): Void;
+    /** Dispatched when this visual body collides with another visual's body. */
+    listensCollide(): Bool;
+    /** Dispatched when this visual body collides with another body. */
+    onCollideBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: arcade.Body) => Void)): Void;
+    /** Dispatched when this visual body collides with another body. */
+    onceCollideBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: arcade.Body) => Void)): Void;
+    /** Dispatched when this visual body collides with another body. */
+    offCollideBody(handleVisualBody?: ((arg1: Visual, arg2: arcade.Body) => Void)?): Void;
+    /** Dispatched when this visual body collides with another body. */
+    listensCollideBody(): Bool;
+    /** Dispatched when this visual body overlaps with another visual's body. */
+    onOverlap(owner: Entity, handleVisual1Visual2: ((arg1: Visual, arg2: Visual) => Void)): Void;
+    /** Dispatched when this visual body overlaps with another visual's body. */
+    onceOverlap(owner: Entity, handleVisual1Visual2: ((arg1: Visual, arg2: Visual) => Void)): Void;
+    /** Dispatched when this visual body overlaps with another visual's body. */
+    offOverlap(handleVisual1Visual2?: ((arg1: Visual, arg2: Visual) => Void)?): Void;
+    /** Dispatched when this visual body overlaps with another visual's body. */
+    listensOverlap(): Bool;
+    /** Dispatched when this visual body overlaps with another body. */
+    onOverlapBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: arcade.Body) => Void)): Void;
+    /** Dispatched when this visual body overlaps with another body. */
+    onceOverlapBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: arcade.Body) => Void)): Void;
+    /** Dispatched when this visual body overlaps with another body. */
+    offOverlapBody(handleVisualBody?: ((arg1: Visual, arg2: arcade.Body) => Void)?): Void;
+    /** Dispatched when this visual body overlaps with another body. */
+    listensOverlapBody(): Bool;
+    /** Dispatched when this visual body collides with the world bounds. */
+    onWorldBounds(owner: Entity, handleVisualUpDownLeftRight: ((arg1: Visual, arg2: Bool, arg3: Bool, arg4: Bool, arg5: Bool) => Void)): Void;
+    /** Dispatched when this visual body collides with the world bounds. */
+    onceWorldBounds(owner: Entity, handleVisualUpDownLeftRight: ((arg1: Visual, arg2: Bool, arg3: Bool, arg4: Bool, arg5: Bool) => Void)): Void;
+    /** Dispatched when this visual body collides with the world bounds. */
+    offWorldBounds(handleVisualUpDownLeftRight?: ((arg1: Visual, arg2: Bool, arg3: Bool, arg4: Bool, arg5: Bool) => Void)?): Void;
+    /** Dispatched when this visual body collides with the world bounds. */
+    listensWorldBounds(): Bool;
     /** Get this visual typed as `Quad` or null if it isn't a `Quad` */
     asQuad: Quad;
     /** Get this visual typed as `Mesh` or null if it isn't a `Mesh` */
@@ -361,6 +823,11 @@ class Visual extends Entity {
     clip: Visual;
     /** Whether this visual should inherit its parent alpha state or not. */
     inheritAlpha: Bool;
+    /**
+     * Stop this visual, whatever that means (override in subclasses).
+     * When arcade physics are enabled, they are also stopped from this call.
+     */
+    stop(): Void;
     /** Computed flag that tells whether this visual is only translated,
         thus not rotated, skewed nor scaled.
         When this is `true`, matrix computation may be a bit faster as it
@@ -809,7 +1276,7 @@ class TimelineKeyframe {
     easing: Easing;
 }
 
-class TimelineFloatTrack extends TimelineTrack {
+class TimelineFloatTrack extends TimelineTrack<TimelineFloatKeyframe> {
     constructor();
     /**change event*/
     onChange(owner: Entity?, handleTrack: ((track: TimelineFloatTrack) => Void)): Void;
@@ -829,7 +1296,7 @@ class TimelineFloatKeyframe extends TimelineKeyframe {
     value: Float;
 }
 
-class TimelineDegreesTrack extends TimelineTrack {
+class TimelineDegreesTrack extends TimelineTrack<TimelineFloatKeyframe> {
     constructor();
     /**change event*/
     onChange(owner: Entity?, handleTrack: ((track: TimelineDegreesTrack) => Void)): Void;
@@ -844,7 +1311,7 @@ class TimelineDegreesTrack extends TimelineTrack {
     unbindEvents(): Void;
 }
 
-class TimelineColorTrack extends TimelineTrack {
+class TimelineColorTrack extends TimelineTrack<TimelineColorKeyframe> {
     constructor();
     /**change event*/
     onChange(owner: Entity?, handleTrack: ((track: TimelineTrack<TimelineColorKeyframe>) => Void)): Void;
@@ -1600,7 +2067,7 @@ class Scroller extends Visual {
     scrollTo(scrollX: Float, scrollY: Float): Void;
     smoothScrollTo(scrollX: Float, scrollY: Float, duration?: Float, easing?: Easing?): Void;
     snapTo(scrollX: Float, scrollY: Float, duration?: Float, easing?: Easing?): Void;
-    bounce(): Void;
+    bounceScroll(): Void;
     unbindEvents(): Void;
 }
 
@@ -2361,532 +2828,9 @@ enum ParticlesLaunchMode {
     CIRCLE
 }
 
-/** A visual that act as a particle emitter. */
-class Particles extends Visual implements Observable {
-    /**
-     * Creates a new `Particles` object.
-     */
-    constructor();
-    /**Event when any observable value as changed on this instance.*/
-    onObservedDirty(owner: Entity?, handleInstanceFromSerializedField: ((instance: Particles, fromSerializedField: Bool) => Void)): Void;
-    /**Event when any observable value as changed on this instance.*/
-    onceObservedDirty(owner: Entity?, handleInstanceFromSerializedField: ((instance: Particles, fromSerializedField: Bool) => Void)): Void;
-    /**Event when any observable value as changed on this instance.*/
-    offObservedDirty(handleInstanceFromSerializedField?: ((instance: Particles, fromSerializedField: Bool) => Void)?): Void;
-    /**Event when any observable value as changed on this instance.*/
-    listensObservedDirty(): Bool;
-    /**Default is `false`, automatically set to `true` when any of this instance's observable variables has changed.*/
-    observedDirty: Bool;
-    /**emitParticle event*/
-    onEmitParticle(owner: Entity?, handleParticle: ((particle: ParticleItem) => Void)): Void;
-    /**emitParticle event*/
-    onceEmitParticle(owner: Entity?, handleParticle: ((particle: ParticleItem) => Void)): Void;
-    /**emitParticle event*/
-    offEmitParticle(handleParticle?: ((particle: ParticleItem) => Void)?): Void;
-    /**Does it listen to emitParticle event*/
-    listensEmitParticle(): Bool;
-    /**
-	 * If you are using `acceleration`, you can use `maxVelocity` with it
-	 * to cap the speed automatically (very useful!).
-	 */
-    maxVelocity(maxVelocityX: Float, maxVelocityY: Float): Void;
-    /**
-     * Sets the velocity starting range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityStart(startMinX: Float, startMinY: Float, startMaxX?: Float?, startMaxY?: Float?): Void;
-    /**
-     * Sets the velocity ending range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityEnd(endMinX: Float, endMinY: Float, endMaxX?: Float?, endMaxY?: Float?): Void;
-    /**
-     * Set the speed starting range of particles launched from this emitter. Only used with `CIRCLE`.
-     */
-    speedStart(startMin: Float, startMax?: Float?): Void;
-    /**
-     * Set the speed ending range of particles launched from this emitter. Only used with `CIRCLE`.
-     */
-    speedEnd(endMin: Float, endMax?: Float?): Void;
-    /**
-     * Set the angular acceleration range of particles launched from this emitter.
-     */
-    angularAcceleration(startMin: Float, startMax: Float): Void;
-    /**
-     * Set the angular drag range of particles launched from this emitter.
-     */
-    angularDrag(startMin: Float, startMax: Float): Void;
-    /**
-     * The angular velocity starting range of particles launched from this emitter.
-     */
-    angularVelocityStart(startMin: Float, startMax?: Float?): Void;
-    /**
-     * The angular velocity ending range of particles launched from this emitter.
-     */
-    angularVelocityEnd(endMin: Float, endMax?: Float?): Void;
-    /**
-     * The angle starting range of particles launched from this emitter.
-     * `angleEndMin` and `angleEndMax` are ignored unless `ignoreAngularVelocity` is set to `true`.
-     */
-    angleStart(startMin: Float, startMax?: Float?): Void;
-    /**
-     * The angle ending range of particles launched from this emitter.
-     * `angleEndMin` and `angleEndMax` are ignored unless `ignoreAngularVelocity` is set to `true`.
-     */
-    angleEnd(endMin: Float, endMax?: Float?): Void;
-    /**
-     * The angle range at which particles will be launched from this emitter.
-     * Ignored unless `launchMode` is set to `CIRCLE`.
-     */
-    launchAngle(min: Float, max: Float): Void;
-    /**
-     * The life, or duration, range of particles launched from this emitter.
-     */
-    lifespan(min: Float, max: Float): Void;
-    /**
-     * Sets `scale` starting range of particles launched from this emitter.
-     */
-    scaleStart(startMinX: Float, startMinY: Float, startMaxX?: Float?, startMaxY?: Float?): Void;
-    /**
-     * Sets `scale` ending range of particles launched from this emitter.
-     */
-    scaleEnd(endMinX: Float, endMinY: Float, endMaxX?: Float?, endMaxY?: Float?): Void;
-    /**
-     * Sets `acceleration` starting range of particles launched from this emitter.
-     */
-    accelerationStart(startMinX: Float, startMinY: Float, startMaxX?: Float?, startMaxY?: Float?): Void;
-    /**
-     * Sets `acceleration` ending range of particles launched from this emitter.
-     */
-    accelerationEnd(endMinX: Float, endMinY: Float, endMaxX?: Float?, endMaxY?: Float?): Void;
-    /**
-     * Sets `drag` starting range of particles launched from this emitter.
-     */
-    dragStart(startMinX: Float, startMinY: Float, startMaxX?: Float?, startMaxY?: Float?): Void;
-    /**
-     * Sets `drag` ending range of particles launched from this emitter.
-     */
-    dragEnd(endMinX: Float, endMinY: Float, endMaxX?: Float?, endMaxY?: Float?): Void;
-    /**
-     * Sets `color` starting range of particles launched from this emitter.
-     */
-    colorStart(startMin: Color, startMax?: Color?): Void;
-    /**
-     * Sets `color` ending range of particles launched from this emitter.
-     */
-    colorEnd(endMin: Color, endMax?: Color?): Void;
-    /**
-     * Sets `alpha` starting range of particles launched from this emitter.
-     */
-    alphaStart(startMin: Float, startMax?: Float?): Void;
-    /**
-     * Sets `alpha` ending range of particles launched from this emitter.
-     */
-    alphaEnd(endMin: Float, endMax?: Float?): Void;
-    /**
-     * Determines whether the emitter is currently emitting particles or not
-     */
-    status: ParticlesStatus;
-    invalidateStatus(): Void;
-    /**Event when status field changes.*/
-    onStatusChange(owner: Entity?, handleCurrentPrevious: ((current: ParticlesStatus, previous: ParticlesStatus) => Void)): Void;
-    /**Event when status field changes.*/
-    onceStatusChange(owner: Entity?, handleCurrentPrevious: ((current: ParticlesStatus, previous: ParticlesStatus) => Void)): Void;
-    /**Event when status field changes.*/
-    offStatusChange(handleCurrentPrevious?: ((current: ParticlesStatus, previous: ParticlesStatus) => Void)?): Void;
-    /**Event when status field changes.*/
-    listensStatusChange(): Bool;
-    /**
-     * Determines whether the emitter is currently paused. It is totally safe to directly toggle this.
-     */
-    paused: Bool;
-    /**
-     * How often a particle is emitted, if currently emitting.
-     * Can be modified at the middle of an emission safely;
-     */
-    frequency: Float;
-    /**
-     * How particles should be launched. If `CIRCLE` (default), particles will use `launchAngle` and `speed`.
-     * Otherwise, particles will just use `velocityX` and `velocityY`.
-     */
-    launchMode: ParticlesLaunchMode;
-    /**
-     * Keep the scale ratio of the particle. Uses the `scaleX` value for reference.
-     */
-    keepScaleRatio: Bool;
-    /**
-     * Apply particle scale to underlying visual or not.
-     */
-    visualScaleActive: Bool;
-    /**
-     * Apply particle color to underlying visual or not.
-     */
-    visualColorActive: Bool;
-    /**
-     * Apply particle position (x & y) to underlying visual or not.
-     */
-    visualPositionActive: Bool;
-    /**
-     * Apply particle angle to underlying visual rotation or not.
-     */
-    visualRotationActive: Bool;
-    /**
-     * Apply particle alpha to underlying visual or not.
-     */
-    visualAlphaActive: Bool;
-    /**
-	 * If you are using `acceleration`, you can use `maxVelocity` with it
-	 * to cap the speed automatically (very useful!).
-	 */
-    maxVelocityX: Float;
-    /**
-	 * If you are using `acceleration`, you can use `maxVelocity` with it
-	 * to cap the speed automatically (very useful!).
-	 */
-    maxVelocityY: Float;
-    /**
-     * Enable or disable the velocity range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityActive: Bool;
-    /**
-     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityStartMinX: Float;
-    /**
-     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityStartMinY: Float;
-    /**
-     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityStartMaxX: Float;
-    /**
-     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityStartMaxY: Float;
-    /**
-     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityEndMinX: Float;
-    /**
-     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityEndMinY: Float;
-    /**
-     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityEndMaxX: Float;
-    /**
-     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
-     */
-    velocityEndMaxY: Float;
-    /**
-     * Set the speed range of particles launched from this emitter. Only used with `CIRCLE`.
-     */
-    speedStartMin: Float;
-    /**
-     * Set the speed range of particles launched from this emitter. Only used with `CIRCLE`.
-     */
-    speedStartMax: Float;
-    /**
-     * Set the speed range of particles launched from this emitter. Only used with `CIRCLE`.
-     */
-    speedEndMin: Float;
-    /**
-     * Set the speed range of particles launched from this emitter. Only used with `CIRCLE`.
-     */
-    speedEndMax: Float;
-    /**
-	 * Use in conjunction with angularAcceleration for fluid spin speed control.
-	 */
-    maxAngularVelocity: Float;
-    /**
-     * Enable or disable the angular acceleration range of particles launched from this emitter.
-     */
-    angularAccelerationActive: Bool;
-    /**
-     * Set the angular acceleration range of particles launched from this emitter.
-     */
-    angularAccelerationStartMin: Float;
-    /**
-     * Set the angular acceleration range of particles launched from this emitter.
-     */
-    angularAccelerationStartMax: Float;
-    /**
-     * Enable or disable the angular drag range of particles launched from this emitter.
-     */
-    angularDragActive: Bool;
-    /**
-     * Set the angular drag range of particles launched from this emitter.
-     */
-    angularDragStartMin: Float;
-    /**
-     * Set the angular drag range of particles launched from this emitter.
-     */
-    angularDragStartMax: Float;
-    /**
-     * Enable or disable the angular velocity range of particles launched from this emitter.
-     */
-    angularVelocityActive: Bool;
-    /**
-     * The angular velocity range of particles launched from this emitter.
-     */
-    angularVelocityStartMin: Float;
-    /**
-     * The angular velocity range of particles launched from this emitter.
-     */
-    angularVelocityStartMax: Float;
-    /**
-     * The angular velocity range of particles launched from this emitter.
-     */
-    angularVelocityEndMin: Float;
-    /**
-     * The angular velocity range of particles launched from this emitter.
-     */
-    angularVelocityEndMax: Float;
-    /**
-     * Enable or disable the angle range of particles launched from this emitter.
-     * `angleEndMin` and `angleEndMax` are ignored unless `ignoreAngularVelocity` is set to `true`.
-     */
-    angleActive: Bool;
-    /**
-     * The angle range of particles launched from this emitter.
-     * `angleEndMin` and `angleEndMax` are ignored unless `ignoreAngularVelocity` is set to `true`.
-     */
-    angleStartMin: Float;
-    /**
-     * The angle range of particles launched from this emitter.
-     * `angleEndMin` and `angleEndMax` are ignored unless `ignoreAngularVelocity` is set to `true`.
-     */
-    angleStartMax: Float;
-    /**
-     * The angle range of particles launched from this emitter.
-     * `angleEndMin` and `angleEndMax` are ignored unless `ignoreAngularVelocity` is set to `true`.
-     */
-    angleEndMin: Float;
-    /**
-     * The angle range of particles launched from this emitter.
-     * `angleEndMin` and `angleEndMax` are ignored unless `ignoreAngularVelocity` is set to `true`.
-     */
-    angleEndMax: Float;
-    /**
-     * Set this if you want to specify the beginning and ending value of angle,
-     * instead of using `angularVelocity` (or `angularAcceleration`).
-     */
-    ignoreAngularVelocity: Bool;
-    /**
-     * Enable or disable the angle range at which particles will be launched from this emitter.
-     * Ignored unless `launchMode` is set to `CIRCLE`.
-     */
-    launchAngleActive: Bool;
-    /**
-     * The angle range at which particles will be launched from this emitter.
-     * Ignored unless `launchMode` is set to `CIRCLE`.
-     */
-    launchAngleMin: Float;
-    /**
-     * The angle range at which particles will be launched from this emitter.
-     * Ignored unless `launchMode` is set to `CIRCLE`.
-     */
-    launchAngleMax: Float;
-    /**
-     * Enable or disable the life, or duration, range of particles launched from this emitter.
-     */
-    lifespanActive: Bool;
-    /**
-     * The life, or duration, range of particles launched from this emitter.
-     */
-    lifespanMin: Float;
-    /**
-     * The life, or duration, range of particles launched from this emitter.
-     */
-    lifespanMax: Float;
-    /**
-     * Enable or disable `scale` range of particles launched from this emitter.
-     */
-    scaleActive: Bool;
-    /**
-     * Sets `scale` range of particles launched from this emitter.
-     */
-    scaleStartMinX: Float;
-    /**
-     * Sets `scale` range of particles launched from this emitter.
-     */
-    scaleStartMinY: Float;
-    /**
-     * Sets `scale` range of particles launched from this emitter.
-     */
-    scaleStartMaxX: Float;
-    /**
-     * Sets `scale` range of particles launched from this emitter.
-     */
-    scaleStartMaxY: Float;
-    /**
-     * Sets `scale` range of particles launched from this emitter.
-     */
-    scaleEndMinX: Float;
-    /**
-     * Sets `scale` range of particles launched from this emitter.
-     */
-    scaleEndMinY: Float;
-    /**
-     * Sets `scale` range of particles launched from this emitter.
-     */
-    scaleEndMaxX: Float;
-    /**
-     * Sets `scale` range of particles launched from this emitter.
-     */
-    scaleEndMaxY: Float;
-    /**
-     * Enable or disable `alpha` range of particles launched from this emitter.
-     */
-    alphaActive: Bool;
-    /**
-     * Sets `alpha` range of particles launched from this emitter.
-     */
-    alphaStartMin: Float;
-    /**
-     * Sets `alpha` range of particles launched from this emitter.
-     */
-    alphaStartMax: Float;
-    /**
-     * Sets `alpha` range of particles launched from this emitter.
-     */
-    alphaEndMin: Float;
-    /**
-     * Sets `alpha` range of particles launched from this emitter.
-     */
-    alphaEndMax: Float;
-    /**
-     * Enable or disable `color` range of particles launched from this emitter.
-     */
-    colorActive: Bool;
-    /**
-     * Sets `color` range of particles launched from this emitter.
-     */
-    colorStartMin: Color;
-    /**
-     * Sets `color` range of particles launched from this emitter.
-     */
-    colorStartMax: Color;
-    /**
-     * Sets `color` range of particles launched from this emitter.
-     */
-    colorEndMin: Color;
-    /**
-     * Sets `color` range of particles launched from this emitter.
-     */
-    colorEndMax: Color;
-    /**
-     * Enable or disable X and Y drag component of particles launched from this emitter.
-     */
-    dragActive: Bool;
-    /**
-     * Sets X and Y drag component of particles launched from this emitter.
-     */
-    dragStartMinX: Float;
-    /**
-     * Sets X and Y drag component of particles launched from this emitter.
-     */
-    dragStartMinY: Float;
-    /**
-     * Sets X and Y drag component of particles launched from this emitter.
-     */
-    dragStartMaxX: Float;
-    /**
-     * Sets X and Y drag component of particles launched from this emitter.
-     */
-    dragStartMaxY: Float;
-    /**
-     * Sets X and Y drag component of particles launched from this emitter.
-     */
-    dragEndMinX: Float;
-    /**
-     * Sets X and Y drag component of particles launched from this emitter.
-     */
-    dragEndMinY: Float;
-    /**
-     * Sets X and Y drag component of particles launched from this emitter.
-     */
-    dragEndMaxX: Float;
-    /**
-     * Sets X and Y drag component of particles launched from this emitter.
-     */
-    dragEndMaxY: Float;
-    /**
-     * Enable or disable the `acceleration` range of particles launched from this emitter.
-     * Set acceleration y-values to give particles gravity.
-     */
-    accelerationActive: Bool;
-    /**
-     * Sets the `acceleration` range of particles launched from this emitter.
-     * Set acceleration y-values to give particles gravity.
-     */
-    accelerationStartMinX: Float;
-    /**
-     * Sets the `acceleration` range of particles launched from this emitter.
-     * Set acceleration y-values to give particles gravity.
-     */
-    accelerationStartMinY: Float;
-    /**
-     * Sets the `acceleration` range of particles launched from this emitter.
-     * Set acceleration y-values to give particles gravity.
-     */
-    accelerationStartMaxX: Float;
-    /**
-     * Sets the `acceleration` range of particles launched from this emitter.
-     * Set acceleration y-values to give particles gravity.
-     */
-    accelerationStartMaxY: Float;
-    /**
-     * Sets the `acceleration` range of particles launched from this emitter.
-     * Set acceleration y-values to give particles gravity.
-     */
-    accelerationEndMinX: Float;
-    /**
-     * Sets the `acceleration` range of particles launched from this emitter.
-     * Set acceleration y-values to give particles gravity.
-     */
-    accelerationEndMinY: Float;
-    /**
-     * Sets the `acceleration` range of particles launched from this emitter.
-     * Set acceleration y-values to give particles gravity.
-     */
-    accelerationEndMaxX: Float;
-    /**
-     * Sets the `acceleration` range of particles launched from this emitter.
-     * Set acceleration y-values to give particles gravity.
-     */
-    accelerationEndMaxY: Float;
-    /**
-     * A random seed used to generated particles.
-     * Provide a custom seed to reproduce same chain of particles.
-     */
-    seed: Float;
-    /**
-     * Custom particle visual creation. Use this to emit custom visuals as particle. Another option
-     * is to create a subclass of `Particles` and override `getParticleVisual()` method.
-     */
-    getCustomParticleVisual: ((existingVisual: Visual) => Visual);
-    /**
-     * Start emitting particles continuously.
-     *
-     * @param   frequency   How often to emit a particle.
-     *                      `0` = never emit, `0.1` = 1 particle every 0.1 seconds, `5` = 1 particle every 5 seconds.
-     * @param   quantity    How many particles to launch before stopping. `-1` (default) = never stop
-     */
-    emitContinuously(frequency?: Float, quantity?: Int): Void;
-    /**
-     * Burst a given quantity number of particles at once
-     *
-     * @param   quantity    How many particles to launch. Does nothing if lower than `1`
-     */
-    explode(quantity: Int): Void;
-    /** Stop emitting (if it was emitting) */
-    stop(): Void;
-    /**
-     * This function can be used both internally and externally to emit the next particle.
-     */
-    emitParticle(): Void;
-    unbindEvents(): Void;
+class Particles extends Visual {
+    constructor(emitter?: ceramic.ParticleEmitter?);
+    emitter: ceramic.ParticleEmitter;
 }
 
 /** A particle item.
@@ -2988,7 +2932,7 @@ class Mesh extends Visual {
         Use only when needed. */
     complexHit: Bool;
     destroy(): Void;
-    /** Can be used instead of colors array when the mesh is only composed of a single color. */
+    /** On `Mesh` instances, can be used instead of colors array when the mesh is only composed of a single color. */
     color: Color;
     /** An array of floats where each pair of numbers is treated as a coordinate location (x,y) */
     vertices: Array<Float>;
@@ -3106,6 +3050,23 @@ class Line extends Mesh {
 /** Lazy allows to mark any property as lazy.
     Lazy properties are initialized only at first access. */
 interface Lazy {
+}
+
+/**
+ * Just a regular quad (transparent by default) with a few addition to make it more convenient when used as a layer
+ */
+class Layer extends Quad {
+    constructor();
+    static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
+    /**resize event*/
+    onResize(owner: Entity?, handleWidthHeight: ((width: Float, height: Float) => Void)): Void;
+    /**resize event*/
+    onceResize(owner: Entity?, handleWidthHeight: ((width: Float, height: Float) => Void)): Void;
+    /**resize event*/
+    offResize(handleWidthHeight?: ((width: Float, height: Float) => Void)?): Void;
+    /**Does it listen to resize event*/
+    listensResize(): Bool;
+    unbindEvents(): Void;
 }
 
 /** The keyCode class, with conversion helpers for scanCodes. The values below come directly from SDL header include files,
@@ -3566,6 +3527,8 @@ interface FragmentItem {
 }
 
 interface FragmentData {
+    /** Fragment color (if not transparent, default `BLACK`) */
+    color?: Color?;
     /** Fragment-level components */
     components: haxe.DynamicAccess<String>;
     /** Arbitrary data hold by this fragment. */
@@ -3576,6 +3539,8 @@ interface FragmentData {
     id: String;
     /** Fragment items (visuals or other entities) */
     items?: Array<TAnonymous>?;
+    /** Fragment being transparent or not (default `true`) */
+    transparent?: Bool?;
     /** Fragment width */
     width: Float;
 }
@@ -3589,7 +3554,7 @@ class FragmentContext {
 }
 
 /** A fragment is a group of visuals rendered from data (.fragment file) */
-class Fragment extends ceramic.Layer {
+class Fragment extends Layer {
     constructor(context: FragmentContext);
     entities: Array<Entity>;
     items: Array<TAnonymous>;
@@ -3615,7 +3580,6 @@ class Fragment extends ceramic.Layer {
     listensEditableItemUpdate(): Bool;
     putItem(item: TAnonymous): Entity;
     get(itemId: String): Entity;
-    getItemInstanceByName(name: String): Entity;
     getItem(itemId: String): TAnonymous;
     getItemByName(name: String): TAnonymous;
     removeItem(itemId: String): Void;
@@ -4413,6 +4377,17 @@ class Asset extends Entity implements Observable {
 
 class ArcadePhysics extends Entity {
     constructor();
+    items: Array<VisualArcadePhysics>;
+    /** All worlds used with arcade physics */
+    worlds: Array<arcade.World>;
+    /** Default world used for arcade physics */
+    world: arcade.World;
+    /** If `true`, default world (`world`) bounds will be
+        updated automatically to match screen size. */
+    autoUpdateWorldBounds: Bool;
+    createWorld(autoAdd?: Bool): arcade.World;
+    addWorld(world: arcade.World): Void;
+    removeWorld(world: arcade.World): Void;
 }
 
 /**
@@ -4785,6 +4760,7 @@ class App extends Entity {
     textInput: TextInput;
     converters: Map<K, V>;
     componentInitializers: Map<K, V>;
+    arcade: ArcadePhysics;
     isKeyPressed(key: Key): Bool;
     isKeyJustPressed(key: Key): Bool;
     unbindEvents(): Void;

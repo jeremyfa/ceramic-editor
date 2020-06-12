@@ -210,6 +210,40 @@ class EditorProjectData extends Model {
 
     }
 
+    public function removeFragment(fragment:EditorFragmentData):Void {
+
+        var fragments = [].concat(this.fragments.mutable);
+        fragments.remove(fragment);
+        this.fragments = cast fragments;
+
+        model.history.step();
+
+    }
+
+    public function duplicateFragment(fragment:EditorFragmentData):Void {
+
+        var jsonFragment = fragment.toJson();
+
+        // Compute duplicated id
+        var i = 0;
+        var prefix = TextUtils.getPrefix(fragment.fragmentId);
+        while (fragmentById(prefix + '_' + i) != null) {
+            i++;
+        }
+        jsonFragment.id = prefix + '_' + i;
+
+        // Create instance
+        var duplicatedFragment = new EditorFragmentData();
+        duplicatedFragment.fromJson(jsonFragment);
+
+        var fragments = [].concat(this.fragments.mutable);
+        fragments.insert(fragments.indexOf(fragment) + 1, duplicatedFragment);
+        this.fragments = cast fragments;
+
+        selectedFragment = duplicatedFragment;
+
+    }
+
     public function addScript():EditorScriptData {
 
         // Compute fragment id
@@ -231,6 +265,40 @@ class EditorProjectData extends Model {
         model.history.step();
 
         return script;
+
+    }
+
+    public function removeScript(script:EditorScriptData):Void {
+
+        var scripts = [].concat(this.scripts.mutable);
+        scripts.remove(script);
+        this.scripts = cast scripts;
+
+        model.history.step();
+
+    }
+
+    public function duplicateScript(script:EditorScriptData):Void {
+
+        var jsonScript = script.toJson();
+
+        // Compute duplicated id
+        var i = 0;
+        var prefix = TextUtils.getPrefix(script.scriptId);
+        while (scriptById(prefix + '_' + i) != null) {
+            i++;
+        }
+        jsonScript.id = prefix + '_' + i;
+
+        // Create instance
+        var duplicatedScript = new EditorScriptData();
+        duplicatedScript.fromJson(jsonScript);
+
+        var scripts = [].concat(this.scripts.mutable);
+        scripts.insert(scripts.indexOf(script) + 1, duplicatedScript);
+        this.scripts = cast scripts;
+
+        selectedScript = duplicatedScript;
 
     }
 
@@ -289,6 +357,8 @@ class EditorProjectData extends Model {
         json.paletteColors = paletteColors;
         json.colorPickerHsluv = colorPickerHsluv;
         json.selectedEditableIndex = selectedEditableIndex;
+        json.lastSelectedFragmentIndex = lastSelectedFragmentIndex;
+        json.lastSelectedScriptIndex = lastSelectedScriptIndex;
 
         if (exportPath != null) {
             if (projectDir != null) {
@@ -307,6 +377,12 @@ class EditorProjectData extends Model {
             jsonFragments.push(fragment.toJson());
         }
         json.fragments = jsonFragments;
+
+        var jsonScripts = [];
+        for (script in scripts) {
+            jsonScripts.push(script.toJson());
+        }
+        json.scripts = jsonScripts;
 
         return json;
 
@@ -371,6 +447,23 @@ class EditorProjectData extends Model {
             fragments = [];
         }
 
+        if (json.scripts != null) {
+            if (!Validate.array(json.scripts))
+                throw 'Invalid project scripts';
+
+            var jsonScripts:Array<Dynamic> = json.scripts;
+            var parsedScripts = [];
+            for (jsonScript in jsonScripts) {
+                var script = new EditorScriptData();
+                script.fromJson(jsonScript);
+                parsedScripts.push(script);
+            }
+            scripts = cast parsedScripts;
+        }
+        else {
+            scripts = [];
+        }
+
         if (json.selectedEditableIndex != null) {
             if (!Validate.int(json.selectedEditableIndex))
                 throw 'Invalid project selected editable index';
@@ -382,6 +475,32 @@ class EditorProjectData extends Model {
         }
         if (selectedEditableIndex >= editables.length || selectedEditableIndex < -1) {
             selectedEditableIndex = -1;
+        }
+
+        if (json.lastSelectedFragmentIndex != null) {
+            if (!Validate.int(json.lastSelectedFragmentIndex))
+                throw 'Invalid project last selected fragment index';
+
+            lastSelectedFragmentIndex = json.lastSelectedFragmentIndex;
+        }
+        else {
+            lastSelectedFragmentIndex = -1;
+        }
+        if (lastSelectedFragmentIndex >= fragments.length || lastSelectedFragmentIndex < -1) {
+            lastSelectedFragmentIndex = -1;
+        }
+
+        if (json.lastSelectedScriptIndex != null) {
+            if (!Validate.int(json.lastSelectedScriptIndex))
+                throw 'Invalid project last selected script index';
+
+            lastSelectedScriptIndex = json.lastSelectedScriptIndex;
+        }
+        else {
+            lastSelectedScriptIndex = -1;
+        }
+        if (lastSelectedScriptIndex >= scripts.length || lastSelectedScriptIndex < -1) {
+            lastSelectedScriptIndex = -1;
         }
 
     }
