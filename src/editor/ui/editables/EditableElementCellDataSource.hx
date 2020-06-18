@@ -76,7 +76,7 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
             else if (Std.is(editable, EditorScriptData)) {
                 var script:EditorScriptData = cast editable;
 
-                if (!selected && project.lastSelectedScript == script) {
+                if (!selected && project.selectedScript == script) {
                     selected = true;
                 }
 
@@ -115,7 +115,7 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
                 }
                 else if (Std.is(editable, EditorScriptData)) {
                     var script:EditorScriptData = cast editable;
-                    if (model.project.lastSelectedScript == script) {
+                    if (model.project.selectedScript == script) {
                         model.project.selectedEditableIndex = -1;
                         model.project.selectedScript = null;
                     }

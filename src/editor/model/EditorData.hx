@@ -238,6 +238,21 @@ class EditorData extends Model {
 
     }
 
+    public function play() {
+        
+        if (location == DEFAULT && project.lastSelectedFragment != null) {
+            location = PLAY(project.lastSelectedFragment.fragmentId);
+            function handlePlayEscape(key:Key) {
+                if (key.scanCode == ScanCode.ESCAPE) {
+                    app.offKeyDown(handlePlayEscape);
+                    location = DEFAULT;
+                }
+            }
+            app.onKeyDown(null, handlePlayEscape);
+        }
+
+    }
+
     function markProjectNotUnsaved() {
 
         projectUnsaved = false;
@@ -537,9 +552,9 @@ class EditorData extends Model {
         // Update script references
         for (fragment in project.fragments) {
             for (item in fragment.items) {
-                var key:String = item.props.get('script');
+                var key:String = item.props.get('scriptContent');
                 if (key != null && key == prevId) {
-                    item.props.set('script', newId);
+                    item.props.set('scriptContent', newId);
                 }
             }
         }

@@ -128,7 +128,8 @@ class MonacoEditorView extends View implements Observable {
                 handleSave,
                 handleSaveAs,
                 handleUndo,
-                handleRedo
+                handleRedo,
+                handlePlay
             );
 
             iframeReady = true;
@@ -170,6 +171,12 @@ class MonacoEditorView extends View implements Observable {
     function handleRedo() {
 
         //
+
+    }
+
+    function handlePlay() {
+
+        model.play();
 
     }
 

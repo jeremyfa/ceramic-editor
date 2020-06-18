@@ -5,6 +5,7 @@ type Bool = boolean;
 type String = string;
 type Dynamic = any;
 type Void = void;
+type ReadOnlyArray = ReadonlyArray;
 
 function trace(msg: any): Void;
 
@@ -572,21 +573,21 @@ class VisualNapePhysics extends Entity {
 
 class VisualArcadePhysics extends Entity {
     constructor(x: Float, y: Float, width: Float, height: Float, rotation: Float);
-    static fromBody(body: arcade.Body): VisualArcadePhysics;
+    static fromBody(body: Body): VisualArcadePhysics;
     /** Dispatched when this visual body collides with another body. */
-    onCollideBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: arcade.Body) => Void)): Void;
+    onCollideBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
     /** Dispatched when this visual body collides with another body. */
-    onceCollideBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: arcade.Body) => Void)): Void;
+    onceCollideBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
     /** Dispatched when this visual body collides with another body. */
-    offCollideBody(handleVisualBody?: ((visual: Visual, body: arcade.Body) => Void)?): Void;
+    offCollideBody(handleVisualBody?: ((visual: Visual, body: Body) => Void)?): Void;
     /** Dispatched when this visual body collides with another body. */
     listensCollideBody(): Bool;
     /** Dispatched when this visual body overlaps with another body. */
-    onOverlapBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: arcade.Body) => Void)): Void;
+    onOverlapBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
     /** Dispatched when this visual body overlaps with another body. */
-    onceOverlapBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: arcade.Body) => Void)): Void;
+    onceOverlapBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
     /** Dispatched when this visual body overlaps with another body. */
-    offOverlapBody(handleVisualBody?: ((visual: Visual, body: arcade.Body) => Void)?): Void;
+    offOverlapBody(handleVisualBody?: ((visual: Visual, body: Body) => Void)?): Void;
     /** Dispatched when this visual body overlaps with another body. */
     listensOverlapBody(): Bool;
     /** Dispatched when this visual body collides with another visual's body. */
@@ -614,13 +615,13 @@ class VisualArcadePhysics extends Entity {
     /** Dispatched when this visual body collides with the world bounds. */
     listensWorldBounds(): Bool;
     visual: Visual;
-    body: arcade.Body;
-    world: arcade.World;
+    body: Body;
+    world: ArcadeWorld;
     destroy(): Void;
     unbindEvents(): Void;
 }
 
-class Visual extends Entity {
+class Visual extends Entity implements Collidable {
     constructor();
     static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
     /**pointerDown event*/
@@ -674,9 +675,9 @@ class Visual extends Entity {
     /** The arcade physics body bound to this visual. */
     arcade: VisualArcadePhysics;
     /** Init arcade physics (body) bound to this visual. */
-    initArcadePhysics(world?: arcade.World?): VisualArcadePhysics;
+    initArcadePhysics(world?: ArcadeWorld?): VisualArcadePhysics;
     /** The arcade physics body linked to this visual */
-    body: arcade.Body;
+    body: Body;
     /** Allow this visual to be rotated by arcade physics, via `angularVelocity`, etc... */
     allowRotation: Bool;
     /** An immovable visual will not receive any impacts from other visual bodies. **Two** immovable visuas can't separate or exchange momentum and will pass through each other. */
@@ -773,11 +774,11 @@ class Visual extends Entity {
     /** Dispatched when this visual body collides with another visual's body. */
     listensCollide(): Bool;
     /** Dispatched when this visual body collides with another body. */
-    onCollideBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: arcade.Body) => Void)): Void;
+    onCollideBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: Body) => Void)): Void;
     /** Dispatched when this visual body collides with another body. */
-    onceCollideBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: arcade.Body) => Void)): Void;
+    onceCollideBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: Body) => Void)): Void;
     /** Dispatched when this visual body collides with another body. */
-    offCollideBody(handleVisualBody?: ((arg1: Visual, arg2: arcade.Body) => Void)?): Void;
+    offCollideBody(handleVisualBody?: ((arg1: Visual, arg2: Body) => Void)?): Void;
     /** Dispatched when this visual body collides with another body. */
     listensCollideBody(): Bool;
     /** Dispatched when this visual body overlaps with another visual's body. */
@@ -789,11 +790,11 @@ class Visual extends Entity {
     /** Dispatched when this visual body overlaps with another visual's body. */
     listensOverlap(): Bool;
     /** Dispatched when this visual body overlaps with another body. */
-    onOverlapBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: arcade.Body) => Void)): Void;
+    onOverlapBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: Body) => Void)): Void;
     /** Dispatched when this visual body overlaps with another body. */
-    onceOverlapBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: arcade.Body) => Void)): Void;
+    onceOverlapBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: Body) => Void)): Void;
     /** Dispatched when this visual body overlaps with another body. */
-    offOverlapBody(handleVisualBody?: ((arg1: Visual, arg2: arcade.Body) => Void)?): Void;
+    offOverlapBody(handleVisualBody?: ((arg1: Visual, arg2: Body) => Void)?): Void;
     /** Dispatched when this visual body overlaps with another body. */
     listensOverlapBody(): Bool;
     /** Dispatched when this visual body collides with the world bounds. */
@@ -2076,7 +2077,31 @@ enum ScrollDirection {
     HORIZONTAL
 }
 
+/**
+ * For now, just a way to identify a script module as a type, to resolve fields dynamically from scripts.
+ * Might be extended later to link with "script converted to haxe compiled code"
+ */
+class ScriptModule {
+    constructor(owner: Script);
+    owner: Script;
+}
+
 type ScriptContent = String;
+
+class Script extends Entity implements Component {
+    constructor(content: String);
+    static errorHandlers: Array<((error: String, line: Int, char: Int) => Void)>;
+    content: String;
+    program: hscript.Expr;
+    interp: ceramic.Interp;
+    module: ScriptModule;
+    destroy(): Void;
+    run(): Void;
+    call(name: String, args?: Array<Dynamic>?): Dynamic;
+    callScriptMethod(name: String, numArgs: Int, arg1?: Dynamic?, arg2?: Dynamic?, arg3?: Dynamic?): Dynamic;
+    entity: Entity;
+    initializerName: String;
+}
 
 enum ScreenScaling {
     /** Screen width and height are automatically resized
@@ -2828,9 +2853,9 @@ enum ParticlesLaunchMode {
     CIRCLE
 }
 
-class Particles extends Visual {
-    constructor(emitter?: ceramic.ParticleEmitter?);
-    emitter: ceramic.ParticleEmitter;
+class Particles<T extends ceramic.ParticleEmitter> extends Visual {
+    constructor(emitter?: T?);
+    emitter: T;
 }
 
 /** A particle item.
@@ -3462,6 +3487,24 @@ class HashedString {
     isLastDecodeIncomplete(): Bool;
 }
 
+/**
+ * A group of entities, which is itself an entity.
+ */
+class Group<T extends Entity> extends Entity implements Collidable {
+    constructor(id?: String?);
+    /**
+     * The order items are sorted before using the group to overlap or collide with over collidables.
+     * Only relevant on groups of visuals, when using arcade physics.
+     */
+    sortDirection: SortDirection;
+    items: haxe.ds.ReadOnlyArray<T>;
+    add(item: T): Void;
+    remove(item: T): Void;
+    contains(item: T): Bool;
+    clear(): Void;
+    destroy(): Void;
+}
+
 class GlyphQuad extends Quad {
     constructor();
     /**clear event*/
@@ -3747,7 +3790,8 @@ class Entity implements Lazy, Events {
     constructor();
     data: Dynamic;
     id: String;
-    script: String;
+    scriptContent: String;
+    script: Script;
     events: DynamicEvents<String>;
     destroyed: Bool;
     /**destroy event*/
@@ -4375,19 +4419,32 @@ class Asset extends Entity implements Observable {
     unbindEvents(): Void;
 }
 
+class ArcadeWorld extends World {
+    constructor(boundsX: Float, boundsY: Float, boundsWidth: Float, boundsHeight: Float);
+    overlap(element1: Collidable, element2?: Collidable?, overlapCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    overlapCeramicGroupVsItself(group: Group<Visual>, overlapCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    overlapBodyVsCeramicGroup(body: Body, group: Group<Visual>, overlapCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    collide(element1: Collidable, element2?: Collidable?, collideCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    collideCeramicGroupVsItself(group: Group<Visual>, collideCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    collideBodyVsCeramicGroup(body: Body, group: Group<Visual>, collideCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    sortCeramicGroup(group: Group<Visual>, sortDirection?: SortDirection): Void;
+}
+
 class ArcadePhysics extends Entity {
     constructor();
     items: Array<VisualArcadePhysics>;
     /** All worlds used with arcade physics */
-    worlds: Array<arcade.World>;
+    worlds: Array<ArcadeWorld>;
     /** Default world used for arcade physics */
-    world: arcade.World;
+    world: ArcadeWorld;
+    /** Groups by id */
+    groups: Map<K, V>;
     /** If `true`, default world (`world`) bounds will be
         updated automatically to match screen size. */
     autoUpdateWorldBounds: Bool;
-    createWorld(autoAdd?: Bool): arcade.World;
-    addWorld(world: arcade.World): Void;
-    removeWorld(world: arcade.World): Void;
+    createWorld(autoAdd?: Bool): ArcadeWorld;
+    addWorld(world: ArcadeWorld): Void;
+    removeWorld(world: ArcadeWorld): Void;
 }
 
 /**
@@ -4740,6 +4797,8 @@ class App extends Entity {
     logger: Logger;
     /** Visuals (ordered) */
     visuals: Array<Visual>;
+    /** Groups */
+    groups: Array<Group<Entity>>;
     /** Render Textures */
     renderTextures: Array<RenderTexture>;
     /** App level assets. Used to load default bitmap font */
@@ -4763,9 +4822,859 @@ class App extends Entity {
     arcade: ArcadePhysics;
     isKeyPressed(key: Key): Bool;
     isKeyJustPressed(key: Key): Bool;
+    group(id: String, createIfNeeded?: Bool): Group<Entity>;
     unbindEvents(): Void;
     /**App info extracted from `ceramic.yml`*/
     info: TAnonymous;
+}
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+class World {
+    constructor(boundsX: Float, boundsY: Float, boundsWidth: Float, boundsHeight: Float);
+    /** The World gravity X setting. Defaults to 0 (no gravity). */
+    gravityX: Float;
+    /** The World gravity Y setting. Defaults to 0 (no gravity). */
+    gravityY: Float;
+    boundsX: Float;
+    boundsY: Float;
+    boundsWidth: Float;
+    boundsHeight: Float;
+    checkCollisionNone: Bool;
+    checkCollisionUp: Bool;
+    checkCollisionDown: Bool;
+    checkCollisionLeft: Bool;
+    checkCollisionRight: Bool;
+    /** Used by the QuadTree to set the maximum number of objects per quad. */
+    maxObjects: Int;
+    /** Used by the QuadTree to set the maximum number of iteration levels. */
+    maxLevels: Int;
+    /** A value added to the delta values during collision checks. Increase it to prevent sprite tunneling. */
+    overlapBias: Float;
+    /** If true World.separate will always separate on the X axis before Y. Otherwise it will check gravity totals first. */
+    forceX: Bool;
+    /** Used when colliding a Sprite vs. a Group, or a Group vs. a Group, this defines the direction the sort is based on. Default is `LEFT_RIGHT`. */
+    sortDirection: SortDirection;
+    /** If true the QuadTree will not be used for any collision. QuadTrees are great if objects are well spread out in your game, otherwise they are a performance hit. If you enable this you can disable on a per body basis via `Body.skipQuadTree`. */
+    skipQuadTree: Bool;
+    /** If `true` the `Body.preUpdate` method will be skipped, halting all motion for all bodies. Note that other methods such as `collide` will still work, so be careful not to call them on paused bodies. */
+    isPaused: Bool;
+    /** The world QuadTree. */
+    quadTree: arcade.QuadTree;
+    /** Elapsed time since last tick. */
+    elapsed: Float;
+    elapsedMS: Float;
+    /**
+     * Updates the size of this physics world.
+     *
+     * @method Phaser.Physics.Arcade#setBounds
+     * @param {number} x - Top left most corner of the world.
+     * @param {number} y - Top left most corner of the world.
+     * @param {number} width - New width of the world. Can never be smaller than the Game.width.
+     * @param {number} height - New height of the world. Can never be smaller than the Game.height.
+     */
+    setBounds(x: Float, y: Float, width: Float, height: Float): Void;
+    /**
+     * Creates an Arcade Physics body on the given game object.
+     *
+     * A game object can only have 1 physics body active at any one time, and it can't be changed until the body is nulled.
+     *
+     * When you add an Arcade Physics body to an object it will automatically add the object into its parent Groups hash array.
+     *
+     * @method Phaser.Physics.Arcade#enableBody
+     * @param {object} object - The game object to create the physics body on. A body will only be created if this object has a null `body` property.
+     */
+    enableBody(body: Body): Void;
+    /**
+     * Called automatically by a Physics body, it updates all motion related values on the Body unless `World.isPaused` is `true`.
+     *
+     * @method Phaser.Physics.Arcade#updateMotion
+     * @param {Phaser.Physics.Arcade.Body} The Body object to be updated.
+     */
+    updateMotion(body: Body): Void;
+    /**
+     * A tween-like function that takes a starting velocity and some other factors and returns an altered velocity.
+     * Based on a function in Flixel by @ADAMATOMIC
+     *
+     * @method Phaser.Physics.Arcade#computeVelocity
+     * @param {number} axis - 0 for nothing, 1 for horizontal, 2 for vertical.
+     * @param {Phaser.Physics.Arcade.Body} body - The Body object to be updated.
+     * @param {number} velocity - Any component of velocity (e.g. 20).
+     * @param {number} acceleration - Rate at which the velocity is changing.
+     * @param {number} drag - Really kind of a deceleration, this is how much the velocity changes if Acceleration is not set.
+     * @param {number} [max=10000] - An absolute value cap for the velocity.
+     * @return {number} The altered Velocity value.
+     */
+    computeVelocity(axis: arcade.Axis, body: Body, velocity: Float, acceleration: Float, drag: Float, max?: Float): Float;
+    overlap(element1: Collidable, element2?: Collidable?, collideCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    /**
+     * Checks for overlaps between two bodies. The objects can be Sprites, Groups or Emitters.
+     * Unlike {@link #collide} the objects are NOT automatically separated or have any physics applied, they merely test for overlap results.
+     * @return {boolean} True if an overlap occurred otherwise false.
+     */
+    overlapBodyVsBody(body1: Body, body2: Body, overlapCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    overlapGroupVsGroup(group1: arcade.Group, group2: arcade.Group, overlapCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    overlapGroupVsItself(group: arcade.Group, overlapCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    overlapBodyVsGroup(body: Body, group: arcade.Group, overlapCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    collide(element1: Collidable, element2?: Collidable?, collideCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    /**
+     * Checks for collision between two bodies and separates them if colliding ({@link https://gist.github.com/samme/cbb81dd19f564dcfe2232761e575063d details}). If you don't require separation then use {@link #overlap} instead.
+     * @return {boolean} True if a collision occurred otherwise false.
+     */
+    collideBodyVsBody(body1: Body, body2: Body, collideCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    collideGroupVsGroup(group1: arcade.Group, group2: arcade.Group, collideCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    collideGroupVsItself(group: arcade.Group, collideCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    collideBodyVsGroup(body: Body, group: arcade.Group, collideCallback?: ((arg1: Body, arg2: Body) => Void)?, processCallback?: ((arg1: Body, arg2: Body) => Bool)?): Bool;
+    /**
+     * This method will sort a Groups hash array.
+     *
+     * If the Group has `physicsSortDirection` set it will use the sort direction defined.
+     *
+     * Otherwise if the sortDirection parameter is undefined, or Group.physicsSortDirection is null, it will use Phaser.Physics.Arcade.sortDirection.
+     *
+     * By changing Group.physicsSortDirection you can customise each Group to sort in a different order.
+     *
+     * @method Phaser.Physics.Arcade#sort
+     * @param {Phaser.Group} group - The Group to sort.
+     * @param {integer} [sortDirection] - The sort direction used to sort this Group.
+     */
+    sort(group: arcade.Group, sortDirection?: SortDirection): Void;
+    /**
+     * Check for intersection against two bodies.
+     *
+     * @method Phaser.Physics.Arcade#intersects
+     * @param {Phaser.Physics.Arcade.Body} body1 - The first Body object to check.
+     * @param {Phaser.Physics.Arcade.Body} body2 - The second Body object to check.
+     * @return {boolean} True if they intersect, otherwise false.
+     */
+    intersects(body1: Body, body2: Body): Bool;
+    /**
+     * Given a Group and a location this will check to see which Group children overlap with the coordinates.
+     * Each child will be sent to the given callback for further processing.
+     * Note that the children are not checked for depth order, but simply if they overlap the coordinate or not.
+     *
+     * @method Phaser.Physics.Arcade#getObjectsAtLocation
+     * @param {number} x - The x coordinate to check.
+     * @param {number} y - The y coordinate to check.
+     * @param {Phaser.Group} group - The Group to check.
+     * @param {function} [callback] - A callback function that is called if the object overlaps the coordinates. The callback will be sent two parameters: the callbackArg and the Object that overlapped the location.
+     * @param {object} [callbackContext] - The context in which to run the callback.
+     * @param {object} [callbackArg] - An argument to pass to the callback.
+     * @return {PIXI.DisplayObject[]} An array of the Sprites from the Group that overlapped the coordinates.
+     */
+    getObjectsAtLocation<T>(x: Float, y: Float, group: arcade.Group, callback?: ((arg1: T, arg2: Body) => Void)?, callbackArg?: T?): Array<Body>;
+    /**
+     * Move the given display object towards the destination object at a steady velocity.
+     * If you specify a maxTime then it will adjust the speed (overwriting what you set) so it arrives at the destination in that number of seconds.
+     * Timings are approximate due to the way browser timers work. Allow for a variance of +- 50ms.
+     * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+     * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+     * Note: Doesn't take into account acceleration, maxVelocity or drag (if you've set drag or acceleration too high this object may not move at all)
+     *
+     * @method Phaser.Physics.Arcade#moveToObject
+     * @param {any} displayObject - The display object to move.
+     * @param {any} destination - The display object to move towards. Can be any object but must have visible x/y properties.
+     * @param {number} [speed=60] - The speed it will move, in pixels per second (default is 60 pixels/sec)
+     * @param {number} [maxTime=0] - Time given in milliseconds (1000 = 1 sec). If set the speed is adjusted so the object will arrive at destination in the given number of ms.
+     * @return {number} The angle (in radians) that the object should be visually set to in order to match its new velocity.
+     */
+    moveToDestination(body: Body, destination: Body, speed?: Float, maxTime?: Float): Float;
+    /**
+     * Move the given display object towards the x/y coordinates at a steady velocity.
+     * If you specify a maxTime then it will adjust the speed (over-writing what you set) so it arrives at the destination in that number of seconds.
+     * Timings are approximate due to the way browser timers work. Allow for a variance of +- 50ms.
+     * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+     * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+     * Note: Doesn't take into account acceleration, maxVelocity or drag (if you've set drag or acceleration too high this object may not move at all)
+     *
+     * @method Phaser.Physics.Arcade#moveToXY
+     * @param {any} displayObject - The display object to move.
+     * @param {number} x - The x coordinate to move towards.
+     * @param {number} y - The y coordinate to move towards.
+     * @param {number} [speed=60] - The speed it will move, in pixels per second (default is 60 pixels/sec)
+     * @param {number} [maxTime=0] - Time given in milliseconds (1000 = 1 sec). If set the speed is adjusted so the object will arrive at destination in the given number of ms.
+     * @return {number} The angle (in radians) that the object should be visually set to in order to match its new velocity.
+     */
+    moveToXY(body: Body, x: Float, y: Float, speed?: Float, maxTime?: Float): Float;
+    /**
+     * Given the angle (in degrees) and speed calculate the velocity and return it as a Point object, or set it to the given point object.
+     * One way to use this is: velocityFromAngle(angle, 200, sprite.velocity) which will set the values directly to the sprites velocity and not create a new Point object.
+     *
+     * @method Phaser.Physics.Arcade#velocityFromAngle
+     * @param {number} angle - The angle in degrees calculated in clockwise positive direction (down = 90 degrees positive, right = 0 degrees positive, up = 90 degrees negative)
+     * @param {number} [speed=60] - The speed it will move, in pixels per second sq.
+     * @param {Phaser.Point|object} [point] - The Point object in which the x and y properties will be set to the calculated velocity.
+     * @return {Phaser.Point} - A Point where point.x contains the velocity x value and point.y contains the velocity y value.
+     */
+    velocityFromAngle(angle: Float, speed?: Float, point?: arcade.Point?): arcade.Point;
+    /**
+     * Given the rotation (in radians) and speed calculate the velocity and return it as a Point object, or set it to the given point object.
+     * One way to use this is: velocityFromRotation(rotation, 200, sprite.velocity) which will set the values directly to the sprites velocity and not create a new Point object.
+     *
+     * @method Phaser.Physics.Arcade#velocityFromRotation
+     * @param {number} rotation - The angle in radians.
+     * @param {number} [speed=60] - The speed it will move, in pixels per second sq.
+     * @param {Phaser.Point|object} [point] - The Point object in which the x and y properties will be set to the calculated velocity.
+     * @return {Phaser.Point} - A Point where point.x contains the velocity x value and point.y contains the velocity y value.
+     */
+    velocityFromRotation(rotation: Float, speed?: Float, point?: arcade.Point?): arcade.Point;
+    /**
+     * Given the rotation (in radians) and speed calculate the acceleration and return it as a Point object, or set it to the given point object.
+     * One way to use this is: accelerationFromRotation(rotation, 200, sprite.acceleration) which will set the values directly to the sprites acceleration and not create a new Point object.
+     *
+     * @method Phaser.Physics.Arcade#accelerationFromRotation
+     * @param {number} rotation - The angle in radians.
+     * @param {number} [speed=60] - The speed it will move, in pixels per second sq.
+     * @param {Phaser.Point|object} [point] - The Point object in which the x and y properties will be set to the calculated acceleration.
+     * @return {Phaser.Point} - A Point where point.x contains the acceleration x value and point.y contains the acceleration y value.
+     */
+    accelerationFromRotation(rotation: Float, speed?: Float, point?: arcade.Point?): arcade.Point;
+    /**
+     * Sets the acceleration.x/y property on the display object so it will move towards the target at the given speed (in pixels per second sq.)
+     * You must give a maximum speed value, beyond which the display object won't go any faster.
+     * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+     * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+     *
+     * @method Phaser.Physics.Arcade#accelerateToObject
+     * @param {any} displayObject - The display object to move.
+     * @param {any} destination - The display object to move towards. Can be any object but must have visible x/y properties.
+     * @param {number} [speed=60] - The speed it will accelerate in pixels per second.
+     * @param {number} [xSpeedMax=1000] - The maximum x velocity the display object can reach.
+     * @param {number} [ySpeedMax=1000] - The maximum y velocity the display object can reach.
+     * @return {number} The angle (in radians) that the object should be visually set to in order to match its new trajectory.
+     */
+    accelerateToDestination(body: Body, destination: Body, speed?: Float, xSpeedMax?: Float, ySpeedMax?: Float): Float;
+    /**
+     * Sets the acceleration.x/y property on the display object so it will move towards the x/y coordinates at the given speed (in pixels per second sq.)
+     * You must give a maximum speed value, beyond which the display object won't go any faster.
+     * Note: The display object does not continuously track the target. If the target changes location during transit the display object will not modify its course.
+     * Note: The display object doesn't stop moving once it reaches the destination coordinates.
+     *
+     * @method Phaser.Physics.Arcade#accelerateToXY
+     * @param {any} displayObject - The display object to move.
+     * @param {number} x - The x coordinate to accelerate towards.
+     * @param {number} y - The y coordinate to accelerate towards.
+     * @param {number} [speed=60] - The speed it will accelerate in pixels per second.
+     * @param {number} [xSpeedMax=1000] - The maximum x velocity the display object can reach.
+     * @param {number} [ySpeedMax=1000] - The maximum y velocity the display object can reach.
+     * @return {number} The angle (in radians) that the object should be visually set to in order to match its new trajectory.
+     */
+    accelerateToXY(body: Body, x: Float, y: Float, speed?: Float, xSpeedMax?: Float, ySpeedMax?: Float): Float;
+    /**
+     * Find the distance between two display objects (like Sprites).
+     *
+     * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+     * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+     * or parent Game Object.
+     *
+     * If you have nested objects and need to calculate the distance between their centers in World coordinates,
+     * set their anchors to (0.5, 0.5) and use the `world` argument.
+     *
+     * If objects aren't nested or they share a parent's offset, you can calculate the distance between their
+     * centers with the `useCenter` argument, regardless of their anchor values.
+     *
+     * @method Phaser.Physics.Arcade#distanceBetween
+     * @param {any} source - The Display Object to test from.
+     * @param {any} target - The Display Object to test to.
+     * @param {boolean} [world=false] - Calculate the distance using World coordinates (true), or Object coordinates (false, the default). If `useCenter` is true, this value is ignored.
+     * @param {boolean} [useCenter=false] - Calculate the distance using the {@link Phaser.Sprite#centerX} and {@link Phaser.Sprite#centerY} coordinates. If true, this value overrides the `world` argument.
+     * @return {number} The distance between the source and target objects.
+     */
+    distanceBetween(source: Body, target: Body, useCenter?: Bool): Float;
+    /**
+     * Find the distance between a display object (like a Sprite) and the given x/y coordinates.
+     * The calculation is made from the display objects x/y coordinate. This may be the top-left if its anchor hasn't been changed.
+     * If you need to calculate from the center of a display object instead use {@link #distanceBetween} with the `useCenter` argument.
+     *
+     * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+     * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+     * or parent Game Object.
+     *
+     * @method Phaser.Physics.Arcade#distanceToXY
+     * @param {any} displayObject - The Display Object to test from.
+     * @param {number} x - The x coordinate to move towards.
+     * @param {number} y - The y coordinate to move towards.
+     * @param {boolean} [world=false] - Calculate the distance using World coordinates (true), or Object coordinates (false, the default)
+     * @return {number} The distance between the object and the x/y coordinates.
+     */
+    distanceToXY(body: Body, x: Float, y: Float): Float;
+    /**
+     * From a set of points or display objects, find the one closest to a source point or object.
+     *
+     * @method Phaser.Physics.Arcade#closest
+     * @param {any} source - The {@link Phaser.Point Point} or Display Object distances will be measured from.
+     * @param {any[]} targets - The {@link Phaser.Point Points} or Display Objects whose distances to the source will be compared.
+     * @param {boolean} [world=false] - Calculate the distance using World coordinates (true), or Object coordinates (false, the default). If `useCenter` is true, this value is ignored.
+     * @param {boolean} [useCenter=false] - Calculate the distance using the {@link Phaser.Sprite#centerX} and {@link Phaser.Sprite#centerY} coordinates. If true, this value overrides the `world` argument.
+     * @return {any} - The first target closest to the origin.
+     */
+    closest(source: Body, targets: Array<Body>, world?: Bool, useCenter?: Bool): Body;
+    /**
+     * From a set of points or display objects, find the one farthest from a source point or object.
+     *
+     * @method Phaser.Physics.Arcade#farthest
+     * @param {any} source - The {@link Phaser.Point Point} or Display Object distances will be measured from.
+     * @param {any[]} targets - The {@link Phaser.Point Points} or Display Objects whose distances to the source will be compared.
+     * @param {boolean} [world=false] - Calculate the distance using World coordinates (true), or Object coordinates (false, the default). If `useCenter` is true, this value is ignored.
+     * @param {boolean} [useCenter=false] - Calculate the distance using the {@link Phaser.Sprite#centerX} and {@link Phaser.Sprite#centerY} coordinates. If true, this value overrides the `world` argument.
+     * @return {any} - The target closest to the origin.
+     */
+    farthest(source: Body, targets: Array<Body>, useCenter?: Bool): Body;
+    /**
+     * Find the angle in radians between two display objects (like Sprites).
+     *
+     * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+     * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+     * or parent Game Object.
+     *
+     * @method Phaser.Physics.Arcade#angleBetween
+     * @param {any} source - The Display Object to test from.
+     * @param {any} target - The Display Object to test to.
+     * @param {boolean} [world=false] - Calculate the angle using World coordinates (true), or Object coordinates (false, the default)
+     * @return {number} The angle in radians between the source and target display objects.
+     */
+    angleBetween(source: Body, target: Body): Float;
+    /**
+     * Find the angle in radians between centers of two display objects (like Sprites).
+     *
+     * @method Phaser.Physics.Arcade#angleBetweenCenters
+     * @param {any} source - The Display Object to test from.
+     * @param {any} target - The Display Object to test to.
+     * @return {number} The angle in radians between the source and target display objects.
+     */
+    angleBetweenCenters(source: Body, target: Body): Float;
+    /**
+     * Find the angle in radians between a display object (like a Sprite) and the given x/y coordinate.
+     *
+     * The optional `world` argument allows you to return the result based on the Game Objects `world` property,
+     * instead of its `x` and `y` values. This is useful of the object has been nested inside an offset Group,
+     * or parent Game Object.
+     *
+     * @method Phaser.Physics.Arcade#angleToXY
+     * @param {any} displayObject - The Display Object to test from.
+     * @param {number} x - The x coordinate to get the angle to.
+     * @param {number} y - The y coordinate to get the angle to.
+     * @param {boolean} [world=false] - Calculate the angle using World coordinates (true), or Object coordinates (false, the default)
+     * @return {number} The angle in radians between displayObject.x/y to Pointer.x/y
+     */
+    angleToXY(body: Body, x: Float, y: Float): Float;
+}
+
+/**
+ * Any class implementing this interface can be used on World.collide()
+ */
+interface Collidable {
+}
+
+/**
+* @author       Richard Davey <rich@photonstorm.com>
+* @copyright    2016 Photon Storm Ltd.
+* @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
+*/
+class Body {
+    constructor(x: Float, y: Float, width: Float, height: Float, rotation?: Float);
+    /** A property to hold any data related to this body. Can be useful if building a system on top if this one. */
+    data: Dynamic;
+    /** The list of groups that contain this body (can be null if there are no groups). */
+    groups: Array<arcade.Group>;
+    /** A "main" group associated with this body. */
+    group: arcade.Group;
+    /**
+    * @property {boolean} enable - A disabled body won't be checked for any form of collision or overlap or have its pre/post updates run.
+    * @default
+    */
+    enable: Bool;
+    /**
+    * If `true` this Body is using circular collision detection. If `false` it is using rectangular.
+    * Use `Body.setCircle` to control the collision shape this Body uses.
+    * @property {boolean} isCircle
+    * @default
+    * @readOnly
+    */
+    isCircle: Bool;
+    /**
+    * The radius of the circular collision shape this Body is using if Body.setCircle has been enabled, relative to the Sprite's _texture_.
+    * If you wish to change the radius then call {@link #setCircle} again with the new value.
+    * If you wish to stop the Body using a circle then call {@link #setCircle} with a radius of zero (or undefined).
+    * The actual radius of the Body (at any Sprite scale) is equal to {@link #halfWidth} and the diameter is equal to {@link #width}.
+    * @property {number} radius
+    * @default
+    * @readOnly
+    */
+    radius: Float;
+    x: Float;
+    y: Float;
+    prevX: Float;
+    prevY: Float;
+    /**
+    * @property {boolean} allowRotation - Allow this Body to be rotated? (via angularVelocity, etc)
+    * @default
+    */
+    allowRotation: Bool;
+    /**
+    * The Body's rotation in degrees, as calculated by its angularVelocity and angularAcceleration. Please understand that the collision Body
+    * itself never rotates, it is always axis-aligned. However these values are passed up to the parent Sprite and updates its rotation.
+    * @property {number} rotation
+    */
+    rotation: Float;
+    /**
+    * @property {number} preRotation - The previous rotation of the physics body, in degrees.
+    * @readonly
+    */
+    preRotation: Float;
+    /**
+    * @property {number} width - The calculated width of the physics body.
+    * @readonly
+    */
+    width: Float;
+    /**
+    * @property {number} height - The calculated height of the physics body.
+    * @readonly
+    */
+    height: Float;
+    /**
+    * @property {number} halfWidth - The calculated width / 2 of the physics body.
+    * @readonly
+    */
+    halfWidth: Float;
+    /**
+    * @property {number} halfHeight - The calculated height / 2 of the physics body.
+    * @readonly
+    */
+    halfHeight: Float;
+    centerX: Float;
+    centerY: Float;
+    velocityX: Float;
+    velocityY: Float;
+    /**
+    * @property {Phaser.Point} newVelocity - The distanced traveled during the last update, equal to `velocity * physicsElapsed`. Calculated during the Body.preUpdate and applied to its position.
+    * @readonly
+    */
+    newVelocityX: Float;
+    newVelocityY: Float;
+    maxDeltaX: Float;
+    maxDeltaY: Float;
+    accelerationX: Float;
+    accelerationY: Float;
+    /**
+     * @property {boolean} allowDrag - Allow this Body to be influenced by {@link #drag}?
+     * @default
+     */
+    allowDrag: Bool;
+    dragX: Float;
+    dragY: Float;
+    /**
+    * @property {boolean} allowGravity - Allow this Body to be influenced by gravity? Either world or local.
+    * @default
+    */
+    allowGravity: Bool;
+    gravityX: Float;
+    gravityY: Float;
+    bounceX: Float;
+    bounceY: Float;
+    /**
+    * The elasticity of the Body when colliding with the World bounds.
+    * By default this property is `null`, in which case `Body.bounce` is used instead. Set this property
+    * to a Phaser.Point object in order to enable a World bounds specific bounce value.
+    * @property {Phaser.Point} useWorldBounce
+    */
+    useWorldBounce: Bool;
+    worldBounceX: Float;
+    worldBounceY: Float;
+    /**
+    * A Signal that is dispatched when this Body collides with the world bounds.
+    * Due to the potentially high volume of signals this could create it is disabled by default.
+    * To use this feature set this property to a Phaser.Signal: `sprite.body.onWorldBounds = new Phaser.Signal()`
+    * and it will be called when a collision happens, passing five arguments:
+    * `onWorldBounds(sprite, up, down, left, right)`
+    * where the Sprite is a reference to the Sprite that owns this Body, and the other arguments are booleans
+    * indicating on which side of the world the Body collided.
+    * @property {Phaser.Signal} onWorldBounds
+    */
+    onWorldBounds: ((arg1: Body, arg2: Bool, arg3: Bool, arg4: Bool, arg5: Bool) => Void);
+    /**
+    * A Signal that is dispatched when this Body collides with another Body.
+    *
+    * You still need to call `game.physics.arcade.collide` in your `update` method in order
+    * for this signal to be dispatched.
+    *
+    * Usually you'd pass a callback to the `collide` method, but this signal provides for
+    * a different level of notification.
+    *
+    * Due to the potentially high volume of signals this could create it is disabled by default.
+    *
+    * To use this feature set this property to a Phaser.Signal: `sprite.body.onCollide = new Phaser.Signal()`
+    * and it will be called when a collision happens, passing two arguments: the sprites which collided.
+    * The first sprite in the argument is always the owner of this Body.
+    *
+    * If two Bodies with this Signal set collide, both will dispatch the Signal.
+    * @property {Phaser.Signal} onCollide
+    */
+    onCollide: ((arg1: Body, arg2: Body) => Void);
+    /**
+    * A Signal that is dispatched when this Body overlaps with another Body.
+    *
+    * You still need to call `game.physics.arcade.overlap` in your `update` method in order
+    * for this signal to be dispatched.
+    *
+    * Usually you'd pass a callback to the `overlap` method, but this signal provides for
+    * a different level of notification.
+    *
+    * Due to the potentially high volume of signals this could create it is disabled by default.
+    *
+    * To use this feature set this property to a Phaser.Signal: `sprite.body.onOverlap = new Phaser.Signal()`
+    * and it will be called when a collision happens, passing two arguments: the sprites which collided.
+    * The first sprite in the argument is always the owner of this Body.
+    *
+    * If two Bodies with this Signal set collide, both will dispatch the Signal.
+    * @property {Phaser.Signal} onOverlap
+    */
+    onOverlap: ((arg1: Body, arg2: Body) => Void);
+    maxVelocityX: Float;
+    maxVelocityY: Float;
+    frictionX: Float;
+    frictionY: Float;
+    /**
+    * @property {number} angularVelocity - The angular velocity is the rate of change of the Body's rotation. It is measured in degrees per second.
+    * @default
+    */
+    angularVelocity: Float;
+    /**
+    * @property {number} angularAcceleration - The angular acceleration is the rate of change of the angular velocity. Measured in degrees per second squared.
+    * @default
+    */
+    angularAcceleration: Float;
+    /**
+    * @property {number} angularDrag - The drag applied during the rotation of the Body. Measured in degrees per second squared.
+    * @default
+    */
+    angularDrag: Float;
+    /**
+    * @property {number} maxAngularVelocity - The maximum angular velocity in degrees per second that the Body can reach.
+    * @default
+    */
+    maxAngularVelocity: Float;
+    /**
+    * @property {number} mass - The mass of the Body. When two bodies collide their mass is used in the calculation to determine the exchange of velocity.
+    * @default
+    */
+    mass: Float;
+    /**
+    * @property {number} angle - The angle of the Body's **velocity** in radians.
+    * @readonly
+    */
+    angle: Float;
+    /**
+    * @property {number} speed - The speed of the Body in pixels per second, equal to the magnitude of the velocity.
+    * @readonly
+    */
+    speed: Float;
+    /**
+    * @property {number} facing - A const reference to the direction the Body is traveling or facing: Phaser.NONE, Phaser.LEFT, Phaser.RIGHT, Phaser.UP, or Phaser.DOWN. If the Body is moving on both axes, UP and DOWN take precedence.
+    * @default
+    */
+    facing: arcade.Direction;
+    /**
+    * @property {boolean} immovable - An immovable Body will not receive any impacts from other bodies. **Two** immovable Bodies can't separate or exchange momentum and will pass through each other.
+    * @default
+    */
+    immovable: Bool;
+    /**
+    * Whether the physics system should update the Body's position and rotation based on its velocity, acceleration, drag, and gravity.
+    *
+    * If you have a Body that is being moved around the world via a tween or a Group motion, but its local x/y position never
+    * actually changes, then you should set Body.moves = false. Otherwise it will most likely fly off the screen.
+    * If you want the physics system to move the body around, then set moves to true.
+    *
+    * A Body with moves = false can still be moved slightly (but not accelerated) during collision separation unless you set {@link #immovable} as well.
+    *
+    * @property {boolean} moves - Set to true to allow the Physics system to move this Body, otherwise false to move it manually.
+    * @default
+    */
+    moves: Bool;
+    /**
+    * This flag allows you to disable the custom x separation that takes place by Physics.Arcade.separate.
+    * Used in combination with your own collision processHandler you can create whatever type of collision response you need.
+    * @property {boolean} customSeparateX - Use a custom separation system or the built-in one?
+    * @default
+    */
+    customSeparateX: Bool;
+    /**
+    * This flag allows you to disable the custom y separation that takes place by Physics.Arcade.separate.
+    * Used in combination with your own collision processHandler you can create whatever type of collision response you need.
+    * @property {boolean} customSeparateY - Use a custom separation system or the built-in one?
+    * @default
+    */
+    customSeparateY: Bool;
+    /**
+    * When this body collides with another, the amount of overlap is stored here.
+    * @property {number} overlapX - The amount of horizontal overlap during the collision.
+    */
+    overlapX: Float;
+    /**
+    * When this body collides with another, the amount of overlap is stored here.
+    * @property {number} overlapY - The amount of vertical overlap during the collision.
+    */
+    overlapY: Float;
+    /**
+    * If `Body.isCircle` is true, and this body collides with another circular body, the amount of overlap is stored here.
+    * @property {number} overlapR - The amount of overlap during the collision.
+    */
+    overlapR: Float;
+    /**
+    * If a body is overlapping with another body, but neither of them are moving (maybe they spawned on-top of each other?) this is set to true.
+    * @property {boolean} embedded - Body embed value.
+    */
+    embedded: Bool;
+    /**
+    * A Body can be set to collide against the World bounds automatically and rebound back into the World if this is set to true. Otherwise it will leave the World.
+    * @property {boolean} collideWorldBounds - Should the Body collide with the World bounds?
+    */
+    collideWorldBounds: Bool;
+    checkCollisionNone: Bool;
+    checkCollisionUp: Bool;
+    checkCollisionDown: Bool;
+    checkCollisionLeft: Bool;
+    checkCollisionRight: Bool;
+    touchingNone: Bool;
+    touchingUp: Bool;
+    touchingDown: Bool;
+    touchingLeft: Bool;
+    touchingRight: Bool;
+    wasTouchingNone: Bool;
+    wasTouchingUp: Bool;
+    wasTouchingDown: Bool;
+    wasTouchingLeft: Bool;
+    wasTouchingRight: Bool;
+    /**
+    * This object is populated with boolean values when the Body collides with the World bounds.
+    * For example if blocked.up is true then the Body cannot move up.
+    * @property {object} blocked - An object containing on which faces this Body is blocked from moving, if any (none, up, down, left, right).
+    */
+    blockedNone: Bool;
+    blockedUp: Bool;
+    blockedDown: Bool;
+    blockedLeft: Bool;
+    blockedRight: Bool;
+    /**
+    * @property {boolean} dirty - If this Body in a preUpdate (true) or postUpdate (false) state?
+    */
+    dirty: Bool;
+    /**
+    * @property {boolean} skipQuadTree - If true and you collide this Sprite against a Group, it will disable the collision check from using a QuadTree.
+    */
+    skipQuadTree: Bool;
+    /**
+    * @property {boolean} isMoving - Set by the `moveTo` and `moveFrom` methods.
+    */
+    isMoving: Bool;
+    /**
+    * @property {boolean} stopVelocityOnCollide - Set by the `moveTo` and `moveFrom` methods.
+    */
+    stopVelocityOnCollide: Bool;
+    /**
+    * @property {Phaser.Signal} onMoveComplete - Listen for the completion of `moveTo` or `moveFrom` events.
+    */
+    onMoveComplete: ((arg1: Body, arg2: Bool) => Void);
+    /**
+    * @property {function} movementCallback - Optional callback. If set, invoked during the running of `moveTo` or `moveFrom` events.
+    */
+    movementCallback: ((arg1: Body, arg2: Float, arg3: Float, arg4: Float) => Bool);
+    updateHalfSize(): Void;
+    /**
+    * Update the Body's center from its position.
+    *
+    * @method Phaser.Physics.Arcade.Body#updateCenter
+    * @protected
+    */
+    updateCenter(): Void;
+    updateSize(width: Float, height: Float): Void;
+    /**
+    * If this Body is moving as a result of a call to `moveTo` or `moveFrom` (i.e. it
+    * has Body.isMoving true), then calling this method will stop the movement before
+    * either the duration or distance counters expire.
+    *
+    * The `onMoveComplete` signal is dispatched.
+    *
+    * @method Phaser.Physics.Arcade.Body#stopMovement
+    * @param {boolean} [stopVelocity] - Should the Body.velocity be set to zero?
+    */
+    stopMovement(stopVelocity: Bool): Void;
+    dx: Float;
+    dy: Float;
+    /**
+    * Note: This method is experimental, and may be changed or removed in a future release.
+    *
+    * This method moves the Body in the given direction, for the duration specified.
+    * It works by setting the velocity on the Body, and an internal timer, and then
+    * monitoring the duration each frame. When the duration is up the movement is
+    * stopped and the `Body.onMoveComplete` signal is dispatched.
+    *
+    * Movement also stops if the Body collides or overlaps with any other Body.
+    *
+    * You can control if the velocity should be reset to zero on collision, by using
+    * the property `Body.stopVelocityOnCollide`.
+    *
+    * Stop the movement at any time by calling `Body.stopMovement`.
+    *
+    * You can optionally set a speed in pixels per second. If not specified it
+    * will use the current `Body.speed` value. If this is zero, the function will return false.
+    *
+    * Please note that due to browser timings you should allow for a variance in
+    * when the duration will actually expire. Depending on system it may be as much as
+    * +- 50ms. Also this method doesn't take into consideration any other forces acting
+    * on the Body, such as Gravity, drag or maxVelocity, all of which may impact the
+    * movement.
+    *
+    * @method Phaser.Physics.Arcade.Body#moveFrom
+    * @param  {number} duration  - The duration of the movement, in seconds.
+    * @param  {number} [speed] - The speed of the movement, in pixels per second. If not provided `Body.speed` is used.
+    * @param  {number} [direction] - The angle of movement in degrees. If not provided `Body.angle` is used.
+    * @return {boolean} True if the movement successfully started, otherwise false.
+    */
+    moveFrom(duration: Float, speed?: Float, direction?: Float): Bool;
+    /**
+    * Note: This method is experimental, and may be changed or removed in a future release.
+    *
+    * This method moves the Body in the given direction, for the duration specified.
+    * It works by setting the velocity on the Body, and an internal distance counter.
+    * The distance is monitored each frame. When the distance equals the distance
+    * specified in this call, the movement is stopped, and the `Body.onMoveComplete`
+    * signal is dispatched.
+    *
+    * Movement also stops if the Body collides or overlaps with any other Body.
+    *
+    * You can control if the velocity should be reset to zero on collision, by using
+    * the property `Body.stopVelocityOnCollide`.
+    *
+    * Stop the movement at any time by calling `Body.stopMovement`.
+    *
+    * Please note that due to browser timings you should allow for a variance in
+    * when the distance will actually expire.
+    *
+    * Note: This method doesn't take into consideration any other forces acting
+    * on the Body, such as Gravity, drag or maxVelocity, all of which may impact the
+    * movement.
+    *
+    * @method Phaser.Physics.Arcade.Body#moveTo
+    * @param  {float} duration - The duration of the movement, in seconds.
+    * @param  {float} distance - The distance, in pixels, the Body will move.
+    * @param  {float} [direction] - The angle of movement. If not provided `Body.angle` is used.
+    * @return {boolean} True if the movement successfully started, otherwise false.
+    */
+    moveTo(duration: Float, distance: Float, direction?: Float): Bool;
+    /**
+    * Sets this Body as using a circle, of the given radius, for all collision detection instead of a rectangle.
+    * The radius is given in pixels (relative to the Sprite's _texture_) and is the distance from the center of the circle to the edge.
+    *
+    * You can also control the x and y offset, which is the position of the Body relative to the top-left of the Sprite's texture.
+    *
+    * To change a Body back to being rectangular again call `Body.setSize`.
+    *
+    * Note: Circular collision only happens with other Arcade Physics bodies, it does not
+    * work against tile maps, where rectangular collision is the only method supported.
+    *
+    * @method Phaser.Physics.Arcade.Body#setCircle
+    * @param {number} [radius] - The radius of the Body in pixels. Pass a value of zero / undefined, to stop the Body using a circle for collision.
+    */
+    setCircle(radius: Float): Void;
+    /**
+    * Resets all Body values (velocity, acceleration, rotation, etc)
+    *
+    * @method Phaser.Physics.Arcade.Body#reset
+    * @param {number} x - The new x position of the Body.
+    * @param {number} y - The new y position of the Body.
+    */
+    reset(x: Float, y: Float, width: Float, height: Float, rotation?: Float): Void;
+    /**
+     * Sets acceleration, velocity, and {@link #speed} to 0.
+     *
+     * @method Phaser.Physics.Arcade.Body#stop
+     */
+    stop(): Void;
+    /**
+    * Tests if a world point lies within this Body.
+    *
+    * @method Phaser.Physics.Arcade.Body#hitTest
+    * @param {number} x - The world x coordinate to test.
+    * @param {number} y - The world y coordinate to test.
+    * @return {boolean} True if the given coordinates are inside this Body, otherwise false.
+    */
+    hitTest(x: Float, y: Float): Bool;
+    /**
+    * Returns true if the bottom of this Body is in contact with either the world bounds or a tile.
+    *
+    * @method Phaser.Physics.Arcade.Body#onFloor
+    * @return {boolean} True if in contact with either the world bounds or a tile.
+    */
+    isOnFloor(): Bool;
+    /**
+    * Returns true if the top of this Body is in contact with either the world bounds or a tile.
+    *
+    * @method Phaser.Physics.Arcade.Body#onCeiling
+    * @return {boolean} True if in contact with either the world bounds or a tile.
+    */
+    isOnCeiling(): Bool;
+    /**
+    * Returns true if either side of this Body is in contact with either the world bounds or a tile.
+    *
+    * @method Phaser.Physics.Arcade.Body#onWall
+    * @return {boolean} True if in contact with either the world bounds or a tile.
+    */
+    isOnWall(): Bool;
+    /**
+    * Returns the absolute delta x value.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaAbsX
+    * @return {number} The absolute delta value.
+    */
+    deltaAbsX(): Float;
+    /**
+    * Returns the absolute delta y value.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaAbsY
+    * @return {number} The absolute delta value.
+    */
+    deltaAbsY(): Float;
+    /**
+    * Returns the delta x value. The difference between Body.x now and in the previous step.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaX
+    * @return {number} The delta value. Positive if the motion was to the right, negative if to the left.
+    */
+    deltaX(): Float;
+    /**
+    * Returns the delta y value. The difference between Body.y now and in the previous step.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaY
+    * @return {number} The delta value. Positive if the motion was downwards, negative if upwards.
+    */
+    deltaY(): Float;
+    /**
+    * Returns the delta z value. The difference between Body.rotation now and in the previous step.
+    *
+    * @method Phaser.Physics.Arcade.Body#deltaZ
+    * @return {number} The delta value. Positive if the motion was clockwise, negative if anti-clockwise.
+    */
+    deltaZ(): Float;
+    /**
+    * Destroys this Body.
+    *
+    * First it calls Group.removeFromHash if the Game Object this Body belongs to is part of a Group.
+    * Then it nulls the Game Objects body reference, and nulls this Body.sprite reference.
+    *
+    * @method Phaser.Physics.Arcade.Body#destroy
+    */
+    destroy(): Void;
+    setVelocityToPolar(azimuth: Float, radius?: Float, asDegrees?: Bool): Void;
+    setAccelerationToPolar(azimuth: Float, radius?: Float, asDegrees?: Bool): Void;
+    left: Float;
+    top: Float;
+    right: Float;
+    bottom: Float;
 }
 
 /**

@@ -300,6 +300,14 @@ class FragmentEditorView extends View implements Observable {
             var entityData = fragmentData.get(visual.id);
             fragmentData.selectedItem = entityData;
 
+            var scriptId = entityData.props.get('scriptContent');
+            if (scriptId != null) {
+                var script = model.project.scriptById(scriptId);
+                if (script != null) {
+                    model.project.selectedScript = script;
+                }
+            }
+
             if (fromPointer) {
                 // Ensure we are on Visuals tab
                 var selectedIndex = editorView.panelTabsView.tabViews.tabs.indexOf('Visuals');

@@ -22,10 +22,12 @@ class EditorProjectData extends Model {
         for (i in 0...fragments.length) {
             result.push(fragments[i]);
         }
+        /*
         var scripts = this.scripts;
         for (i in 0...scripts.length) {
             result.push(scripts[i]);
         }
+        */
         var tilemaps = this.tilemaps;
         for (i in 0...tilemaps.length) {
             result.push(tilemaps[i]);
@@ -89,12 +91,12 @@ class EditorProjectData extends Model {
         return selectedFragment;
     }
 
-    @serialize public var lastSelectedScriptIndex(default, null):Int = -1;
+    @serialize public var selectedScriptIndex:Int = -1;
 
-    public var lastSelectedScript(get,never):EditorScriptData;
-    function get_lastSelectedScript():EditorScriptData {
-        if (lastSelectedScriptIndex == -1) return null;
-        var item = scripts[lastSelectedScriptIndex];
+    public var selectedScript(get,set):EditorScriptData;
+    function get_selectedScript():EditorScriptData {
+        if (selectedScriptIndex == -1) return null;
+        var item = scripts[selectedScriptIndex];
         if (item != null) {
             return item;
         }
@@ -102,21 +104,8 @@ class EditorProjectData extends Model {
             return null;
         }
     }
-
-    public var selectedScript(get,set):EditorScriptData;
-    function get_selectedScript():EditorScriptData {
-        if (selectedEditableIndex == -1) return null;
-        var item = editables[selectedEditableIndex];
-        if (item != null && Std.is(item, EditorScriptData)) {
-            return cast item;
-        }
-        else {
-            return null;
-        }
-    }
     function set_selectedScript(selectedScript:EditorScriptData):EditorScriptData {
-        selectedEditableIndex = editables.indexOf(selectedScript);
-        lastSelectedScriptIndex = scripts.indexOf(selectedScript);
+        selectedScriptIndex = scripts.indexOf(selectedScript);
         return selectedScript;
     }
 
@@ -358,7 +347,7 @@ class EditorProjectData extends Model {
         json.colorPickerHsluv = colorPickerHsluv;
         json.selectedEditableIndex = selectedEditableIndex;
         json.lastSelectedFragmentIndex = lastSelectedFragmentIndex;
-        json.lastSelectedScriptIndex = lastSelectedScriptIndex;
+        json.selectedScriptIndex = selectedScriptIndex;
 
         if (exportPath != null) {
             if (projectDir != null) {
@@ -490,17 +479,17 @@ class EditorProjectData extends Model {
             lastSelectedFragmentIndex = -1;
         }
 
-        if (json.lastSelectedScriptIndex != null) {
-            if (!Validate.int(json.lastSelectedScriptIndex))
+        if (json.selectedScriptIndex != null) {
+            if (!Validate.int(json.selectedScriptIndex))
                 throw 'Invalid project last selected script index';
 
-            lastSelectedScriptIndex = json.lastSelectedScriptIndex;
+            selectedScriptIndex = json.selectedScriptIndex;
         }
         else {
-            lastSelectedScriptIndex = -1;
+            selectedScriptIndex = -1;
         }
-        if (lastSelectedScriptIndex >= scripts.length || lastSelectedScriptIndex < -1) {
-            lastSelectedScriptIndex = -1;
+        if (selectedScriptIndex >= scripts.length || selectedScriptIndex < -1) {
+            selectedScriptIndex = -1;
         }
 
     }

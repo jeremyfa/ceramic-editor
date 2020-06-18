@@ -60,6 +60,9 @@ class EditorEntityProps extends Model {
                     var scriptId:String = value;
                     unobserve();
                     if (scriptId != null) {
+                        if (entityData.fragmentData != null && entityData.fragmentData.selectedItem == entityData) {
+                            model.project.selectedScript = model.project.scriptById(scriptId);
+                        }
                         reobserve();
                         var scriptValue = model != null ? model.scripts.get(value) : null;
                         if (scriptValue != null) {

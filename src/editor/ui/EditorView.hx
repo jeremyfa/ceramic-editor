@@ -179,16 +179,7 @@ class EditorView extends View implements Observable {
                 playButton.disabled = (model.project.lastSelectedFragment == null);
             });
             settingsButton.onClick(this, () -> {
-                if (model.location == DEFAULT && model.project.lastSelectedFragment != null) {
-                    model.location = PLAY(model.project.lastSelectedFragment.fragmentId);
-                    function handlePlayEscape(key:Key) {
-                        if (key.scanCode == ScanCode.ESCAPE) {
-                            app.offKeyDown(handlePlayEscape);
-                            model.location = DEFAULT;
-                        }
-                    }
-                    app.onKeyDown(null, handlePlayEscape);
-                }
+                model.play();
             });
             editorMenu.add(settingsButton);
 
@@ -226,7 +217,7 @@ class EditorView extends View implements Observable {
         scriptEditorView = new ScriptEditorView();
         scriptEditorView.depth = 8;
         autorun(() -> {
-            scriptEditorView.selectedScript = model.project.lastSelectedScript;
+            scriptEditorView.selectedScript = model.project.selectedScript;
         });
         add(scriptEditorView);
 
@@ -363,10 +354,10 @@ class EditorView extends View implements Observable {
         var selectedName = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
 
         if (selectedFragment == null) {
-            panelTabsView.tabViews.tabs = ['Editables'];
+            panelTabsView.tabViews.tabs = ['Editables', 'Scripts'];
         }
         else {
-            panelTabsView.tabViews.tabs = ['Visuals', 'Editables'];
+            panelTabsView.tabViews.tabs = ['Visuals', 'Editables', 'Scripts'];
         }
 
         // Restore selected tab name on new tab list
@@ -434,7 +425,7 @@ class EditorView extends View implements Observable {
         var contentViewClass:Class<View> = switch (selectedName) {
             case 'Visuals': VisualsPanelView;
             case 'Editables': EditableElementsPanelView;
-            //case 'Assets': null;
+            case 'Scripts': ScriptsPanelView;
             default: null;
         }
         var prevContentViewClass = null;
@@ -467,6 +458,11 @@ class EditorView extends View implements Observable {
             if (selectedItem != null) {
                 app.backend.clipboard.setText('{"ceramic-editor":{"entity":' + Json.stringify(selectedItem.toJson()) + '}}');
             }
+        });
+
+        keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.ENTER)], () -> {
+            log.debug('PLAY');
+            model.play();
         });
 
         keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_V)], () -> {

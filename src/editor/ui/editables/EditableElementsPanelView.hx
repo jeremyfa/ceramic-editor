@@ -16,8 +16,7 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
 
         initAllEditablesSection();
         initSelectedEditableSection();
-        initSelectedScriptSection();
-        initAddFragmentButton();
+        initAddButton();
 
         autorun(updateStyle);
 
@@ -32,7 +31,7 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
         var dataSource = new EditableElementCellDataSource();
 
         var collectionView = new CellCollectionView();
-        collectionView.viewSize(fill(), percent(25));
+        collectionView.viewSize(fill(), percent(50));
         collectionView.dataSource = dataSource;
         add(collectionView);
 
@@ -241,37 +240,7 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
 
     }
 
-    function initSelectedScriptSection() {
-
-        var title = new SectionTitleView();
-        title.content = 'Selected script';
-        add(title);
-
-        var form = new FormLayout();
-        add(form);
-
-        (function() {
-            var item = new LabeledFieldView(null);
-            item.label = 'Id';
-            item.autorun(() -> {
-                var script = model.project.lastSelectedScript;
-                unobserve();
-                if (script != null && !script.destroyed) {
-                    item.field = EntityFieldUtils.createEditableScriptIdField(script);
-                }
-            });
-            form.add(item);
-        })();
-
-        autorun(function() {
-            var active = model.project.lastSelectedScript != null;
-            title.active = active;
-            form.active = active;
-        });
-
-    }
-
-    function initAddFragmentButton() {
+    function initAddButton() {
 
         var separator = new SectionSeparatorView();
         add(separator);
@@ -283,13 +252,6 @@ class EditableElementsPanelView extends LinearLayout implements Observable {
         button.content = 'Add fragment';
         button.onClick(this, function() {
             model.project.selectedFragment = model.project.addFragment();
-        });
-        container.add(button);
-
-        var button = new Button();
-        button.content = 'Add script';
-        button.onClick(this, function() {
-            model.project.selectedScript = model.project.addScript();
         });
         container.add(button);
 

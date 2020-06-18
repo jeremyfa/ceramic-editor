@@ -38,7 +38,8 @@
         emitSave,
         emitSaveAs,
         emitUndo,
-        emitRedo
+        emitRedo,
+        emitPlay
     ) {
         if (didInitMonaco) return;
         didInitMonaco = true;
@@ -57,7 +58,8 @@
                     2552, // Cannot find name 'qua'. Did you mean 'quad'?
                     2582, // Cannot find name 'test'. Do you need to install type definitions for a test runner?
                     2407, // The right-hand side of a 'for...in' statement must be of type A or 'any'..
-                    2339 // Property A does not exist on type B.
+                    2339, // Property A does not exist on type B.
+                    1108 // A 'return' statement can only be used within a function body.
                 ]
             });
             // extra libraries
@@ -133,6 +135,18 @@
                     didUndoOrRedo = true;
                     emitRedo();
                     editor.getModel().redo();
+                    return null;
+                }
+            });
+
+            editor.addAction({
+                id: 'play',
+                label: 'Play',
+                keybindings: [
+                    monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter)
+                ],
+                run: function(ed) {
+                    emitPlay();
                     return null;
                 }
             });
