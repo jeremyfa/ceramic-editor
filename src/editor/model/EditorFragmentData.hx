@@ -67,7 +67,6 @@ class EditorFragmentData extends EditorEditableElementData {
     }
     function set_selectedItem(selectedItem:EditorEntityData):EditorEntityData {
         selectedItemIndex = items.indexOf(selectedItem);
-        //invalidateSelectedItemIndex();
         return selectedItem;
     }
 
@@ -82,74 +81,65 @@ class EditorFragmentData extends EditorEditableElementData {
         return selectedVisual;
     }
 
-    @:isVar public var selectedVisualIndex(get,set):Int = -2;
-    function get_selectedVisualIndex():Int {
-        var selectedItemIndex = this.selectedItemIndex;
-        var items = this.items;
+    @compute public function selectedVisualIndex():Int {
 
-        if (this.selectedVisualIndex != -2) {
-            return this.selectedVisualIndex;
-        }
-        if (selectedItemIndex == -1) {
-            this.selectedVisualIndex = -1;
+        var item = this.selectedItem;
+        if (item == null || !Std.is(item, EditorVisualData)) {
+            return -1;
         }
         else {
-            var n = 0;
-            for (i in 0...items.length) {
-                var item = items[i];
-                if (i == selectedItemIndex) {
-                    if (Std.is(item, EditorVisualData)) {
-                        this.selectedVisualIndex = n;
-                        return this.selectedVisualIndex;
-                    }
-                    else {
-                        this.selectedVisualIndex = -1;
-                        return this.selectedVisualIndex;
-                    }
-                }
-                else {
-                    if (Std.is(item, EditorVisualData)) {
-                        n++;
-                    }
-                }
-            }
-            this.selectedVisualIndex = n;
+            return visuals.indexOf(cast item);
         }
-        return this.selectedVisualIndex;
-    }
-    function set_selectedVisualIndex(selectedVisualIndex:Int):Int {
-        if (selectedVisualIndex != -2) {
-            if (selectedVisualIndex == -1) {
-                selectedItemIndex = -1;
-            }
-            else {
-                var visualData = visuals[selectedVisualIndex];
-                if (visualData == null) {
-                    selectedItemIndex = -1;
-                    selectedVisualIndex = -1;
-                }
-                else {
-                    selectedItemIndex = items.indexOf(visualData);
-                }
-            }
-        }
-        return this.selectedVisualIndex = selectedVisualIndex;
+
     }
 
-    public var visuals(get,null):ImmutableArray<EditorVisualData> = null;
-    function get_visuals():ImmutableArray<EditorVisualData> {
-        var items = this.items;
+    @compute public function visuals():Array<EditorVisualData> {
 
-        if (this.visuals != null) return this.visuals;
-        var result = [];
+        var result:Array<EditorVisualData> = [];
         for (i in 0...items.length) {
             var item = items[i];
             if (Std.is(item, EditorVisualData)) {
+                result.push(cast item);
+            }
+        }
+        return result;
+
+    }
+
+    public var selectedEntity(get,set):EditorEntityData;
+    function get_selectedEntity():EditorEntityData {
+        var selectedItem = this.selectedItem;
+        if (!Std.is(selectedItem, EditorVisualData)) return selectedItem;
+        return null;
+    }
+    function set_selectedEntity(selectedEntity:EditorEntityData):EditorEntityData {
+        selectedItem = selectedEntity;
+        return selectedEntity;
+    }
+
+    @compute public function selectedEntityIndex():Int {
+
+        var item = this.selectedItem;
+        if (item == null || Std.is(item, EditorVisualData)) {
+            return -1;
+        }
+        else {
+            return entities.indexOf(item);
+        }
+
+    }
+
+    @compute public function entities():Array<EditorEntityData> {
+
+        var result:Array<EditorEntityData> = [];
+        for (i in 0...items.length) {
+            var item = items[i];
+            if (!Std.is(item, EditorVisualData)) {
                 result.push(item);
             }
         }
-        this.visuals = cast result;
-        return this.visuals;
+        return result;
+
     }
 
 /// Computed fragment data
@@ -198,14 +188,19 @@ class EditorFragmentData extends EditorEditableElementData {
 
         didInit = true;
 
+        /*
         // Reset computed values when their source value changes
         onItemsChange(this, function(_, _) {
             visuals = null;
+            entities = null;
             selectedVisualIndex = -2;
+            selectedEntityIndex = -2;
         });
         onSelectedItemIndexChange(this, function(newValue, prevValue) {
             selectedVisualIndex = -2;
+            selectedEntityIndex = -2;
         });
+        */
 
         fragmentDataWithoutItems = {
             id: null,
@@ -317,6 +312,40 @@ class EditorFragmentData extends EditorEditableElementData {
         model.history.step();
 
         return visual;
+
+    }
+
+    public function addItem(entityClass:String):EditorEntityData {
+
+        // Compute entity id
+        var i = 0;
+        var prefix = TextUtils.uppercasePrefixFromClass(entityClass);
+        while (get(prefix + '_' + i) != null) {
+            i++;
+        }
+
+        // Create and add entity data
+        //
+        var entity = new EditorEntityData();
+        entity.fragmentData = this;
+        entity.entityId = prefix + '_' + i;
+        entity.entityClass = entityClass;
+
+        var clazz = Type.resolveClass(entityClass);
+        if (clazz != null) {
+            if (Reflect.hasField(clazz, 'editorSetupEntity')) {
+                var setup = Reflect.field(clazz, 'editorSetupEntity');
+                setup(entity);
+            }
+        }
+
+        var items = [].concat(this.items.mutable);
+        items.push(entity);
+        this.items = cast sortItemsArray(items);
+
+        model.history.step();
+
+        return entity;
 
     }
 

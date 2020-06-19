@@ -242,6 +242,8 @@ class FragmentEditorView extends View implements Observable {
 
     function deselectItems() {
 
+        trace('deselect items');
+
         if (this.selectedFragment != null)
             this.selectedFragment.selectedItem = null;
 
@@ -290,16 +292,21 @@ class FragmentEditorView extends View implements Observable {
 
     function bindEditableVisualComponent(visual:Visual, editedFragment:Fragment) {
 
+        trace('BIND $visual');
+
         var editable = new Editable();
 
         visual.component('editable', editable);
 
         editable.onSelect(this, function(visual, fromPointer) {
+
+            trace("SELECT EDITABLE " + visual);
             
             var fragmentData = this.selectedFragment;
             var entityData = fragmentData.get(visual.id);
             fragmentData.selectedItem = entityData;
 
+            // Auto-select related script (if any)
             var scriptId = entityData.props.get('scriptContent');
             if (scriptId != null) {
                 var script = model.project.scriptById(scriptId);

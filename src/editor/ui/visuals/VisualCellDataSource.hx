@@ -73,10 +73,10 @@ class VisualCellDataSource implements CollectionViewDataSource {
                 return;
 
             if (model.project.lastSelectedFragment.selectedVisualIndex != cell.itemIndex) {
-                model.project.lastSelectedFragment.selectedVisualIndex = cell.itemIndex;
+                model.project.lastSelectedFragment.selectedVisual = model.project.lastSelectedFragment.visuals[cell.itemIndex];
             }
             else {
-                model.project.lastSelectedFragment.selectedVisualIndex = -1;
+                model.project.lastSelectedFragment.selectedVisual = null;
             }
 
         });

@@ -13,6 +13,7 @@ import editor.ui.element.*;
 import editor.ui.editables.*;
 import editor.ui.project.*;
 import editor.ui.visuals.*;
+import editor.ui.entities.*;
 import editor.ui.scripts.*;
 import editor.ui.form.*;
 import editor.components.*;

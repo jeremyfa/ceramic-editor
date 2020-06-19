@@ -39,6 +39,8 @@ class Editor extends Entity implements Observable {
 
     public var editableVisuals:ImmutableArray<EditableType> = [];
 
+    public var editableEntities:ImmutableArray<EditableType> = [];
+
 /// Internal properties
 
     @observe var pendingFile:String = null;
@@ -343,6 +345,7 @@ class Editor extends Entity implements Observable {
 
         var editableTypes:Array<EditableType> = [];
         var editableVisuals:Array<EditableType> = [];
+        var editableEntities:Array<EditableType> = [];
 
         // Compute editable types
         for (key in Reflect.fields(app.info.editable)) {
@@ -375,6 +378,9 @@ class Editor extends Entity implements Observable {
 
             if (isVisual) {
                 editableVisuals.push(editableTypes[editableTypes.length - 1]);
+            }
+            else {
+                editableEntities.push(editableTypes[editableTypes.length - 1]);
             }
 
             var fieldKeys = [];
@@ -445,6 +451,7 @@ class Editor extends Entity implements Observable {
 
         this.editableTypes = cast editableTypes;
         this.editableVisuals = cast editableVisuals;
+        this.editableEntities = cast editableEntities;
 
     }
 

@@ -9,6 +9,9 @@ type ReadOnlyArray = ReadonlyArray;
 
 function trace(msg: any): Void;
 
+function get(id: String): Entity;
+function module(id: String): ScriptModule;
+
 type AnyVisual = Visual & Text & Mesh & Quad;
 
 const self: Entity;
@@ -2097,6 +2100,8 @@ class Script extends Entity implements Component {
     module: ScriptModule;
     destroy(): Void;
     run(): Void;
+    getEntity(itemId: String): Entity;
+    getModule(itemId: String): ScriptModule;
     call(name: String, args?: Array<Dynamic>?): Dynamic;
     callScriptMethod(name: String, numArgs: Int, arg1?: Dynamic?, arg2?: Dynamic?, arg3?: Dynamic?): Dynamic;
     entity: Entity;
@@ -5450,14 +5455,24 @@ class Body {
     wasTouchingLeft: Bool;
     wasTouchingRight: Bool;
     /**
-    * This object is populated with boolean values when the Body collides with the World bounds.
-    * For example if blocked.up is true then the Body cannot move up.
-    * @property {object} blocked - An object containing on which faces this Body is blocked from moving, if any (none, up, down, left, right).
+    * @property {boolean} blockedNone - If this Body being blocked by world bounds or another immovable object?
     */
     blockedNone: Bool;
+    /**
+    * @property {boolean} blockedNone - If this Body being blocked by upper world bounds or another immovable object above it?
+    */
     blockedUp: Bool;
+    /**
+    * @property {boolean} blockedNone - If this Body being blocked by lower world bounds or another immovable object below it?
+    */
     blockedDown: Bool;
+    /**
+    * @property {boolean} blockedNone - If this Body being blocked by left world bounds or another immovable object on the left?
+    */
     blockedLeft: Bool;
+    /**
+    * @property {boolean} blockedNone - If this Body being blocked by right world bounds or another immovable object on the right?
+    */
     blockedRight: Bool;
     /**
     * @property {boolean} dirty - If this Body in a preUpdate (true) or postUpdate (false) state?

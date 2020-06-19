@@ -357,7 +357,7 @@ class EditorView extends View implements Observable {
             panelTabsView.tabViews.tabs = ['Editables', 'Scripts'];
         }
         else {
-            panelTabsView.tabViews.tabs = ['Visuals', 'Editables', 'Scripts'];
+            panelTabsView.tabViews.tabs = ['Entities', 'Visuals', 'Editables', 'Scripts'];
         }
 
         // Restore selected tab name on new tab list
@@ -423,6 +423,7 @@ class EditorView extends View implements Observable {
         unobserve();
 
         var contentViewClass:Class<View> = switch (selectedName) {
+            case 'Entities': EntitiesPanelView;
             case 'Visuals': VisualsPanelView;
             case 'Editables': EditableElementsPanelView;
             case 'Scripts': ScriptsPanelView;
