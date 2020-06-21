@@ -39,10 +39,19 @@ class ScrollingLayout<T:View> extends ScrollView {
 
         if (direction == VERTICAL) {
             layoutView.computeSize(width, height, ViewLayoutMask.INCREASE_HEIGHT, true);
-            layoutView.applyComputedSize();
+            layoutView.size(layoutView.computedWidth, Math.max(layoutView.computedHeight, height));
+            
+            if (layoutView.computedHeight - scroller.scrollY < height) {
+                scroller.scrollY = layoutView.computedHeight - height;
+            }
+
         } else {
             layoutView.computeSize(width, height, ViewLayoutMask.INCREASE_WIDTH, true);
-            layoutView.applyComputedSize();
+            layoutView.size(Math.max(layoutView.computedWidth, width), layoutView.computedHeight);
+            
+            if (layoutView.computedWidth - scroller.scrollX < width) {
+                scroller.scrollX = layoutView.computedWidth - width;
+            }
         }
         
         contentView.size(layoutView.width, layoutView.height);

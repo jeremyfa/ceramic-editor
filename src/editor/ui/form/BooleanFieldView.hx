@@ -18,6 +18,8 @@ class BooleanFieldView extends FieldView implements Observable {
 
     @observe public var value:Bool = false;
 
+    @observe public var overlayStyle:Bool = false;
+
 /// Internal properties
 
     public function new() {
@@ -120,12 +122,20 @@ class BooleanFieldView extends FieldView implements Observable {
 
     function updateStyle() {
         
-        switchContainer.color = theme.darkBackgroundColor;
+        if (overlayStyle) {
+            switchContainer.transparent = true;
+        }
+        else {
+            switchContainer.transparent = false;
+            switchContainer.color = theme.darkBackgroundColor;
+        }
 
         if (value) {
+            switchSquare.transparent = false;
             switchSquare.color = theme.mediumTextColor;
         }
         else {
+            switchSquare.transparent = overlayStyle;
             switchSquare.color = theme.darkBackgroundColor;//theme.darkerTextColor.getDarkened(0.1);
         }
 

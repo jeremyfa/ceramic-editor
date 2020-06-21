@@ -47,6 +47,8 @@ class EditorData extends Model {
 
     @observe public var location:EditorLocation = DEFAULT;
 
+    @observe public var animationState:EditorAnimationState = new EditorAnimationState();
+
     var clearStatusMessageDelay:Void->Void = null;
     
     var ignoreUnsaved:Int = 0;

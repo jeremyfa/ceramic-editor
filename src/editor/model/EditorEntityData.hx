@@ -37,17 +37,40 @@ class EditorEntityData extends Model {
         return map;
     }
 
+    var didInit:Bool = false;
+
     public function new() {
 
         super();
 
-        props.entityData = this;
+        if (!didInit) {
+            init();
+        }
 
     }
 
     override function didDeserialize() {
 
+        if (!didInit) {
+            init();
+        }
+
+    }
+
+    function init() {
+
+        didInit = true;
+
         props.entityData = this;
+
+        autorun(() -> {
+            var entityId = this.entityId;
+            unobserve();
+
+            for (track in timelineTracks) {
+                track.targetId = entityId;
+            }
+        });
 
     }
 
@@ -176,6 +199,89 @@ class EditorEntityData extends Model {
                 props.set(key, value);
             }
         }
+
+    }
+
+/// Timeline
+
+    /**
+     * The number of frames of this entity's timeline.
+     * Automatically computed from timeline tracks
+     * @return Int
+     */
+    @compute public function numTimelineFrames():Int {
+
+        var tracks = timelineTracks;
+        var size = 0;
+
+        for (i in 0...tracks.length) {
+            var track = tracks[i];
+            var trackFrames = track.numFrames;
+            if (trackFrames > size) {
+                size = trackFrames;
+            }
+        }
+
+        return size;
+
+    }
+
+    @serialize public var timelineTracks:ImmutableArray<EditorTimelineTrack> = [];
+
+    public function timelineTrackForField(field:String):EditorTimelineTrack {
+
+        var tracks = this.timelineTracks;
+        for (i in 0...tracks.length) {
+            var track = tracks[i];
+            if (track.targetField == field && track.targetId == entityId) {
+                return track;
+            }
+        }
+
+        return null;
+
+    }
+
+    public function ensureTimelineTrack(field:String):Void {
+
+        if (timelineTrackForField(field) == null) {
+            var track = new EditorTimelineTrack(entityId, field);
+            var newTracks = [].concat(this.timelineTracks.mutable);
+            newTracks.push(track);
+            newTracks.sort(compareTimelineTracks);
+            this.timelineTracks = cast newTracks;
+        }
+        
+    }
+
+    public function removeTimelineTrack(field:String):Void {
+
+        var track = timelineTrackForField(field);
+        if (track != null) {
+            var newTracks = [].concat(this.timelineTracks.mutable);
+            newTracks.remove(track);
+            this.timelineTracks = cast newTracks;
+        }
+        
+    }
+
+    function compareTimelineTracks(trackA:EditorTimelineTrack, trackB:EditorTimelineTrack):Int {
+
+        var fieldA = trackA.targetField;
+        var fieldB = trackB.targetField;
+
+        var editableType = this.editableType;
+        if (editableType == null) {
+            return 0;
+        }
+        
+        var fields = editableType.fields;
+        for (i in 0...fields.length) {
+            var field = fields[i];
+            if (field.name == fieldA) return -1;
+            else if (field.name == fieldB) return 1;
+        }
+        return 0;
 
     }
 

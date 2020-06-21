@@ -27,6 +27,8 @@ class EditorView extends View implements Observable {
 
     public var scriptEditorView(default, null):ScriptEditorView;
 
+    public var timelineEditorView(default, null):TimelineEditorView;
+
     //var scriptEditorView:ScriptEditorView;
 
 /// Lifecycle
@@ -213,22 +215,30 @@ class EditorView extends View implements Observable {
         });
         add(fragmentEditorView);
 
-        // Monaco editor view
+        // Script editor view
         scriptEditorView = new ScriptEditorView();
-        scriptEditorView.depth = 8;
+        scriptEditorView.depth = 9;
         autorun(() -> {
             scriptEditorView.selectedScript = model.project.selectedScript;
         });
         add(scriptEditorView);
 
+        // Timeline editor view
+        timelineEditorView = new TimelineEditorView(this);
+        timelineEditorView.depth = 10;
+        autorun(() -> {
+            timelineEditorView.selectedFragment = model.project.lastSelectedFragment;
+        });
+        add(timelineEditorView);
+
         editorsSeparator = new View();
         editorsSeparator.active = false;
-        editorsSeparator.depth = 9;
+        editorsSeparator.depth = 11;
         add(editorsSeparator);
 
         // Popup
         popup = new PopupView();
-        popup.depth = 10;
+        popup.depth = 12;
         add(popup);
 
         /*
@@ -258,13 +268,14 @@ class EditorView extends View implements Observable {
         var panelsTabsWidth = 300;
         var bottomBarHeight = 18;
         var leftSpacerSize = 6;
+        var timelineHeight = Math.min(height * 0.25, 250);
         var availableViewportWidth = width - panelsTabsWidth - leftSpacerSize - 2;
-        var availableViewportHeight = height - bottomBarHeight - editorMenuHeight;
+        var availableViewportHeight = height - bottomBarHeight - editorMenuHeight - timelineHeight;
 
         leftSpacerView.size(leftSpacerSize, height);
         leftSpacerView.pos(0, 0);
 
-        leftSpacerBorder.size(1, availableViewportHeight);
+        leftSpacerBorder.size(1, availableViewportHeight + timelineHeight);
         leftSpacerBorder.pos(leftSpacerSize, editorMenuHeight);
 
         panelTabsView.viewSize(panelsTabsWidth, height - editorMenuHeight);
@@ -320,6 +331,9 @@ class EditorView extends View implements Observable {
             scriptEditorView.active = false;
             fragmentEditorView.active = false;
         }
+
+        timelineEditorView.size(availableViewportWidth, timelineHeight);
+        timelineEditorView.pos(1 + leftSpacerSize, editorMenuHeight + availableViewportHeight);
 
         popup.anchor(0.5, 0.5);
         popup.pos(width * 0.5, height * 0.5);

@@ -64,6 +64,10 @@ class EditorTheme extends Model {
 
     @observe public var focusedFieldBorderColor:Color = 0x4392E0;
 
+/// Timeline
+
+    @observe public var timelineCursorColor:Color = 0x4392E0;
+
 /// Bubble
 
     @observe public var overlayBackgroundColor:Color = 0x111111;

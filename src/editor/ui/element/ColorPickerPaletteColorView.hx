@@ -8,7 +8,7 @@ class ColorPickerPaletteColorView extends View implements Observable {
     
     @component var longPress:LongPress;
 
-    @component var dragDrop:DragDrop;
+    @component public var dragDrop:DragDrop;
 
 /// Events
 

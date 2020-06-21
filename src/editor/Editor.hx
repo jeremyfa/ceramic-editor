@@ -73,8 +73,8 @@ class Editor extends Entity implements Observable {
 
         settings.antialiasing = 4;
         settings.background = 0x282828;
-        settings.targetWidth = 1280;
-        settings.targetHeight = 720;
+        settings.targetWidth = 1400;
+        settings.targetHeight = 860;
         settings.resizable = true;
         settings.scaling = FIT;
         settings.title = 'Ceramic Editor';

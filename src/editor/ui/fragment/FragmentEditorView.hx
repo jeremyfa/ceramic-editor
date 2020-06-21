@@ -1,4 +1,4 @@
-package editor.ui.element;
+package editor.ui.fragment;
 
 class FragmentEditorView extends View implements Observable {
 
@@ -292,15 +292,11 @@ class FragmentEditorView extends View implements Observable {
 
     function bindEditableVisualComponent(visual:Visual, editedFragment:Fragment) {
 
-        trace('BIND $visual');
-
         var editable = new Editable();
 
         visual.component('editable', editable);
 
         editable.onSelect(this, function(visual, fromPointer) {
-
-            trace("SELECT EDITABLE " + visual);
             
             var fragmentData = this.selectedFragment;
             var entityData = fragmentData.get(visual.id);

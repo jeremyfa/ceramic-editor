@@ -37,7 +37,7 @@ class Tooltip extends Visual implements Component implements Observable {
         super();
 
         this.content = content;
-        depth = 10;
+        depth = 15;
         editor.view.add(this);
 
         anchor(0, 0.5);
