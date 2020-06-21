@@ -228,6 +228,35 @@ class EditorEntityData extends Model {
 
     @serialize public var timelineTracks:ImmutableArray<EditorTimelineTrack> = [];
 
+    public function ensureKeyframe(field:String, index:Int):Void {
+
+        trace('ensure keyframe $field $index');
+
+        ensureTimelineTrack(field);
+        var track = timelineTrackForField(field);
+
+        var keyframe = track.keyframeAtIndex(index);
+        if (keyframe == null) {
+            keyframe = new EditorTimelineKeyframe();
+            keyframe.index = index;
+            keyframe.value = props.get(field);
+
+            track.setKeyframe(index, keyframe);
+        }
+        
+    }
+
+    public function removeKeyframe(field:String, index:Int):Void {
+
+        trace('remove keyframe $field $index');
+
+        var track = timelineTrackForField(field);
+        if (track != null) {
+            track.removeKeyframeAtIndex(index);
+        }
+        
+    }
+
     public function timelineTrackForField(field:String):EditorTimelineTrack {
 
         var tracks = this.timelineTracks;

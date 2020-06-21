@@ -58,7 +58,7 @@ class TimelineChooseTracksView extends FlowLayout implements Observable {
                             
                             var checkbox = new BooleanFieldView();
                             checkbox.viewSize(25, 25);
-                            checkbox.overlayStyle = true;
+                            checkbox.inputStyle = OVERLAY;
                             itemView.add(checkbox);
     
                             checkbox.setValue = function(_, value) {
@@ -102,7 +102,7 @@ class TimelineChooseTracksView extends FlowLayout implements Observable {
             okRow.viewSize(fill(), 40);
 
             var button = new Button();
-            button.overlayStyle = true;
+            button.inputStyle = OVERLAY;
             button.content = 'Done';
             button.padding(0, 12);
             button.onClick(this, () -> {

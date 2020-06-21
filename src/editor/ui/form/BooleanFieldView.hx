@@ -18,7 +18,7 @@ class BooleanFieldView extends FieldView implements Observable {
 
     @observe public var value:Bool = false;
 
-    @observe public var overlayStyle:Bool = false;
+    @observe public var inputStyle:InputStyle = DEFAULT;
 
 /// Internal properties
 
@@ -35,9 +35,7 @@ class BooleanFieldView extends FieldView implements Observable {
         switchContainer = new View();
         switchContainer.padding(pad);
         switchContainer.viewSize(w, w);
-        switchContainer.borderSize = 1;
         switchContainer.borderPosition = INSIDE;
-        switchContainer.transparent = false;
         add(switchContainer);
 
         switchSquare = new View();
@@ -122,7 +120,7 @@ class BooleanFieldView extends FieldView implements Observable {
 
     function updateStyle() {
         
-        if (overlayStyle) {
+        if (inputStyle == OVERLAY || inputStyle == MINIMAL) {
             switchContainer.transparent = true;
         }
         else {
@@ -135,15 +133,30 @@ class BooleanFieldView extends FieldView implements Observable {
             switchSquare.color = theme.mediumTextColor;
         }
         else {
-            switchSquare.transparent = overlayStyle;
-            switchSquare.color = theme.darkBackgroundColor;//theme.darkerTextColor.getDarkened(0.1);
+            switchSquare.transparent = (inputStyle == OVERLAY);
+            switchSquare.color = theme.darkBackgroundColor;
         }
 
-        if (focused) {
-            switchContainer.borderColor = theme.focusedFieldBorderColor;
+        if (inputStyle == MINIMAL) {
+            switchContainer.borderSize = 0;
+            switchContainer.transparent = true;
+
+            switchSquare.borderSize = 1;
+            switchSquare.borderPosition = OUTSIDE;
+            switchSquare.borderColor = theme.darkBorderColor;
         }
         else {
-            switchContainer.borderColor = theme.lightBorderColor;
+            switchContainer.borderSize = 1;
+            switchContainer.transparent = false;
+
+            switchSquare.borderSize = 0;
+
+            if (focused) {
+                switchContainer.borderColor = theme.focusedFieldBorderColor;
+            }
+            else {
+                switchContainer.borderColor = theme.lightBorderColor;
+            }
         }
 
     }

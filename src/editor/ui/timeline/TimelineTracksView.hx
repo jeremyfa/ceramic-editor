@@ -40,6 +40,7 @@ class TimelineTracksView extends View implements Observable {
                     add(trackView);
                     trackViews[i] = trackView;
                 }
+                trackView.selectedItem = selectedItem;
                 trackView.timelineTrack = tracks[i];
             }
 

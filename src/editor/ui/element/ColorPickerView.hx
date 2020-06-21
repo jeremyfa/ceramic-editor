@@ -379,7 +379,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         colorModeButton = new Button();
         colorModeButton.content = 'Color mode';
-        colorModeButton.overlayStyle = true;
+        colorModeButton.inputStyle = OVERLAY;
         colorModeButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
         colorModeButton.offset(offsetX, offsetY);
         colorModeButton.onClick(this, switchColorMode);
@@ -388,7 +388,7 @@ class ColorPickerView extends LayersLayout implements Observable {
         offsetY += BUTTON_ADVANCE + PADDING;
 
         paletteAddButton = new Button();
-        paletteAddButton.overlayStyle = true;
+        paletteAddButton.inputStyle = OVERLAY;
         paletteAddButton.viewWidth = FIELD_ROW_WIDTH * 2 + PADDING;
         paletteAddButton.offset(offsetX, offsetY);
         paletteAddButton.onClick(this, () -> {
@@ -751,7 +751,7 @@ class ColorPickerView extends LayersLayout implements Observable {
 
         var fieldView = new TextFieldView(NUMERIC);
         fieldView.textAlign = CENTER;
-        fieldView.overlayStyle = true;
+        fieldView.inputStyle = OVERLAY;
         fieldView.textValue = '0';
         fieldView.viewWidth = FIELD_ROW_WIDTH;
 

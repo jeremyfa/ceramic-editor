@@ -52,7 +52,7 @@ class TextFieldView extends FieldView implements Observable {
 
     @observe public var placeholder:String = '';
 
-    @observe public var overlayStyle:Bool = false;
+    @observe public var inputStyle:InputStyle = DEFAULT;
 
     @observe public var textAlign:TextAlign = LEFT;
 
@@ -261,7 +261,7 @@ class TextFieldView extends FieldView implements Observable {
             editText.textCursorColor = theme.lightTextColor;
         }
 
-        if (overlayStyle) {
+        if (inputStyle == OVERLAY) {
             color = Color.WHITE;
             alpha = 0.1;
         

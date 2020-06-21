@@ -32,20 +32,82 @@ class EditorTimelineTrack extends Model {
 
     }
 
-    public function keyframeByIndex(index:Int):EditorTimelineKeyframe {
+    public function keyframeAtIndex(index:Int):Null<EditorTimelineKeyframe> {
 
         return keyframes.get(index);
 
     }
 
+    /**
+     * Find the keyframe right before or equal to given `index`
+     * @param index 
+     * @return Null<EditorTimelineKeyframe>
+     */
+    public function keyframeBeforeIndex(index:Int):Null<EditorTimelineKeyframe> {
+
+        var keyframes = this.keyframes;
+        while (index >= 0) {
+
+            if (keyframes.exists(index)) {
+                var keyframe = keyframes.get(index);
+                if (keyframe != null) {
+                    return keyframe;
+                }
+            }
+
+            index--;
+        }
+
+        return null;
+
+    }
+
+    /**
+     * Find the keyframe right after given `index`
+     * @param index 
+     * @return Null<EditorTimelineKeyframe>
+     */
+    public function keyframeAfterIndex(index:Int):Null<EditorTimelineKeyframe> {
+
+        var keyframes = this.keyframes;
+        
+        var bestIndex = -1;
+        var bestDiff = 999999999;
+
+        for (anIndex in keyframes.keys()) {
+            if (anIndex > index) {
+                var diff = anIndex - index;
+                if (diff < bestDiff) {
+                    bestDiff = diff;
+                    bestIndex = anIndex;
+                }
+            }
+        }
+
+        if (bestIndex != -1) {
+            return keyframes.get(bestIndex);
+        }
+
+        return null;
+
+    }
+
     public function setKeyframe(index:Int, keyframe:EditorTimelineKeyframe) {
 
-        var prevKeyframe = keyframeByIndex(index);
+        var prevKeyframe = keyframeAtIndex(index);
         if (prevKeyframe != null && prevKeyframe != keyframe) {
             removeKeyframeAtIndex(index);
         }
         
         keyframe.index = index;
+        var newKeyframes = new Map<Int, EditorTimelineKeyframe>();
+        newKeyframes.set(index, keyframe);
+        for (key => val in keyframes.mutable) {
+            if (key != index) {
+                newKeyframes.set(key, val);
+            }
+        }
+        this.keyframes = cast newKeyframes;
 
     }
 
@@ -59,8 +121,8 @@ class EditorTimelineTrack extends Model {
                 if (key != index) {
                     newKeyframes.set(key, val);
                 }
-                this.keyframes = cast newKeyframes;
             }
+            this.keyframes = cast newKeyframes;
         }
 
     }
@@ -83,8 +145,8 @@ class EditorTimelineTrack extends Model {
                 if (val != keyframe) {
                     newKeyframes.set(key, val);
                 }
-                this.keyframes = cast newKeyframes;
             }
+            this.keyframes = cast newKeyframes;
         }
 
     }
