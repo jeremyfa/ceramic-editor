@@ -22,6 +22,7 @@ class TimelineCursorView extends View implements Observable {
 
         text = new Text();
         text.anchor(0.5, 1);
+        text.preRenderedSize = 20;
         text.pointSize = 11;
         add(text);
         

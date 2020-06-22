@@ -96,9 +96,9 @@ class ColorPickerView extends LayersLayout implements Observable {
     inline function get_hsluv():Bool return model.project.colorPickerHsluv;
     inline function set_hsluv(hsluv:Bool) return model.project.colorPickerHsluv = hsluv;
 
-    var paletteColors(get, set):ImmutableArray<Color>;
-    inline function get_paletteColors():ImmutableArray<Color> return model.project.paletteColors;
-    inline function set_paletteColors(paletteColors:ImmutableArray<Color>) return model.project.paletteColors = paletteColors;
+    var paletteColors(get, set):ReadOnlyArray<Color>;
+    inline function get_paletteColors():ReadOnlyArray<Color> return model.project.paletteColors;
+    inline function set_paletteColors(paletteColors:ReadOnlyArray<Color>) return model.project.paletteColors = paletteColors;
 
     var hsbGradientView:ColorPickerHSBGradientView;
 

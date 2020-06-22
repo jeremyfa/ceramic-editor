@@ -6,7 +6,7 @@ class EditorTimelineTrack extends Model {
 
     @serialize public var targetField:String;
 
-    @serialize public var keyframes:ImmutableMap<Int, EditorTimelineKeyframe> = new Map();
+    @serialize public var keyframes:ReadOnlyMap<Int, EditorTimelineKeyframe> = new Map();
 
     @compute public function numFrames():Int {
 
@@ -102,7 +102,7 @@ class EditorTimelineTrack extends Model {
         keyframe.index = index;
         var newKeyframes = new Map<Int, EditorTimelineKeyframe>();
         newKeyframes.set(index, keyframe);
-        for (key => val in keyframes.mutable) {
+        for (key => val in keyframes.original) {
             if (key != index) {
                 newKeyframes.set(key, val);
             }
@@ -117,7 +117,7 @@ class EditorTimelineTrack extends Model {
 
         if (keyframes.exists(index)) {
             var newKeyframes = new Map<Int, EditorTimelineKeyframe>();
-            for (key => val in keyframes.mutable) {
+            for (key => val in keyframes.original) {
                 if (key != index) {
                     newKeyframes.set(key, val);
                 }
@@ -132,7 +132,7 @@ class EditorTimelineTrack extends Model {
         var keyframes = this.keyframes;
         var exists = false;
 
-        for (val in keyframes.mutable) {
+        for (val in keyframes.original) {
             if (val == keyframe) {
                 exists = true;
                 break;
@@ -141,7 +141,7 @@ class EditorTimelineTrack extends Model {
 
         if (exists) {
             var newKeyframes = new Map<Int, EditorTimelineKeyframe>();
-            for (key => val in keyframes.mutable) {
+            for (key => val in keyframes.original) {
                 if (val != keyframe) {
                     newKeyframes.set(key, val);
                 }

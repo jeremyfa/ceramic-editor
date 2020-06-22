@@ -10,13 +10,13 @@ class EditorProjectData extends Model {
 
     @serialize public var title:String = 'New Project';
 
-    @serialize public var fragments:ImmutableArray<EditorFragmentData> = [];
+    @serialize public var fragments:ReadOnlyArray<EditorFragmentData> = [];
 
-    @serialize public var scripts:ImmutableArray<EditorScriptData> = [];
+    @serialize public var scripts:ReadOnlyArray<EditorScriptData> = [];
 
-    @serialize public var tilemaps:ImmutableArray<EditorTilemapData> = [];
+    @serialize public var tilemaps:ReadOnlyArray<EditorTilemapData> = [];
 
-    @compute public function editables():ImmutableArray<EditorEditableElementData> {
+    @compute public function editables():ReadOnlyArray<EditorEditableElementData> {
         var result:Array<EditorEditableElementData> = [];
         var fragments = this.fragments;
         for (i in 0...fragments.length) {
@@ -36,10 +36,10 @@ class EditorProjectData extends Model {
     }
 
     /*
-    @serialize public var scripts:ImmutableArray<EditorScriptData> = [];
+    @serialize public var scripts:ReadOnlyArray<EditorScriptData> = [];
 
 
-    @serialize public var tilesets:ImmutableArray<Tileset> = [];
+    @serialize public var tilesets:ReadOnlyArray<Tileset> = [];
     */
 
     @serialize public var exportPath:String = null;
@@ -48,7 +48,7 @@ class EditorProjectData extends Model {
 
     @serialize public var colorPickerHsluv:Bool = false;
 
-    @serialize public var paletteColors:ImmutableArray<Color> = [];
+    @serialize public var paletteColors:ReadOnlyArray<Color> = [];
 
 /// Computed data
 
@@ -189,7 +189,7 @@ class EditorProjectData extends Model {
         fragment.width = 800;
         fragment.height = 600;
 
-        var fragments = [].concat(this.fragments.mutable);
+        var fragments = [].concat(this.fragments.original);
         fragments.push(fragment);
         this.fragments = cast fragments;
 
@@ -201,7 +201,7 @@ class EditorProjectData extends Model {
 
     public function removeFragment(fragment:EditorFragmentData):Void {
 
-        var fragments = [].concat(this.fragments.mutable);
+        var fragments = [].concat(this.fragments.original);
         fragments.remove(fragment);
         this.fragments = cast fragments;
 
@@ -225,7 +225,7 @@ class EditorProjectData extends Model {
         var duplicatedFragment = new EditorFragmentData();
         duplicatedFragment.fromJson(jsonFragment);
 
-        var fragments = [].concat(this.fragments.mutable);
+        var fragments = [].concat(this.fragments.original);
         fragments.insert(fragments.indexOf(fragment) + 1, duplicatedFragment);
         this.fragments = cast fragments;
 
@@ -247,7 +247,7 @@ class EditorProjectData extends Model {
         script.scriptId = 'SCRIPT_$i';
         script.content = '';
 
-        var scripts = [].concat(this.scripts.mutable);
+        var scripts = [].concat(this.scripts.original);
         scripts.push(script);
         this.scripts = cast scripts;
 
@@ -259,7 +259,7 @@ class EditorProjectData extends Model {
 
     public function removeScript(script:EditorScriptData):Void {
 
-        var scripts = [].concat(this.scripts.mutable);
+        var scripts = [].concat(this.scripts.original);
         scripts.remove(script);
         this.scripts = cast scripts;
 
@@ -283,7 +283,7 @@ class EditorProjectData extends Model {
         var duplicatedScript = new EditorScriptData();
         duplicatedScript.fromJson(jsonScript);
 
-        var scripts = [].concat(this.scripts.mutable);
+        var scripts = [].concat(this.scripts.original);
         scripts.insert(scripts.indexOf(script) + 1, duplicatedScript);
         this.scripts = cast scripts;
 
@@ -306,7 +306,7 @@ class EditorProjectData extends Model {
         }
 
         // Add color
-        var paletteColors = [].concat(prevPaletteColors.mutable);
+        var paletteColors = [].concat(prevPaletteColors.original);
         paletteColors.push(color);
         this.paletteColors = cast paletteColors;
 
@@ -314,7 +314,7 @@ class EditorProjectData extends Model {
 
     public function movePaletteColor(fromIndex:Int, toIndex:Int):Void {
 
-        var paletteColors = [].concat(this.paletteColors.mutable);
+        var paletteColors = [].concat(this.paletteColors.original);
 
         var colorToMove = paletteColors[fromIndex];
 
@@ -327,7 +327,7 @@ class EditorProjectData extends Model {
 
     public function removePaletteColor(index:Int):Void {
 
-        var paletteColors = [].concat(this.paletteColors.mutable);
+        var paletteColors = [].concat(this.paletteColors.original);
 
         paletteColors.splice(index, 1);
 

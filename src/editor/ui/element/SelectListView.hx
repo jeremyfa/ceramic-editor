@@ -6,7 +6,7 @@ class SelectListView extends View implements CollectionViewDataSource implements
 
     @observe public var value:String = null;
 
-    @observe public var list:ImmutableArray<String> = [];
+    @observe public var list:ReadOnlyArray<String> = [];
 
     @observe public var nullValueText:String = null;
 

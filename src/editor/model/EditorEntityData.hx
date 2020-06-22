@@ -29,7 +29,7 @@ class EditorEntityData extends Model {
         return editor.getEditableType(entityClass);
     }
 
-    @compute public function fieldTypes():ImmutableMap<String,String> {
+    @compute public function fieldTypes():ReadOnlyMap<String,String> {
         var map = new Map<String,String>();
         for (field in editableType.fields) {
             map.set(field.name, field.type);
@@ -226,7 +226,7 @@ class EditorEntityData extends Model {
 
     }
 
-    @serialize public var timelineTracks:ImmutableArray<EditorTimelineTrack> = [];
+    @serialize public var timelineTracks:ReadOnlyArray<EditorTimelineTrack> = [];
 
     public function ensureKeyframe(field:String, index:Int):Void {
 
@@ -275,7 +275,7 @@ class EditorEntityData extends Model {
 
         if (timelineTrackForField(field) == null) {
             var track = new EditorTimelineTrack(entityId, field);
-            var newTracks = [].concat(this.timelineTracks.mutable);
+            var newTracks = [].concat(this.timelineTracks.original);
             newTracks.push(track);
             newTracks.sort(compareTimelineTracks);
             this.timelineTracks = cast newTracks;
@@ -287,7 +287,7 @@ class EditorEntityData extends Model {
 
         var track = timelineTrackForField(field);
         if (track != null) {
-            var newTracks = [].concat(this.timelineTracks.mutable);
+            var newTracks = [].concat(this.timelineTracks.original);
             newTracks.remove(track);
             this.timelineTracks = cast newTracks;
         }

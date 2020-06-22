@@ -19,21 +19,21 @@ class EditorData extends Model {
 
     @serialize public var project:EditorProjectData = new EditorProjectData();
 
-    @observe public var images:ImmutableArray<String> = [];
+    @observe public var images:ReadOnlyArray<String> = [];
 
-    @observe public var texts:ImmutableArray<String> = [];
+    @observe public var texts:ReadOnlyArray<String> = [];
 
-    @observe public var sounds:ImmutableArray<String> = [];
+    @observe public var sounds:ReadOnlyArray<String> = [];
 
-    @observe public var fonts:ImmutableArray<String> = [];
+    @observe public var fonts:ReadOnlyArray<String> = [];
 
-    @observe public var databases:ImmutableArray<String> = [];
+    @observe public var databases:ReadOnlyArray<String> = [];
 
-    @observe public var shaders:ImmutableArray<String> = [];
+    @observe public var shaders:ReadOnlyArray<String> = [];
 
-    @observe public var fragments:ImmutableMap<String,EditorValue> = new Map();
+    @observe public var fragments:ReadOnlyMap<String,EditorValue> = new Map();
 
-    @observe public var scripts:ImmutableMap<String,EditorValue> = new Map();
+    @observe public var scripts:ReadOnlyMap<String,EditorValue> = new Map();
 
     @observe public var pendingChoice:EditorPendingChoice = null;
 
@@ -312,7 +312,7 @@ class EditorData extends Model {
             for (existingFragment in project.fragments) {
                 existingIds.set(existingFragment.fragmentId, true);
             }
-            for (key => val in this.fragments.mutable) {
+            for (key => val in this.fragments.original) {
                 if (existingIds.exists(key))
                     newFragments.set(key, val);
             }
@@ -368,7 +368,7 @@ class EditorData extends Model {
             for (existingScript in project.scripts) {
                 existingIds.set(existingScript.scriptId, true);
             }
-            for (key => val in this.scripts.mutable) {
+            for (key => val in this.scripts.original) {
                 if (existingIds.exists(key))
                     newScripts.set(key, val);
             }

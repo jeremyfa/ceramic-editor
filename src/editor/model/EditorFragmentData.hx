@@ -52,7 +52,7 @@ class EditorFragmentData extends EditorEditableElementData {
     /**
      * Fragments items
      */
-    @serialize public var items:ImmutableArray<EditorEntityData> = [];
+    @serialize public var items:ReadOnlyArray<EditorEntityData> = [];
 
     @serialize public var selectedItemIndex:Int = -1;
 
@@ -305,7 +305,7 @@ class EditorFragmentData extends EditorEditableElementData {
             }
         }
 
-        var items = [].concat(this.items.mutable);
+        var items = [].concat(this.items.original);
         items.push(visual);
         this.items = cast sortItemsArray(items);
 
@@ -339,7 +339,7 @@ class EditorFragmentData extends EditorEditableElementData {
             }
         }
 
-        var items = [].concat(this.items.mutable);
+        var items = [].concat(this.items.original);
         items.push(entity);
         this.items = cast sortItemsArray(items);
 
@@ -375,7 +375,7 @@ class EditorFragmentData extends EditorEditableElementData {
         duplicatedItem.fromJson(jsonItem);
         duplicatedItem.props.set('depth', item.props.get('depth') + 0.001);
 
-        var items = [].concat(this.items.mutable);
+        var items = [].concat(this.items.original);
         items.insert(items.indexOf(item) + 1, duplicatedItem);
         this.items = cast items;
 
@@ -410,7 +410,7 @@ class EditorFragmentData extends EditorEditableElementData {
 
         entityData.entityId = computeAvailableId(entityData.entityId);
 
-        var items = [].concat(this.items.mutable);
+        var items = [].concat(this.items.original);
         items.push(entityData);
         this.items = cast sortItemsArray(items);
 
@@ -730,7 +730,7 @@ class EditorFragmentData extends EditorEditableElementData {
         lockSortItems = true;
 
         var startDepth:Float = 1;
-        var itemsCopy = [].concat(this.items.mutable);
+        var itemsCopy = [].concat(this.items.original);
         for (item in itemsCopy) {
             if (Std.is(item, EditorVisualData)) {
                 item.props.set('depth', startDepth++);
@@ -748,7 +748,7 @@ class EditorFragmentData extends EditorEditableElementData {
 
         var prevSelectedItem = this.selectedItem;
 
-        var newItems = [].concat(this.items.mutable);
+        var newItems = [].concat(this.items.original);
         this.items = cast sortItemsArray(newItems);
 
         this.selectedItem = prevSelectedItem;

@@ -12,6 +12,10 @@ class TimelineTrackView extends View implements Observable {
 
     var toggleKeyframeFieldView:BooleanFieldView;
 
+    var keyframeMarkers:Array<View> = [];
+
+    var keyframes:ReadOnlyMap<Int, EditorTimelineKeyframe> = null;
+
     public function new(timelineEditorView:TimelineEditorView) {
 
         super();
@@ -20,6 +24,7 @@ class TimelineTrackView extends View implements Observable {
 
         titleView = new TextView();
         titleView.depth = 1;
+        titleView.preRenderedSize = 20;
         titleView.pointSize = 13;
         titleView.verticalAlign = CENTER;
         titleView.align = RIGHT;
@@ -45,7 +50,6 @@ class TimelineTrackView extends View implements Observable {
             var timelineTrack = this.timelineTrack;
             var value = timelineTrack != null && timelineTrack.keyframeAtIndex(currentFrame) != null;
             unobserve();
-            log.debug('toggle value $value ($currentFrame)');
             toggleKeyframeFieldView.value = value;
         });
         add(toggleKeyframeFieldView);
@@ -58,6 +62,7 @@ class TimelineTrackView extends View implements Observable {
     function updateFromTimelineTrack() {
 
         var timelineTrack = this.timelineTrack;
+        keyframes = timelineTrack != null ? timelineTrack.keyframes : null;
 
         unobserve();
 
@@ -79,6 +84,13 @@ class TimelineTrackView extends View implements Observable {
         toggleKeyframeFieldView.pos(TimelineEditorView.TRACK_TITLE_WIDTH - 20, 1);
         toggleKeyframeFieldView.computeSizeIfNeeded(height, height, ViewLayoutMask.FIXED, true);
         toggleKeyframeFieldView.applyComputedSize();
+
+        var n = 0;
+        if (keyframes != null) {
+            for (keyframe in keyframes) {
+                var index = keyframe.index;
+            }
+        }
 
     }
 

@@ -536,9 +536,9 @@ class EntityFieldUtils {
 
     }
 
-    public static function createEditableSelectField(options:Dynamic, item:EditorEntityData, name:String, getter:Void->ImmutableArray<Dynamic>, ?nullValueText:String) {
+    public static function createEditableSelectField(options:Dynamic, item:EditorEntityData, name:String, getter:Void->ReadOnlyArray<Dynamic>, ?nullValueText:String) {
 
-        var rawList:ImmutableArray<Dynamic> = null;
+        var rawList:ReadOnlyArray<Dynamic> = null;
         var fieldView = new SelectFieldView();
         fieldView.nullValueText = nullValueText;
         fieldView.setValue = function(field, value) {

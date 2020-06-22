@@ -33,7 +33,7 @@ class TimelineChooseTracksView extends FlowLayout implements Observable {
         unobserve();
 
         if (subviews != null) {
-            for (view in [].concat(subviews.mutable)) {
+            for (view in [].concat(subviews.original)) {
                 view.destroy();
             }
         }
@@ -76,6 +76,7 @@ class TimelineChooseTracksView extends FlowLayout implements Observable {
     
                             var text = new TextView();
                             text.content = field.name;
+                            text.preRenderedSize = 20;
                             text.pointSize = 13;
                             text.viewSize(fill(), 25);
                             text.verticalAlign = CENTER;

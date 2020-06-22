@@ -4,7 +4,7 @@ class TabsView extends LinearLayout implements Observable {
 
 /// Public properties
 
-    @observe public var tabs:ImmutableArray<String> = [];
+    @observe public var tabs:ReadOnlyArray<String> = [];
 
     @observe public var selectedIndex:Int = 0;
 

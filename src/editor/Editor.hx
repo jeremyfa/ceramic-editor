@@ -35,11 +35,11 @@ class Editor extends Entity implements Observable {
 
     public var playView:EditorPlayView;
 
-    public var editableTypes:ImmutableArray<EditableType> = [];
+    public var editableTypes:ReadOnlyArray<EditableType> = [];
 
-    public var editableVisuals:ImmutableArray<EditableType> = [];
+    public var editableVisuals:ReadOnlyArray<EditableType> = [];
 
-    public var editableEntities:ImmutableArray<EditableType> = [];
+    public var editableEntities:ReadOnlyArray<EditableType> = [];
 
 /// Internal properties
 

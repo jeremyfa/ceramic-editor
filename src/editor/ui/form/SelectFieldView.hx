@@ -20,7 +20,7 @@ class SelectFieldView extends FieldView implements Observable {
 
     @observe public var value:String = null;
 
-    @observe public var list:ImmutableArray<String> = [];
+    @observe public var list:ReadOnlyArray<String> = [];
 
     @observe public var nullValueText:String = null;
 

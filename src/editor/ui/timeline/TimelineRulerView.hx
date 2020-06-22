@@ -124,6 +124,7 @@ class TimelineRulerView extends View {
                 text.anchor(0.5, 1);
                 text.color = quad.color;
                 text.content = '' + unit;
+                text.preRenderedSize = 20;
                 text.pointSize = 11;
                 text.font = theme.mediumFont;
                 text.pos(quad.x + 1, quad.y - quad.height - 1);
