@@ -1,5 +1,7 @@
 package editor.ui.fragment;
 
+import tracker.Autorun;
+
 class FragmentEditorView extends View implements Observable {
 
     @observe var prevSelectedFragment:EditorFragmentData = null;
@@ -19,6 +21,8 @@ class FragmentEditorView extends View implements Observable {
     var headerView:RowLayout;
 
     var editorView:EditorView;
+
+    var itemAutoruns:Array<Autorun> = null;
 
     public function new(editorView:EditorView) {
         
@@ -58,6 +62,7 @@ class FragmentEditorView extends View implements Observable {
 
         autorun(updateEditedFragment);
         autorun(updateFragmentItems);
+        //autorun(updateFragmentTracks);
 
         autorun(() -> updateSelectedEditable(true));
 
@@ -163,23 +168,28 @@ class FragmentEditorView extends View implements Observable {
 
         var toCheck = [];
 
+        if (itemAutoruns != null) {
+            for (auto in itemAutoruns) {
+                auto.destroy();
+            }
+        }
+
+        itemAutoruns = []; 
+
         if (selectedFragment != null) {
             // Add or update items
             reobserve();
-            for (item in selectedFragment.items) {
-                var entityId = item.entityId;
-                unobserve();
-                toCheck.push(entityId);
-                model.pushUsedFragmentId(selectedFragment.fragmentId);
-                reobserve();
-                var fragmentItem = item.toFragmentItem();
-                unobserve();
-                model.popUsedFragmentId();
-                //trace('PUT ITEM $entityId');
-                editedFragment.putItem(fragmentItem);
-                reobserve();
-            }
+            var selectedFragmentItems = selectedFragment.items;
             unobserve();
+            for (item in selectedFragmentItems) {
+
+                var entityId = item.entityId;
+                toCheck.push(entityId);
+
+                itemAutoruns.push(item.autorun(function() {
+                    bindItemData(item);
+                }));
+            }
             // Remove missing items
             var toRemove = null;
             for (fragmentItem in editedFragment.items) {
@@ -207,6 +217,26 @@ class FragmentEditorView extends View implements Observable {
                 }
             }
         });
+
+    }
+
+    function bindItemData(item:EditorEntityData) {
+
+        if (model.loading > 0)
+            return;
+
+        var selectedFragment = this.selectedFragment;
+        if (selectedFragment == null)
+            return;
+
+        unobserve();
+        model.pushUsedFragmentId(selectedFragment.fragmentId);
+        reobserve();
+        var fragmentItem = item.toFragmentItem();
+        unobserve();
+        model.popUsedFragmentId();
+        editedFragment.putItem(fragmentItem);
+        reobserve();
 
     }
 
@@ -334,6 +364,68 @@ class FragmentEditorView extends View implements Observable {
         });
 
     }
+
+    /*
+    function updateFragmentTracks() {
+
+        if (model.loading > 0)
+            return;
+
+        var selectedFragment = this.selectedFragment;
+        var prevSelectedFragment = this.prevSelectedFragment; // Used for invalidation
+        var editedFragment = this.editedFragment;
+
+        unobserve();
+
+        var toCheck = [];
+
+        if (selectedFragment != null) {
+            // Add or update items
+            reobserve();
+            for (item in selectedFragment.items) {
+                var entityId = item.entityId;
+                unobserve();
+                toCheck.push(entityId);
+                model.pushUsedFragmentId(selectedFragment.fragmentId);
+                reobserve();
+                var fragmentItem = item.toFragmentItem();
+                unobserve();
+                model.popUsedFragmentId();
+                //trace('PUT ITEM $entityId');
+                editedFragment.putItem(fragmentItem);
+                reobserve();
+            }
+            unobserve();
+            // Remove missing items
+            var toRemove = null;
+            for (fragmentItem in editedFragment.items) {
+                if (selectedFragment.get(fragmentItem.id) == null) {
+                    if (toRemove == null)
+                        toRemove = [];
+                    toRemove.push(fragmentItem.id);
+                }
+            }
+            if (toRemove != null) {
+                for (id in toRemove) {
+                    //trace('REMOVE ITEM $id');
+                    editedFragment.removeItem(id);
+                }
+            }
+        }
+
+        app.onceUpdate(this, (_) -> {
+            if (editedFragment != null) {
+                for (entityId in toCheck) {
+                    var entity = editedFragment.get(entityId);
+                    if (Std.is(entity, Visual) && !entity.hasComponent('editable')) {
+                        bindEditableVisualComponent(cast entity, editedFragment);
+                    }
+                }
+            }
+        });
+
+    }
+    */
 
     override function layout() {
 

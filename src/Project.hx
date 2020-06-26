@@ -29,12 +29,6 @@ class Project {
 
     function new(settings:InitSettings) {
 
-        /*
-        #if luxe
-        Luxe.core.update_rate = 1.0 / 30;
-        #end
-        */
-
         #if editor
         new Editor(settings, {
             #if (cpp || (web && ceramic_use_electron))

@@ -68,6 +68,12 @@ class EditorTheme extends Model {
 
     @observe public var timelineCursorColor:Color = 0x4392E0;
 
+    @observe public var timelineKeyframeMarkerColor:Color = 0x4392E0;
+
+    @observe public var timelineKeyframeMarkerSelectedBorderColor:Color = 0xF3F3F3;
+
+    @observe public var timelineKeyframeInterpolationColor:Color = 0x4392E0;//0x8DC4FA;
+
 /// Bubble
 
     @observe public var overlayBackgroundColor:Color = 0x111111;

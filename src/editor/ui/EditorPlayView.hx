@@ -8,6 +8,11 @@ class EditorPlayView extends View {
 
         super();
 
+        // Ensure 60FPS
+        #if luxe
+        Luxe.core.update_rate = 0;
+        #end
+
         color = Color.BLACK;
         transparent = true;
 

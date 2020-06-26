@@ -2,11 +2,34 @@ package editor.model;
 
 class EditorTimelineTrack extends Model {
 
-    @serialize public var targetId:String;
+    @serialize public var loop:Bool = true;
 
-    @serialize public var targetField:String;
+    @serialize public var entity:String;
+
+    @serialize public var field:String;
 
     @serialize public var keyframes:ReadOnlyMap<Int, EditorTimelineKeyframe> = new Map();
+
+    @compute public function keyframeIndexes():ReadOnlyArray<Int> {
+
+        var result = [];
+
+        for (index in keyframes.keys()) {
+            result.push(index);
+        }
+
+        result.sort((a, b) -> {
+            if (a > b)
+                return 1;
+            else if (a < b)
+                return -1;
+            else
+                return 0;
+        });
+
+        return cast result;
+
+    }
 
     @compute public function numFrames():Int {
 
@@ -23,12 +46,12 @@ class EditorTimelineTrack extends Model {
 
     }
 
-    public function new(targetId:String, targetField:String) {
+    public function new(entity:String, field:String) {
 
         super();
 
-        this.targetId = targetId;
-        this.targetField = targetField;
+        this.entity = entity;
+        this.field = field;
 
     }
 

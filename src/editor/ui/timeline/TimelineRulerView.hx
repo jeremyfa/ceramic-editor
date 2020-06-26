@@ -16,7 +16,7 @@ class TimelineRulerView extends View {
 
     var lastPointerX:Float = -1;
         
-    var rulerStart = TimelineEditorView.TRACK_TITLE_WIDTH + TimelineEditorView.TRACK_TITLE_GAP;
+    var rulerStart = TimelineEditorView.TRACK_TITLE_WIDTH + TimelineEditorView.TRACK_TITLE_GAP + TimelineEditorView.TRACK_LEFT_PADDING;
 
     public function new(timelineEditorView:TimelineEditorView) {
 

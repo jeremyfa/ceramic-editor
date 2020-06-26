@@ -22,6 +22,10 @@ class SliderFieldView extends FieldView implements Observable {
 
     @observe public var maxValue:Float = 0.0;
 
+    @observe public var enabledTextInput:Bool = true;
+
+    @observe public var inputStyle:InputStyle = DEFAULT;
+
 /// Internal properties
 
     var textView:TextView;
@@ -37,9 +41,7 @@ class SliderFieldView extends FieldView implements Observable {
         super();
 
         padding(6, 6, 6, 6);
-        borderSize = 1;
         borderPosition = INSIDE;
-        transparent = false;
 
         this.minValue = minValue;
         this.maxValue = maxValue;
@@ -53,6 +55,9 @@ class SliderFieldView extends FieldView implements Observable {
         textView.align = LEFT;
         textView.pointSize = 12;
         textView.preRenderedSize = 20;
+        autorun(() -> {
+            textView.active = enabledTextInput;
+        });
         add(textView);
 
         editText = new EditText(theme.focusedFieldSelectionColor, theme.lightTextColor);
@@ -69,6 +74,7 @@ class SliderFieldView extends FieldView implements Observable {
         sliderSquare = new View();
         sliderSquare.transparent = false;
         sliderSquare.size(19, 15);
+        sliderSquare.depth = 1;
         sliderContainer.add(sliderSquare);
 
         sliderContainer.onPointerDown(this, handleSliderDown);
@@ -133,7 +139,7 @@ class SliderFieldView extends FieldView implements Observable {
         }
 
         sliderSquare.pos(
-            minX + (maxX - minX) * usedValue / (maxValue - minValue),
+            minX + (maxX - minX) * (usedValue - (minValue > 0 ? minValue : 0)) / (maxValue - minValue),
             sliderContainer.paddingTop
         );
 
@@ -187,20 +193,38 @@ class SliderFieldView extends FieldView implements Observable {
             editText.textCursorColor = theme.lightTextColor;
         }
         
-        color = theme.darkBackgroundColor;
+        if (inputStyle == MINIMAL) {
+            transparent = true;
+            borderSize = 0;
+        }
+        else {
+            transparent = false;
+            color = theme.darkBackgroundColor;
+            borderSize = 1;
+        }
 
         textView.textColor = theme.fieldTextColor;
         textView.font = theme.mediumFont;
 
-        if (focused) {
+        if (inputStyle == MINIMAL) {
+            sliderSquare.color = theme.darkTextColor;
+            sliderContainer.color = theme.mediumBackgroundColor;
+            sliderContainer.borderSize = 1;
+            sliderContainer.borderPosition = INSIDE;
+            sliderContainer.borderDepth = 0;
+            sliderContainer.borderColor = theme.darkBorderColor;
+        }
+        else if (focused) {
             sliderSquare.color = theme.mediumTextColor;
             sliderContainer.color = theme.lightBackgroundColor;
             borderColor = theme.focusedFieldBorderColor;
+            sliderContainer.borderSize = 0;
         }
         else {
             sliderSquare.color = theme.darkTextColor;
             sliderContainer.color = theme.mediumBackgroundColor;
             borderColor = theme.lightBorderColor;
+            sliderContainer.borderSize = 0;
         }
 
     }

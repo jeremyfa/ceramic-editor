@@ -9,9 +9,19 @@ class TimelineEditorView extends View implements Observable {
 
     public static final TRACK_TITLE_GAP:Float = 10;
 
+    public static final TRACK_LEFT_PADDING:Float = 8;
+
     public static final TRACK_HEIGHT:Float = 26;
 
     public static final RULER_HEIGHT:Float = 24;
+
+    public static final MIN_FRAME_STEP_WIDTH:Float = 1;
+
+    public static final MAX_FRAME_STEP_WIDTH:Float = 20;
+
+    public static final KEYFRAME_MARKER_WIDTH:Float = 7;
+
+    public static final KEYFRAME_MARKER_HEIGHT:Float = 13;
 
     @observe public var selectedFragment:EditorFragmentData = null;
 
@@ -41,6 +51,8 @@ class TimelineEditorView extends View implements Observable {
 
     var cursorX:Float = 0;
 
+    var frameStepSliderView:SliderFieldView;
+
     public function new(editorView:EditorView) {
 
         super();
@@ -52,7 +64,7 @@ class TimelineEditorView extends View implements Observable {
         headerView = new RowLayout();
         headerView.padding(0, 6);
         headerView.align = LEFT;
-        headerView.depth = 3;
+        headerView.depth = 40;
         {
             titleText = new TextView();
             titleText.viewSize(auto(), fill());
@@ -118,12 +130,17 @@ class TimelineEditorView extends View implements Observable {
                 //
             });
             headerView.add(button);
+
+            initFrameStepSlider();
+
+            initSelectedKeyframeActions();
         }
         add(headerView);
 
         tracksLayout = new ScrollingLayout(new TimelineTracksView(this));
-        tracksLayout.id = 'TIMELINE';
-        tracksLayout.depth = 4;
+        tracksLayout.depthRange = -1;
+        tracksLayout.scroller.depthRange = -1;
+        tracksLayout.contentView.depthRange = -1;
         tracksLayout.scroller.scrollbar = new Scrollbar();
         tracksLayout.layoutView.autorun(() -> {
             var selectedFragment = model.project.selectedFragment;
@@ -137,12 +154,12 @@ class TimelineEditorView extends View implements Observable {
         add(rulerView);
 
         cursorView = new TimelineCursorView(this);
-        cursorView.depth = 6;
+        cursorView.depth = 18;
         add(cursorView);
 
         chooseTracksView = new TimelineChooseTracksView(this);
         chooseTracksView.active = choosingTracks;
-        chooseTracksView.depth = 10;
+        chooseTracksView.depth = 41;
         chooseTracksView.autorun(() -> {
             var selectedFragment = model.project.selectedFragment;
             var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
@@ -158,6 +175,102 @@ class TimelineEditorView extends View implements Observable {
 
     }
 
+    function initFrameStepSlider() {
+
+        var filler = new RowSeparator();
+        filler.viewSize(16, fill());
+        headerView.add(filler);
+
+        frameStepSliderView = new SliderFieldView(MIN_FRAME_STEP_WIDTH, MAX_FRAME_STEP_WIDTH);
+        frameStepSliderView.inputStyle = MINIMAL;
+        frameStepSliderView.enabledTextInput = false;
+        frameStepSliderView.setValue = function(field, value) {
+            if (value > MAX_FRAME_STEP_WIDTH)
+                value = MAX_FRAME_STEP_WIDTH;
+            if (value < MIN_FRAME_STEP_WIDTH)
+                value = MIN_FRAME_STEP_WIDTH;
+            value = Math.round(value);
+            frameStepSliderView.value = value;
+            frameStepWidth = value;
+        };
+        frameStepSliderView.autorun(function() {
+            frameStepSliderView.value = frameStepWidth;
+        });
+        frameStepSliderView.viewSize(120, 27);
+        frameStepSliderView.offsetY = 2;
+        headerView.add(frameStepSliderView);
+
+    }
+
+    function initSelectedKeyframeActions() {
+
+        var filler = new RowSeparator();
+        filler.viewSize(16, fill());
+        headerView.add(filler);
+
+        var easingText = new TextView();
+        easingText.content = 'Easing';
+        easingText.pointSize = 13;
+        easingText.viewSize(auto(), fill());
+        easingText.verticalAlign = CENTER;
+        easingText.padding(0, 8);
+        easingText.autorun(() -> {
+            easingText.font = theme.boldFont;
+            easingText.textColor = theme.lightTextColor;
+        });
+        headerView.add(easingText);
+
+        var selectEasing = new SelectFieldView();
+        var list = [];
+        for (item in Type.getEnumConstructs(ceramic.Easing)) {
+            if (item != 'BEZIER' && item != 'CUSTOM') {
+                list.push(item);
+            }
+        }
+        selectEasing.list = list;
+        selectEasing.setValue = function(field, value) {
+            var selectedKeyframe = getSelectedKeyframe();
+            if (selectedKeyframe != null) {
+                var enumValue = Type.createEnum(Easing, value);
+                selectedKeyframe.easing = enumValue != null ? enumValue : NONE;
+            }
+        };
+        selectEasing.autorun(() -> {
+            var selectedKeyframe = getSelectedKeyframe();
+            if (selectedKeyframe != null) {
+                var easingValue = selectedKeyframe.easing.getName();
+                unobserve();
+                selectEasing.value = easingValue;
+            }
+        });
+        selectEasing.viewSize(150, 20);
+        selectEasing.offsetY = 5;
+        selectEasing.inputStyle = MINIMAL;
+        headerView.add(selectEasing);
+
+        autorun(() -> {
+            var selectedKeyframe = getSelectedKeyframe();
+            unobserve();
+
+            var active = (selectedKeyframe != null);
+
+            filler.active = active;
+            easingText.active = active;
+            selectEasing.active = active;
+        });
+
+    }
+
+    function getSelectedKeyframe() {
+
+        var selectedFragment = model.project.selectedFragment;
+        var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
+        var selectedKeyframe = selectedItem != null ? selectedItem.selectedTimelineKeyframe : null;
+
+        return selectedKeyframe;
+
+    }
+
     function updateFromAnimationState() {
 
         var animationState = model.animationState;
@@ -167,7 +280,7 @@ class TimelineEditorView extends View implements Observable {
 
         unobserve();
 
-        var cursorX = TRACK_TITLE_WIDTH + TRACK_TITLE_GAP;
+        var cursorX = TRACK_TITLE_WIDTH + TRACK_TITLE_GAP + TRACK_LEFT_PADDING;
         cursorX += frameStepWidth * currentFrame + timelineOffsetX;
 
         this.cursorX = cursorX;

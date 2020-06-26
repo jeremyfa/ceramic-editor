@@ -4,7 +4,7 @@ class SelectFieldView extends FieldView implements Observable {
 
     static var _point = new Point();
 
-    static final MAX_LIST_HEIGHT = 220;
+    static final MAX_LIST_HEIGHT = 200;
 
     static final ITEM_HEIGHT = SelectListView.ITEM_HEIGHT;
 
@@ -23,6 +23,8 @@ class SelectFieldView extends FieldView implements Observable {
     @observe public var list:ReadOnlyArray<String> = [];
 
     @observe public var nullValueText:String = null;
+
+    @observe public var inputStyle:InputStyle = DEFAULT;
 
 /// Internal properties
 
@@ -63,7 +65,7 @@ class SelectFieldView extends FieldView implements Observable {
         listContainer.transparent = true;
         listContainer.viewSize(0, 0);
         listContainer.active = false;
-        listContainer.depth = 10;
+        listContainer.depth = 40;
         editor.view.add(listContainer);
 
         tip = new Line();
@@ -73,11 +75,11 @@ class SelectFieldView extends FieldView implements Observable {
             5, -5
         ];
         tip.thickness = 1;
-        tip.depth = 1;
+        tip.depth = 2;
         container.onLayout(tip, () -> {
             tip.pos(
                 container.x + container.width - 13,
-                container.y + container.height - 10
+                container.y + container.height * 0.6
             );
         });
         add(tip);
@@ -90,6 +92,7 @@ class SelectFieldView extends FieldView implements Observable {
         textView = new TextView();
         textView.viewSize(fill(), auto());
         textView.align = LEFT;
+        textView.verticalAlign = CENTER;
         textView.pointSize = 12;
         textView.preRenderedSize = 20;
         container.add(textView);
@@ -299,7 +302,7 @@ class SelectFieldView extends FieldView implements Observable {
             textView.text.skewX = 0;
         }
 
-        if (focused) {
+        if (focused && inputStyle != MINIMAL) {
             tip.color = theme.lightTextColor;
             container.borderColor = theme.focusedFieldBorderColor;
         }

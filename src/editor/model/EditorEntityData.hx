@@ -68,7 +68,7 @@ class EditorEntityData extends Model {
             unobserve();
 
             for (track in timelineTracks) {
-                track.targetId = entityId;
+                track.entity = entityId;
             }
         });
 
@@ -228,9 +228,21 @@ class EditorEntityData extends Model {
 
     @serialize public var timelineTracks:ReadOnlyArray<EditorTimelineTrack> = [];
 
-    public function ensureKeyframe(field:String, index:Int):Void {
+    @observe public var selectedTimelineTrack:EditorTimelineTrack = null;
 
-        trace('ensure keyframe $field $index');
+    @compute public function selectedTimelineKeyframe():EditorTimelineKeyframe {
+
+        var selectedTimelineTrack = this.selectedTimelineTrack;
+        if (selectedTimelineTrack != null && !model.animationState.animating) {
+            return selectedTimelineTrack.keyframeAtIndex(model.animationState.currentFrame);
+        }
+        else {
+            return null;
+        }
+
+    }
+
+    public function ensureKeyframe(field:String, index:Int):Void {
 
         ensureTimelineTrack(field);
         var track = timelineTrackForField(field);
@@ -248,8 +260,6 @@ class EditorEntityData extends Model {
 
     public function removeKeyframe(field:String, index:Int):Void {
 
-        trace('remove keyframe $field $index');
-
         var track = timelineTrackForField(field);
         if (track != null) {
             track.removeKeyframeAtIndex(index);
@@ -262,7 +272,7 @@ class EditorEntityData extends Model {
         var tracks = this.timelineTracks;
         for (i in 0...tracks.length) {
             var track = tracks[i];
-            if (track.targetField == field && track.targetId == entityId) {
+            if (track.field == field && track.entity == entityId) {
                 return track;
             }
         }
@@ -296,8 +306,8 @@ class EditorEntityData extends Model {
 
     function compareTimelineTracks(trackA:EditorTimelineTrack, trackB:EditorTimelineTrack):Int {
 
-        var fieldA = trackA.targetField;
-        var fieldB = trackB.targetField;
+        var fieldA = trackA.field;
+        var fieldB = trackB.field;
 
         var editableType = this.editableType;
         if (editableType == null) {

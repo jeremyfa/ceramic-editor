@@ -37,6 +37,11 @@ class EditorView extends View implements Observable {
 
         super();
 
+        // Cap to 30 fps in editor mode
+        #if luxe
+        Luxe.core.update_rate = 1.0 / 30;
+        #end
+
         app.onceImmediate(() -> init());
 
     }
@@ -268,7 +273,7 @@ class EditorView extends View implements Observable {
         var panelsTabsWidth = 300;
         var bottomBarHeight = 18;
         var leftSpacerSize = 6;
-        var timelineHeight = Math.min(height * 0.25, 250);
+        var timelineHeight = Math.max(height * 0.2, 220);
         var availableViewportWidth = width - panelsTabsWidth - leftSpacerSize - 2;
         var availableViewportHeight = height - bottomBarHeight - editorMenuHeight - timelineHeight;
 

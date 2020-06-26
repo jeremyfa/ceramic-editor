@@ -3587,6 +3587,8 @@ interface FragmentData {
     id: String;
     /** Fragment items (visuals or other entities) */
     items?: Array<TAnonymous>?;
+    /** Timeline tracks */
+    tracks?: Array<TAnonymous>?;
     /** Fragment being transparent or not (default `true`) */
     transparent?: Bool?;
     /** Fragment width */
@@ -3637,6 +3639,7 @@ class Fragment extends Layer {
     /** Fragment components mapping. Does not contain components
         created separatelywith `component()` or macro-based components or components property. */
     fragmentComponents: Map<String, Component>;
+    putTrack(track: TAnonymous): Void;
     unbindEvents(): Void;
 }
 

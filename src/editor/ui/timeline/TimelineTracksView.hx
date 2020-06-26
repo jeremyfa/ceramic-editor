@@ -12,6 +12,8 @@ class TimelineTracksView extends View implements Observable {
 
         super();
 
+        depthRange = -1;
+
         this.timelineEditorView = timelineEditorView;
 
         transparent = true;
@@ -36,7 +38,7 @@ class TimelineTracksView extends View implements Observable {
                 var trackView = trackViews[i];
                 if (trackView == null) {
                     trackView = new TimelineTrackView(timelineEditorView);
-                    trackView.depth = 1;
+                    trackView.depth = 10;
                     add(trackView);
                     trackViews[i] = trackView;
                 }

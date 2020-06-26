@@ -7,6 +7,7 @@ class TimelineUtils {
         return switch type {
             case 'Float': true;
             case 'Int': true;
+            case 'ceramic.Color': true;
             default: false;
         }
 
