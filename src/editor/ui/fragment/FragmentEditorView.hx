@@ -24,6 +24,8 @@ class FragmentEditorView extends View implements Observable {
 
     var itemAutoruns:Array<Autorun> = null;
 
+    var trackAutoruns:Array<Autorun> = null;
+
     public function new(editorView:EditorView) {
         
         super();
@@ -62,7 +64,7 @@ class FragmentEditorView extends View implements Observable {
 
         autorun(updateEditedFragment);
         autorun(updateFragmentItems);
-        //autorun(updateFragmentTracks);
+        autorun(updateFragmentTracks);
 
         autorun(() -> updateSelectedEditable(true));
 
@@ -365,67 +367,89 @@ class FragmentEditorView extends View implements Observable {
 
     }
 
-    /*
     function updateFragmentTracks() {
 
         if (model.loading > 0)
             return;
 
         var selectedFragment = this.selectedFragment;
-        var prevSelectedFragment = this.prevSelectedFragment; // Used for invalidation
         var editedFragment = this.editedFragment;
 
         unobserve();
 
-        var toCheck = [];
+        var stillUsed = new Map<String,Map<String,Bool>>();
+
+        if (trackAutoruns != null) {
+            for (auto in trackAutoruns) {
+                auto.destroy();
+            }
+        }
+
+        trackAutoruns = []; 
 
         if (selectedFragment != null) {
-            // Add or update items
+            // Add or update item tracks
             reobserve();
-            for (item in selectedFragment.items) {
-                var entityId = item.entityId;
-                unobserve();
-                toCheck.push(entityId);
-                model.pushUsedFragmentId(selectedFragment.fragmentId);
-                reobserve();
-                var fragmentItem = item.toFragmentItem();
-                unobserve();
-                model.popUsedFragmentId();
-                //trace('PUT ITEM $entityId');
-                editedFragment.putItem(fragmentItem);
-                reobserve();
-            }
+            var selectedFragmentItems = selectedFragment.items;
             unobserve();
-            // Remove missing items
-            var toRemove = null;
-            for (fragmentItem in editedFragment.items) {
-                if (selectedFragment.get(fragmentItem.id) == null) {
-                    if (toRemove == null)
-                        toRemove = [];
-                    toRemove.push(fragmentItem.id);
+            for (item in selectedFragmentItems) {
+                reobserve();
+                var tracks = item.timelineTracks;
+                unobserve();
+                for (track in tracks) {
+                    reobserve();
+                    var trackEntity = track.entity;
+                    var trackField = track.field;
+                    unobserve();
+
+                    var forEntity = stillUsed.get(trackEntity);
+                    if (forEntity == null) {
+                        forEntity = new Map();
+                        stillUsed.set(trackEntity, forEntity);
+                    }
+                    forEntity.set(trackField, true);
+
+                    trackAutoruns.push(track.autorun(function() {
+                        bindTrackData(track);
+                    }));
                 }
             }
-            if (toRemove != null) {
-                for (id in toRemove) {
-                    //trace('REMOVE ITEM $id');
-                    editedFragment.removeItem(id);
+
+            // Remove missing items
+            var toRemove:Array<Array<String>> = null;
+            if (editedFragment.tracks != null) {
+                for (fragmentTrack in editedFragment.tracks) {
+                    if (!stillUsed.exists(fragmentTrack.entity) || !stillUsed.get(fragmentTrack.entity).exists(fragmentTrack.field)) {
+                        if (toRemove == null)
+                            toRemove = [];
+                        toRemove.push([fragmentTrack.entity, fragmentTrack.field]);
+                    }
+                }
+                if (toRemove != null) {
+                    for (info in toRemove) {
+                        editedFragment.removeTrack(info[0], info[1]);
+                    }
                 }
             }
         }
 
-        app.onceUpdate(this, (_) -> {
-            if (editedFragment != null) {
-                for (entityId in toCheck) {
-                    var entity = editedFragment.get(entityId);
-                    if (Std.is(entity, Visual) && !entity.hasComponent('editable')) {
-                        bindEditableVisualComponent(cast entity, editedFragment);
-                    }
-                }
-            }
-        });
+    }
+
+    function bindTrackData(track:EditorTimelineTrack) {
+
+        if (model.loading > 0)
+            return;
+
+        var selectedFragment = this.selectedFragment;
+        if (selectedFragment == null)
+            return;
+
+        var trackItem = track.toTimelineTrackData();
+        unobserve();
+        editedFragment.putTrack(trackItem);
+        reobserve();
 
     }
-    */
 
     override function layout() {
 

@@ -14,4 +14,20 @@ class EditorTimelineKeyframe extends Model {
 
     }
 
+    public function toTimelineKeyframeData():TimelineKeyframeData {
+
+        return {
+            index: this.index,
+            easing: easingToString(),
+            value: value
+        };
+
+    }
+    
+    public function easingToString() {
+
+        return easing.getName();
+
+    }
+
 }

@@ -1258,16 +1258,20 @@ class TimelineTrack<K extends TimelineKeyframe> extends Entity {
     before: K;
     /** The keyframe right after current time, if any. */
     after: K;
+    destroy(): Void;
     /** Seek the given time (in seconds) in the track.
         Will take care of clamping `time` or looping it depending on `duration` and `loop` properties. */
     seek(targetTime: Float): Void;
     /** Add a keyframe to this track */
     add(keyframe: K): Void;
+    /** Remove a keyframe from this track */
+    remove(keyframe: K): Void;
     /** Update `duration` property to make it fit
         the time of the last keyframe on this track. */
     fitDuration(): Void;
     /** Apply changes that this track is responsible of. Usually called after `update(delta)` or `seek(time)`. */
     apply(): Void;
+    findKeyframeAtTime(time: Float): K?;
     /** Find the keyframe right before or equal to given `time` */
     findKeyframeBefore(time: Float): K?;
     /** Find the keyframe right after given `time` */
@@ -1318,11 +1322,11 @@ class TimelineDegreesTrack extends TimelineTrack<TimelineFloatKeyframe> {
 class TimelineColorTrack extends TimelineTrack<TimelineColorKeyframe> {
     constructor();
     /**change event*/
-    onChange(owner: Entity?, handleTrack: ((track: TimelineTrack<TimelineColorKeyframe>) => Void)): Void;
+    onChange(owner: Entity?, handleTrack: ((track: TimelineColorTrack) => Void)): Void;
     /**change event*/
-    onceChange(owner: Entity?, handleTrack: ((track: TimelineTrack<TimelineColorKeyframe>) => Void)): Void;
+    onceChange(owner: Entity?, handleTrack: ((track: TimelineColorTrack) => Void)): Void;
     /**change event*/
-    offChange(handleTrack?: ((track: TimelineTrack<TimelineColorKeyframe>) => Void)?): Void;
+    offChange(handleTrack?: ((track: TimelineColorTrack) => Void)?): Void;
     /**Does it listen to change event*/
     listensChange(): Bool;
     value: Color;
@@ -1351,16 +1355,17 @@ class Timeline extends Entity implements Component {
         Gets back to zero when `loop=true` and time reaches a defined `duration`. */
     time: Float;
     /** The tracks updated by this timeline */
-    tracks: Array<TimelineTrack<Dynamic>>;
+    tracks: Array<TimelineTrack<TimelineKeyframe>>;
     /** Whether this timeline is paused or not. */
     paused: Bool;
     /** Seek the given time (in seconds) in the timeline.
         Will take care of clamping `time` or looping it depending on `duration` and `loop` properties. */
     seek(targetTime: Float): Void;
     /** Add a track to this timeline */
-    add(track: TimelineTrack<Dynamic>): Void;
+    add(track: TimelineTrack<TimelineKeyframe>): Void;
+    get(trackId: String): TimelineTrack<TimelineKeyframe>;
     /** Remove a track from this timeline */
-    remove(track: TimelineTrack<Dynamic>): Void;
+    remove(track: TimelineTrack<TimelineKeyframe>): Void;
     /** Update `duration` property to make it fit
         the duration of the longuest track. */
     fitDuration(): Void;
@@ -3581,6 +3586,13 @@ interface FragmentData {
     components: haxe.DynamicAccess<String>;
     /** Arbitrary data hold by this fragment. */
     data: Dynamic;
+    /**
+     * Frames per second (used in timeline, default is 30).
+     * Note that this is only affecting how long a frame in the timeline lasts.
+     * Using 30FPS doesn't mean the screen will be rendered at 30FPS.
+     * Frame values are interpolated to match screen frame rate.
+     */
+    fps?: Int?;
     /** Fragment height */
     height: Float;
     /** Identifier of the fragment. */
@@ -3608,10 +3620,13 @@ class Fragment extends Layer {
     constructor(context: FragmentContext);
     entities: Array<Entity>;
     items: Array<TAnonymous>;
+    tracks: Array<TAnonymous>;
+    fps: Int;
     context: FragmentContext;
     fragmentData: TAnonymous;
     resizable: Bool;
     pendingLoads: Int;
+    timeline: Timeline;
     /**ready event*/
     onReady(owner: Entity?, handle: (() => Void)): Void;
     /**ready event*/
@@ -3632,6 +3647,7 @@ class Fragment extends Layer {
     get(itemId: String): Entity;
     getItem(itemId: String): TAnonymous;
     getItemByName(name: String): TAnonymous;
+    typeOfItem(itemId: String): String;
     removeItem(itemId: String): Void;
     removeAllItems(): Void;
     destroy(): Void;
@@ -3639,7 +3655,16 @@ class Fragment extends Layer {
     /** Fragment components mapping. Does not contain components
         created separatelywith `component()` or macro-based components or components property. */
     fragmentComponents: Map<String, Component>;
-    putTrack(track: TAnonymous): Void;
+    /**
+     * Create or update a timeline track from the provided track data
+     * @param entityType
+     *      (optional) entity type being targeted by the track.
+     *      If not provided, will try to resolve it from track's target entity id
+     * @param track Track data used to create or update timeline track
+     */
+    putTrack(entityType?: String?, track: TAnonymous): Void;
+    getTrack(entity: String, field: String): TAnonymous;
+    removeTrack(entity: String, field: String): Void;
     unbindEvents(): Void;
 }
 
@@ -4826,7 +4851,7 @@ class App extends Entity {
     /** Text input manager */
     textInput: TextInput;
     converters: Map<K, V>;
-    componentInitializers: Map<K, V>;
+    timelines: ceramic.Timelines;
     arcade: ArcadePhysics;
     isKeyPressed(key: Key): Bool;
     isKeyJustPressed(key: Key): Bool;

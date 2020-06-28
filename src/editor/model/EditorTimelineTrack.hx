@@ -174,4 +174,25 @@ class EditorTimelineTrack extends Model {
 
     }
 
+    public function toTimelineTrackData():TimelineTrackData {
+
+        return {
+            loop: this.loop,
+            entity: this.entity,
+            field: this.field,
+            keyframes: keyframesToTimelineKeyframesData()
+        };
+
+    }
+
+    function keyframesToTimelineKeyframesData():Array<TimelineKeyframeData> {
+
+        var result = [];
+        for (keyframe in keyframes) {
+            result.push(keyframe.toTimelineKeyframeData());
+        }
+        return result;
+
+    }
+
 }
