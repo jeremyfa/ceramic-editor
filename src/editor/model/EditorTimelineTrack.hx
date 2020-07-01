@@ -195,4 +195,53 @@ class EditorTimelineTrack extends Model {
 
     }
 
+    public function toJson():Dynamic {
+
+        var json:Dynamic = {};
+
+        json.loop = loop;
+        json.entity = entity;
+        json.field = field;
+        
+        var jsonKeyframes = [];
+        for (keyframe in keyframes) {
+            jsonKeyframes.push(keyframe.toJson());
+        }
+        json.keyframes = jsonKeyframes;
+
+        return json;
+
+    }
+
+    public function fromJson(json:Dynamic):Void {
+
+        var json:Dynamic = {};
+
+        if (json.loop != null && !Validate.boolean(json.loop))
+            throw 'Invalid timeline loop';
+        loop = json.loop;
+
+        if (!Validate.identifier(json.entity))
+            throw 'Invalid timeline entity';
+        entity = json.entity;
+
+        if (!Validate.identifier(json.field))
+            throw 'Invalid timeline field';
+        field = json.field;
+
+        if (json.keyframes != null) {
+            if (!Validate.array(json.keyframes))
+                throw 'Invalid timeline keyframes';
+            var jsonKeyframes:Array<Dynamic> = json.keyframes;
+            var keyframes = new Map<Int, EditorTimelineKeyframe>();
+            for (jsonKeyframe in jsonKeyframes) {
+                var keyframe = new EditorTimelineKeyframe();
+                keyframe.fromJson(jsonKeyframe);
+                keyframes.set(keyframe.index, keyframe);
+            }
+            this.keyframes = cast keyframes;
+        }
+
+    }
+
 }

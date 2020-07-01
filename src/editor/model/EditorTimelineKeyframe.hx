@@ -18,15 +18,40 @@ class EditorTimelineKeyframe extends Model {
 
         return {
             index: this.index,
-            easing: easingToString(),
+            easing: EasingUtils.easingToString(easing),
             value: value
         };
 
     }
-    
-    public function easingToString() {
 
-        return easing.getName();
+    public function toJson():Dynamic {
+
+        var json:Dynamic = {};
+
+        json.index = index;
+        json.easing = EasingUtils.easingToString(easing);
+        json.value = value;
+
+        return json;
+
+    }
+
+    public function fromJson(json:Dynamic):Void {
+
+        var json:Dynamic = {};
+
+        if (!Validate.int(json.index))
+            throw 'Invalid keyframe index';
+        index = json.index;
+
+        if (json.easing != null) {
+            var easing = EasingUtils.easingFromString(json.easing);
+            if (easing == null)
+                throw 'Invalid keyframe easing';
+            this.easing = easing;
+        }
+
+        value = json.value;
 
     }
 

@@ -156,6 +156,14 @@ class EditorEntityData extends Model {
             Reflect.setField(json.props, key, propValue);
         }
 
+        if (timelineTracks != null && timelineTracks.length > 0) {
+            var jsonTracks = [];
+            for (timelineTrack in timelineTracks) {
+                jsonTracks.push(timelineTrack.toJson());
+            }
+            json.tracks = jsonTracks;
+        }
+
         return json;
 
     }
@@ -200,6 +208,19 @@ class EditorEntityData extends Model {
             }
         }
 
+        if (json.tracks != null) {
+            if (!Validate.array(json.tracks))
+                throw 'Invalid entity tracks';
+            var jsonTracks:Array<Dynamic> = json.tracks;
+            var tracks = [];
+            for (jsonTrack in jsonTracks) {
+                var timelineTrack = new EditorTimelineTrack(null, null);
+                timelineTrack.fromJson(jsonTrack);
+                tracks.push(timelineTrack);
+            }
+            this.timelineTracks = cast tracks;
+        }
+
     }
 
 /// Timeline
@@ -242,7 +263,7 @@ class EditorEntityData extends Model {
 
     }
 
-    public function ensureKeyframe(field:String, index:Int):Void {
+    public function ensureKeyframe(field:String, index:Int):EditorTimelineKeyframe {
 
         ensureTimelineTrack(field);
         var track = timelineTrackForField(field);
@@ -250,11 +271,14 @@ class EditorEntityData extends Model {
         var keyframe = track.keyframeAtIndex(index);
         if (keyframe == null) {
             keyframe = new EditorTimelineKeyframe();
+            keyframe.easing = model.project.lastSelectedEasing;
             keyframe.index = index;
             keyframe.value = props.get(field);
 
             track.setKeyframe(index, keyframe);
         }
+
+        return keyframe;
         
     }
 

@@ -15,6 +15,8 @@ class EditorData extends Model {
 
     @serialize public var projectPath:String = null;
 
+    @serialize public var settings:EditorSettings = new EditorSettings();
+
     @observe public var theme:EditorTheme = new EditorTheme();
 
     @serialize public var project:EditorProjectData = new EditorProjectData();

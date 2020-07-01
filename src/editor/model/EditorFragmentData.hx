@@ -459,7 +459,7 @@ class EditorFragmentData extends EditorEditableElementData {
 
     }
 
-    public function toFragmentData():FragmentData {
+    public function toFragmentData(includeTracks:Bool = true):FragmentData {
 
         if (model.isFragmentIdUsed(fragmentId)) {
             return null;
@@ -477,6 +477,21 @@ class EditorFragmentData extends EditorEditableElementData {
             components: fragmentComponentsToDynamic(),
             items: fragmentItems()
         };
+
+        if (includeTracks) {
+            var tracks = [];
+            for (item in items) {
+                var timelineTracks = item.timelineTracks;
+                if (timelineTracks != null) {
+                    for (track in timelineTracks) {
+                        tracks.push(track.toTimelineTrackData());
+                    }
+                }
+            }
+            if (tracks.length > 0) {
+                result.tracks = tracks;
+            }
+        }
 
         model.popUsedFragmentId();
 

@@ -3,7 +3,15 @@ package editor.model;
 /** A map model that wraps every value into their own model object to make them observable. */
 class EditorEntityProps extends Model {
 
+    /**
+     * Actual setup values
+     */
     @serialize var values:Map<String,EditorValue> = new Map();
+
+    /**
+     * Value taking animation state in account
+     */
+    @observe var animatedValues:Map<String,EditorValue> = new Map();
 
     @observe public var entityData:EditorEntityData;
 
@@ -92,7 +100,7 @@ class EditorEntityProps extends Model {
 
     }
 
-    public function set(key:String, value:Dynamic):Void {
+    public function set(key:String, value:Dynamic, canAutoKeyframe:Bool = false):Void {
 
         unobserve();
         var valueHasChanged = false;
@@ -111,7 +119,60 @@ class EditorEntityProps extends Model {
                 }
             }
         }
-        reobserve();
+
+        // Is this property related to a timeline track?
+        if (entityData != null) {
+            var track = entityData.timelineTrackForField(key);
+            if (track != null) {
+
+                // Update animated value
+                if (animatedValues.exists(key)) {
+                    animatedValues.get(key).value = value;
+                }
+                else {
+                    var aValue = new EditorValue();
+                    aValue.value = value;
+                    animatedValues.set(key, aValue);
+                    invalidateAnimatedValues();
+                }
+
+                var currentFrame = model.animationState.currentFrame;
+                var keyframe = track.keyframeBeforeIndex(currentFrame);
+                var shouldCreateKeyframe = false;
+                if (keyframe != null) {
+                    if (keyframe.index != currentFrame) {
+                        if (canAutoKeyframe && model.settings.autoKeyframe) {
+                            shouldCreateKeyframe = true;
+                        }
+                    }
+                    else {
+                        keyframe.value = value;
+                    }
+                }
+                else {
+                    if (canAutoKeyframe && model.settings.autoKeyframe) {
+                        shouldCreateKeyframe = true;
+                    }
+                }
+
+                if (shouldCreateKeyframe) {
+                    keyframe = entityData.ensureKeyframe(key, currentFrame);
+                    keyframe.value = value;
+                }
+
+                reobserve();
+                return;
+            }
+        }
+
+        //reobserve();
+        
+        // Cleanup any existing animated value (as there is no track)
+        if (animatedValues.exists(key)) {
+            var aValue = animatedValues.get(key);
+            animatedValues.remove(key);
+            aValue.destroy();
+        }
 
         if (values.exists(key)) {
             values.get(key).value = value;
@@ -123,29 +184,34 @@ class EditorEntityProps extends Model {
             invalidateValues();
         }
 
-        unobserve();
+        //unobserve();
         if (valueHasChanged && key == 'depth' && Std.is(entityData, EditorVisualData)) {
             var visualData:EditorVisualData = cast entityData;
             visualData.depthDidChange();
         }
-        reobserve();
+        //reobserve();
 
         if (valueHasChanged) {
-            unobserve();
+            //unobserve();
             model.history.step();
-            reobserve();
+            //reobserve();
         }
 
-        unobserve();
+        //unobserve();
         if (entityData != null)
             entityData.freezeEditorChanges();
+
         reobserve();
 
     }
 
     public function get(key:String):Dynamic {
 
-        if (values.exists(key)) {
+        if (animatedValues.exists(key)) {
+            var v = animatedValues.get(key);
+            return v.value;
+        }
+        else if (values.exists(key)) {
             var v = values.get(key);
             return v.value;
         }

@@ -104,11 +104,34 @@ class FragmentEditorView extends View implements Observable {
             assets: editor.contentAssets,
             editedItems: true
         });
+        editedFragment.timeline = new Timeline();
+        editedFragment.timeline.paused = true;
         editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
         onPointerDown(this, (_) -> deselectItems());
         editedFragment.depth = 2;
         add(editedFragment);
         editedFragment.clip = fragmentOverlay;
+
+        editedFragment.timeline.autorun(() -> {
+            var time = model.animationState.currentFrame / editedFragment.fps;
+            unobserve();
+
+            // Update timeline position
+            editedFragment.timeline.seek(time);
+
+            // Then retrieve changes made from timeline to report them to edited data
+            app.oncePostFlushImmediate(() -> {
+                var selectedFragment = model.project.selectedFragment;
+                if (selectedFragment != null && editedFragment != null) {
+                    for (item in selectedFragment.items) {
+                        if (item.timelineTracks != null && item.timelineTracks.length > 0) {
+                            editedFragment.computeInstanceContentIfNeeded(item.entityId);
+                            editedFragment.updateEditableFieldsFromInstance(item.entityId);
+                        }
+                    }
+                }
+            });
+        });
 
     }
 
@@ -228,7 +251,7 @@ class FragmentEditorView extends View implements Observable {
             return;
 
         var selectedFragment = this.selectedFragment;
-        if (selectedFragment == null)
+        if (selectedFragment == null || editedFragment == null || editedFragment.destroyed)
             return;
 
         unobserve();
@@ -248,12 +271,17 @@ class FragmentEditorView extends View implements Observable {
         log.debug('ITEM UPDATED: ${fragmentItem.id} w=${fragmentItem.props.width} h=${fragmentItem.props.height}');
         #end
 
+        if (model.animationState.animating) {
+            // Ignore changes when animating
+            return;
+        }
+
         var item = this.selectedFragment.get(fragmentItem.id);
 
         var props = fragmentItem.props;
         if (item != null && props != null) {
             for (key in Reflect.fields(fragmentItem.props)) {
-                var value = Reflect.field(props, key);
+                var value:Dynamic = Reflect.field(props, key);
 
                 unobserve();
                 var propType = item.typeOfProp(key);
@@ -262,6 +290,9 @@ class FragmentEditorView extends View implements Observable {
                 }
                 else if (propType == 'ceramic.ScriptContent') {
                     // Nothing to do here
+                }
+                else if (propType == 'Float') {
+                    item.props.set(key, Math.round(value * 1000) / 1000);
                 }
                 else {
                     item.props.set(key, value);
@@ -359,7 +390,7 @@ class FragmentEditorView extends View implements Observable {
             if (entityData != null) {
                 for (key in Reflect.fields(changed)) {
                     var value = Reflect.field(changed, key);
-                    entityData.props.set(key, value);
+                    entityData.props.set(key, value, true);
                 }
             }
 

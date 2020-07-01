@@ -232,6 +232,7 @@ class TimelineEditorView extends View implements Observable {
             var selectedKeyframe = getSelectedKeyframe();
             if (selectedKeyframe != null) {
                 var enumValue = Type.createEnum(Easing, value);
+                model.project.lastSelectedEasing = enumValue;
                 selectedKeyframe.easing = enumValue != null ? enumValue : NONE;
             }
         };

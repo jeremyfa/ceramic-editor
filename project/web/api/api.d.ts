@@ -3651,6 +3651,7 @@ class Fragment extends Layer {
     removeItem(itemId: String): Void;
     removeAllItems(): Void;
     destroy(): Void;
+    computeInstanceContentIfNeeded(itemId: String, entity?: Entity?): Void;
     updateEditableFieldsFromInstance(itemId: String): Void;
     /** Fragment components mapping. Does not contain components
         created separatelywith `component()` or macro-based components or components property. */

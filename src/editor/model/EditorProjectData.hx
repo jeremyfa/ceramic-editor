@@ -16,6 +16,8 @@ class EditorProjectData extends Model {
 
     @serialize public var tilemaps:ReadOnlyArray<EditorTilemapData> = [];
 
+    @serialize public var lastSelectedEasing:Easing = NONE;
+
     @compute public function editables():ReadOnlyArray<EditorEditableElementData> {
         var result:Array<EditorEditableElementData> = [];
         var fragments = this.fragments;
@@ -348,6 +350,7 @@ class EditorProjectData extends Model {
         json.selectedEditableIndex = selectedEditableIndex;
         json.lastSelectedFragmentIndex = lastSelectedFragmentIndex;
         json.selectedScriptIndex = selectedScriptIndex;
+        json.lastSelectedEasing = EasingUtils.easingToString(lastSelectedEasing);
 
         if (exportPath != null) {
             if (projectDir != null) {
@@ -490,6 +493,14 @@ class EditorProjectData extends Model {
         }
         if (selectedScriptIndex >= scripts.length || selectedScriptIndex < -1) {
             selectedScriptIndex = -1;
+        }
+
+        if (json.lastSelectedEasing != null) {
+            var easing = EasingUtils.easingFromString(json.lastSelectedEasing);
+            if (easing == null) {
+                throw 'Invalid project last selected easing';
+            }
+            lastSelectedEasing = easing;
         }
 
     }
