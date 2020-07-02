@@ -114,8 +114,9 @@ class EntityFieldUtils {
                 var power = Math.pow(10, decimals);
                 value = Math.round(value * power) / power;
             }
+            var valueDidChange = fieldView.value != value;
             fieldView.value = value;
-            item.props.set(name, value);
+            item.props.set(name, value, valueDidChange);
         };
         fieldView.autorun(function() {
             var value:Dynamic = item.props.get(name);
@@ -212,7 +213,7 @@ class EntityFieldUtils {
                 else {
                     extra = null;
                 }
-                item.props.set(name, array);
+                item.props.set(name, array, true);
             };
             fieldView.autorun(function() {
                 var value:Array<Float> = item.props.get(name);
@@ -248,7 +249,7 @@ class EntityFieldUtils {
                 else {
                     extra = null;
                 }
-                item.props.set(name, array);
+                item.props.set(name, array, true);
             };
             fieldView.autorun(function() {
                 var value:Array<Float> = item.props.get(name);
@@ -263,7 +264,7 @@ class EntityFieldUtils {
         }
         else {
             fieldView.setValue = function(field, value) {
-                item.props.set(name, value);
+                item.props.set(name, value, true);
             };
             fieldView.autorun(function() {
                 var value:Dynamic = item.props.get(name);
@@ -502,7 +503,7 @@ class EntityFieldUtils {
 
         var fieldView = new BooleanFieldView();
         fieldView.setValue = function(field, value) {
-            item.props.set(name, value);
+            item.props.set(name, value, true);
         };
         fieldView.autorun(function() {
             var value:Dynamic = item.props.get(name);
@@ -521,7 +522,7 @@ class EntityFieldUtils {
 
         var fieldView = new ColorFieldView();
         fieldView.setValue = function(field, value) {
-            item.props.set(name, value);
+            item.props.set(name, value, true);
         };
         fieldView.autorun(function() {
             var value:Dynamic = item.props.get(name);
@@ -546,13 +547,13 @@ class EntityFieldUtils {
                 for (listItem in rawList) {
                     if (listItem[0] == value) {
                         var toAssign = listItem[1];
-                        item.props.set(name, toAssign);
+                        item.props.set(name, toAssign, true);
                         break;
                     }
                 }
             }
             else {
-                item.props.set(name, value);
+                item.props.set(name, value, true);
             }
         };
         fieldView.autorun(function() {

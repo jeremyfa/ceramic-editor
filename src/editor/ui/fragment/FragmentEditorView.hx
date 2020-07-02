@@ -10,7 +10,9 @@ class FragmentEditorView extends View implements Observable {
 
     @observe var resettingFragment:Bool = false;
 
-    @observe var editedFragment:Fragment = null;
+    @observe public var editedFragment(default, null):Fragment = null;
+
+    @observe var editedFragmentTimelineTime:Float = 0;
 
     public var fragmentOverlay(default, null):Quad;
 
@@ -105,7 +107,17 @@ class FragmentEditorView extends View implements Observable {
             editedItems: true
         });
         editedFragment.timeline = new Timeline();
-        editedFragment.timeline.paused = true;
+        var wasAnimating = model.animationState.animating;
+        editedFragment.autorun(() -> {
+            var animating = model.animationState.animating;
+            unobserve();
+            editedFragment.timeline.paused = !animating;
+            if (wasAnimating && !animating) {
+                model.animationState.currentFrame = Math.floor(editedFragment.timeline.time * editedFragment.fps);
+                model.animationState.invalidateCurrentFrame();
+            }
+            wasAnimating = animating;
+        });
         editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
         onPointerDown(this, (_) -> deselectItems());
         editedFragment.depth = 2;
@@ -114,10 +126,14 @@ class FragmentEditorView extends View implements Observable {
 
         editedFragment.timeline.autorun(() -> {
             var time = model.animationState.currentFrame / editedFragment.fps;
+            var prevTime = this.editedFragmentTimelineTime;
             unobserve();
 
             // Update timeline position
             editedFragment.timeline.seek(time);
+
+            // Invalidate timeline time
+            this.editedFragmentTimelineTime = time;
 
             // Then retrieve changes made from timeline to report them to edited data
             app.oncePostFlushImmediate(() -> {
@@ -271,19 +287,46 @@ class FragmentEditorView extends View implements Observable {
         log.debug('ITEM UPDATED: ${fragmentItem.id} w=${fragmentItem.props.width} h=${fragmentItem.props.height}');
         #end
 
+        var editedFragment = editedFragment;
+        if (editedFragment == null) {
+            return;
+        }
+
         if (model.animationState.animating) {
             // Ignore changes when animating
             return;
         }
 
+        var currentFrame = model.animationState.currentFrame;
+        var timelineFrame = 0;
+        if (editedFragment.timeline != null) {
+            timelineFrame = Math.round(editedFragment.timeline.time * editedFragment.fps);
+        }
         var item = this.selectedFragment.get(fragmentItem.id);
 
         var props = fragmentItem.props;
+        var shouldInvalidateTimelineTime = false;
         if (item != null && props != null) {
             for (key in Reflect.fields(fragmentItem.props)) {
                 var value:Dynamic = Reflect.field(props, key);
 
                 unobserve();
+                var timelineTrack = null;
+                if (currentFrame > 0) {
+                    timelineTrack = item.timelineTrackForField(key);
+                    if (timelineTrack != null) {
+                        // Got a timeline track. Ensure fragment also has a track in sync
+                        // otherwise ignore changes for now
+                        var track = editedFragment.getTrack(item.entityId, key);
+                        if (track == null || timelineFrame != currentFrame) {
+                            shouldInvalidateTimelineTime = true;
+                            //log.warning('Ignore entity changes because tracks are not in sync $timelineFrame');
+                            reobserve();
+                            continue;
+                        }
+                    }
+                }
+
                 var propType = item.typeOfProp(key);
                 if (propType == 'ceramic.FragmentData') {
                     item.props.set(key, value != null ? value.id : null);
@@ -299,6 +342,19 @@ class FragmentEditorView extends View implements Observable {
                 }
                 reobserve();
             }
+        }
+
+        // When fragment's timeline is not in sync with edited data, explicitly invalidate
+        // timeline time to recompute it
+        if (shouldInvalidateTimelineTime) {
+            app.oncePostFlushImmediate(() -> {
+                if (!destroyed) {
+                    invalidateEditedFragmentTimelineTime();
+                }
+            });
+            app.onceUpdate(this, _ -> {
+                invalidateEditedFragmentTimelineTime();
+            });
         }
 
     }
@@ -471,13 +527,17 @@ class FragmentEditorView extends View implements Observable {
         if (model.loading > 0)
             return;
 
+        var editedFragmentTimelineTime = this.editedFragmentTimelineTime;
+
         var selectedFragment = this.selectedFragment;
         if (selectedFragment == null)
             return;
 
         var trackItem = track.toTimelineTrackData();
         unobserve();
-        editedFragment.putTrack(trackItem);
+        if (editedFragment.get(trackItem.entity) != null) {
+            editedFragment.putTrack(trackItem);
+        }
         reobserve();
 
     }
@@ -540,8 +600,8 @@ class FragmentEditorView extends View implements Observable {
 
     override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float):Bool {
 
-        // Forbid touch outside fragment editor bounds
-        if (!hits(x, y)) {
+        // Forbid touch outside fragment editor bounds or if currently animating its content
+        if (model.animationState.animating || !hits(x, y)) {
             return true;
         }
         

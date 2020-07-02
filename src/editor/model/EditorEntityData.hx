@@ -313,6 +313,8 @@ class EditorEntityData extends Model {
             newTracks.push(track);
             newTracks.sort(compareTimelineTracks);
             this.timelineTracks = cast newTracks;
+
+            model.history.step();
         }
         
     }
@@ -324,6 +326,8 @@ class EditorEntityData extends Model {
             var newTracks = [].concat(this.timelineTracks.original);
             newTracks.remove(track);
             this.timelineTracks = cast newTracks;
+
+            model.history.step();
         }
         
     }

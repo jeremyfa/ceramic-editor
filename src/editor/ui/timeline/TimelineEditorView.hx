@@ -107,7 +107,8 @@ class TimelineEditorView extends View implements Observable {
             button.pointSize = s;
             button.tooltip('To start');
             button.onClick(this, () -> {
-                //
+                model.animationState.currentFrame = 0;
+                model.animationState.invalidateCurrentFrame();
             });
             headerView.add(button);
 
@@ -116,8 +117,20 @@ class TimelineEditorView extends View implements Observable {
             button.viewSize(w, fill());
             button.pointSize = s;
             button.tooltip('Play');
+            button.autorun(() -> {
+                var animating = model.animationState.animating;
+                unobserve();
+                if (animating) {
+                    button.tooltip('Pause');
+                    button.icon = PAUSE;
+                }
+                else {
+                    button.tooltip('Play');
+                    button.icon = PLAY;
+                }
+            });
             button.onClick(this, () -> {
-                //
+                model.animationState.animating = !model.animationState.animating;
             });
             headerView.add(button);
 
@@ -172,6 +185,8 @@ class TimelineEditorView extends View implements Observable {
 
         autorun(updateFromAnimationState);
         autorun(updateStyle);
+
+        app.onUpdate(this, _ -> updateFromFragmentTimeline());
 
     }
 
@@ -278,8 +293,14 @@ class TimelineEditorView extends View implements Observable {
         var currentFrame = animationState.currentFrame;
         var frameStepWidth = this.frameStepWidth;
         var timelineOffsetX = this.timelineOffsetX;
+        var animating = animationState.animating;
 
         unobserve();
+
+        if (animating) {
+            updateFromFragmentTimeline();
+            return;
+        }
 
         var cursorX = TRACK_TITLE_WIDTH + TRACK_TITLE_GAP + TRACK_LEFT_PADDING;
         cursorX += frameStepWidth * currentFrame + timelineOffsetX;
@@ -287,6 +308,29 @@ class TimelineEditorView extends View implements Observable {
         this.cursorX = cursorX;
 
         reobserve();
+
+    }
+
+    function updateFromFragmentTimeline() {
+
+        if (!model.animationState.animating)
+            return;
+
+        if (editorView.fragmentEditorView == null)
+            return;
+        var editedFragment = editorView.fragmentEditorView.editedFragment;
+        if (editedFragment == null || editedFragment.timeline == null)
+            return;
+
+        var currentFrame = editedFragment.timeline.time * editedFragment.fps;
+
+        var cursorX = TRACK_TITLE_WIDTH + TRACK_TITLE_GAP + TRACK_LEFT_PADDING;
+        cursorX += frameStepWidth * currentFrame + timelineOffsetX;
+
+        if (this.cursorX != cursorX) {
+            this.cursorX = cursorX;
+            layoutDirty = true;
+        }
 
     }
 
@@ -315,6 +359,17 @@ class TimelineEditorView extends View implements Observable {
     }
 
     function updateCursorPosition() {
+
+    }
+
+    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float):Bool {
+
+        // When animating, only allow clicking on the header to update playback
+        if (model.animationState.animating && !hittingVisual.hasIndirectParent(headerView)) {
+            model.animationState.animating = false;
+        }
+
+        return false;
 
     }
 

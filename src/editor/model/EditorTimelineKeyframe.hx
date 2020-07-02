@@ -38,8 +38,6 @@ class EditorTimelineKeyframe extends Model {
 
     public function fromJson(json:Dynamic):Void {
 
-        var json:Dynamic = {};
-
         if (!Validate.int(json.index))
             throw 'Invalid keyframe index';
         index = json.index;

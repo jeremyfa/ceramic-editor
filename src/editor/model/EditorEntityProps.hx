@@ -108,6 +108,9 @@ class EditorEntityProps extends Model {
         if (prevValue != value)
             valueHasChanged = true;
 
+        if (!valueHasChanged || model.animationState.animating || model.animationState.wasJustAnimating > 0)
+            canAutoKeyframe = false;
+
         // TODO cache?
         var editableType = editor.getEditableType(entityData.entityClass);
         if (editableType.meta != null && editableType.meta.editable != null && Std.is(editableType.meta.editable, Array)) {
@@ -121,9 +124,13 @@ class EditorEntityProps extends Model {
         }
 
         // Is this property related to a timeline track?
+        var doesUpdateTrack = false;
+        var currentFrame = 0;
         if (entityData != null) {
             var track = entityData.timelineTrackForField(key);
             if (track != null) {
+
+                doesUpdateTrack = true;
 
                 // Update animated value
                 if (animatedValues.exists(key)) {
@@ -136,7 +143,7 @@ class EditorEntityProps extends Model {
                     invalidateAnimatedValues();
                 }
 
-                var currentFrame = model.animationState.currentFrame;
+                currentFrame = model.animationState.currentFrame;
                 var keyframe = track.keyframeBeforeIndex(currentFrame);
                 var shouldCreateKeyframe = false;
                 if (keyframe != null) {
@@ -159,45 +166,39 @@ class EditorEntityProps extends Model {
                     keyframe = entityData.ensureKeyframe(key, currentFrame);
                     keyframe.value = value;
                 }
-
-                reobserve();
-                return;
+            }
+        }
+        
+        if (!doesUpdateTrack) {
+            // Cleanup any existing animated value (as there is no track)
+            if (animatedValues.exists(key)) {
+                var aValue = animatedValues.get(key);
+                animatedValues.remove(key);
+                aValue.destroy();
             }
         }
 
-        //reobserve();
-        
-        // Cleanup any existing animated value (as there is no track)
-        if (animatedValues.exists(key)) {
-            var aValue = animatedValues.get(key);
-            animatedValues.remove(key);
-            aValue.destroy();
+        if (!doesUpdateTrack || currentFrame == 0) {
+            if (values.exists(key)) {
+                values.get(key).value = value;
+            }
+            else {
+                var aValue = new EditorValue();
+                aValue.value = value;
+                values.set(key, aValue);
+                invalidateValues();
+            }
         }
 
-        if (values.exists(key)) {
-            values.get(key).value = value;
-        }
-        else {
-            var aValue = new EditorValue();
-            aValue.value = value;
-            values.set(key, aValue);
-            invalidateValues();
-        }
-
-        //unobserve();
         if (valueHasChanged && key == 'depth' && Std.is(entityData, EditorVisualData)) {
             var visualData:EditorVisualData = cast entityData;
             visualData.depthDidChange();
         }
-        //reobserve();
 
         if (valueHasChanged) {
-            //unobserve();
             model.history.step();
-            //reobserve();
         }
 
-        //unobserve();
         if (entityData != null)
             entityData.freezeEditorChanges();
 

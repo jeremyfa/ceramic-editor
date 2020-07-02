@@ -13,7 +13,11 @@ class ScriptEditorView extends View implements Observable {
         return hideMonacoEditor;
     }
 
+    #if web
     var monaco:MonacoEditorView;
+    #else
+    var nativeEditor:NativeScriptEditorView;
+    #end
 
     var headerView:RowLayout;
 
@@ -23,8 +27,13 @@ class ScriptEditorView extends View implements Observable {
 
         super();
 
+        #if web
         monaco = new MonacoEditorView();
         add(monaco);
+        #else
+        nativeEditor = new NativeScriptEditorView();
+        add(nativeEditor);
+        #end
 
         headerView = new RowLayout();
         headerView.padding(0, 6);
@@ -43,6 +52,7 @@ class ScriptEditorView extends View implements Observable {
         autorun(updateFromSelectedScript);
         autorun(updateStyle);
 
+        #if web
         monaco.onContentChange(this, (newContent, prevContent) -> {
             var selectedScript = this.selectedScript;
             if (selectedScript != null) {
@@ -54,6 +64,19 @@ class ScriptEditorView extends View implements Observable {
                 }
             }
         });
+        #else
+        nativeEditor.onContentChange(this, (newContent) -> {
+            var selectedScript = this.selectedScript;
+            if (selectedScript != null) {
+                if (selectedScript.content != newContent) {
+                    selectedScript.content = newContent;
+                    if (true/*!monaco.didUndoOrRedo*/) {
+                        model.history.step();
+                    }
+                }
+            }
+        });
+        #end
 
     }
 
@@ -69,13 +92,23 @@ class ScriptEditorView extends View implements Observable {
             var scriptContent = selectedScript.content;
             unobserve();
             titleText.content = scriptId;
+            #if web
             monaco.setContent(scriptContent);
             monaco.active = true;
+            #else
+            nativeEditor.setContent(scriptContent);
+            nativeEditor.active = true;
+            #end
         }
         else {
             titleText.content = '';
+            #if web
             monaco.setContent(null);
             monaco.active = false;
+            #else
+            nativeEditor.setContent(null);
+            nativeEditor.active = false;
+            #end
         }
 
         reobserve();
@@ -86,8 +119,14 @@ class ScriptEditorView extends View implements Observable {
 
         var headerViewHeight = 25;
 
+        #if web
         monaco.pos(hideMonacoEditor ? -9999 : 0, hideMonacoEditor ? -9999 : headerViewHeight);
         monaco.size(width, height - headerViewHeight);
+        #else
+        nativeEditor.pos(0, headerViewHeight);
+        nativeEditor.computeSize(width, height - headerViewHeight, ViewLayoutMask.FIXED, true);
+        nativeEditor.applyComputedSize();
+        #end
 
         headerView.viewSize(width, headerViewHeight);
         headerView.computeSize(width, height - headerViewHeight, ViewLayoutMask.FIXED, true);

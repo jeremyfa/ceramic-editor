@@ -37,11 +37,6 @@ class EditorView extends View implements Observable {
 
         super();
 
-        // Cap to 30 fps in editor mode
-        #if luxe
-        Luxe.core.update_rate = 1.0 / 30;
-        #end
-
         app.onceImmediate(() -> init());
 
     }
@@ -265,6 +260,41 @@ class EditorView extends View implements Observable {
         // Touchable state
         autorun(updateTouchable);
 
+        bindAutoFps();
+
+        computeInitialSelectedTab();
+
+    }
+
+    @observe var isScreenPointerDown:Bool = false;
+
+    function bindAutoFps() {
+
+        // TODO multitouch?
+
+        screen.onPointerDown(this, _ -> {
+            isScreenPointerDown = true;
+        });
+
+        screen.onPointerUp(this, _ -> {
+            isScreenPointerDown = false;
+        });
+
+        autorun(() -> {
+            var highFps = isScreenPointerDown || model.animationState.animating;
+            unobserve();
+            if (highFps) {
+                #if luxe
+                Luxe.core.update_rate = 1.0 / 30;
+                #end
+            }
+            else {
+                #if luxe
+                Luxe.core.update_rate = 1.0 / 10;
+                #end
+            }
+        });
+
     }
 
     override function layout() {
@@ -385,6 +415,25 @@ class EditorView extends View implements Observable {
 
     }
 
+    function computeInitialSelectedTab() {
+
+        var selectedFragment = model.project.lastSelectedFragment;
+        if (selectedFragment != null) {
+            var selectedItem = selectedFragment.selectedItem;
+            if (selectedItem != null) {
+                if (Std.is(selectedItem, EditorVisualData)) {
+                    var selectedIndex = panelTabsView.tabViews.tabs.indexOf('Visuals');
+                    panelTabsView.tabViews.selectedIndex = selectedIndex != -1 ? selectedIndex : 0;
+                }
+                else {
+                    var selectedIndex = panelTabsView.tabViews.tabs.indexOf('Entities');
+                    panelTabsView.tabViews.selectedIndex = selectedIndex != -1 ? selectedIndex : 0;
+                }
+            }
+        }
+
+    }
+
     function updatePopupContentView() {
 
         var pendingChoice = model.pendingChoice;
@@ -489,7 +538,6 @@ class EditorView extends View implements Observable {
             var clipboardText = app.backend.clipboard.getText();
             log.debug('PASTE $clipboardText');
             if (clipboardText != null && clipboardText.startsWith('{"ceramic-editor":')) {
-                trace('do try');
                 try {
                     var parsed:Dynamic = Reflect.field(Json.parse(clipboardText), 'ceramic-editor');
                     if (parsed.entity != null) {
@@ -617,6 +665,17 @@ class EditorView extends View implements Observable {
         bottomBar.borderTopSize = 1;
         bottomBar.borderTopColor = theme.darkBorderColor;
         bottomBar.borderPosition = INSIDE;
+
+    }
+
+    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float):Bool {
+
+        // Forbid touch outside timeline editor view when animating
+        if (model.animationState.animating && !hittingVisual.hasIndirectParent(timelineEditorView)) {
+            model.animationState.animating = false;
+        }
+
+        return false;
 
     }
 

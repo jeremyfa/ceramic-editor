@@ -132,6 +132,8 @@ class EditorTimelineTrack extends Model {
         }
         this.keyframes = cast newKeyframes;
 
+        model.history.step();
+
     }
 
     public function removeKeyframeAtIndex(index:Int) {
@@ -146,6 +148,8 @@ class EditorTimelineTrack extends Model {
                 }
             }
             this.keyframes = cast newKeyframes;
+
+            model.history.step();
         }
 
     }
@@ -170,6 +174,8 @@ class EditorTimelineTrack extends Model {
                 }
             }
             this.keyframes = cast newKeyframes;
+
+            model.history.step();
         }
 
     }
@@ -214,8 +220,6 @@ class EditorTimelineTrack extends Model {
     }
 
     public function fromJson(json:Dynamic):Void {
-
-        var json:Dynamic = {};
 
         if (json.loop != null && !Validate.boolean(json.loop))
             throw 'Invalid timeline loop';
