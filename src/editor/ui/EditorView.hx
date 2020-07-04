@@ -606,6 +606,7 @@ class EditorView extends View implements Observable {
     function handleKeyDown(key:Key) {
 
         if (key.scanCode == ScanCode.BACKSPACE) {
+            // Delete selected item?
             var fragment = model.project.lastSelectedFragment;
             if (fragment != null) {
                 var selectedItem = getSelectedItemIfFocusedInFragment();
@@ -615,7 +616,13 @@ class EditorView extends View implements Observable {
                         selectedItem.destroy();
                         selectedItem = null;
                     });
+                    return;
                 }
+            }
+
+            // Delete keyframe?
+            if (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(timelineEditorView)) {
+                log.debug('DELETE: ' + screen.focusedVisual);
             }
         }
 

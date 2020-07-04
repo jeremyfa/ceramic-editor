@@ -861,6 +861,18 @@ class Visual extends Entity implements Collidable {
     /** If set, children will be sort by depth and their computed depth
         will be within range [parent.depth, parent.depth + depthRange] */
     depthRange: Float;
+    /**
+     * Visual X translation.
+     * This is a shorthand equivalent to assigning a `Transform` object to
+     * the visual with a `tx` value of `translateX`
+     */
+    translateX: Float;
+    /**
+     * Visual Y translation.
+     * This is a shorthand equivalent to assigning a `Transform` object to
+     * the visual with a `ty` value of `translateY`
+     */
+    translateY: Float;
     x: Float;
     y: Float;
     scaleX: Float;
@@ -898,6 +910,7 @@ class Visual extends Entity implements Collidable {
     pos(x: Float, y: Float): Void;
     scale(scaleX: Float, scaleY?: Float): Void;
     skew(skewX: Float, skewY: Float): Void;
+    translate(translateX: Float, translateY: Float): Void;
     /** Change the visual's anchor but update its x and y values to make
         it keep its current position. */
     anchorKeepPosition(anchorX: Float, anchorY: Float): Void;
@@ -3608,11 +3621,15 @@ interface FragmentData {
 }
 
 class FragmentContext {
-    constructor(assets: Assets, editedItems?: Bool?);
+    constructor(assets: Assets, editedItems?: Bool?, parent?: Fragment?);
     /** The assets registry used to load/unload assets in this fragment */
     assets: Assets;
     /** Whether the items are edited items or not */
     editedItems: Bool;
+    /**
+     * Parent fragment (if any)
+     */
+    parent: Fragment;
 }
 
 /** A fragment is a group of visuals rendered from data (.fragment file) */

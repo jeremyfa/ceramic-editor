@@ -6,7 +6,22 @@ class EditorTimelineKeyframe extends Model {
 
     @serialize public var easing:Easing = NONE;
 
-    @serialize public var value:Dynamic = null;
+    @serialize public var value(default, set):Dynamic = null;
+    function set_value(value:Dynamic):Dynamic {
+        if (Std.is(value, Array)) {
+            if (this.unobservedValue == null || !Equal.arrayEqual(this.unobservedValue, value)) {
+                // Make a copy, when providing array
+                this.value = [].concat(value);
+            }
+            else {
+                // Arrays have same content, do nothing then
+            }
+        }
+        else {
+            this.value = value;
+        }
+        return value;
+    }
 
     public function new() {
 
@@ -16,10 +31,15 @@ class EditorTimelineKeyframe extends Model {
 
     public function toTimelineKeyframeData():TimelineKeyframeData {
 
+        var keyframeValue:Dynamic = value;
+        if (Std.is(keyframeValue, Array)) {
+            keyframeValue = [].concat(keyframeValue);
+        }
+
         return {
             index: this.index,
             easing: EasingUtils.easingToString(easing),
-            value: value
+            value: keyframeValue
         };
 
     }

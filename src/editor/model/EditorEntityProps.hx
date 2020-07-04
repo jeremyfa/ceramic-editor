@@ -105,7 +105,7 @@ class EditorEntityProps extends Model {
         unobserve();
         var valueHasChanged = false;
         var prevValue = get(key);
-        if (prevValue != value)
+        if (!Equal.equal(prevValue, value))
             valueHasChanged = true;
 
         if (!valueHasChanged || model.animationState.animating || model.animationState.wasJustAnimating > 0)
@@ -164,6 +164,7 @@ class EditorEntityProps extends Model {
 
                 if (shouldCreateKeyframe) {
                     keyframe = entityData.ensureKeyframe(key, currentFrame);
+                    log.debug('B keyframe[${keyframe.index}]<-$currentFrame = ' + (value != null ? value[0] : '-'));
                     keyframe.value = value;
                 }
             }
@@ -192,6 +193,7 @@ class EditorEntityProps extends Model {
 
         if (valueHasChanged && key == 'depth' && Std.is(entityData, EditorVisualData)) {
             var visualData:EditorVisualData = cast entityData;
+            log.warning('DEPTH DID CHANGE $prevValue -> $value');
             visualData.depthDidChange();
         }
 

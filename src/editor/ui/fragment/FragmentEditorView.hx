@@ -2,6 +2,8 @@ package editor.ui.fragment;
 
 import tracker.Autorun;
 
+using ceramic.Extensions;
+
 class FragmentEditorView extends View implements Observable {
 
     @observe var prevSelectedFragment:EditorFragmentData = null;
@@ -112,6 +114,7 @@ class FragmentEditorView extends View implements Observable {
             var animating = model.animationState.animating;
             unobserve();
             editedFragment.timeline.paused = !animating;
+            TimelineUtils.setEveryTimelinePaused(editedFragment, !animating);
             if (wasAnimating && !animating) {
                 model.animationState.currentFrame = Math.floor(editedFragment.timeline.time * editedFragment.fps);
                 model.animationState.invalidateCurrentFrame();
@@ -131,6 +134,7 @@ class FragmentEditorView extends View implements Observable {
 
             // Update timeline position
             editedFragment.timeline.seek(time);
+            TimelineUtils.setEveryTimelineTime(editedFragment, time);
 
             // Invalidate timeline time
             this.editedFragmentTimelineTime = time;
@@ -140,7 +144,24 @@ class FragmentEditorView extends View implements Observable {
                 var selectedFragment = model.project.selectedFragment;
                 if (selectedFragment != null && editedFragment != null) {
                     for (item in selectedFragment.items) {
+                        var entity = null;
                         if (item.timelineTracks != null && item.timelineTracks.length > 0) {
+                            for (timelineTrack in item.timelineTracks) {
+
+                                // Before dispatching change, force arrays to be copied when changing time
+                                var propType = item.typeOfProp(timelineTrack.field);
+                                if (propType != null && propType.startsWith('Array<')) {
+                                    if (entity == null) {
+                                        entity = editedFragment.get(item.entityId);
+                                    }
+                                    if (entity != null) {
+                                        var array:Array<Dynamic> = entity.getProperty(timelineTrack.field);
+                                        entity.setProperty(timelineTrack.field, [].concat(array));
+                                    }
+                                }
+
+                            }
+
                             editedFragment.computeInstanceContentIfNeeded(item.entityId);
                             editedFragment.updateEditableFieldsFromInstance(item.entityId);
                         }
@@ -277,6 +298,14 @@ class FragmentEditorView extends View implements Observable {
         unobserve();
         model.popUsedFragmentId();
         editedFragment.putItem(fragmentItem);
+        app.oncePostFlushImmediate(() -> {
+            if (!destroyed) {
+                TimelineUtils.setEveryTimelinePaused(editedFragment, !model.animationState.animating);
+            }
+        });
+        app.onceUpdate(this, _ -> {
+            TimelineUtils.setEveryTimelinePaused(editedFragment, !model.animationState.animating);
+        });
         reobserve();
 
     }
@@ -496,6 +525,7 @@ class FragmentEditorView extends View implements Observable {
                     }
                     forEntity.set(trackField, true);
 
+                    log.debug('BIND TRACK DATA');
                     trackAutoruns.push(track.autorun(function() {
                         bindTrackData(track);
                     }));
@@ -536,6 +566,7 @@ class FragmentEditorView extends View implements Observable {
         var trackItem = track.toTimelineTrackData();
         unobserve();
         if (editedFragment.get(trackItem.entity) != null) {
+            //log.warning('PUT TRACK ' + trackItem.entity + '#' + trackItem.field);
             editedFragment.putTrack(trackItem);
         }
         reobserve();

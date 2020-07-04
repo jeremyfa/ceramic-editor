@@ -947,6 +947,8 @@ class Editable extends Entity implements Component implements Observable {
 
         function onPointerMove(info:TouchInfo) {
 
+            points = entity.getProperty(options.highlightPoints);
+
             canSkipRender = true;
 
             var moveStep = 16.0;
@@ -1014,6 +1016,8 @@ class Editable extends Entity implements Component implements Observable {
 
         screen.onPointerMove(this, onPointerMove);
         screen.oncePointerUp(this, function(info) {
+            points = entity.getProperty(options.highlightPoints);
+            
             screen.offPointerMove(onPointerMove);
 
             applyPointChanges();
@@ -1087,7 +1091,7 @@ class Editable extends Entity implements Component implements Observable {
         };
         Reflect.setField(changes, options.highlightPoints, entity.getProperty(options.highlightPoints));
 
-        log.debug('EMIT CHANGES ${entity.getProperty(options.highlightPoints).length}');
+        //log.debug('EMIT CHANGES ${entity.getProperty(options.highlightPoints).length}');
         emitChange(entity, changes);
 
     }

@@ -100,7 +100,7 @@ class TimelineChooseTracksView extends FlowLayout implements Observable {
             var okRow = new RowLayout();
             okRow.align = LEFT;
             okRow.paddingTop = 15;
-            okRow.viewSize(fill(), 40);
+            okRow.viewSize(percent(100), 40);
 
             var button = new Button();
             button.inputStyle = OVERLAY;
