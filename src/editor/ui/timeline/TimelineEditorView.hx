@@ -281,9 +281,9 @@ class TimelineEditorView extends View implements Observable {
 
         var selectedFragment = model.project.selectedFragment;
         var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
-        var selectedKeyframe = selectedItem != null ? selectedItem.selectedTimelineKeyframe : null;
+        var selectedKeyframes = selectedItem != null ? selectedItem.selectedTimelineKeyframes : null;
 
-        return selectedKeyframe;
+        return selectedKeyframes != null && selectedKeyframes.length > 0 ? selectedKeyframes[selectedKeyframes.length-1] : null;
 
     }
 

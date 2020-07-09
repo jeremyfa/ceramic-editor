@@ -36,7 +36,8 @@ class TimelineTrackView extends View implements Observable {
 
         onPointerDown(this, _ -> {
             if (selectedItem != null) {
-                selectedItem.selectedTimelineTrack = timelineTrack;
+                var shiftPressed = app.keyCodePressed(KeyCode.LSHIFT) || app.keyCodePressed(KeyCode.RSHIFT);
+                selectedItem.selectTimelineTrack(timelineTrack, shiftPressed);
             }
         });
 
@@ -234,7 +235,7 @@ class TimelineTrackView extends View implements Observable {
 
         var selectedItem = this.selectedItem;
         var timelineTrack = this.timelineTrack;
-        var selected = selectedItem != null && selectedItem.selectedTimelineTrack == timelineTrack && timelineTrack != null;
+        var selected = selectedItem != null && selectedItem.selectedTimelineTracks.indexOf(timelineTrack) != -1 && timelineTrack != null;
 
         transparent = false;
         color = selected ? theme.mediumBackgroundColor : theme.lightBackgroundColor;

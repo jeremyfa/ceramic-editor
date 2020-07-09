@@ -21,7 +21,9 @@ class TimelineKeyframeMarkerView extends View implements Observable {
         if (timelineTrackView != null && timelineTrackView.timelineTrack != null && index != -1) {
             var selectedItem = timelineTrackView.selectedItem;
             if (selectedItem != null) {
-                selectedItem.selectedTimelineTrack = timelineTrackView.timelineTrack;
+                var shiftPressed = app.keyCodePressed(KeyCode.LSHIFT) || app.keyCodePressed(KeyCode.RSHIFT);
+                selectedItem.selectTimelineTrack(timelineTrackView.timelineTrack, shiftPressed);
+                //selectedItem.selectedTimelineTrack = timelineTrackView.timelineTrack;
                 model.animationState.currentFrame = index;
             }
         }
@@ -37,7 +39,7 @@ class TimelineKeyframeMarkerView extends View implements Observable {
 
         if (timelineTrackView != null && timelineTrackView.timelineTrack != null && index != -1) {
             var selectedItem = timelineTrackView.selectedItem;
-            if (selectedItem != null && selectedItem.selectedTimelineTrack == timelineTrackView.timelineTrack) {
+            if (selectedItem != null && selectedItem.selectedTimelineTracks.indexOf(timelineTrackView.timelineTrack) != -1) {
                 if (index == model.animationState.currentFrame) {
                     selected = true;
                 }

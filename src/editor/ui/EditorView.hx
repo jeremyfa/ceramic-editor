@@ -607,22 +607,23 @@ class EditorView extends View implements Observable {
 
         if (key.scanCode == ScanCode.BACKSPACE) {
             // Delete selected item?
-            var fragment = model.project.lastSelectedFragment;
-            if (fragment != null) {
-                var selectedItem = getSelectedItemIfFocusedInFragment();
-                if (selectedItem != null) {
-                    fragment.removeItem(selectedItem);
-                    app.onceUpdate(this, _ -> {
-                        selectedItem.destroy();
-                        selectedItem = null;
-                    });
-                    return;
-                }
+            var selectedItem = getSelectedItemIfFocusedInFragment();
+            if (selectedItem != null) {
+                var fragment = model.project.lastSelectedFragment;
+                fragment.removeItem(selectedItem);
+                app.onceUpdate(this, _ -> {
+                    selectedItem.destroy();
+                    selectedItem = null;
+                });
+                return;
             }
 
             // Delete keyframe?
             if (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(timelineEditorView)) {
-                log.debug('DELETE: ' + screen.focusedVisual);
+                if (Std.is(screen.focusedVisual, TimelineKeyframeMarkerView)) {
+                    var marker:TimelineKeyframeMarkerView = cast screen.focusedVisual;
+                    
+                }
             }
         }
 
@@ -636,9 +637,11 @@ class EditorView extends View implements Observable {
             var selectedItem = fragment.selectedItem;
             if (selectedItem != null) {
                 if (FieldManager.manager.focusedField == null && popup.contentView == null && screen.focusedVisual != null) {
-                    var selectedTab = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
-                    if (selectedTab == 'Visuals' || (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentEditorView))) {
-                        return selectedItem;
+                    if (!screen.focusedVisual.hasIndirectParent(timelineEditorView)) {
+                        var selectedTab = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
+                        if (selectedTab == 'Visuals' || (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentEditorView))) {
+                            return selectedItem;
+                        }
                     }
                 }
             }

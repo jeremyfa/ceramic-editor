@@ -249,17 +249,41 @@ class EditorEntityData extends Model {
 
     @serialize public var timelineTracks:ReadOnlyArray<EditorTimelineTrack> = [];
 
-    @observe public var selectedTimelineTrack:EditorTimelineTrack = null;
+    @observe public var selectedTimelineTracks:ReadOnlyArray<EditorTimelineTrack> = [];
 
-    @compute public function selectedTimelineKeyframe():EditorTimelineKeyframe {
+    @compute public function selectedTimelineKeyframes():ReadOnlyArray<EditorTimelineKeyframe> {
 
-        var selectedTimelineTrack = this.selectedTimelineTrack;
-        if (selectedTimelineTrack != null && !model.animationState.animating) {
-            return selectedTimelineTrack.keyframeAtIndex(model.animationState.currentFrame);
+        var result = [];
+
+        for (selectedTimelineTrack in this.selectedTimelineTracks) {
+            if (selectedTimelineTrack != null && !model.animationState.animating) {
+                result.push(selectedTimelineTrack.keyframeAtIndex(model.animationState.currentFrame));
+            }
+        }
+
+        return cast result;
+
+    }
+
+    public function selectTimelineTrack(track:EditorTimelineTrack, keepPrevSelection:Bool = false) {
+
+        unobserve();
+
+        if (track == null) {
+            selectedTimelineTracks = cast [];
+        }
+        else if (!keepPrevSelection) {
+            if (selectedTimelineTracks.length != 1 || selectedTimelineTracks[0] != track) {
+                selectedTimelineTracks = cast [track];
+            }
         }
         else {
-            return null;
+            if (selectedTimelineTracks.indexOf(track) == -1) {
+                selectedTimelineTracks = selectedTimelineTracks.concat([track]);
+            }
         }
+
+        reobserve();
 
     }
 

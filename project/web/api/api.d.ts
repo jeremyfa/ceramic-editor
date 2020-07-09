@@ -4871,8 +4871,12 @@ class App extends Entity {
     converters: Map<K, V>;
     timelines: ceramic.Timelines;
     arcade: ArcadePhysics;
-    isKeyPressed(key: Key): Bool;
-    isKeyJustPressed(key: Key): Bool;
+    keyCodePressed(keyCode: Int): Bool;
+    keyCodeJustPressed(keyCode: Int): Bool;
+    scanCodePressed(scanCode: Int): Bool;
+    scanCodeJustPressed(scanCode: Int): Bool;
+    keyPressed(key: Key): Bool;
+    keyJustPressed(key: Key): Bool;
     group(id: String, createIfNeeded?: Bool): Group<Entity>;
     unbindEvents(): Void;
     /**App info extracted from `ceramic.yml`*/
