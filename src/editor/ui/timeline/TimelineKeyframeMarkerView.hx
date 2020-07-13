@@ -12,6 +12,10 @@ class TimelineKeyframeMarkerView extends View implements Observable {
 
         onPointerDown(this, handlePointerDown);
 
+        var doubleClick = new DoubleClick();
+        component('doubleClick', doubleClick);
+        doubleClick.onDoubleClick(this, handleDoubleClick);
+
         autorun(updateStyle);
 
     }
@@ -22,8 +26,19 @@ class TimelineKeyframeMarkerView extends View implements Observable {
             var selectedItem = timelineTrackView.selectedItem;
             if (selectedItem != null) {
                 var shiftPressed = app.keyCodePressed(KeyCode.LSHIFT) || app.keyCodePressed(KeyCode.RSHIFT);
-                selectedItem.selectTimelineTrack(timelineTrackView.timelineTrack, shiftPressed);
-                //selectedItem.selectedTimelineTrack = timelineTrackView.timelineTrack;
+                selectedItem.toggleTimelineTrack(timelineTrackView.timelineTrack, shiftPressed);
+                model.animationState.currentFrame = index;
+            }
+        }
+
+    }
+
+    function handleDoubleClick() {
+
+        if (timelineTrackView != null && timelineTrackView.timelineTrack != null && index != -1) {
+            var selectedItem = timelineTrackView.selectedItem;
+            if (selectedItem != null) {
+                selectedItem.selectAllTracks();
                 model.animationState.currentFrame = index;
             }
         }

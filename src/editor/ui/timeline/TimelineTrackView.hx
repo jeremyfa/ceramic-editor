@@ -34,12 +34,11 @@ class TimelineTrackView extends View implements Observable {
 
         this.timelineEditorView = timelineEditorView;
 
-        onPointerDown(this, _ -> {
-            if (selectedItem != null) {
-                var shiftPressed = app.keyCodePressed(KeyCode.LSHIFT) || app.keyCodePressed(KeyCode.RSHIFT);
-                selectedItem.selectTimelineTrack(timelineTrack, shiftPressed);
-            }
-        });
+        onPointerDown(this, handlePointerDown);
+
+        var doubleClick = new DoubleClick();
+        component('doubleClick', doubleClick);
+        doubleClick.onDoubleClick(this, handleDoubleClick);
 
         titleView = new TextView();
         titleView.depth = 21;
@@ -77,6 +76,23 @@ class TimelineTrackView extends View implements Observable {
         autorun(updateFromTimelineTrack);
         autorun(updateStyle);
 
+    }
+
+    function handlePointerDown(info:TouchInfo) {
+
+        if (selectedItem != null) {
+            var shiftPressed = app.keyCodePressed(KeyCode.LSHIFT) || app.keyCodePressed(KeyCode.RSHIFT);
+            selectedItem.toggleTimelineTrack(timelineTrack, shiftPressed);
+        }
+        
+    }
+
+    function handleDoubleClick() {
+
+        if (selectedItem != null) {
+            selectedItem.selectAllTracks();
+        }
+        
     }
 
     function updateFromTimelineEditorView() {

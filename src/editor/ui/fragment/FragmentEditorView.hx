@@ -122,7 +122,7 @@ class FragmentEditorView extends View implements Observable {
             wasAnimating = animating;
         });
         editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
-        onPointerDown(this, (_) -> deselectItems());
+        onPointerDown(this, handlePointerDown);
         editedFragment.depth = 2;
         add(editedFragment);
         editedFragment.clip = fragmentOverlay;
@@ -525,7 +525,6 @@ class FragmentEditorView extends View implements Observable {
                     }
                     forEntity.set(trackField, true);
 
-                    log.debug('BIND TRACK DATA');
                     trackAutoruns.push(track.autorun(function() {
                         bindTrackData(track);
                     }));
@@ -629,11 +628,34 @@ class FragmentEditorView extends View implements Observable {
 
     }
 
-    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float):Bool {
+    function handlePointerDown(info:TouchInfo) {
+
+        if (info.buttonId == 3) {
+            log.debug('todo: right click in fragment editor view');
+        }
+        else {
+            deselectItems();
+        }
+
+    }
+
+    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float, touchIndex:Int, buttonId:Int):Bool {
 
         // Forbid touch outside fragment editor bounds or if currently animating its content
         if (model.animationState.animating || !hits(x, y)) {
             return true;
+        }
+
+        // Do not accept right click unless hittingVisual is the fragment editor view itself
+        if (buttonId == 3) {
+            if (hittingVisual == this) {
+                // Handle right click
+                return false;
+            }
+            else {
+                // Forbid right click on this hitting visual
+                return true;
+            }
         }
         
         // Forbid touch on locked visuals

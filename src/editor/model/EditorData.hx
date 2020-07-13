@@ -129,6 +129,7 @@ class EditorData extends Model {
                 confirmed -> {
                     if (confirmed) {
                         incrementLoading();
+                        animationState.currentFrame = 0;
                         projectPath = null;
                         project.clear();
                         markProjectNotUnsaved();
@@ -139,6 +140,7 @@ class EditorData extends Model {
         }
         else {
             incrementLoading();
+            animationState.currentFrame = 0;
             projectPath = null;
             project.clear();
             markProjectNotUnsaved();
@@ -199,6 +201,7 @@ class EditorData extends Model {
         try {
             incrementLoading();
             var json = Json.parse(Files.getContent(file));
+            animationState.currentFrame = 0;
             projectPath = null;
             project.clear();
             project.fromJson(json, file);

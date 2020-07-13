@@ -257,11 +257,42 @@ class EditorEntityData extends Model {
 
         for (selectedTimelineTrack in this.selectedTimelineTracks) {
             if (selectedTimelineTrack != null && !model.animationState.animating) {
-                result.push(selectedTimelineTrack.keyframeAtIndex(model.animationState.currentFrame));
+                var keyframe = selectedTimelineTrack.keyframeAtIndex(model.animationState.currentFrame);
+                if (keyframe != null) {
+                    result.push(keyframe);
+                }
             }
         }
 
         return cast result;
+
+    }
+
+    public function selectAllTracks() {
+
+        var result = [];
+
+        for (track in this.timelineTracks) {
+            result.push(track);
+        }
+
+        selectedTimelineTracks = cast result;
+
+    }
+
+    public function toggleTimelineTrack(track:EditorTimelineTrack, keepPrevSelection:Bool = false) {
+
+        var trackSelected = (selectedTimelineTracks.indexOf(track) != -1);
+
+        if (!keepPrevSelection && selectedTimelineTracks.length >= 2) {
+            selectTimelineTrack(track, false);
+        }
+        else if (trackSelected) {
+            deselectTimelineTrack(track);
+        }
+        else {
+            selectTimelineTrack(track, keepPrevSelection);
+        }
 
     }
 
@@ -280,6 +311,30 @@ class EditorEntityData extends Model {
         else {
             if (selectedTimelineTracks.indexOf(track) == -1) {
                 selectedTimelineTracks = selectedTimelineTracks.concat([track]);
+            }
+        }
+
+        reobserve();
+
+    }
+
+    public function deselectTimelineTrack(track:EditorTimelineTrack) {
+
+        unobserve();
+
+        if (track == null) {
+            selectedTimelineTracks = cast [];
+        }
+        else {
+            var index = selectedTimelineTracks.indexOf(track);
+            if (index != -1) {
+                var result = [];
+                for (aTrack in selectedTimelineTracks) {
+                    if (track != aTrack) {
+                        result.push(aTrack);
+                    }
+                }
+                selectedTimelineTracks = cast result;
             }
         }
 

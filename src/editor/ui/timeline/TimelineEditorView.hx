@@ -243,22 +243,38 @@ class TimelineEditorView extends View implements Observable {
             }
         }
         selectEasing.list = list;
-        selectEasing.setValue = function(field, value) {
-            var selectedKeyframe = getSelectedKeyframe();
-            if (selectedKeyframe != null) {
-                var enumValue = Type.createEnum(Easing, value);
-                model.project.lastSelectedEasing = enumValue;
-                selectedKeyframe.easing = enumValue != null ? enumValue : NONE;
-            }
-        };
         selectEasing.autorun(() -> {
-            var selectedKeyframe = getSelectedKeyframe();
-            if (selectedKeyframe != null) {
-                var easingValue = selectedKeyframe.easing.getName();
-                unobserve();
-                selectEasing.value = easingValue;
+            var multipleEasings = hasMultipleEasingValuesSelected();
+            unobserve();
+            if (multipleEasings) {
+                selectEasing.nullValueText = 'multiple values';
+                selectEasing.value = null;
+            }
+            else {
+                selectEasing.nullValueText = '';
+
+                reobserve();
+                var selectedKeyframe = getSelectedKeyframe();
+                if (selectedKeyframe != null) {
+                    var easingValue = selectedKeyframe.easing.getName();
+                    unobserve();
+                    selectEasing.value = easingValue;
+                }
+                else {
+                    unobserve();
+                }
             }
         });
+        selectEasing.setValue = function(field, value) {
+            var selectedKeyframes = getAllSelectedKeyframes();
+            if (selectedKeyframes != null && value != null) {
+                var enumValue = EasingUtils.easingFromString(value);
+                model.project.lastSelectedEasing = enumValue;
+                for (keyframe in selectedKeyframes) {
+                    keyframe.easing = enumValue != null ? enumValue : NONE;
+                }
+            }
+        };
         selectEasing.viewSize(150, 20);
         selectEasing.offsetY = 5;
         selectEasing.inputStyle = MINIMAL;
@@ -274,6 +290,33 @@ class TimelineEditorView extends View implements Observable {
             easingText.active = active;
             selectEasing.active = active;
         });
+
+    }
+
+    function hasMultipleEasingValuesSelected() {
+
+        var selectedEasings = [];
+        var selectedKeyframes = getAllSelectedKeyframes();
+        if (selectedKeyframes != null) {
+            for (keyframe in selectedKeyframes) {
+                var easing = keyframe.easing;
+                if (selectedEasings.indexOf(easing) == -1) {
+                    selectedEasings.push(easing);
+                }
+            }
+        }
+
+        return selectedEasings.length >= 2;
+
+    }
+
+    function getAllSelectedKeyframes() {
+
+        var selectedFragment = model.project.selectedFragment;
+        var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
+        var selectedKeyframes = selectedItem != null ? selectedItem.selectedTimelineKeyframes : null;
+
+        return selectedKeyframes;
 
     }
 
@@ -362,7 +405,7 @@ class TimelineEditorView extends View implements Observable {
 
     }
 
-    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float):Bool {
+    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float, touchIndex:Int, buttonId:Int):Bool {
 
         // When animating, only allow clicking on the header to update playback
         if (model.animationState.animating && !hittingVisual.hasIndirectParent(headerView)) {

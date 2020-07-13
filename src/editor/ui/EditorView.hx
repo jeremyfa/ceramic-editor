@@ -1,6 +1,8 @@
 package editor.ui;
 
 import haxe.Json;
+import haxe.DynamicAccess;
+
 using editor.components.Tooltip;
 
 class EditorView extends View implements Observable {
@@ -522,10 +524,21 @@ class EditorView extends View implements Observable {
         var keyBindings = new KeyBindings();
 
         keyBindings.bind([CMD_OR_CTRL, KEY(KeyCode.KEY_C)], () -> {
-            log.debug('COPY');
             var selectedItem = getSelectedItemIfFocusedInFragment();
             if (selectedItem != null) {
+                log.debug('COPY selected item');
                 app.backend.clipboard.setText('{"ceramic-editor":{"entity":' + Json.stringify(selectedItem.toJson()) + '}}');
+            }
+            else {
+                var selectedKeyframes = getSelectedKeyframesIfFocusedInTimeline();
+                if (selectedKeyframes != null) {
+                    log.debug('COPY keyframes');
+                    var keyframesData:DynamicAccess<Dynamic> = {};
+                    for (key => val in selectedKeyframes) {
+                        keyframesData.set(key, val.toJson());
+                    }
+                    app.backend.clipboard.setText('{"ceramic-editor":{"keyframes":' + Json.stringify(keyframesData) + '}}');
+                }
             }
         });
 
@@ -540,8 +553,9 @@ class EditorView extends View implements Observable {
             if (clipboardText != null && clipboardText.startsWith('{"ceramic-editor":')) {
                 try {
                     var parsed:Dynamic = Reflect.field(Json.parse(clipboardText), 'ceramic-editor');
-                    if (parsed.entity != null) {
-                        if (FieldManager.manager.focusedField == null && popup.contentView == null) {
+                    if (FieldManager.manager.focusedField == null && popup.contentView == null) {
+                        if (parsed.entity != null) {
+                            // Paste entity
                             var fragment = model.project.lastSelectedFragment;
                             if (fragment != null) {
                                 var item:EditorEntityData;
@@ -557,17 +571,43 @@ class EditorView extends View implements Observable {
                                 item.fromJson(parsed.entity);
                                 fragment.addEntityData(item);
                                 fragment.selectedItem = item;
+
+                                model.history.step();
                             }
                             else {
                                 log.warning('Failed to paste entity: no selected fragment');
                             }
                         }
+                        else if (parsed.keyframes != null) {
+                            // Paste keyframes
+                            var fragment = model.project.lastSelectedFragment;
+                            if (fragment != null) {
+                                var selectedItem = fragment.selectedItem;
+                                if (selectedItem != null) {
+                                    var currentFrame = model.animationState.currentFrame;
+                                    var didAddTrack = false;
+                                    for (key in Reflect.fields(parsed.keyframes)) {
+                                        var track = selectedItem.timelineTrackForField(key);
+                                        if (track != null) {
+                                            var keyframeJson = Reflect.field(parsed.keyframes, key);
+                                            var keyframe = new EditorTimelineKeyframe();
+                                            keyframe.fromJson(keyframeJson);
+                                            track.setKeyframe(currentFrame, keyframe);
+                                            model.history.step();
+                                        }
+                                    }
+                                    if (didAddTrack) {
+                                        model.history.step();
+                                    }
+                                }
+                            }
+                        }
                         else {
-                            log.warning('Failed to paste entity: focus not matching');
+                            log.warning('Failed to parse clipboard text: nothing valid to paste');
                         }
                     }
                     else {
-                        log.warning('Failed to parse clipboard text: no entity class');
+                        log.warning('Failed to paste entity: focus not matching');
                     }
                 }
                 catch (e:Dynamic) {
@@ -618,11 +658,17 @@ class EditorView extends View implements Observable {
                 return;
             }
 
-            // Delete keyframe?
-            if (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(timelineEditorView)) {
-                if (Std.is(screen.focusedVisual, TimelineKeyframeMarkerView)) {
-                    var marker:TimelineKeyframeMarkerView = cast screen.focusedVisual;
-                    
+            // Delete keyframes?
+            var fragment = model.project.lastSelectedFragment;
+            if (fragment != null) {
+                var selectedItem = fragment.selectedItem;
+                if (selectedItem != null) {
+                    var currentFrame = model.animationState.currentFrame;
+                    for (track in selectedItem.timelineTracks) {
+                        if (selectedItem.selectedTimelineTracks.indexOf(track) != -1) {
+                            track.removeKeyframeAtIndex(currentFrame);
+                        }
+                    }
                 }
             }
         }
@@ -642,6 +688,36 @@ class EditorView extends View implements Observable {
                         if (selectedTab == 'Visuals' || (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentEditorView))) {
                             return selectedItem;
                         }
+                    }
+                }
+            }
+        }
+
+        return null;
+
+    }
+
+    function getSelectedKeyframesIfFocusedInTimeline():Null<Map<String,EditorTimelineKeyframe>> {
+
+        var fragment = model.project.lastSelectedFragment;
+
+        if (fragment != null) {
+            var selectedItem = fragment.selectedItem;
+            if (selectedItem != null) {
+                if (FieldManager.manager.focusedField == null && popup.contentView == null && screen.focusedVisual != null) {
+                    if (screen.focusedVisual.hasIndirectParent(timelineEditorView)) {
+                        var result:Map<String,EditorTimelineKeyframe> = null;
+                        var currentFrame = model.animationState.currentFrame;
+                        for (track in selectedItem.timelineTracks) {
+                            var keyframe = track.keyframeAtIndex(currentFrame);
+                            if (keyframe != null) {
+                                if (result == null) {
+                                    result = new Map();
+                                }
+                                result.set(track.field, keyframe);
+                            }
+                        }
+                        return result;
                     }
                 }
             }
@@ -678,7 +754,7 @@ class EditorView extends View implements Observable {
 
     }
 
-    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float):Bool {
+    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float, touchIndex:Int, buttonId:Int):Bool {
 
         // Forbid touch outside timeline editor view when animating
         if (model.animationState.animating && !hittingVisual.hasIndirectParent(timelineEditorView)) {
