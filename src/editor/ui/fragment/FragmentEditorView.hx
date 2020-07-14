@@ -6,6 +6,10 @@ using ceramic.Extensions;
 
 class FragmentEditorView extends View implements Observable {
 
+    static var _point = new Point(0, 0);
+
+    static var _decomposed = new DecomposedTransform();
+
     @observe var prevSelectedFragment:EditorFragmentData = null;
 
     @observe public var selectedFragment:EditorFragmentData = null;
@@ -30,6 +34,16 @@ class FragmentEditorView extends View implements Observable {
 
     var trackAutoruns:Array<Autorun> = null;
 
+    var fragmentTransform:Transform = new Transform();
+
+    var draggingFragment:Bool = false;
+
+    var dragStartX:Float = 0;
+
+    var dragStartY:Float = 0;
+
+    var fragmentDragStartTransform:Transform = new Transform();
+
     public function new(editorView:EditorView) {
         
         super();
@@ -41,6 +55,7 @@ class FragmentEditorView extends View implements Observable {
         fragmentBackground = new Quad();
         fragmentBackground.transparent = false;
         fragmentBackground.depth = 1;
+        fragmentBackground.transform = fragmentTransform;
         add(fragmentBackground);
 
         headerView = new RowLayout();
@@ -65,6 +80,8 @@ class FragmentEditorView extends View implements Observable {
 
         // Fragment
         createEditedFragment();
+
+        fragmentTransform.onChange(this, handleFragmentTransformChange);
 
         autorun(updateEditedFragment);
         autorun(updateFragmentItems);
@@ -108,6 +125,7 @@ class FragmentEditorView extends View implements Observable {
             assets: editor.contentAssets,
             editedItems: true
         });
+        editedFragment.transform = fragmentTransform;
         editedFragment.timeline = new Timeline();
         var wasAnimating = model.animationState.animating;
         editedFragment.autorun(() -> {
@@ -122,10 +140,10 @@ class FragmentEditorView extends View implements Observable {
             wasAnimating = animating;
         });
         editedFragment.onEditableItemUpdate(this, handleEditableItemUpdate);
-        onPointerDown(this, handlePointerDown);
+        onPointerDown(editedFragment, handlePointerDown);
+        screen.onMouseWheel(editedFragment, handleMouseWheel);
         editedFragment.depth = 2;
         add(editedFragment);
-        editedFragment.clip = fragmentOverlay;
 
         editedFragment.timeline.autorun(() -> {
             var time = model.animationState.currentFrame / editedFragment.fps;
@@ -141,7 +159,7 @@ class FragmentEditorView extends View implements Observable {
 
             // Then retrieve changes made from timeline to report them to edited data
             app.oncePostFlushImmediate(() -> {
-                var selectedFragment = model.project.selectedFragment;
+                var selectedFragment = model.project.lastSelectedFragment;
                 if (selectedFragment != null && editedFragment != null) {
                     for (item in selectedFragment.items) {
                         var entity = null;
@@ -197,6 +215,7 @@ class FragmentEditorView extends View implements Observable {
                 #end
                 copied.items = [];
                 prevSelectedFragment = selectedFragment;
+                fragmentTransform.identity();
             }
             #if ceramic_editor_debug_fragment
             trace('update fragment data');
@@ -213,6 +232,25 @@ class FragmentEditorView extends View implements Observable {
             }
             fragmentBackground.transparent = !transparent;
             reobserve();
+        }
+
+    }
+
+    function handleFragmentTransformChange() {
+
+        var selectedFragment = model.project.lastSelectedFragment;
+        var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
+
+        if (editedFragment != null && selectedItem != null) {
+            var entityId = selectedItem.entityId;
+            var entity = editedFragment.get(entityId);
+            if (entity != null) {
+                var rawEditable = entity.component('editable');
+                if (rawEditable != null && Std.is(rawEditable, Editable)) {
+                    var editable:Editable = cast rawEditable;
+                    editable.syncVisual();
+                }
+            }
         }
 
     }
@@ -389,8 +427,6 @@ class FragmentEditorView extends View implements Observable {
     }
 
     function deselectItems() {
-
-        trace('deselect items');
 
         if (this.selectedFragment != null)
             this.selectedFragment.selectedItem = null;
@@ -631,11 +667,81 @@ class FragmentEditorView extends View implements Observable {
     function handlePointerDown(info:TouchInfo) {
 
         if (info.buttonId == 3) {
-            log.debug('todo: right click in fragment editor view');
+            // Right click
+            draggingFragment = true;
+            screenToVisual(info.x, info.y, _point);
+            dragStartX = _point.x;
+            dragStartY = _point.y;
+            fragmentDragStartTransform.setToTransform(fragmentTransform);
+            screen.onPointerMove(this, handlePointerMove);
+            screen.oncePointerUp(this, _ -> {
+                draggingFragment = false;
+            });
+        }
+        else if (info.buttonId == 2) {
+            // Middle click
+            fragmentTransform.identity();
         }
         else {
             deselectItems();
         }
+
+    }
+
+    function handleMouseWheel(x:Float, y:Float) {
+
+        if (hits(screen.pointerX, screen.pointerY)) {
+
+            screenToVisual(screen.pointerX, screen.pointerY, _point);
+            var pointerX = _point.x;
+            var pointerY = _point.y;
+            
+            var scaleFactor = 1.0;
+
+            if (y > 0) {
+                scaleFactor = 1.0 + y * 0.001;
+            }
+            else if (y < 0) {
+                scaleFactor = 1.0 / (1.0 - y * 0.001);
+            }
+
+            if (scaleFactor != 1.0) {
+
+                fragmentTransform.decompose(_decomposed);
+                var prevScale = _decomposed.scaleX;
+                var newScale = prevScale * scaleFactor;
+
+                if (newScale < 0.1 || newScale > 100.0)
+                    return;
+                
+                var tx = pointerX;
+                var ty = pointerY;
+
+                fragmentTransform.translate(-tx, -ty);
+    
+                fragmentTransform.scale(
+                    scaleFactor,
+                    scaleFactor
+                );
+
+                fragmentTransform.translate(tx, ty);
+            }
+        }
+
+    }
+
+    function handlePointerMove(info:TouchInfo) {
+
+        if (!draggingFragment)
+            return;
+
+        screenToVisual(info.x, info.y, _point);
+        var dragX = _point.x;
+        var dragY = _point.y;
+
+        fragmentTransform.tx = fragmentDragStartTransform.tx + dragX - dragStartX;
+        fragmentTransform.ty = fragmentDragStartTransform.ty + dragY - dragStartY;
+        fragmentTransform.changedDirty = true;
 
     }
 
@@ -646,8 +752,8 @@ class FragmentEditorView extends View implements Observable {
             return true;
         }
 
-        // Do not accept right click unless hittingVisual is the fragment editor view itself
-        if (buttonId == 3) {
+        // Do not accept right or middle click unless hittingVisual is the fragment editor view itself
+        if (buttonId == 3 || buttonId == 2) {
             if (hittingVisual == this) {
                 // Handle right click
                 return false;

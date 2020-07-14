@@ -211,7 +211,7 @@ class EditorView extends View implements Observable {
 
         // Fragment editor view
         fragmentEditorView = new FragmentEditorView(this);
-        fragmentEditorView.depth = 8;
+        fragmentEditorView.depth = 2;
         autorun(() -> {
             fragmentEditorView.selectedFragment = model.project.lastSelectedFragment;
         });
@@ -302,7 +302,7 @@ class EditorView extends View implements Observable {
     override function layout() {
         
         var editorMenuHeight = 40;
-        var panelsTabsWidth = 300;
+        var panelsTabsWidth = 320;
         var bottomBarHeight = 18;
         var leftSpacerSize = 6;
         var timelineHeight = Math.max(height * 0.2, 220);

@@ -861,18 +861,6 @@ class Visual extends Entity implements Collidable {
     /** If set, children will be sort by depth and their computed depth
         will be within range [parent.depth, parent.depth + depthRange] */
     depthRange: Float;
-    /**
-     * Visual X translation.
-     * This is a shorthand equivalent to assigning a `Transform` object to
-     * the visual with a `tx` value of `translateX`
-     */
-    translateX: Float;
-    /**
-     * Visual Y translation.
-     * This is a shorthand equivalent to assigning a `Transform` object to
-     * the visual with a `ty` value of `translateY`
-     */
-    translateY: Float;
     x: Float;
     y: Float;
     scaleX: Float;
@@ -885,6 +873,18 @@ class Visual extends Entity implements Collidable {
     height: Float;
     rotation: Float;
     alpha: Float;
+    /**
+     * Visual X translation.
+     * This is a shorthand equivalent to assigning a `Transform` object to
+     * the visual with a `tx` value of `translateX`
+     */
+    translateX: Float;
+    /**
+     * Visual Y translation.
+     * This is a shorthand equivalent to assigning a `Transform` object to
+     * the visual with a `ty` value of `translateY`
+     */
+    translateY: Float;
     /** Set additional matrix-based transform to this visual. Default is null. */
     transform: Transform;
     /** Assign a shader to this visual. */

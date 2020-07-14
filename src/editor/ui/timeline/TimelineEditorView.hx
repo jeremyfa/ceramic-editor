@@ -156,7 +156,7 @@ class TimelineEditorView extends View implements Observable {
         tracksLayout.contentView.depthRange = -1;
         tracksLayout.scroller.scrollbar = new Scrollbar();
         tracksLayout.layoutView.autorun(() -> {
-            var selectedFragment = model.project.selectedFragment;
+            var selectedFragment = model.project.lastSelectedFragment;
             var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
             tracksLayout.layoutView.selectedItem = selectedItem;
         });
@@ -174,7 +174,7 @@ class TimelineEditorView extends View implements Observable {
         chooseTracksView.active = choosingTracks;
         chooseTracksView.depth = 41;
         chooseTracksView.autorun(() -> {
-            var selectedFragment = model.project.selectedFragment;
+            var selectedFragment = model.project.lastSelectedFragment;
             var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
             var choosingTracks = this.choosingTracks;
             unobserve();
@@ -312,7 +312,7 @@ class TimelineEditorView extends View implements Observable {
 
     function getAllSelectedKeyframes() {
 
-        var selectedFragment = model.project.selectedFragment;
+        var selectedFragment = model.project.lastSelectedFragment;
         var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
         var selectedKeyframes = selectedItem != null ? selectedItem.selectedTimelineKeyframes : null;
 
@@ -322,7 +322,7 @@ class TimelineEditorView extends View implements Observable {
 
     function getSelectedKeyframe() {
 
-        var selectedFragment = model.project.selectedFragment;
+        var selectedFragment = model.project.lastSelectedFragment;
         var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
         var selectedKeyframes = selectedItem != null ? selectedItem.selectedTimelineKeyframes : null;
 

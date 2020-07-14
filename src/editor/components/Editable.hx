@@ -68,6 +68,14 @@ class Editable extends Entity implements Component implements Observable {
 
     }
 
+    function update(_) {
+
+        if (activeEditable != this) return;
+
+        wrapVisual(entity);
+
+    }
+
 /// Public API
 
     public function select(selectFromPointer:Bool = false) {
@@ -138,7 +146,7 @@ class Editable extends Entity implements Component implements Observable {
 
     }
 
-    function update(_) {
+    public function syncVisual():Void {
 
         if (activeEditable != this) return;
 
