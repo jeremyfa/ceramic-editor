@@ -163,9 +163,30 @@ class EditorEntityProps extends Model {
                 }
 
                 if (shouldCreateKeyframe) {
-                    keyframe = entityData.ensureKeyframe(key, currentFrame);
-                    log.debug('B keyframe[${keyframe.index}]<-$currentFrame = ' + (value != null ? value[0] : '-'));
-                    keyframe.value = value;
+
+                    // If value is identical, then let's not create keyframe
+                    if (!valueHasChanged) {
+                        shouldCreateKeyframe = false;
+                    }
+                    else if (Std.is(entityData, EditorVisualData)) {
+                        switch (key) {
+                            case 'x' | 'y' | 'width' | 'height':
+                                if (Math.round(prevValue) == Math.round(value))
+                                    shouldCreateKeyframe = false;
+                            case 'scaleX' | 'scaleY':
+                                if (Math.round(prevValue * 1000) == Math.round(value * 1000))
+                                    shouldCreateKeyframe = false;
+                            case 'skewX' | 'skewY' | 'rotation':
+                                if (Math.round(prevValue * 100) == Math.round(value * 100))
+                                    shouldCreateKeyframe = false;
+                            default:
+                        }
+                    }
+
+                    if (shouldCreateKeyframe) {
+                        keyframe = entityData.ensureKeyframe(key, currentFrame);
+                        keyframe.value = value;
+                    }
                 }
             }
         }

@@ -3968,6 +3968,7 @@ class DoubleClick extends Entity implements Component {
     threshold: Float;
     maxDelay: Float;
     entity: Visual;
+    cancel(): Void;
     initializerName: String;
     unbindEvents(): Void;
 }

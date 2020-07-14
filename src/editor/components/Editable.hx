@@ -893,6 +893,8 @@ class Editable extends Entity implements Component implements Observable {
             log.error('Invalid points property!');
             return;
         }
+
+        var didChangePoints = false;
             
         var translateTests = [
             -1, -1,
@@ -948,6 +950,12 @@ class Editable extends Entity implements Component implements Observable {
         function onPointerMove(info:TouchInfo) {
 
             points = entity.getProperty(options.highlightPoints);
+
+            if (!didChangePoints) {
+                didChangePoints = true;
+                points = [].concat(points);
+                entity.setProperty(options.highlightPoints, points);
+            }
 
             canSkipRender = true;
 

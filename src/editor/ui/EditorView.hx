@@ -405,10 +405,10 @@ class EditorView extends View implements Observable {
         var selectedName = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
 
         if (selectedFragment == null) {
-            panelTabsView.tabViews.tabs = ['Editables', 'Scripts'];
+            panelTabsView.tabViews.tabs = ['Containers', 'Scripts'];
         }
         else {
-            panelTabsView.tabViews.tabs = ['Entities', 'Visuals', 'Editables', 'Scripts'];
+            panelTabsView.tabViews.tabs = ['Entities', 'Visuals', 'Containers', 'Scripts'];
         }
 
         // Restore selected tab name on new tab list
@@ -495,7 +495,7 @@ class EditorView extends View implements Observable {
         var contentViewClass:Class<View> = switch (selectedName) {
             case 'Entities': EntitiesPanelView;
             case 'Visuals': VisualsPanelView;
-            case 'Editables': EditableElementsPanelView;
+            case 'Containers': EditableElementsPanelView;
             case 'Scripts': ScriptsPanelView;
             default: null;
         }
@@ -558,6 +558,10 @@ class EditorView extends View implements Observable {
                             // Paste entity
                             var fragment = model.project.lastSelectedFragment;
                             if (fragment != null) {
+
+                                // When pasting entity, we need to reset timeline position
+                                model.animationState.currentFrame = 0;
+
                                 var item:EditorEntityData;
                                 if (parsed.entity.isVisual) {
                                     item = new EditorVisualData();
