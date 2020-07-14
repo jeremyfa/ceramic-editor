@@ -49,16 +49,19 @@ class LabeledFieldGroupView<T:LabeledFieldView<U>,U:FieldView> extends LinearLay
 
         if (fields.length > 0) {
 
-            var itemWidth = ((width - paddingLeft - paddingRight - 65 + 50 - 8 * (fields.length - 1)) / fields.length);
+            final labelWidth1 = 65;
+            final labelWidth2 = 65;
+
+            var itemWidth = ((width - paddingLeft - paddingRight - labelWidth1 + labelWidth2 - 8 * (fields.length - 1)) / fields.length);
     
             for (i in 0...fields.length) {
                 var field = fields[i];
                 if (i == 0) {
-                    field.labelViewWidth = 65;
-                    field.viewSize(itemWidth + 65 - 50, auto());
+                    field.labelViewWidth = labelWidth1;
+                    field.viewSize(itemWidth + labelWidth1 - labelWidth2, auto());
                 }
                 else {
-                    field.labelViewWidth = 50;
+                    field.labelViewWidth = labelWidth2;
                     field.viewSize(itemWidth, auto());
                 }
             }
