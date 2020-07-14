@@ -188,6 +188,9 @@ class TimelineEditorView extends View implements Observable {
 
         app.onUpdate(this, _ -> updateFromFragmentTimeline());
 
+        onPointerDown(this, handlePointerDown);
+        onPointerUp(this, handlePointerUp);
+
     }
 
     function initFrameStepSlider() {
@@ -401,10 +404,6 @@ class TimelineEditorView extends View implements Observable {
 
     }
 
-    function updateCursorPosition() {
-
-    }
-
     override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float, touchIndex:Int, buttonId:Int):Bool {
 
         // When animating, only allow clicking on the header to update playback
@@ -412,7 +411,37 @@ class TimelineEditorView extends View implements Observable {
             model.animationState.animating = false;
         }
 
+        // Do not accept right or middle click unless hittingVisual is the timeline editor view itself
+        if (buttonId == 3 || buttonId == 2) {
+            if (hittingVisual == this && !headerView.hits(x, y)) {
+                // Handle right click
+                return false;
+            }
+            else {
+                // Forbid right click on this hitting visual
+                return true;
+            }
+        }
+
         return false;
+
+    }
+
+    function handlePointerDown(info:TouchInfo) {
+
+        if (info.buttonId == 3) {
+            // Right click
+            @:privateAccess rulerView.handlePointerDown(info);
+        }
+
+    }
+
+    function handlePointerUp(info:TouchInfo) {
+
+        if (info.buttonId == 3) {
+            // Right click
+            @:privateAccess rulerView.handlePointerUp(info);
+        }
 
     }
 

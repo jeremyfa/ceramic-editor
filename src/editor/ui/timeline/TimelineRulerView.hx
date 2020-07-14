@@ -15,6 +15,8 @@ class TimelineRulerView extends View {
     var timelineOffsetX:Float;
 
     var lastPointerX:Float = -1;
+
+    var dragging:Bool = false;
         
     var rulerStart = TimelineEditorView.TRACK_TITLE_WIDTH + TimelineEditorView.TRACK_TITLE_GAP + TimelineEditorView.TRACK_LEFT_PADDING;
 
@@ -40,7 +42,7 @@ class TimelineRulerView extends View {
 
         var scrollThreshold:Float = Math.min(100.0, width * 0.1);
 
-        if (isPointerDown) {
+        if (dragging) {
             var x = lastPointerX;
 
             var moveRatio:Float = 0;
@@ -150,6 +152,8 @@ class TimelineRulerView extends View {
 
     function handlePointerDown(info:TouchInfo) {
 
+        dragging = true;
+
         screen.onPointerMove(this, handlePointerMove);
 
         updateCursor(info.x, info.y);
@@ -163,6 +167,8 @@ class TimelineRulerView extends View {
     }
 
     function handlePointerUp(info:TouchInfo) {
+
+        dragging = false;
 
         screen.offPointerMove(handlePointerMove);
 
