@@ -129,7 +129,10 @@ class MonacoEditorView extends View implements Observable {
                 handleSaveAs,
                 handleUndo,
                 handleRedo,
-                handlePlay
+                handlePlay,
+                handleMouseDown,
+                handleMouseUp,
+                handleMouseMove
             );
 
             iframeReady = true;
@@ -178,6 +181,33 @@ class MonacoEditorView extends View implements Observable {
 
         model.play();
 
+    }
+
+    function handleMouseDown(button:Int, x:Float, y:Float) {
+
+        visualToScreen(0, 0, _point);
+        #if luxe
+        @:privateAccess Main.mouseDownButtons.set(button + 1, true);
+        #end
+        @:privateAccess app.backend.screen.emitMouseDown(button + 1, _point.x + x, _point.y + y);
+
+    }
+
+    function handleMouseUp(button:Int, x:Float, y:Float) {
+
+        visualToScreen(0, 0, _point);
+        #if luxe
+        @:privateAccess Main.mouseDownButtons.remove(button + 1);
+        #end
+        @:privateAccess app.backend.screen.emitMouseUp(button + 1, _point.x + x, _point.y + y);
+        
+    }
+
+    function handleMouseMove(x:Float, y:Float) {
+
+        visualToScreen(0, 0, _point);
+        @:privateAccess app.backend.screen.emitMouseMove(_point.x + x, _point.y + y);
+        
     }
 
     public function setContent(content:String) {

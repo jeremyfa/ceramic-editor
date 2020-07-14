@@ -39,10 +39,24 @@
         emitSaveAs,
         emitUndo,
         emitRedo,
-        emitPlay
+        emitPlay,
+        emitMouseDown,
+        emitMouseUp,
+        emitMouseMove
     ) {
         if (didInitMonaco) return;
         didInitMonaco = true;
+
+        // Used to re-route mouse events to ceramic when focus is on iframe
+        window.addEventListener('mousedown', function(event) {
+            emitMouseDown(event.button, event.pageX, event.pageY);
+        });
+        window.addEventListener('mouseup', function(event) {
+            emitMouseUp(event.button, event.pageX, event.pageY);
+        });
+        window.addEventListener('mousemove', function(event) {
+            emitMouseMove(event.pageX, event.pageY);
+        });
         
         require.config({ paths: { 'vs': 'monaco-editor/min/vs' }});
         require(['vs/editor/editor.main'], function() {
