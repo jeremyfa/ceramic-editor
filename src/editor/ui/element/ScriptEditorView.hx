@@ -39,6 +39,14 @@ class ScriptEditorView extends View implements Observable {
         headerView.padding(0, 6);
         headerView.depth = 2;
         {
+            var leftIconView = new ClickableIconView();
+            leftIconView.viewSize(24, fill());
+            leftIconView.icon = CANCEL;
+            leftIconView.onClick(this, () -> {
+                model.project.selectedScript = null;
+            });
+            headerView.add(leftIconView);
+
             titleText = new TextView();
             titleText.viewSize(fill(), fill());
             titleText.align = CENTER;
@@ -46,6 +54,11 @@ class ScriptEditorView extends View implements Observable {
             titleText.preRenderedSize = 20;
             titleText.pointSize = 13;
             headerView.add(titleText);
+
+            var filler = new View();
+            filler.transparent = true;
+            filler.viewSize(24, fill());
+            headerView.add(filler);
         }
         add(headerView);
 
