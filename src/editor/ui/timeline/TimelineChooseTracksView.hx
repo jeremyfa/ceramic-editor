@@ -77,7 +77,7 @@ class TimelineChooseTracksView extends FlowLayout implements Observable {
                             var text = new TextView();
                             text.content = field.name;
                             text.preRenderedSize = 20;
-                            text.pointSize = 13;
+                            text.pointSize = 10;
                             text.viewSize(fill(), 25);
                             text.verticalAlign = CENTER;
                             itemView.add(text);

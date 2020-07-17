@@ -45,13 +45,13 @@ class LabeledFieldView<T:FieldView> extends LinearLayout implements Observable {
         super();
 
         direction = HORIZONTAL;
-        itemSpacing = 8;
+        itemSpacing = 6;
 
         labelText = new TextView();
-        labelText.viewSize(65, auto());
+        labelText.viewSize(75, auto());
         labelText.align = RIGHT;
         labelText.verticalAlign = CENTER;
-        labelText.pointSize = 12;
+        labelText.pointSize = 10;
         labelText.preRenderedSize = 20;
         add(labelText);
 

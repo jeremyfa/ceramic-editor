@@ -68,6 +68,7 @@ class EditorEntityData extends Model {
             unobserve();
 
             for (track in timelineTracks) {
+                track.entityData = this;
                 track.entity = entityId;
             }
         });
@@ -214,7 +215,7 @@ class EditorEntityData extends Model {
             var jsonTracks:Array<Dynamic> = json.tracks;
             var tracks = [];
             for (jsonTrack in jsonTracks) {
-                var timelineTrack = new EditorTimelineTrack(null, null);
+                var timelineTrack = new EditorTimelineTrack(this, null, null);
                 timelineTrack.fromJson(jsonTrack);
                 tracks.push(timelineTrack);
             }
@@ -387,7 +388,7 @@ class EditorEntityData extends Model {
     public function ensureTimelineTrack(field:String):Void {
 
         if (timelineTrackForField(field) == null) {
-            var track = new EditorTimelineTrack(entityId, field);
+            var track = new EditorTimelineTrack(this, entityId, field);
             var newTracks = [].concat(this.timelineTracks.original);
             newTracks.push(track);
             newTracks.sort(compareTimelineTracks);

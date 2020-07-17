@@ -50,7 +50,7 @@ class SliderFieldView extends FieldView implements Observable {
         align = LEFT;
 
         textView = new TextView();
-        textView.viewSize(40, auto());
+        textView.viewSize(50, auto());
         textView.verticalAlign = CENTER;
         textView.align = LEFT;
         textView.pointSize = 12;

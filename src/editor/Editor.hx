@@ -591,4 +591,16 @@ class Editor extends Entity implements Observable {
 
     }
 
+    public function requestHighFps():Void {
+
+        if (model == null)
+            return;
+
+        model.requireHighFps++;
+        Timer.delay(this, 1.0, () -> {
+            model.requireHighFps--;
+        });
+
+    }
+
 }

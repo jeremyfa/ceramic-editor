@@ -49,8 +49,8 @@ class LabeledFieldGroupView<T:LabeledFieldView<U>,U:FieldView> extends LinearLay
 
         if (fields.length > 0) {
 
-            final labelWidth1 = 65;
-            final labelWidth2 = 65;
+            final labelWidth1 = 75;
+            final labelWidth2 = 75;
 
             var itemWidth = ((width - paddingLeft - paddingRight - labelWidth1 + labelWidth2 - 8 * (fields.length - 1)) / fields.length);
     

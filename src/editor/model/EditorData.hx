@@ -7,6 +7,7 @@ import haxe.DynamicAccess;
 using tracker.SaveModel;
 using tracker.History;
 
+@:allow(editor.Editor)
 class EditorData extends Model {
 
     @component public var history:History;
@@ -50,6 +51,8 @@ class EditorData extends Model {
     @observe public var location:EditorLocation = DEFAULT;
 
     @observe public var animationState:EditorAnimationState = new EditorAnimationState();
+
+    @observe public var requireHighFps(default,null):Int = 0;
 
     var clearStatusMessageDelay:Void->Void = null;
     

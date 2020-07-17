@@ -2,6 +2,8 @@ package editor.model;
 
 class EditorTimelineTrack extends Model {
 
+    @serialize public var entityData:EditorEntityData;
+
     @serialize public var loop:Bool = true;
 
     @serialize public var entity:String;
@@ -46,10 +48,11 @@ class EditorTimelineTrack extends Model {
 
     }
 
-    public function new(entity:String, field:String) {
+    public function new(entityData:EditorEntityData, entity:String, field:String) {
 
         super();
 
+        this.entityData = entityData;
         this.entity = entity;
         this.field = field;
 
@@ -186,8 +189,26 @@ class EditorTimelineTrack extends Model {
             loop: this.loop,
             entity: this.entity,
             field: this.field,
-            keyframes: keyframesToTimelineKeyframesData()
+            keyframes: keyframesToTimelineKeyframesData(),
+            options: timelineOptions()
         };
+
+    }
+
+    function timelineOptions():Dynamic<Dynamic> {
+
+        var fieldName = this.field;
+        if (entityData != null && entityData.editableType != null) {
+            for (field in entityData.editableType.fields) {
+                if (field.name == fieldName) {
+                    if (field.meta != null && field.meta.editable != null) {
+                        return field.meta.editable[0];
+                    }
+                }
+            }
+        }
+
+        return null;
 
     }
 

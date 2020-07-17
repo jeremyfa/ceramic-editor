@@ -283,7 +283,7 @@ class EditorView extends View implements Observable {
         });
 
         autorun(() -> {
-            var highFps = isScreenPointerDown || model.animationState.animating;
+            var highFps = isScreenPointerDown || model.animationState.animating || model.requireHighFps > 0;
             unobserve();
             if (highFps) {
                 #if luxe
@@ -535,6 +535,7 @@ class EditorView extends View implements Observable {
                     log.debug('COPY keyframes');
                     var keyframesData:DynamicAccess<Dynamic> = {};
                     for (key => val in selectedKeyframes) {
+                        trace(' - $key');
                         keyframesData.set(key, val.toJson());
                     }
                     app.backend.clipboard.setText('{"ceramic-editor":{"keyframes":' + Json.stringify(keyframesData) + '}}');
@@ -589,7 +590,7 @@ class EditorView extends View implements Observable {
                                 var selectedItem = fragment.selectedItem;
                                 if (selectedItem != null) {
                                     var currentFrame = model.animationState.currentFrame;
-                                    var didAddTrack = false;
+                                    var didUpdateKeyframe = false;
                                     for (key in Reflect.fields(parsed.keyframes)) {
                                         var track = selectedItem.timelineTrackForField(key);
                                         if (track != null) {
@@ -597,11 +598,18 @@ class EditorView extends View implements Observable {
                                             var keyframe = new EditorTimelineKeyframe();
                                             keyframe.fromJson(keyframeJson);
                                             track.setKeyframe(currentFrame, keyframe);
-                                            model.history.step();
+                                            didUpdateKeyframe = true;
                                         }
                                     }
-                                    if (didAddTrack) {
+                                    if (didUpdateKeyframe) {
                                         model.history.step();
+                                        app.onceImmediate(() -> {
+                                            if (destroyed) return;
+                                            model.animationState.invalidateCurrentFrame();
+                                        });
+                                        app.onceUpdate(this, _ -> {
+                                            model.animationState.invalidateCurrentFrame();
+                                        });
                                     }
                                 }
                             }

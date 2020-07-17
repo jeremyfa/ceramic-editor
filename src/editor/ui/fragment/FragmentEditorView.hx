@@ -165,6 +165,9 @@ class FragmentEditorView extends View implements Observable {
 
             // Update timeline position
             editedFragment.timeline.seek(time);
+            if (time == prevTime) {
+                editedFragment.timeline.apply(true);
+            }
             TimelineUtils.setEveryTimelineTime(editedFragment, time);
 
             // Invalidate timeline time
@@ -324,6 +327,9 @@ class FragmentEditorView extends View implements Observable {
             if (editedFragment != null) {
                 for (entityId in toCheck) {
                     var entity = editedFragment.get(entityId);
+                    if (entity != null && entity.destroyed) {
+                        log.debug('ENTITY IS DESTROYED!! ' + entity);
+                    }
                     if (Std.is(entity, Visual) && !entity.hasComponent('editable')) {
                         bindEditableVisualComponent(cast entity, editedFragment);
                     }
@@ -605,7 +611,7 @@ class FragmentEditorView extends View implements Observable {
         if (model.loading > 0)
             return;
 
-        var editedFragmentTimelineTime = this.editedFragmentTimelineTime;
+        //var editedFragmentTimelineTime = this.editedFragmentTimelineTime;
 
         var selectedFragment = this.selectedFragment;
         if (selectedFragment == null)
@@ -614,7 +620,7 @@ class FragmentEditorView extends View implements Observable {
         var trackItem = track.toTimelineTrackData();
         unobserve();
         if (editedFragment.get(trackItem.entity) != null) {
-            //log.warning('PUT TRACK ' + trackItem.entity + '#' + trackItem.field);
+            //log.debug('PUT TRACK ' + trackItem.entity + '#' + trackItem.field);
             editedFragment.putTrack(trackItem);
         }
         reobserve();

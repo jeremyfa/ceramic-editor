@@ -1283,7 +1283,7 @@ class TimelineTrack<K extends TimelineKeyframe> extends Entity {
         the time of the last keyframe on this track. */
     fitDuration(): Void;
     /** Apply changes that this track is responsible of. Usually called after `update(delta)` or `seek(time)`. */
-    apply(): Void;
+    apply(forceChange?: Bool): Void;
     findKeyframeAtTime(time: Float): K?;
     /** Find the keyframe right before or equal to given `time` */
     findKeyframeBefore(time: Float): K?;
@@ -1308,7 +1308,7 @@ class TimelineFloatTrack extends TimelineTrack<TimelineFloatKeyframe> {
     /**Does it listen to change event*/
     listensChange(): Bool;
     value: Float;
-    apply(): Void;
+    apply(forceChange?: Bool): Void;
     unbindEvents(): Void;
 }
 
@@ -1328,7 +1328,7 @@ class TimelineDegreesTrack extends TimelineTrack<TimelineFloatKeyframe> {
     /**Does it listen to change event*/
     listensChange(): Bool;
     value: Float;
-    apply(): Void;
+    apply(forceChange?: Bool): Void;
     unbindEvents(): Void;
 }
 
@@ -1343,7 +1343,7 @@ class TimelineColorTrack extends TimelineTrack<TimelineColorKeyframe> {
     /**Does it listen to change event*/
     listensChange(): Bool;
     value: Color;
-    apply(): Void;
+    apply(forceChange?: Bool): Void;
     unbindEvents(): Void;
 }
 
@@ -1374,6 +1374,8 @@ class Timeline extends Entity implements Component {
     /** Seek the given time (in seconds) in the timeline.
         Will take care of clamping `time` or looping it depending on `duration` and `loop` properties. */
     seek(targetTime: Float): Void;
+    /** Apply (or re-apply) every track of this timeline at the current time */
+    apply(forceChange?: Bool): Void;
     /** Add a track to this timeline */
     add(track: TimelineTrack<TimelineKeyframe>): Void;
     get(trackId: String): TimelineTrack<TimelineKeyframe>;
@@ -2878,7 +2880,113 @@ enum ParticlesLaunchMode {
 
 class Particles<T extends ceramic.ParticleEmitter> extends Visual {
     constructor(emitter?: T?);
+    static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
     emitter: T;
+    autoEmit: Bool;
+    autoExplodeInterval: Float;
+    autoExplodeQuantity: Int;
+    /**
+     * Determines whether the emitter is currently paused. It is totally safe to directly toggle this.
+     */
+    emitterPaused: Bool;
+    /**
+     * How often a particle is emitted, if currently emitting.
+     * Can be modified at the middle of an emission safely;
+     */
+    emitterInterval: Float;
+    /**
+     * How particles should be launched. If `CIRCLE` (default), particles will use `launchAngle` and `speed`.
+     * Otherwise, particles will just use `velocityX` and `velocityY`.
+     */
+    emitterLaunchMode: ParticlesLaunchMode;
+    /**
+     * Apply particle scale to underlying visual or not.
+     */
+    emitterVisualScaleActive: Bool;
+    /**
+     * Keep the scale ratio of the particle. Uses the `scaleX` value for reference.
+     */
+    emitterKeepScaleRatio: Bool;
+    /**
+     * Apply particle color to underlying visual or not.
+     */
+    emitterVisualColorActive: Bool;
+    /**
+     * Apply particle alpha to underlying visual or not.
+     */
+    emitterVisualAlphaActive: Bool;
+    /**
+     * Apply particle position (x & y) to underlying visual or not.
+     */
+    emitterVisualPositionActive: Bool;
+    /**
+     * Apply particle angle to underlying visual rotation or not.
+     */
+    emitterVisualRotationActive: Bool;
+    /**
+	 * The width of the emission area.
+     * If not defined (`-1`), will use visual's width bound to this `ParticleEmitter` object, if any
+	 */
+    emitterWidth: Float;
+    /**
+	 * The height of the emission area.
+     * If not defined (`-1`), will use visual's height bound to this `ParticleEmitter` object, if any
+	 */
+    emitterHeight: Float;
+    /**
+	 * The x position of the emission, relative to particles parent (if any)
+	 */
+    emitterX: Float;
+    /**
+	 * The y position of the emission, relative to particles parent (if any)
+	 */
+    emitterY: Float;
+    /**
+     * Enable or disable the velocity range of particles launched from this emitter. Only used with `SQUARE`.
+     */
+    emitterVelocityActive: Bool;
+    /**
+	 * If you are using `acceleration`, you can use `maxVelocity` with it
+	 * to cap the speed automatically (very useful!).
+	 */
+    emitterMaxVelocityX: Float;
+    /**
+	 * If you are using `acceleration`, you can use `maxVelocity` with it
+	 * to cap the speed automatically (very useful!).
+	 */
+    emitterMaxVelocityY: Float;
+    /**
+     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
+     */
+    emitterVelocityStartMinX: Float;
+    /**
+     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
+     */
+    emitterVelocityStartMinY: Float;
+    /**
+     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
+     */
+    emitterVelocityStartMaxX: Float;
+    /**
+     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
+     */
+    emitterVelocityStartMaxY: Float;
+    /**
+     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
+     */
+    emitterVelocityEndMinX: Float;
+    /**
+     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
+     */
+    emitterVelocityEndMinY: Float;
+    /**
+     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
+     */
+    emitterVelocityEndMaxX: Float;
+    /**
+     * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
+     */
+    emitterVelocityEndMaxY: Float;
 }
 
 /** A particle item.
