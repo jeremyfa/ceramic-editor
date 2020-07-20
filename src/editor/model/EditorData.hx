@@ -160,7 +160,6 @@ class EditorData extends Model {
                 true,
                 confirmed -> {
                     if (confirmed) {
-                        incrementLoading();
                         if (file != null && contents != null) {
                             openProjectFromNameAndContents(file, contents);
                         }
@@ -170,13 +169,15 @@ class EditorData extends Model {
                         else {
                             openProjectDialog();
                         }
-                        scheduleDecrementLoading();
                     }
                 }
             );
         }
         else {
-            if (file != null) {
+            if (file != null && contents != null) {
+                openProjectFromNameAndContents(file, contents);
+            }
+            else if (file != null) {
                 openProjectFromFilePath(file);
             }
             else {
@@ -261,13 +262,19 @@ class EditorData extends Model {
         }
         #end
         if (webWithoutElectron) {
-            var saveAs:Dynamic = untyped global.saveAs;
+            #if web
+            if (projectPath == null) {
+                projectPath = 'Project.ceramic';
+                project.title = 'Project';
+            }
             var file = new js.html.File(
                 [Json.stringify(project.toJson(projectPath), null, '  ')],
                 Path.withoutDirectory(projectPath),
                 { type: "text/plain;charset=utf-8" }
             );
-            saveAs(file);
+            untyped saveAs(file);
+            markProjectNotUnsaved();
+            #end
         }
         else if (projectPath != null && !forceSaveAs) {
             Files.saveContent(projectPath, Json.stringify(project.toJson(projectPath), null, '  '));
@@ -520,7 +527,7 @@ class EditorData extends Model {
 
         var exportPath = project.exportPath;
         if (exportPath == null) {
-            if (projectPath == null) {
+            if (projectPath == null || !Path.isAbsolute(projectPath)) {
                 Message.message(
                     'Error',
                     'Failed to resolve export path',
@@ -557,7 +564,7 @@ class EditorData extends Model {
         try {
             for (exportBundlePath in output.keys()) {
                 // Create directories if needed
-                if (!Files.exists(exportBundlePath)) {
+                if (!Files.exists(Path.directory(exportBundlePath))) {
                     Files.createDirectory(Path.directory(exportBundlePath));
                 }
                 else if (!Files.isDirectory(Path.directory(exportBundlePath))) {

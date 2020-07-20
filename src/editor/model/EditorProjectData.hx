@@ -127,6 +127,8 @@ class EditorProjectData extends Model {
 
         paletteColors = [];
 
+        exportPath = null;
+
     }
 
     function clearEditables() {
@@ -134,9 +136,13 @@ class EditorProjectData extends Model {
         var prevEditables = this.editables;
 
         selectedEditableIndex = -1;
+        lastSelectedFragmentIndex = -1;
+        selectedScriptIndex = -1;
+        lastSelectedEasing = NONE;
         
         fragments = [];
         tilemaps = [];
+        scripts = [];
 
         for (editable in prevEditables) {
             editable.destroy();

@@ -86,6 +86,15 @@ class Editor extends Entity implements Observable {
             pendingFile = filePath;
         });
 
+        var webWithoutElectron = false;
+        #if web
+        webWithoutElectron = (PlatformSpecific.resolveElectron() == null);
+        if (webWithoutElectron) {
+            untyped __js__('document.addEventListener("keydown", function(e) { if (e.keyCode == 83 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) { e.preventDefault(); } }, false)');
+            untyped __js__('document.addEventListener("keydown", function(e) { if (e.keyCode == 79 && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) { e.preventDefault(); } }, false)');
+        }
+        #end
+
     }
 
     function loadAssets() {

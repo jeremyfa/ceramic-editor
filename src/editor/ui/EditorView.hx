@@ -152,15 +152,18 @@ class EditorView extends View implements Observable {
             });
             editorMenu.add(settingsButton);
             
-            var settingsButton = new ClickableIconView();
-            settingsButton.icon = DOWNLOAD;
-            settingsButton.viewSize(w, fill());
-            settingsButton.pointSize = s - 2;
-            settingsButton.tooltip('Export');
-            settingsButton.onClick(this, () -> {
-                model.exportFragments();
-            });
-            editorMenu.add(settingsButton);
+            if (!webWithoutElectron) {
+
+                var settingsButton = new ClickableIconView();
+                settingsButton.icon = DOWNLOAD;
+                settingsButton.viewSize(w, fill());
+                settingsButton.pointSize = s - 2;
+                settingsButton.tooltip('Export');
+                settingsButton.onClick(this, () -> {
+                    model.exportFragments();
+                });
+                editorMenu.add(settingsButton);
+            }
 
             var filler = new RowSeparator();
             filler.viewSize(16, fill());
