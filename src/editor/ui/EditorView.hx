@@ -101,15 +101,46 @@ class EditorView extends View implements Observable {
             });
             editorMenu.add(settingsButton);
             
+            var webWithoutElectron = false;
+            #if web
+            webWithoutElectron = (PlatformSpecific.resolveElectron() == null);
+            #end
+
             var settingsButton = new ClickableIconView();
             settingsButton.icon = FOLDER;
             settingsButton.viewSize(w, fill());
             settingsButton.pointSize = s - 2;
             settingsButton.tooltip('Open project...');
-            settingsButton.onClick(this, () -> {
-                model.openProject();
-            });
+            if (!webWithoutElectron) {
+                settingsButton.onClick(this, () -> {
+                    model.openProject();
+                });
+            }
             editorMenu.add(settingsButton);
+
+            #if web
+            if (webWithoutElectron) {
+                (function(settingsButton:ClickableIconView) {
+
+                    var fileInput = new WebFileInputView();
+                    fileInput.pos(0, 0);
+                    fileInput.depth = 10;
+
+                    settingsButton.add(fileInput);
+                    settingsButton.onLayout(fileInput, function() {
+                        fileInput.size(
+                            settingsButton.width,
+                            settingsButton.height
+                        );
+                    });
+
+                    fileInput.onOpen(this, function(name, contents) {
+                        model.openProject(name, contents);
+                    });
+
+                })(settingsButton);
+            }
+            #end
             
             var settingsButton = new ClickableIconView();
             settingsButton.icon = WINDOW;

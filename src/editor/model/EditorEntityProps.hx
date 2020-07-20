@@ -214,7 +214,6 @@ class EditorEntityProps extends Model {
 
         if (valueHasChanged && key == 'depth' && Std.is(entityData, EditorVisualData)) {
             var visualData:EditorVisualData = cast entityData;
-            log.warning('DEPTH DID CHANGE $prevValue -> $value');
             visualData.depthDidChange();
         }
 

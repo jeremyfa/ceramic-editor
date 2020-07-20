@@ -151,7 +151,7 @@ class EditorData extends Model {
 
     }
 
-    public function openProject(?file:String) {
+    public function openProject(?file:String, ?contents:String) {
 
         if (projectUnsaved) {
             Confirmation.confirm(
@@ -161,7 +161,10 @@ class EditorData extends Model {
                 confirmed -> {
                     if (confirmed) {
                         incrementLoading();
-                        if (file != null) {
+                        if (file != null && contents != null) {
+                            openProjectFromNameAndContents(file, contents);
+                        }
+                        else if (file != null) {
                             openProjectFromFilePath(file);
                         }
                         else {
@@ -223,9 +226,50 @@ class EditorData extends Model {
 
     }
 
+    public function openProjectFromNameAndContents(name:String, contents:String) {
+
+        log.debug('open: $name');
+        try {
+            incrementLoading();
+            var json = Json.parse(contents);
+            animationState.currentFrame = 0;
+            projectPath = null;
+            project.clear();
+            project.fromJson(json, name);
+            projectPath = name;
+            project.title = Path.withoutExtension(name);
+            markProjectNotUnsaved();
+            status('Using project with name: $projectPath');
+            scheduleDecrementLoading();
+        }
+        catch (e:Dynamic) {
+            Message.message(
+                'Error',
+                'Failed to open project with name:\n$name\n$e',
+                true
+            );
+        }
+
+    }
+
     public function saveProject(forceSaveAs:Bool = false) {
 
-        if (projectPath != null && !forceSaveAs) {
+        var webWithoutElectron = false;
+        #if web
+        if (PlatformSpecific.resolveElectron() == null) {
+            webWithoutElectron = true;
+        }
+        #end
+        if (webWithoutElectron) {
+            var saveAs:Dynamic = untyped global.saveAs;
+            var file = new js.html.File(
+                [Json.stringify(project.toJson(projectPath), null, '  ')],
+                Path.withoutDirectory(projectPath),
+                { type: "text/plain;charset=utf-8" }
+            );
+            saveAs(file);
+        }
+        else if (projectPath != null && !forceSaveAs) {
             Files.saveContent(projectPath, Json.stringify(project.toJson(projectPath), null, '  '));
             markProjectNotUnsaved();
             status('Project saved at path: $projectPath');
