@@ -60,12 +60,12 @@ class EditorView extends View implements Observable {
 
         // Panels tabs
         panelTabsView = new PanelTabsView();
-        panelTabsView.depth = 5;
+        panelTabsView.depth = 10;
         add(panelTabsView);
 
         // Left side menu
         editorMenu = new RowLayout();
-        editorMenu.depth = 6;
+        editorMenu.depth = 11;
         editorMenu.padding(0, 6, 0, 12);
         {
             var w = 38;
@@ -219,7 +219,7 @@ class EditorView extends View implements Observable {
 
         // Script editor view
         scriptEditorView = new ScriptEditorView();
-        scriptEditorView.depth = 9;
+        scriptEditorView.depth = 12;
         autorun(() -> {
             scriptEditorView.selectedScript = model.project.selectedScript;
         });
@@ -227,7 +227,7 @@ class EditorView extends View implements Observable {
 
         // Timeline editor view
         timelineEditorView = new TimelineEditorView(this);
-        timelineEditorView.depth = 10;
+        timelineEditorView.depth = 9;
         autorun(() -> {
             timelineEditorView.selectedFragment = model.project.lastSelectedFragment;
         });
@@ -235,12 +235,13 @@ class EditorView extends View implements Observable {
 
         editorsSeparator = new View();
         editorsSeparator.active = false;
-        editorsSeparator.depth = 11;
+        editorsSeparator.depth = 14;
+        bindEditorsSeparator();
         add(editorsSeparator);
 
         // Popup
         popup = new PopupView();
-        popup.depth = 12;
+        popup.depth = 20;
         add(popup);
 
         /*
@@ -283,9 +284,15 @@ class EditorView extends View implements Observable {
         });
 
         autorun(() -> {
-            var highFps = isScreenPointerDown || model.animationState.animating || model.requireHighFps > 0;
+            var highFps = true || isScreenPointerDown || model.requireHighFps > 0;
+            var veryHighFps = model.animationState.animating;
             unobserve();
-            if (highFps) {
+            if (veryHighFps) {
+                #if luxe
+                Luxe.core.update_rate = 0;
+                #end
+            }
+            else if (highFps) {
                 #if luxe
                 Luxe.core.update_rate = 1.0 / 30;
                 #end
@@ -298,16 +305,33 @@ class EditorView extends View implements Observable {
         });
 
     }
+        
+    var editorMenuHeight = 40;
+    var panelsTabsWidth = 320;
+    var bottomBarHeight = 18;
+    var leftSpacerSize = 6;
+
+    var availableViewportWidth(get,never):Float;
+    inline function get_availableViewportWidth():Float {
+        return width - panelsTabsWidth - leftSpacerSize - 2;
+    }
+
+    var availableViewportHeight(get,never):Float;
+    inline function get_availableViewportHeight():Float {
+        return height - bottomBarHeight - editorMenuHeight - timelineHeight;
+    }
+
+    var timelineHeight(get,never):Float;
+    inline function get_timelineHeight():Float {
+        return Math.max(height * 0.2, 220);
+    }
+
+    var baseScriptEditorWidth(get,never):Float;
+    inline function get_baseScriptEditorWidth():Float {
+        return Math.min(650, availableViewportWidth * 0.5) - 4;
+    }
 
     override function layout() {
-        
-        var editorMenuHeight = 40;
-        var panelsTabsWidth = 320;
-        var bottomBarHeight = 18;
-        var leftSpacerSize = 6;
-        var timelineHeight = Math.max(height * 0.2, 220);
-        var availableViewportWidth = width - panelsTabsWidth - leftSpacerSize - 2;
-        var availableViewportHeight = height - bottomBarHeight - editorMenuHeight - timelineHeight;
 
         leftSpacerView.size(leftSpacerSize, height);
         leftSpacerView.pos(0, 0);
@@ -329,7 +353,13 @@ class EditorView extends View implements Observable {
         var shouldDisplayFragmentEditor = fragmentEditorView.selectedFragment != null;
         if (shouldDisplayScriptEditor && shouldDisplayFragmentEditor) {
 
-            var scriptEditorWidth = Math.min(650, availableViewportWidth * 0.5) - 1;
+            var scriptEditorWidth = baseScriptEditorWidth + model.settings.editorsSeparatorOffset;
+            if (scriptEditorWidth < 50) {
+                scriptEditorWidth = 50;
+            }
+            else if (scriptEditorWidth > availableViewportWidth - 50) {
+                scriptEditorWidth = availableViewportWidth - 50;
+            }
 
             scriptEditorView.active = true;
             scriptEditorView.size(scriptEditorWidth, availableViewportHeight);
@@ -337,11 +367,11 @@ class EditorView extends View implements Observable {
 
             editorsSeparator.active = true;
             editorsSeparator.pos(scriptEditorView.x + scriptEditorWidth, editorMenuHeight);
-            editorsSeparator.size(1, availableViewportHeight);
+            editorsSeparator.size(8, availableViewportHeight);
 
             fragmentEditorView.active = true;
-            fragmentEditorView.size(availableViewportWidth - scriptEditorWidth - 1, availableViewportHeight);
-            fragmentEditorView.pos(1 + scriptEditorView.x + scriptEditorWidth, editorMenuHeight);
+            fragmentEditorView.size(availableViewportWidth - scriptEditorWidth - editorsSeparator.width, availableViewportHeight);
+            fragmentEditorView.pos(editorsSeparator.width + scriptEditorView.x + scriptEditorWidth, editorMenuHeight);
         }
         else if (shouldDisplayScriptEditor) {
 
@@ -405,10 +435,10 @@ class EditorView extends View implements Observable {
         var selectedName = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
 
         if (selectedFragment == null) {
-            panelTabsView.tabViews.tabs = ['Containers', 'Scripts'];
+            panelTabsView.tabViews.tabs = ['Fragments', 'Scripts'];
         }
         else {
-            panelTabsView.tabViews.tabs = ['Entities', 'Visuals', 'Containers', 'Scripts'];
+            panelTabsView.tabViews.tabs = ['Visuals', 'Entities', 'Fragments', 'Scripts'];
         }
 
         // Restore selected tab name on new tab list
@@ -495,7 +525,7 @@ class EditorView extends View implements Observable {
         var contentViewClass:Class<View> = switch (selectedName) {
             case 'Entities': EntitiesPanelView;
             case 'Visuals': VisualsPanelView;
-            case 'Containers': EditableElementsPanelView;
+            case 'Fragments': EditableElementsPanelView;
             case 'Scripts': ScriptsPanelView;
             default: null;
         }
@@ -517,6 +547,38 @@ class EditorView extends View implements Observable {
 
     }
 
+    var editorsSeparatorDragStart:Float = 0;
+    var editorsSeparatorOffsetStart:Float = 0;
+
+    function bindEditorsSeparator() {
+
+        editorsSeparator.onPointerDown(this, handleEditorsSeparatorDown);
+        editorsSeparator.onPointerUp(this, handleEditorsSeparatorUp);
+
+    }
+
+    function handleEditorsSeparatorDown(info:TouchInfo) {
+
+        editorsSeparatorDragStart = info.x;
+        editorsSeparatorOffsetStart = model.settings.editorsSeparatorOffset;
+
+        screen.onPointerMove(this, handleEditorsSeparatorMove);
+
+    }
+
+    function handleEditorsSeparatorMove(info:TouchInfo) {
+
+        model.settings.editorsSeparatorOffset = editorsSeparatorOffsetStart + info.x - editorsSeparatorDragStart;
+        layoutDirty = true;
+
+    }
+
+    function handleEditorsSeparatorUp(info:TouchInfo) {
+
+        screen.offPointerMove(handleEditorsSeparatorMove);
+
+    }
+
     function bindKeyBindings() {
 
         app.onKeyDown(this, handleKeyDown);
@@ -527,7 +589,15 @@ class EditorView extends View implements Observable {
             var selectedItem = getSelectedItemIfFocusedInFragment();
             if (selectedItem != null) {
                 log.debug('COPY selected item');
-                app.backend.clipboard.setText('{"ceramic-editor":{"entity":' + Json.stringify(selectedItem.toJson()) + '}}');
+                // For now, data gets messy when copy/pasting on another frame than zero
+                // We might improve this later, but force frame zero when copying for now
+                model.animationState.currentFrame = 0;
+                app.onceUpdate(this, function(_) {
+                    app.onceUpdate(this, function(_) {
+                    if (selectedItem.destroyed)
+                        return;
+                    app.backend.clipboard.setText('{"ceramic-editor":{"entity":' + Json.stringify(selectedItem.toJson()) + '}}');
+                });});
             }
             else {
                 var selectedKeyframes = getSelectedKeyframesIfFocusedInTimeline();
@@ -552,6 +622,7 @@ class EditorView extends View implements Observable {
             var clipboardText = app.backend.clipboard.getText();
             log.debug('PASTE $clipboardText');
             if (clipboardText != null && clipboardText.startsWith('{"ceramic-editor":')) {
+                var prevLockKeyframes = model.lockKeyframes;
                 try {
                     var parsed:Dynamic = Reflect.field(Json.parse(clipboardText), 'ceramic-editor');
                     if (FieldManager.manager.focusedField == null && popup.contentView == null) {
@@ -559,6 +630,7 @@ class EditorView extends View implements Observable {
                             // Paste entity
                             var fragment = model.project.lastSelectedFragment;
                             if (fragment != null) {
+                                model.lockKeyframes++;
 
                                 // When pasting entity, we need to reset timeline position
                                 model.animationState.currentFrame = 0;
@@ -578,6 +650,12 @@ class EditorView extends View implements Observable {
                                 fragment.selectedItem = item;
 
                                 model.history.step();
+
+                                app.onceUpdate(model, function(_) {
+                                    app.onceUpdate(model, function(_) {
+                                        model.lockKeyframes--;
+                                    });
+                                });
                             }
                             else {
                                 log.warning('Failed to paste entity: no selected fragment');
@@ -623,6 +701,7 @@ class EditorView extends View implements Observable {
                     }
                 }
                 catch (e:Dynamic) {
+                    model.lockKeyframes = prevLockKeyframes;
                     log.error('Failed to parse clipboard text: $e');
                 }
             }
@@ -720,7 +799,7 @@ class EditorView extends View implements Observable {
                     if (screen.focusedVisual.hasIndirectParent(timelineEditorView)) {
                         var result:Map<String,EditorTimelineKeyframe> = null;
                         var currentFrame = model.animationState.currentFrame;
-                        for (track in selectedItem.timelineTracks) {
+                        for (track in selectedItem.selectedTimelineTracks) {
                             var keyframe = track.keyframeAtIndex(currentFrame);
                             if (keyframe != null) {
                                 if (result == null) {
@@ -750,7 +829,11 @@ class EditorView extends View implements Observable {
         leftSpacerBorder.color = theme.darkBorderColor;
 
         editorsSeparator.transparent = false;
-        editorsSeparator.color = theme.darkBorderColor;
+        editorsSeparator.color = theme.lightBackgroundColor;
+        editorsSeparator.borderLeftSize = 1;
+        editorsSeparator.borderRightSize = 1;
+        editorsSeparator.borderPosition = INSIDE;
+        editorsSeparator.borderColor = theme.darkBorderColor;
 
         editorMenu.transparent = false;
         editorMenu.color = theme.lightBackgroundColor;

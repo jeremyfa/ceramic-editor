@@ -108,7 +108,6 @@ class Editable extends Entity implements Component implements Observable {
 
         highlight.anchor(0, 0);
         highlight.pos(0, 0);
-        highlight.depth = 500;
         highlight.transform = new Transform();
         wrapVisual(entity);
 
@@ -126,6 +125,7 @@ class Editable extends Entity implements Component implements Observable {
             onShiftPressedChange(highlight, handleShiftPressedChange);
         }
 
+        highlight.depth = 1;
         editor.view.fragmentEditorView.fragmentOverlay.add(highlight);
 
         app.onUpdate(this, update);

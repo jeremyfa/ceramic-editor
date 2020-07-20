@@ -10,7 +10,7 @@ class EntityFieldUtils {
         var options:Dynamic = field.meta.editable[0];
 
         if (options.slider != null) {
-            return createEditableSliderField(options, item, name);
+            return createEditableSliderField(options, item, name, type);
         }
         else if (type == 'String' || type == 'Float' || type == 'Int') {// || type == 'Array<Float>' || type == 'Array<Int>') {
             return createEditableTextField(options, item, name, type);
@@ -73,7 +73,7 @@ class EntityFieldUtils {
 
     }
 
-    public static function createEditableSliderField(options:Dynamic, item:EditorEntityData, name:String):SliderFieldView {
+    public static function createEditableSliderField(options:Dynamic, item:EditorEntityData, name:String, type:String):SliderFieldView {
 
         var minValue:Float = 0;
         var maxValue:Float = 1;
@@ -94,7 +94,7 @@ class EntityFieldUtils {
             }
         }
         if (!hasDecimalsValue) {
-            if (maxValue - minValue >= 100) {
+            if (maxValue - minValue >= 100 || type == 'Int') {
                 decimals = 0;
             }
             else {

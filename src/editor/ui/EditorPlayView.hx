@@ -48,10 +48,7 @@ class EditorPlayView extends View {
 
         var fragmentData = editorFragmentData.toFragmentData();
 
-        fragment = new Fragment({
-            assets: editor.contentAssets,
-            editedItems: false
-        });
+        fragment = new Fragment(editor.contentAssets, false);
         add(fragment);
 
         fragment.fragmentData = fragmentData;

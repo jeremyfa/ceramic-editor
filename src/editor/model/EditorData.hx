@@ -10,6 +10,8 @@ using tracker.History;
 @:allow(editor.Editor)
 class EditorData extends Model {
 
+    @event function scriptLog(color:Color, message:String);
+
     @component public var history:History;
 
     @serialize public var projectUnsaved:Bool = false;
@@ -54,6 +56,8 @@ class EditorData extends Model {
 
     @observe public var requireHighFps(default,null):Int = 0;
 
+    public var lockKeyframes:Int = 0;
+
     var clearStatusMessageDelay:Void->Void = null;
     
     var ignoreUnsaved:Int = 0;
@@ -87,7 +91,7 @@ class EditorData extends Model {
             autorun(updateScripts);
         });
 
-        Script.errorHandlers.push(handleScriptError);
+        bindScriptHandlers();
 
     }
 
@@ -96,15 +100,10 @@ class EditorData extends Model {
         super.destroy();
 
         Script.errorHandlers.remove(handleScriptError);
+        Script.traceHandlers.remove(handleScriptTrace);
 
         trace('MODEL DESTROY');
         
-    }
-
-    function handleScriptError(error:String, line:Int, char:Int) {
-
-        status(error, Color.RED);
-
     }
 
     public function status(message:String, color:Color = Color.WHITE, duration:Float = 60) {
@@ -569,6 +568,68 @@ class EditorData extends Model {
             }
         }
 
+    }
+
+    function bindScriptHandlers() {
+
+        Script.errorHandlers.push(handleScriptError);
+        Script.traceHandlers.push(handleScriptTrace);
+        Script.log.onInfo(this, handleScriptLogInfo);
+        Script.log.onDebug(this, handleScriptLogDebug);
+        Script.log.onSuccess(this, handleScriptLogSuccess);
+        Script.log.onWarning(this, handleScriptLogWarning);
+        Script.log.onError(this, handleScriptLogError);
+        
+    }
+
+    function handleScriptError(error:String, line:Int, char:Int) {
+
+        status(error, Color.RED);
+
+    }
+
+    function handleScriptTrace(v:Dynamic, ?pos:haxe.PosInfos) {
+        
+        emitScriptLog(0xACACAC, '' + v);
+
+    }
+
+    function handleScriptLogInfo(v:Dynamic, ?pos:haxe.PosInfos) {
+        
+        emitScriptLog(0x14829D, '' + v);
+        
+    }
+
+    function handleScriptLogDebug(v:Dynamic, ?pos:haxe.PosInfos) {
+        
+        emitScriptLog(0xA039A0, '' + v);
+        
+    }
+
+    function handleScriptLogSuccess(v:Dynamic, ?pos:haxe.PosInfos) {
+        
+        emitScriptLog(0x0DBC79, '' + v);
+        
+    }
+
+    function handleScriptLogWarning(v:Dynamic, ?pos:haxe.PosInfos) {
+        
+        emitScriptLog(0xADAD14, '' + v);
+        
+    }
+
+    function handleScriptLogError(v:Dynamic, ?pos:haxe.PosInfos) {
+
+        // Do not display parse script errors as log
+        if (Std.is(v, String)) {
+            var str:String = v;
+            if (str.startsWith('Failed to parse script: ')) {
+                return;
+            }
+        }
+        
+        emitScriptLog(0xC32F2F, '' + v);
+        
     }
 
 }

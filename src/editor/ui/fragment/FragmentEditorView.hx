@@ -30,6 +30,8 @@ class FragmentEditorView extends View implements Observable {
 
     var editorView:EditorView;
 
+    var loggerView:ColumnLayout;
+
     var itemAutoruns:Array<Autorun> = null;
 
     var trackAutoruns:Array<Autorun> = null;
@@ -58,9 +60,33 @@ class FragmentEditorView extends View implements Observable {
         fragmentBackground.transform = fragmentTransform;
         add(fragmentBackground);
 
+        // Fragment logs
+        loggerView = new ColumnLayout();
+        loggerView.depth = 9;
+        loggerView.align = BOTTOM;
+        loggerView.paddingBottom = 4;
+        loggerView.anchor(0, 1);
+        model.onScriptLog(this, function(color, message) {
+            var logText = new TextView();
+            logText.textColor = color;
+            logText.font = theme.mediumFont;
+            logText.preRenderedSize = 20;
+            logText.pointSize = 10;
+            logText.content = message;
+            logText.align = LEFT;
+            logText.verticalAlign = TOP;
+            logText.padding(0, 4);
+            logText.viewSize(fill(), auto());
+            loggerView.add(logText);
+            Timer.delay(logText, 10.0, () -> {
+                logText.destroy();
+            });
+        });
+        add(loggerView);
+
         headerView = new RowLayout();
         headerView.padding(0, 6);
-        headerView.depth = 3;
+        headerView.depth = 10;
         {
             var leftIconView = new ClickableIconView();
             leftIconView.viewSize(24, fill());
@@ -134,10 +160,7 @@ class FragmentEditorView extends View implements Observable {
             editedFragment = null;
         }
 
-        editedFragment = new Fragment({
-            assets: editor.contentAssets,
-            editedItems: true
-        });
+        editedFragment = new Fragment(editor.contentAssets, true);
         editedFragment.transform = fragmentTransform;
         editedFragment.timeline = new Timeline();
         var wasAnimating = model.animationState.animating;
@@ -470,7 +493,7 @@ class FragmentEditorView extends View implements Observable {
                 else if (entity.id == selectedVisual.entityId) {
                     unobserve();
                     editable.select();
-                    Editable.highlight.clip = fragmentOverlay;
+                    //Editable.highlight.clip = fragmentOverlay;
                     reobserve();
                 }
             }
@@ -503,6 +526,9 @@ class FragmentEditorView extends View implements Observable {
             
             var fragmentData = this.selectedFragment;
             var entityData = fragmentData.get(visual.id);
+            if (entityData == null)
+                return;
+            
             fragmentData.selectedItem = entityData;
 
             // Auto-select related script (if any)
@@ -661,8 +687,13 @@ class FragmentEditorView extends View implements Observable {
         );
         fragmentOverlay.size(availableFragmentWidth, availableFragmentHeight);
 
+        loggerView.viewSize(availableFragmentWidth, availableFragmentHeight);
+        loggerView.computeSizeIfNeeded(availableFragmentWidth, availableFragmentHeight, ViewLayoutMask.FIXED, true);
+        loggerView.applyComputedSize();
+        loggerView.pos(fragmentOverlay.x, fragmentOverlay.y + fragmentOverlay.height);
+
         headerView.viewSize(availableFragmentWidth, headerViewHeight);
-        headerView.computeSize(availableFragmentWidth, headerViewHeight, ViewLayoutMask.FIXED, true);
+        headerView.computeSizeIfNeeded(availableFragmentWidth, headerViewHeight, ViewLayoutMask.FIXED, true);
         headerView.applyComputedSize();
         headerView.pos(0, 0);
 

@@ -65,7 +65,7 @@ class SelectFieldView extends FieldView implements Observable {
         listContainer.transparent = true;
         listContainer.viewSize(0, 0);
         listContainer.active = false;
-        listContainer.depth = 40;
+        listContainer.depth = 26;
         editor.view.add(listContainer);
 
         tip = new Line();
@@ -344,32 +344,55 @@ class SelectFieldView extends FieldView implements Observable {
         if (!listContainer.active)
             return;
         
+
+        var scrollingLayout = getScrollingLayout();
+        
         container.visualToScreen(
             0,
             0,
             _point
         );
-        editor.view.screenToVisual(_point.x, _point.y, _point);
+        
+        var x = _point.x;
+        var y = _point.y;
 
-        if (editor.view.height - _point.y <= listHeight()) {
+        // if (scrollingLayout != null && scrollingLayout.filter != null && scrollingLayout.filter.enabled) {
+        //     scrollingLayout.visualToScreen(0, 0, _point);
+        //     x += _point.x;
+        //     y += _point.y;
+        // }
+
+        editor.view.screenToVisual(x, y, _point);
+        x = _point.x;
+        y = _point.y;
+
+        if (editor.view.height - y <= listHeight()) {
             listIsAbove = true;
             container.visualToScreen(
                 0,
                 container.height - listHeight(),
                 _point
             );
-            editor.view.screenToVisual(_point.x, _point.y, _point);
+        
+            x = _point.x;
+            y = _point.y;
+
+            // if (scrollingLayout != null && scrollingLayout.filter != null && scrollingLayout.filter.enabled) {
+            //     scrollingLayout.visualToScreen(0, 0, _point);
+            //     x += _point.x;
+            //     y += _point.y;
+            // }
+
+            editor.view.screenToVisual(x, y, _point);
+            x = _point.x;
+            y = _point.y;
         }
         else {
             listIsAbove = false;
         }
-        
-        var x = _point.x;
-        var y = _point.y;
 
         // Clip if needed
         if (listVisible) {
-            var scrollingLayout = getScrollingLayout();
             if (scrollingLayout != null) {
                 scrollingLayout.screenToVisual(0, 0, _point);
                 editor.view.screenToVisual(_point.x, _point.y, _point);

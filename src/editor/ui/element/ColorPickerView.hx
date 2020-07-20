@@ -234,11 +234,6 @@ class ColorPickerView extends LayersLayout implements Observable {
         autorun(updateSize);
         autorun(updateFromColorDrop);
 
-        autorun(() -> {
-            log.debug('dragging: $draggingColorPreview');
-            log.debug('dropIndex: $draggingColorDropIndex');
-        });
-
     }
 
     function getColorPickerWidth() {
@@ -426,8 +421,6 @@ class ColorPickerView extends LayersLayout implements Observable {
 /// Public API
 
     public function setColorFromRGB(r:Int, g:Int, b:Int) {
-
-        log.debug('setColorFromRGB($r, $g, $b)');
 
         updatingColor++;
 

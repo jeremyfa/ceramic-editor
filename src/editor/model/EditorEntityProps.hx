@@ -68,9 +68,9 @@ class EditorEntityProps extends Model {
                     var scriptId:String = value;
                     unobserve();
                     if (scriptId != null) {
-                        if (entityData.fragmentData != null && entityData.fragmentData.selectedItem == entityData) {
+                        /*if (entityData.fragmentData != null && model.project.lastSelectedFragment == entityData.fragmentData && entityData.fragmentData.selectedItem == entityData) {
                             model.project.selectedScript = model.project.scriptById(scriptId);
-                        }
+                        }*/
                         reobserve();
                         var scriptValue = model != null ? model.scripts.get(value) : null;
                         if (scriptValue != null) {
@@ -108,7 +108,7 @@ class EditorEntityProps extends Model {
         if (!Equal.equal(prevValue, value))
             valueHasChanged = true;
 
-        if (!valueHasChanged || model.animationState.animating || model.animationState.wasJustAnimating > 0)
+        if (model.lockKeyframes > 0 || !valueHasChanged || model.animationState.animating || model.animationState.wasJustAnimating > 0)
             canAutoKeyframe = false;
 
         // TODO cache?
@@ -128,7 +128,7 @@ class EditorEntityProps extends Model {
         var currentFrame = 0;
         if (entityData != null) {
             var track = entityData.timelineTrackForField(key);
-            if (track != null) {
+            if (track != null && model.lockKeyframes == 0) {
 
                 doesUpdateTrack = true;
 

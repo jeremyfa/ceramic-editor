@@ -17,6 +17,7 @@ type AnyVisual = Visual & Text & Mesh & Quad;
 const self: Entity;
 const entity: Entity;
 const visual: AnyVisual;
+const fragment: Fragment;
 
 const app: App;
 const screen: Screen;
@@ -79,7 +80,7 @@ class SerializeModel extends Entity implements Component {
     checkInterval: Float;
     compactInterval: Float;
     destroyModelOnUntrack: Bool;
-    serializedMap: Map<K, V>;
+    serializedMap: haxe.ds.Map<K, V>;
     model: Model;
     entity: Model;
     /** Recompute the whole object tree instead of appending. This will untrack every object not on the model anymore
@@ -264,6 +265,58 @@ class Autorun extends Entity {
     unbindEvents(): Void;
 }
 
+/**
+	StringMap allows mapping of String keys to arbitrary values.
+
+	See `Map` for documentation details.
+
+	@see https://haxe.org/manual/std-Map.html
+*/
+class StringMap<T> implements haxe.IMap {
+    /**
+		Creates a new StringMap.
+	*/
+    constructor();
+    /**
+		See `Map.set`
+	*/
+    set(key: String, value: T): Void;
+    /**
+		See `Map.get`
+	*/
+    get(key: String): T?;
+    /**
+		See `Map.exists`
+	*/
+    exists(key: String): Bool;
+    /**
+		See `Map.remove`
+	*/
+    remove(key: String): Bool;
+    /**
+		See `Map.keys`
+
+		(cs, java) Implementation detail: Do not `set()` any new value while
+		iterating, as it may cause a resize, which will break iteration.
+	*/
+    keys(): TAnonymous;
+    /**
+		See `Map.iterator`
+
+		(cs, java) Implementation detail: Do not `set()` any new value while
+		iterating, as it may cause a resize, which will break iteration.
+	*/
+    iterator(): TAnonymous;
+    /**
+		See `Map.keyValueIterator`
+	*/
+    keyValueIterator(): TAnonymous;
+    /**
+		See `Map.toString`
+	*/
+    toString(): String;
+}
+
 class RotateFrame {
     static NONE: Int;
     static ROTATE_90: Int;
@@ -292,6 +345,68 @@ class MeshColorMapping {
     static INDICES: Int;
     /** Map a color to each vertex. */
     static VERTICES: Int;
+}
+
+interface Map<K, V> {
+    /**
+		Maps `key` to `value`.
+
+		If `key` already has a mapping, the previous value disappears.
+
+		If `key` is `null`, the result is unspecified.
+	*/
+    set(key: K, value: V): Void;
+    /**
+		Returns the current mapping of `key`.
+
+		If no such mapping exists, `null` is returned.
+
+		Note that a check like `map.get(key) == null` can hold for two reasons:
+
+		1. the map has no mapping for `key`
+		2. the map has a mapping with a value of `null`
+
+		If it is important to distinguish these cases, `exists()` should be
+		used.
+
+		If `key` is `null`, the result is unspecified.
+	*/
+    get(key: K): V;
+    /**
+		Returns true if `key` has a mapping, false otherwise.
+
+		If `key` is `null`, the result is unspecified.
+	*/
+    exists(key: K): Bool;
+    /**
+		Removes the mapping of `key` and returns true if such a mapping existed,
+		false otherwise.
+
+		If `key` is `null`, the result is unspecified.
+	*/
+    remove(key: K): Bool;
+    /**
+		Returns an Iterator over the keys of `this` Map.
+
+		The order of keys is undefined.
+	*/
+    keys(): TAnonymous;
+    /**
+		Returns an Iterator over the values of `this` Map.
+
+		The order of values is undefined.
+	*/
+    iterator(): TAnonymous;
+    /**
+		Returns an Iterator over the keys and values of `this` Map.
+
+		The order of values is undefined.
+	*/
+    keyValueIterator(): TAnonymous;
+    /**
+		Removes all keys from `this` Map.
+	*/
+    clear(): Void;
 }
 
 class Flags {
@@ -921,9 +1036,9 @@ class Visual extends Entity implements Collidable {
     /** Returns true if screen (x, y) screen coordinates hit/intersect this visual visible bounds */
     hits(x: Float, y: Float): Bool;
     /** Assign X and Y to given point after converting them from screen coordinates to current visual coordinates. */
-    screenToVisual(x: Float, y: Float, point: Point): Void;
+    screenToVisual(x: Float, y: Float, point: Point, handleFilters?: Bool): Void;
     /** Assign X and Y to given point after converting them from current visual coordinates to screen coordinates. */
-    visualToScreen(x: Float, y: Float, point: Point): Void;
+    visualToScreen(x: Float, y: Float, point: Point, handleFilters?: Bool): Void;
     /** Assign X and Y to given point after converting them from current visual coordinates to screen coordinates. */
     visualToTransform(transform: Transform): Void;
     computeContent(): Void;
@@ -1190,7 +1305,7 @@ class TrackerBackend {
 class TrackEntities extends Entity implements Component {
     constructor();
     entity: Entity;
-    entityMap: Map<K, V>;
+    entityMap: haxe.ds.Map<K, V>;
     /** Compute the whole object tree to see which entities are in it.
         It will then be possible to compare the result with a previous scan and detect new and unused entities. */
     scan(): Void;
@@ -1364,6 +1479,8 @@ class Timeline extends Entity implements Component {
     autoFitDuration: Bool;
     /** Whether this timeline should loop. Ignored if timeline's `duration` is `-1` (not defined). */
     loop: Bool;
+    /** Whether this timeline should bind itself to update cycle automatically or not (default `true`). */
+    autoUpdate: Bool;
     /** Elapsed time on this timeline.
         Gets back to zero when `loop=true` and time reaches a defined `duration`. */
     time: Float;
@@ -1371,6 +1488,7 @@ class Timeline extends Entity implements Component {
     tracks: Array<TimelineTrack<TimelineKeyframe>>;
     /** Whether this timeline is paused or not. */
     paused: Bool;
+    update(delta: Float): Void;
     /** Seek the given time (in seconds) in the timeline.
         Will take care of clamping `time` or looping it depending on `duration` and `loop` properties. */
     seek(targetTime: Float): Void;
@@ -2114,6 +2232,8 @@ type ScriptContent = String;
 class Script extends Entity implements Component {
     constructor(content: String);
     static errorHandlers: Array<((error: String, line: Int, char: Int) => Void)>;
+    static traceHandlers: Array<((v: Dynamic, pos?: TAnonymous) => Void)>;
+    static log: Logger;
     content: String;
     program: hscript.Expr;
     interp: ceramic.Interp;
@@ -2122,6 +2242,7 @@ class Script extends Entity implements Component {
     run(): Void;
     getEntity(itemId: String): Entity;
     getModule(itemId: String): ScriptModule;
+    get(name: String): Dynamic;
     call(name: String, args?: Array<Dynamic>?): Dynamic;
     callScriptMethod(name: String, numArgs: Int, arg1?: Dynamic?, arg2?: Dynamic?, arg3?: Dynamic?): Dynamic;
     entity: Entity;
@@ -3515,6 +3636,11 @@ class Key {
     scanCodeName: String;
 }
 
+class Json {
+    static stringify(value: Dynamic, replacer?: ((key: Dynamic, value: Dynamic) => Dynamic)?, space?: String?): String;
+    static parse(text: String): Dynamic;
+}
+
 /** An object map that uses integers as key. */
 class IntMap<V> {
     constructor(size?: Int, fillFactor?: Float, iterable?: Bool);
@@ -3701,6 +3827,8 @@ interface FragmentItem {
 }
 
 interface FragmentData {
+    /** Timeline tracks for each named animation */
+    animationTracks?: haxe.DynamicAccess<Array<TAnonymous>>?;
     /** Fragment color (if not transparent, default `BLACK`) */
     color?: Color?;
     /** Fragment-level components */
@@ -3728,28 +3856,75 @@ interface FragmentData {
     width: Float;
 }
 
-class FragmentContext {
-    constructor(assets: Assets, editedItems?: Bool?, parent?: Fragment?);
-    /** The assets registry used to load/unload assets in this fragment */
-    assets: Assets;
-    /** Whether the items are edited items or not */
-    editedItems: Bool;
-    /**
-     * Parent fragment (if any)
-     */
-    parent: Fragment;
-}
-
 /** A fragment is a group of visuals rendered from data (.fragment file) */
 class Fragment extends Layer {
-    constructor(context: FragmentContext);
+    constructor(assets?: Assets?, editedItems?: Bool);
+    static cacheData(fragmentData: TAnonymous): Void;
+    /**
+     * A static helper to get a fragment data object from fragment id.
+     * Fragments need to be cached first with `cacheFragmentData()`,
+     * unless an editor instance is being active.
+     * @param fragmentId 
+     * @return Null<FragmentData>
+     */
+    static getData(fragmentId: String): TAnonymous?;
+    /**floatAChange event*/
+    onFloatAChange(owner: Entity?, handleFloatAPrevFloatA: ((floatA: Float, prevFloatA: Float) => Void)): Void;
+    /**floatAChange event*/
+    onceFloatAChange(owner: Entity?, handleFloatAPrevFloatA: ((floatA: Float, prevFloatA: Float) => Void)): Void;
+    /**floatAChange event*/
+    offFloatAChange(handleFloatAPrevFloatA?: ((floatA: Float, prevFloatA: Float) => Void)?): Void;
+    /**Does it listen to floatAChange event*/
+    listensFloatAChange(): Bool;
+    /**floatBChange event*/
+    onFloatBChange(owner: Entity?, handleFloatBPrevFloatB: ((floatB: Float, prevFloatB: Float) => Void)): Void;
+    /**floatBChange event*/
+    onceFloatBChange(owner: Entity?, handleFloatBPrevFloatB: ((floatB: Float, prevFloatB: Float) => Void)): Void;
+    /**floatBChange event*/
+    offFloatBChange(handleFloatBPrevFloatB?: ((floatB: Float, prevFloatB: Float) => Void)?): Void;
+    /**Does it listen to floatBChange event*/
+    listensFloatBChange(): Bool;
+    /**floatCChange event*/
+    onFloatCChange(owner: Entity?, handleFloatCPrevFloatC: ((floatC: Float, prevFloatC: Float) => Void)): Void;
+    /**floatCChange event*/
+    onceFloatCChange(owner: Entity?, handleFloatCPrevFloatC: ((floatC: Float, prevFloatC: Float) => Void)): Void;
+    /**floatCChange event*/
+    offFloatCChange(handleFloatCPrevFloatC?: ((floatC: Float, prevFloatC: Float) => Void)?): Void;
+    /**Does it listen to floatCChange event*/
+    listensFloatCChange(): Bool;
+    /**floatDChange event*/
+    onFloatDChange(owner: Entity?, handleFloatDPrevFloatD: ((floatD: Float, prevFloatD: Float) => Void)): Void;
+    /**floatDChange event*/
+    onceFloatDChange(owner: Entity?, handleFloatDPrevFloatD: ((floatD: Float, prevFloatD: Float) => Void)): Void;
+    /**floatDChange event*/
+    offFloatDChange(handleFloatDPrevFloatD?: ((floatD: Float, prevFloatD: Float) => Void)?): Void;
+    /**Does it listen to floatDChange event*/
+    listensFloatDChange(): Bool;
+    editedItems: Bool;
+    assets: Assets;
     entities: Array<Entity>;
     items: Array<TAnonymous>;
     tracks: Array<TAnonymous>;
     fps: Int;
-    context: FragmentContext;
     fragmentData: TAnonymous;
     resizable: Bool;
+    autoUpdateTimeline: Bool;
+    /**
+     * Custom float value that can be used in editor
+     */
+    floatA: Float;
+    /**
+     * Custom float value that can be used in editor
+     */
+    floatB: Float;
+    /**
+     * Custom float value that can be used in editor
+     */
+    floatC: Float;
+    /**
+     * Custom float value that can be used in editor
+     */
+    floatD: Float;
     pendingLoads: Int;
     timeline: Timeline;
     /**ready event*/
@@ -3791,6 +3966,8 @@ class Fragment extends Layer {
     putTrack(entityType?: String?, track: TAnonymous): Void;
     getTrack(entity: String, field: String): TAnonymous;
     removeTrack(entity: String, field: String): Void;
+    createTimelineIfNeeded(): Void;
+    paused: Bool;
     unbindEvents(): Void;
 }
 
@@ -3814,7 +3991,7 @@ class FontAsset extends Asset {
     /**Does it listen to replaceFont event*/
     listensReplaceFont(): Bool;
     fontData: BitmapFontData;
-    pages: Map<K, V>;
+    pages: haxe.ds.Map<K, V>;
     font: BitmapFont;
     invalidateFont(): Void;
     /**Event when font field changes.*/
@@ -3908,9 +4085,9 @@ class FileWatcher extends Entity {
  * or classes using FieldInfoMacro. 
  */
 class FieldInfo {
-    static types(targetClass: String, recursive?: Bool): Map<K, V>;
+    static types(targetClass: String, recursive?: Bool): haxe.ds.Map<K, V>;
     static typeOf(targetClass: String, field: String): String;
-    static editableFieldInfo(targetClass: String, recursive?: Bool): Map<K, V>;
+    static editableFieldInfo(targetClass: String, recursive?: Bool): haxe.ds.Map<K, V>;
 }
 
 /** A bunch of static extensions to make life easier. */
@@ -3997,6 +4174,14 @@ class EditText extends Entity implements TextInputDelegate, Component {
     offUpdate(handleContent?: ((content: String) => Void)?): Void;
     /**Does it listen to update event*/
     listensUpdate(): Bool;
+    /**start event*/
+    onStart(owner: Entity?, handle: (() => Void)): Void;
+    /**start event*/
+    onceStart(owner: Entity?, handle: (() => Void)): Void;
+    /**start event*/
+    offStart(handle?: (() => Void)?): Void;
+    /**Does it listen to start event*/
+    listensStart(): Bool;
     /**stop event*/
     onStop(owner: Entity?, handle: (() => Void)): Void;
     /**stop event*/
@@ -4140,8 +4325,8 @@ class ConvertTexture implements ConvertField {
 
 class ConvertMap<T> implements ConvertField {
     constructor();
-    basicToField(assets: Assets, basic: haxe.DynamicAccess<T>, done: ((arg1: Map<K, V>) => Void)): Void;
-    fieldToBasic(value: Map<K, V>): haxe.DynamicAccess<T>;
+    basicToField(assets: Assets, basic: haxe.DynamicAccess<T>, done: ((arg1: haxe.ds.Map<K, V>) => Void)): Void;
+    fieldToBasic(value: haxe.ds.Map<K, V>): haxe.DynamicAccess<T>;
 }
 
 class ConvertFragmentData implements ConvertField {
@@ -4168,8 +4353,8 @@ interface ConvertField<T, U> {
 
 class ConvertComponentMap implements ConvertField {
     constructor();
-    basicToField(assets: Assets, basic: haxe.DynamicAccess<String>, done: ((arg1: Map<K, V>) => Void)): Void;
-    fieldToBasic(value: Map<K, V>): haxe.DynamicAccess<String>;
+    basicToField(assets: Assets, basic: haxe.DynamicAccess<String>, done: ((arg1: haxe.ds.Map<K, V>) => Void)): Void;
+    fieldToBasic(value: haxe.ds.Map<K, V>): haxe.DynamicAccess<String>;
 }
 
 class ComputeFps {
@@ -4292,16 +4477,16 @@ class BitmapFontDistanceFieldData {
 }
 
 class BitmapFontData {
-    constructor(face: String, pointSize: Float, baseSize: Float, chars: Map<K, V>, charCount: Int, distanceField: BitmapFontDistanceFieldData?, pages: Array<TAnonymous>, lineHeight: Float, kernings: Map<K, V>);
+    constructor(face: String, pointSize: Float, baseSize: Float, chars: haxe.ds.Map<K, V>, charCount: Int, distanceField: BitmapFontDistanceFieldData?, pages: Array<TAnonymous>, lineHeight: Float, kernings: haxe.ds.Map<K, V>);
     face: String;
     pointSize: Float;
     baseSize: Float;
-    chars: Map<K, V>;
+    chars: haxe.ds.Map<K, V>;
     charCount: Int;
     distanceField: BitmapFontDistanceFieldData?;
     pages: Array<TAnonymous>;
     lineHeight: Float;
-    kernings: Map<K, V>;
+    kernings: haxe.ds.Map<K, V>;
 }
 
 class BitmapFontCharacter {
@@ -4318,16 +4503,16 @@ class BitmapFontCharacter {
 }
 
 class BitmapFont extends Entity {
-    constructor(fontData: BitmapFontData, pages: Map<K, V>);
+    constructor(fontData: BitmapFontData, pages: haxe.ds.Map<K, V>);
     /** The map of font texture pages to their id. */
-    pages: Map<K, V>;
+    pages: haxe.ds.Map<K, V>;
     face: String;
     pointSize: Float;
     baseSize: Float;
-    chars: Map<K, V>;
+    chars: haxe.ds.Map<K, V>;
     charCount: Int;
     lineHeight: Float;
-    kernings: Map<K, V>;
+    kernings: haxe.ds.Map<K, V>;
     msdf: Bool;
     /** Cached reference of the ' '(32) character, for sizing on tabs/spaces */
     spaceChar: BitmapFontCharacter;
@@ -4336,13 +4521,13 @@ class BitmapFont extends Entity {
      * When loading MSDF fonts, ceramic's MSDF shader will be assigned here.
      * Stored per page
      */
-    pageShaders: Map<K, V>;
+    pageShaders: haxe.ds.Map<K, V>;
     /**
      * When using MSDF fonts, or fonts with custom shaders, it is possible to pre-render characters
      * onto a RenderTexture to use it like a regular texture later with default shader.
      * Useful in some situations to reduce draw calls.
      */
-    preRenderedPages: Map<K, V>;
+    preRenderedPages: haxe.ds.Map<K, V>;
     asset: Asset;
     destroy(): Void;
     needsToPreRenderAtSize(pixelSize: Int): Bool;
@@ -4409,9 +4594,9 @@ class Assets extends Entity {
     /**All asset directory paths array*/
     static allDirs: Array<String>;
     /**Assets by base name*/
-    static allByName: Map<K, V>;
+    static allByName: haxe.ds.Map<K, V>;
     /**Asset directories by base name*/
-    static allDirsByName: Map<K, V>;
+    static allDirsByName: haxe.ds.Map<K, V>;
     /**complete event*/
     onComplete(owner: Entity?, handleSuccess: ((success: Bool) => Void)): Void;
     /**complete event*/
@@ -4514,7 +4699,7 @@ class AssetPathInfo {
     extension: String;
     name: String;
     path: String;
-    flags: Map<K, V>;
+    flags: haxe.ds.Map<K, V>;
 }
 
 type AssetOptions = Dynamic;
@@ -4598,7 +4783,7 @@ class ArcadePhysics extends Entity {
     /** Default world used for arcade physics */
     world: ArcadeWorld;
     /** Groups by id */
-    groups: Map<K, V>;
+    groups: haxe.ds.Map<K, V>;
     /** If `true`, default world (`world`) bounds will be
         updated automatically to match screen size. */
     autoUpdateWorldBounds: Bool;
@@ -4977,7 +5162,7 @@ class App extends Entity {
     persistent: PersistentData;
     /** Text input manager */
     textInput: TextInput;
-    converters: Map<K, V>;
+    converters: haxe.ds.Map<K, V>;
     timelines: ceramic.Timelines;
     arcade: ArcadePhysics;
     keyCodePressed(keyCode: Int): Bool;

@@ -52,7 +52,6 @@ class ColorPickerHSBGradientView extends View {
         transparent = true;
 
         tintGradient = new Mesh();
-        tintGradient.clip = editor.view;
         tintGradient.colorMapping = VERTICES;
         tintGradient.depth = 1;
         filter.content.add(tintGradient);

@@ -38,7 +38,7 @@ class TimelineUtils {
             var entity = entities[i];
             if (Std.is(entity, Fragment)) {
                 var subFragment:Fragment = cast entity;
-                if (subFragment.timeline != null) {
+                if (subFragment.timeline != null && subFragment.autoUpdateTimeline) {
                     subFragment.timeline.seek(time);
                 }
                 setEveryTimelineTime(subFragment, time);

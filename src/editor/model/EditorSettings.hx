@@ -6,4 +6,6 @@ class EditorSettings extends Model {
 
     @serialize public var autoKeyframe:Bool = true;
 
+    @serialize public var editorsSeparatorOffset:Float = 0;
+
 }

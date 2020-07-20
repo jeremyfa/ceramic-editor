@@ -145,6 +145,7 @@ class VisualsPanelView extends LinearLayout implements Observable {
         layers.add(container);
 
         var scroll = new ScrollingLayout(container, true);
+        scroll.checkChildrenOfView = form;
         scroll.scroller.scrollbar = new Scrollbar();
         scroll.transparent = true;
         scroll.viewSize(fill(), fill());

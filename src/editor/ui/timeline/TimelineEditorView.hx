@@ -57,8 +57,6 @@ class TimelineEditorView extends View implements Observable {
 
         super();
 
-        clip = this;
-
         this.editorView = editorView;
 
         headerView = new RowLayout();

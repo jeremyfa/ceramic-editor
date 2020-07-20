@@ -62,7 +62,7 @@ class ColorFieldView extends FieldView implements Observable {
         pickerContainer.transparent = true;
         pickerContainer.viewSize(0, 0);
         pickerContainer.active = false;
-        pickerContainer.depth = 10;
+        pickerContainer.depth = 25;
         editor.view.add(pickerContainer);
         
         var filler = new View();
@@ -203,21 +203,30 @@ class ColorFieldView extends FieldView implements Observable {
 
         if (!pickerContainer.active)
             return;
+
+        var scrollingLayout = getScrollingLayout();
         
         colorPreview.visualToScreen(
             colorPreview.width * 0.5,
             colorPreview.height * 0.5,
             _point
         );
-
-        editor.view.screenToVisual(_point.x, _point.y, _point);
         
         var x = _point.x;
         var y = _point.y;
 
+        // if (scrollingLayout != null && scrollingLayout.filter != null && scrollingLayout.filter.enabled) {
+        //     scrollingLayout.visualToScreen(0, 0, _point);
+        //     x += _point.x;
+        //     y += _point.y;
+        // }
+
+        editor.view.screenToVisual(x, y, _point);
+        x = _point.x;
+        y = _point.y;
+
         // Clip if needed
         if (pickerView != null) {
-            var scrollingLayout = getScrollingLayout();
             if (scrollingLayout != null) {
                 scrollingLayout.screenToVisual(0, 0, _point);
                 editor.view.screenToVisual(_point.x, _point.y, _point);

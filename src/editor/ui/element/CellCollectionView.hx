@@ -8,18 +8,23 @@ class CellCollectionView extends CollectionView implements Observable {
 
     @observe public var inputStyle:Bool = false;
 
+    var filter:Filter;
+
     public function new() {
 
         super();
+
+        filter = new Filter();
+        add(filter);
 
         viewSize(fill(), fill());
         transparent = false;
         contentView.transparent = true;
         contentView.borderPosition = OUTSIDE;
         borderPosition = INSIDE;
-        clip = this;
         scroller.allowPointerOutside = false;
         scroller.scrollbar = new Scrollbar();
+        filter.content.add(scroller);
 
         #if !(ios || android)
         scroller.dragEnabled = false;
@@ -40,6 +45,9 @@ class CellCollectionView extends CollectionView implements Observable {
     }
 
     override function layout() {
+
+        filter.pos(0, 0);
+        filter.size(width, height);
 
         super.layout();
 
