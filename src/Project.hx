@@ -29,10 +29,15 @@ class Project {
 
     function new(settings:InitSettings) {
 
+        var webWithoutElectron = false;
+        #if web
+        webWithoutElectron = (ceramic.PlatformSpecific.resolveElectron() == null);
+        #end
+        
         #if editor
         new Editor(settings, {
             #if (cpp || (web && ceramic_use_electron))
-            assets: DefinesMacro.getDefine('assets_path')
+            assets: webWithoutElectron ? null : DefinesMacro.getDefine('assets_path')
             #end
         });
         #end
