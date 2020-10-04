@@ -2,5 +2,6 @@
 /out
 /completion.hxml
 /dump
+/gen
 /.haxelib
 .vscode/tasks.json

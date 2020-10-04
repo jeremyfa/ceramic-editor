@@ -437,7 +437,11 @@ class FragmentEditorView extends View implements Observable {
                 }
 
                 var propType = item.typeOfProp(key);
-                if (propType == 'ceramic.FragmentData') {
+                if (item.shouldIgnoreEditableItemUpdate(key)) {
+                    // Should ignore
+                    log.debug('ignore $key ($value)');
+                }
+                else if (propType == 'ceramic.FragmentData') {
                     item.props.set(key, value != null ? value.id : null);
                 }
                 else if (propType == 'ceramic.ScriptContent') {

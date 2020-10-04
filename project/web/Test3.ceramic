@@ -1,0 +1,3901 @@
+{
+  "title": "Test3",
+  "paletteColors": [
+    2006211,
+    1149023,
+    11939888,
+    16753152,
+    0,
+    267829
+  ],
+  "colorPickerHsluv": false,
+  "selectedEditableIndex": 6,
+  "lastSelectedFragmentIndex": 6,
+  "selectedScriptIndex": -1,
+  "lastSelectedEasing": "ELASTIC_EASE_IN_OUT",
+  "exportPath": null,
+  "fragments": [
+    {
+      "id": "FRAGMENT_1",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": true,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "BACKGROUND",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": true,
+          "props": {
+            "x": 0,
+            "y": 0,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 800,
+            "height": 600,
+            "scriptcontent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 0,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_4",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 576,
+            "y": 92,
+            "depth": 2,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 13657568,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_1",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 359,
+            "y": 282,
+            "depth": 3,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16537902,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_5",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 132,
+            "y": 381,
+            "depth": 4,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 12787307,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_0",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 159,
+            "y": 98,
+            "depth": 7,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 2006211,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_6",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 565,
+            "y": 405,
+            "depth": 8,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 2926336,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "FRAGMENT_0",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": false,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "FRAGMENT_0",
+          "entity": "ceramic.Fragment",
+          "isVisual": true,
+          "locked": true,
+          "props": {
+            "x": 0,
+            "y": 0,
+            "depth": 2,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "fragmentData": "FRAGMENT_4",
+            "resizable": true,
+            "transparent": true,
+            "color": 8392206,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 600,
+            "width": 800,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_4",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 64,
+            "y": 638,
+            "depth": 3,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 672,
+            "height": 20,
+            "scriptContent": "WALL",
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 13657568,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_1",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 510,
+            "y": 307,
+            "depth": 4,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 30,
+            "height": 30,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16537902,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_5",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 87,
+            "y": 275,
+            "depth": 5,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 30,
+            "height": 30,
+            "scriptContent": "INNER_RANDOM",
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 12787307,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_0",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 246,
+            "y": 339,
+            "depth": 6,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 30,
+            "height": 30,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 2006211,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_2",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 554,
+            "y": 383,
+            "depth": 7,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 30,
+            "height": 30,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 2926336,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "FRAGMENT_2",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 13580193,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "LAYER_0",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 132,
+            "y": 65,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "scriptContent": "INNER_RANDOM",
+            "shader": null,
+            "texture": null,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_1",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 273,
+            "y": 72,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 177,
+            "height": 188,
+            "scriptContent": "INNER_RANDOM",
+            "shader": null,
+            "texture": null,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_2",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 85,
+            "y": 310,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 177,
+            "height": 188,
+            "scriptContent": "INNER_RANDOM",
+            "shader": null,
+            "texture": null,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_3",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 527,
+            "y": 60,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 177,
+            "height": 188,
+            "scriptContent": "INNER_RANDOM",
+            "shader": null,
+            "texture": null,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_4",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 557,
+            "y": 339,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 177,
+            "height": 188,
+            "scriptContent": "INNER_RANDOM",
+            "shader": null,
+            "texture": null,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LAYER_5",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 336,
+            "y": 447,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 392,
+            "height": 56,
+            "scriptContent": "INNER_RANDOM",
+            "shader": null,
+            "texture": null,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "FRAGMENT_3",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": []
+    },
+    {
+      "id": "FRAGMENT_4",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 2709616,
+      "overflow": false,
+      "transparent": false,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "LAYER_0",
+          "entity": "ceramic.Layer",
+          "isVisual": true,
+          "locked": true,
+          "props": {
+            "x": 0,
+            "y": 1,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 800,
+            "height": 600,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "TEXT_SHADOW",
+          "entity": "ceramic.Text",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 152,
+            "y": 135,
+            "depth": 2,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "content": "Bonjour\nJe suis un texte",
+            "scriptContent": "SHAKE_TEXT",
+            "shader": null,
+            "fitWidth": -1,
+            "letterSpacing": 0,
+            "color": 4884112,
+            "align": "Left",
+            "font": "RobotoMedium",
+            "maxLineDiff": -1,
+            "pointSize": 55,
+            "lineHeight": 1,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 115.238,
+            "width": 386.932,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "TEXT",
+          "entity": "ceramic.Text",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 155,
+            "y": 132,
+            "depth": 3,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "content": "Bonjour\nJe suis un texte",
+            "scriptContent": "SHAKE_TEXT",
+            "shader": null,
+            "fitWidth": -1,
+            "letterSpacing": 0,
+            "color": 16777215,
+            "align": "Left",
+            "font": "RobotoMedium",
+            "maxLineDiff": -1,
+            "pointSize": 55,
+            "lineHeight": 1,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 115.238,
+            "width": 386.932,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "LINE_0",
+          "entity": "ceramic.Line",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 400,
+            "y": 530,
+            "depth": 4,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "thickness": 9.907,
+            "points": [
+              -50.70069622599133,
+              -8.311315806661874,
+              -0.038931207887845015,
+              -66.0795622774688,
+              55.233263224144885,
+              -20.42449463307342,
+              91.4516561502446,
+              -47.69217524220616,
+              89.70301071327277,
+              -113.75178724745005,
+              127.20382296772114,
+              -162.7791035435279,
+              266.365,
+              -223.007
+            ],
+            "scriptContent": null,
+            "shader": null,
+            "cap": "BUTT",
+            "join": "BEVEL",
+            "autoComputeSize": true,
+            "miterLimit": 10,
+            "loop": false,
+            "complexHit": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 0,
+            "width": 266.365,
+            "translateY": 0,
+            "translateX": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "PHYSICS",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "HELPERS",
+          "entity": "ceramic.Entity",
+          "isVisual": false,
+          "locked": false,
+          "props": {
+            "scriptContent": "HELPERS"
+          }
+        },
+        {
+          "id": "PHYSICS",
+          "entity": "ceramic.Entity",
+          "isVisual": false,
+          "locked": false,
+          "props": {
+            "scriptContent": "PHYSICS"
+          }
+        },
+        {
+          "id": "CONTROL",
+          "entity": "ceramic.Visual",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 33,
+            "y": 23,
+            "depth": 2,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "scriptContent": "CONTROL",
+            "shader": null,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "FLOOR",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 149,
+            "y": 495,
+            "depth": 3,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 527,
+            "height": 35,
+            "scriptContent": "WALL",
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "FLOOR_0",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 306,
+            "y": 439,
+            "depth": 4,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 58,
+            "height": 23,
+            "scriptContent": "MOVING_PLATFORM",
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "FLOOR_1",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 486,
+            "y": 406,
+            "depth": 5,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 58,
+            "height": 23,
+            "scriptContent": "MOVING_PLATFORM",
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "FLOOR_2",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 326,
+            "y": 325,
+            "depth": 6,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 260,
+            "height": 17,
+            "scriptContent": "MOVING_PLATFORM",
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "CHARACTER",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 204,
+            "y": 294,
+            "depth": 7,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 36,
+            "height": 49,
+            "scriptContent": "CHARACTER",
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 11939888,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        },
+        {
+          "id": "QUAD_0",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 65,
+            "y": 66,
+            "depth": 8,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16753152,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "QUAD_0",
+              "field": "x",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "LINEAR",
+                  "value": 65
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "QUAD_0",
+              "field": "y",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "LINEAR",
+                  "value": 66
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ANIMATION_TEST",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "QUAD_1",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 111.983,
+            "y": 479.056,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0.5,
+            "anchorY": 0.5,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 101,
+            "height": 101,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 8196486,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0.028,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "QUAD_1",
+              "field": "x",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 118
+                },
+                {
+                  "index": 18,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 112
+                },
+                {
+                  "index": 35,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 655
+                },
+                {
+                  "index": 50,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 118
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "QUAD_1",
+              "field": "y",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 112
+                },
+                {
+                  "index": 18,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 478
+                },
+                {
+                  "index": 35,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 280
+                },
+                {
+                  "index": 50,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 112
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "QUAD_1",
+              "field": "rotation",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 350.267
+                },
+                {
+                  "index": 18,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 0
+                },
+                {
+                  "index": 35,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 317.13
+                },
+                {
+                  "index": 50,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 350.267
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "QUAD_1",
+              "field": "color",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 11939888
+                },
+                {
+                  "index": 18,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 8262278
+                },
+                {
+                  "index": 35,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 1149023
+                },
+                {
+                  "index": 50,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 11939888
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FRAGMENT_5",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "FRAGMENT_0",
+          "entity": "ceramic.Fragment",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 52,
+            "y": 43,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 0.51,
+            "scaleY": 0.51,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "fragmentData": "ANIMATION_TEST",
+            "resizable": false,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 600,
+            "translateY": 0,
+            "translateX": 0,
+            "width": 800,
+            "autoUpdateTimeline": true,
+            "floatD": 0,
+            "floatA": 0,
+            "floatC": 0,
+            "floatB": 0
+          }
+        },
+        {
+          "id": "FRAGMENT_1",
+          "entity": "ceramic.Fragment",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 285,
+            "y": 235,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 0.51,
+            "scaleY": 0.51,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "fragmentData": "ANIMATION_TEST",
+            "resizable": false,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 600,
+            "translateY": 0,
+            "translateX": 0,
+            "width": 800,
+            "autoUpdateTimeline": true,
+            "floatD": 0,
+            "floatA": 0,
+            "floatC": 0,
+            "floatB": 0
+          }
+        },
+        {
+          "id": "FRAGMENT_2",
+          "entity": "ceramic.Fragment",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 345,
+            "y": 48,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 0.51,
+            "scaleY": 0.51,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "fragmentData": "ANIMATION_TEST",
+            "resizable": false,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 600,
+            "translateY": 0,
+            "translateX": 0,
+            "width": 800,
+            "autoUpdateTimeline": true,
+            "floatD": 0,
+            "floatA": 0,
+            "floatC": 0,
+            "floatB": 0
+          }
+        },
+        {
+          "id": "FRAGMENT_3",
+          "entity": "ceramic.Fragment",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 188,
+            "y": 95,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 0.51,
+            "scaleY": 0.51,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "fragmentData": "ANIMATION_TEST",
+            "resizable": false,
+            "transparent": true,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 600,
+            "translateY": 0,
+            "translateX": 0,
+            "width": 800,
+            "autoUpdateTimeline": true,
+            "floatD": 0,
+            "floatA": 0,
+            "floatC": 0,
+            "floatB": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "ANIMATED_SHAPE",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "SHAPE_0",
+          "entity": "ceramic.Shape",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 680.23,
+            "y": 123,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 42.869,
+            "height": 99.503,
+            "points": [
+              -83.5064082847065,
+              3.3312468468574488,
+              42.869,
+              -4.986,
+              -68.82320427193214,
+              18.011476338312765,
+              -90.704,
+              99.503
+            ],
+            "scriptContent": null,
+            "shader": null,
+            "autoComputeSize": true,
+            "holes": null,
+            "triangulation": "Poly2tri",
+            "complexHit": false,
+            "color": 16737123,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "SHAPE_0",
+              "field": "x",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 680.23
+                },
+                {
+                  "index": 13,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 263
+                },
+                {
+                  "index": 22,
+                  "easing": "LINEAR",
+                  "value": 658
+                },
+                {
+                  "index": 28,
+                  "easing": "LINEAR",
+                  "value": 660
+                },
+                {
+                  "index": 31,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 726
+                },
+                {
+                  "index": 60,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 681
+                },
+                {
+                  "index": 72,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 583
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 159
+                },
+                {
+                  "index": 120,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 179.3
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_0",
+              "field": "color",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "LINEAR",
+                  "value": 16737123
+                },
+                {
+                  "index": 22,
+                  "easing": "LINEAR",
+                  "value": 16711680
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_0",
+              "field": "points",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -83.5064082847065,
+                    3.3312468468574488,
+                    42.869,
+                    -4.986,
+                    -68.82320427193214,
+                    18.011476338312765,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 31,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -236.224,
+                    -88.616,
+                    42.869,
+                    -4.986,
+                    -212.526,
+                    -71.381,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 60,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    24.925,
+                    86.966,
+                    42.869,
+                    -4.986,
+                    42.469,
+                    104.047,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    110.659,
+                    84.196,
+                    345.488,
+                    75.578,
+                    110.659,
+                    93.89,
+                    -99.395,
+                    106.817
+                  ]
+                },
+                {
+                  "index": 120,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -83.4991688888889,
+                    3.2678111111111114,
+                    42.869,
+                    -4.986,
+                    -70.49276666666667,
+                    17.9141,
+                    -90.704,
+                    99.503
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SHAPE_1",
+          "entity": "ceramic.Shape",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 289.632,
+            "y": 325,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 42.869,
+            "height": 99.503,
+            "points": [
+              -83.49206299447248,
+              3.3398837689528103,
+              42.869,
+              -4.986,
+              -70.44163324466204,
+              18.001737846688865,
+              -90.704,
+              99.503
+            ],
+            "scriptContent": null,
+            "shader": null,
+            "autoComputeSize": true,
+            "holes": null,
+            "triangulation": "Poly2tri",
+            "complexHit": false,
+            "color": 16737123,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "SHAPE_1",
+              "field": "x",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 289.632
+                },
+                {
+                  "index": 13,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 263
+                },
+                {
+                  "index": 22,
+                  "easing": "LINEAR",
+                  "value": 658
+                },
+                {
+                  "index": 28,
+                  "easing": "LINEAR",
+                  "value": 660
+                },
+                {
+                  "index": 33,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 726
+                },
+                {
+                  "index": 60,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 681
+                },
+                {
+                  "index": 72,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 583
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 159
+                },
+                {
+                  "index": 120,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 179.3
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_1",
+              "field": "color",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "LINEAR",
+                  "value": 16737123
+                },
+                {
+                  "index": 22,
+                  "easing": "LINEAR",
+                  "value": 16711680
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_1",
+              "field": "points",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -83.49206299447248,
+                    3.3398837689528103,
+                    42.869,
+                    -4.986,
+                    -70.44163324466204,
+                    18.001737846688865,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 33,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -236.224,
+                    -88.616,
+                    42.869,
+                    -4.986,
+                    -212.526,
+                    -71.381,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 60,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    24.925,
+                    86.966,
+                    42.869,
+                    -4.986,
+                    42.469,
+                    104.047,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    110.659,
+                    84.196,
+                    345.488,
+                    75.578,
+                    110.659,
+                    93.89,
+                    -99.395,
+                    106.817
+                  ]
+                },
+                {
+                  "index": 120,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -83.4991688888889,
+                    3.2678111111111114,
+                    42.869,
+                    -4.986,
+                    -70.49276666666667,
+                    17.9141,
+                    -90.704,
+                    99.503
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SHAPE_2",
+          "entity": "ceramic.Shape",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 228.478,
+            "y": 124,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 42.869,
+            "height": 99.503,
+            "points": [
+              -83.5064082847065,
+              3.3312468468574488,
+              42.869,
+              -4.986,
+              -70.45497846583045,
+              17.993342606364802,
+              -90.704,
+              99.503
+            ],
+            "scriptContent": null,
+            "shader": null,
+            "autoComputeSize": true,
+            "holes": null,
+            "triangulation": "Poly2tri",
+            "complexHit": false,
+            "color": 16737123,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "SHAPE_2",
+              "field": "x",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 228.478
+                },
+                {
+                  "index": 13,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 263
+                },
+                {
+                  "index": 22,
+                  "easing": "LINEAR",
+                  "value": 658
+                },
+                {
+                  "index": 28,
+                  "easing": "LINEAR",
+                  "value": 660
+                },
+                {
+                  "index": 31,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 726
+                },
+                {
+                  "index": 60,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 681
+                },
+                {
+                  "index": 72,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 583
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 159
+                },
+                {
+                  "index": 120,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 179.3
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_2",
+              "field": "color",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "LINEAR",
+                  "value": 16737123
+                },
+                {
+                  "index": 22,
+                  "easing": "LINEAR",
+                  "value": 16711680
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_2",
+              "field": "points",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -83.5064082847065,
+                    3.3312468468574488,
+                    42.869,
+                    -4.986,
+                    -70.45497846583045,
+                    17.993342606364802,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 31,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -236.224,
+                    -88.616,
+                    42.869,
+                    -4.986,
+                    -212.526,
+                    -71.381,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 60,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    24.925,
+                    86.966,
+                    42.869,
+                    -4.986,
+                    42.469,
+                    104.047,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    110.659,
+                    84.196,
+                    345.488,
+                    75.578,
+                    110.659,
+                    93.89,
+                    -99.395,
+                    106.817
+                  ]
+                },
+                {
+                  "index": 120,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -83.4991688888889,
+                    3.2678111111111114,
+                    42.869,
+                    -4.986,
+                    -70.49276666666667,
+                    17.9141,
+                    -90.704,
+                    99.503
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "SHAPE_3",
+          "entity": "ceramic.Shape",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 473.97,
+            "y": 148,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 42.869,
+            "height": 99.503,
+            "points": [
+              -83.5064082847065,
+              3.3312468468574488,
+              42.869,
+              -4.986,
+              -70.45497846583045,
+              17.993342606364802,
+              -90.704,
+              99.503
+            ],
+            "scriptContent": null,
+            "shader": null,
+            "autoComputeSize": true,
+            "holes": null,
+            "triangulation": "Poly2tri",
+            "complexHit": false,
+            "color": 16737123,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "SHAPE_3",
+              "field": "x",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 473.97
+                },
+                {
+                  "index": 13,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 263
+                },
+                {
+                  "index": 22,
+                  "easing": "LINEAR",
+                  "value": 658
+                },
+                {
+                  "index": 28,
+                  "easing": "LINEAR",
+                  "value": 660
+                },
+                {
+                  "index": 31,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 726
+                },
+                {
+                  "index": 61,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 681
+                },
+                {
+                  "index": 72,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 583
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 159
+                },
+                {
+                  "index": 120,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 179.3
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_3",
+              "field": "color",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "LINEAR",
+                  "value": 16737123
+                },
+                {
+                  "index": 22,
+                  "easing": "LINEAR",
+                  "value": 16711680
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_3",
+              "field": "points",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -83.5064082847065,
+                    3.3312468468574488,
+                    42.869,
+                    -4.986,
+                    -70.45497846583045,
+                    17.993342606364802,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 31,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -236.224,
+                    -88.616,
+                    42.869,
+                    -4.986,
+                    -212.526,
+                    -71.381,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 61,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    24.925,
+                    86.966,
+                    42.869,
+                    -4.986,
+                    42.469,
+                    104.047,
+                    -90.704,
+                    99.503
+                  ]
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    110.659,
+                    84.196,
+                    345.488,
+                    75.578,
+                    110.659,
+                    93.89,
+                    -99.395,
+                    106.817
+                  ]
+                },
+                {
+                  "index": 120,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -83.4991688888889,
+                    3.2678111111111114,
+                    42.869,
+                    -4.986,
+                    -70.49276666666667,
+                    17.9141,
+                    -90.704,
+                    99.503
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "LINE_0",
+          "entity": "ceramic.Line",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 359,
+            "y": 473,
+            "depth": 2,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "thickness": 1.778,
+            "points": [
+              -50.70069622599133,
+              -8.311315806661874,
+              -0.038931207887845015,
+              -66.0795622774688,
+              55.233263224144885,
+              -20.42449463307342,
+              91.4516561502446,
+              -47.69217524220616,
+              89.70301071327277,
+              -113.75178724745005,
+              127.20382296772114,
+              -162.7791035435279,
+              266.365,
+              -223.007
+            ],
+            "scriptContent": null,
+            "shader": null,
+            "cap": "BUTT",
+            "join": "BEVEL",
+            "autoComputeSize": true,
+            "miterLimit": 10,
+            "loop": false,
+            "complexHit": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 0,
+            "translateY": 0,
+            "translateX": 0,
+            "width": 266.365
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "LINE_0",
+              "field": "points",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "NONE",
+                  "value": [
+                    -50.70069622599133,
+                    -8.311315806661874,
+                    -0.038931207887845015,
+                    -66.0795622774688,
+                    55.233263224144885,
+                    -20.42449463307342,
+                    91.4516561502446,
+                    -47.69217524220616,
+                    89.70301071327277,
+                    -113.75178724745005,
+                    127.20382296772114,
+                    -162.7791035435279,
+                    266.365,
+                    -223.007
+                  ]
+                },
+                {
+                  "index": 13,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": [
+                    -35.50971428571429,
+                    -53.907,
+                    -1.73775,
+                    -52.86157142857143,
+                    43.154,
+                    -29.194,
+                    88.59667857142857,
+                    -50.70632142857143,
+                    93.44303571428571,
+                    -104.98964285714285,
+                    110.21782142857143,
+                    -145.53860714285713,
+                    193.962,
+                    -209.086
+                  ]
+                },
+                {
+                  "index": 28,
+                  "easing": "LINEAR",
+                  "value": [
+                    -16.899,
+                    -109.767,
+                    -3.819,
+                    -36.668,
+                    55.81,
+                    -9.124,
+                    85.099,
+                    -54.399,
+                    98.025,
+                    -94.255,
+                    89.408,
+                    -124.417,
+                    45.038,
+                    -131.925
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FRAGMENT_6",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": 0,
+      "items": [
+        {
+          "id": "PARTICLES_0",
+          "entity": "ceramic.Particles",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 3,
+            "y": 608,
+            "depth": 3,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 40,
+            "height": 40,
+            "autoEmit": true,
+            "scriptContent": null,
+            "shader": null,
+            "emitterVisualScaleActive": true,
+            "emitterVelocityStartMaxY": 500,
+            "emitterVisualAlphaActive": true,
+            "emitterVisualRotationActive": true,
+            "emitterVelocityEndMinX": -100,
+            "autoExplodeQuantity": 64,
+            "emitterY": 0,
+            "emitterVisualPositionActive": true,
+            "emitterVelocityActive": true,
+            "emitterHeight": -1,
+            "emitterVelocityStartMaxX": 100,
+            "emitterVelocityStartMinY": 100,
+            "emitterMaxVelocityX": 10000,
+            "emitterX": 0,
+            "emitterKeepScaleRatio": false,
+            "emitterVelocityEndMaxX": 100,
+            "emitterInterval": 0.1,
+            "emitterPaused": false,
+            "emitterVelocityEndMinY": 100,
+            "emitterVisualColorActive": true,
+            "autoExplodeInterval": -1,
+            "emitterVelocityEndMaxY": 500,
+            "emitterVelocityStartMinX": -100,
+            "emitterMaxVelocityY": 10000,
+            "emitterLaunchMode": "Square",
+            "emitterWidth": -1,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 229.046,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "PARTICLES_0",
+              "field": "x",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 3
+                },
+                {
+                  "index": 30,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 346
+                },
+                {
+                  "index": 60,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 799
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 2.556
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "PARTICLES_0",
+              "field": "y",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 608
+                },
+                {
+                  "index": 30,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": -8
+                },
+                {
+                  "index": 60,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 567
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 609
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "PARTICLES_0",
+              "field": "rotation",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 229.046
+                },
+                {
+                  "index": 30,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 356.94
+                },
+                {
+                  "index": 60,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 133.34
+                },
+                {
+                  "index": 90,
+                  "easing": "QUART_EASE_IN_OUT",
+                  "value": 228.778
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "QUAD_0",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 580,
+            "y": 85,
+            "depth": 4,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "FRAGMENT_7",
+      "width": 800,
+      "height": 800,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "SHAPE_2",
+          "entity": "ceramic.Shape",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 400,
+            "y": 400,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0.5,
+            "anchorY": 0.5,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "points": [
+              0,
+              0,
+              99.99941029905087,
+              0.0005783793618136345,
+              100,
+              100,
+              0.00007435906729938461,
+              99.99985631368199
+            ],
+            "scriptContent": null,
+            "shader": null,
+            "autoComputeSize": true,
+            "holes": null,
+            "triangulation": "Earcut",
+            "complexHit": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0.007,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "SHAPE_2",
+              "field": "scaleX",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 1
+                },
+                {
+                  "index": 30,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 1
+                },
+                {
+                  "index": 55,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 0.2
+                },
+                {
+                  "index": 77,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_2",
+              "field": "scaleY",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 1
+                },
+                {
+                  "index": 30,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 1
+                },
+                {
+                  "index": 55,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 4
+                },
+                {
+                  "index": 77,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_2",
+              "field": "rotation",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 0.007
+                },
+                {
+                  "index": 30,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 45
+                },
+                {
+                  "index": 55,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 46.593
+                },
+                {
+                  "index": 77,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "SHAPE_2",
+              "field": "points",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": [
+                    0,
+                    0,
+                    99.99941029905087,
+                    0.0005783793618136345,
+                    100,
+                    100,
+                    0.00007435906729938461,
+                    99.99985631368199
+                  ]
+                },
+                {
+                  "index": 77,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": [
+                    0,
+                    0,
+                    100,
+                    0,
+                    100,
+                    100,
+                    0,
+                    100
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "FRAGMENT_8",
+      "width": 800,
+      "height": 60,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "QUEUE",
+          "entity": "ceramic.Entity",
+          "isVisual": false,
+          "locked": false,
+          "props": {
+            "scriptContent": "QUEUE"
+          }
+        }
+      ]
+    },
+    {
+      "id": "CIRCULAR_ANIM",
+      "width": 200,
+      "height": 200,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": 1,
+      "items": [
+        {
+          "id": "ARC_0",
+          "entity": "ceramic.Arc",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 100,
+            "y": 100,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0.5,
+            "anchorY": 0.5,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 0.8,
+            "visible": true,
+            "touchable": true,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "sides": 64,
+            "borderPosition": "Outside",
+            "angle": 360,
+            "thickness": 2,
+            "radius": 92.4,
+            "vertices": [
+              92.39999999999999,
+              0,
+              92.39999999999999,
+              -2,
+              101.45678376645137,
+              0.4449312554890099,
+              101.65281804711049,
+              -1.5454381978553897,
+              110.42634575429027,
+              1.7754400907415118,
+              110.81652639832252,
+              -0.18613047006495265,
+              119.2223041783123,
+              3.978712978343893,
+              119.80287353282122,
+              2.064832306879481,
+              127.75994915053433,
+              7.03353119595711,
+              128.5253160152645,
+              5.185772130934538,
+              135.95705848272218,
+              10.910475174211996,
+              136.89985195637416,
+              9.146632645515282,
+              143.7346895310112,
+              15.572207823244796,
+              144.84582999705043,
+              13.909268598639713,
+              151.01793945672085,
+              20.973834109283118,
+              152.28672602504815,
+              19.427813202557644,
+              157.736666581637,
+              27.063333418363,
+              159.15088014401007,
+              25.649119855989895,
+              163.82616589071688,
+              33.782060543279115,
+              165.37218679744234,
+              32.51327397495183,
+              169.2277921767552,
+              41.06531046898876,
+              170.89073140136028,
+              39.95417000294956,
+              173.889524825788,
+              48.842941517277794,
+              175.65336735448471,
+              47.9001480436258,
+              177.7664688040429,
+              57.04005084946565,
+              179.61422786906547,
+              56.27468398473547,
+              180.8212870216561,
+              65.57769582168767,
+              182.73516769312053,
+              64.99712646717875,
+              183.0245599092585,
+              74.37365424570972,
+              184.98613047006495,
+              73.98347360167745,
+              184.35506874451102,
+              83.34321623354862,
+              186.3454381978554,
+              83.1471819528895,
+              184.8,
+              92.39999999999998,
+              186.8,
+              92.39999999999998,
+              184.35506874451102,
+              101.45678376645135,
+              186.3454381978554,
+              101.65281804711047,
+              183.0245599092585,
+              110.42634575429025,
+              184.98613047006495,
+              110.81652639832251,
+              180.82128702165613,
+              119.2223041783123,
+              182.73516769312053,
+              119.80287353282122,
+              177.76646880404292,
+              127.75994915053431,
+              179.61422786906547,
+              128.5253160152645,
+              173.88952482578802,
+              135.95705848272218,
+              175.65336735448471,
+              136.89985195637416,
+              169.2277921767552,
+              143.7346895310112,
+              170.8907314013603,
+              144.84582999705043,
+              163.82616589071694,
+              151.0179394567208,
+              165.37218679744242,
+              152.2867260250481,
+              157.736666581637,
+              157.736666581637,
+              159.1508801440101,
+              159.15088014401007,
+              151.01793945672082,
+              163.82616589071694,
+              152.28672602504813,
+              165.3721867974424,
+              143.73468953101127,
+              169.2277921767552,
+              144.84582999705046,
+              170.89073140136028,
+              135.95705848272223,
+              173.889524825788,
+              136.89985195637422,
+              175.65336735448471,
+              127.75994915053437,
+              177.7664688040429,
+              128.52531601526454,
+              179.61422786906547,
+              119.22230417831234,
+              180.8212870216561,
+              119.80287353282128,
+              182.73516769312053,
+              110.42634575429031,
+              183.0245599092585,
+              110.81652639832257,
+              184.98613047006495,
+              101.45678376645141,
+              184.35506874451102,
+              101.65281804711053,
+              186.3454381978554,
+              92.40000000000003,
+              184.8,
+              92.40000000000003,
+              186.8,
+              83.34321623354866,
+              184.35506874451102,
+              83.14718195288954,
+              186.3454381978554,
+              74.37365424570967,
+              183.0245599092585,
+              73.98347360167742,
+              184.98613047006495,
+              65.57769582168764,
+              180.82128702165608,
+              64.99712646717872,
+              182.7351676931205,
+              57.0400508494657,
+              177.76646880404292,
+              56.27468398473552,
+              179.61422786906547,
+              48.842941517277836,
+              173.88952482578804,
+              47.90014804362584,
+              175.65336735448474,
+              41.065310468988805,
+              169.2277921767552,
+              39.954170002949596,
+              170.8907314013603,
+              33.78206054327922,
+              163.82616589071696,
+              32.51327397495193,
+              165.37218679744245,
+              27.063333418363086,
+              157.73666658163708,
+              25.649119855989994,
+              159.15088014401016,
+              20.97383410928319,
+              151.01793945672097,
+              19.42781320255773,
+              152.28672602504827,
+              15.572207823244838,
+              143.73468953101127,
+              13.909268598639741,
+              144.84582999705046,
+              10.91047517421201,
+              135.95705848272223,
+              9.14663264551531,
+              136.89985195637422,
+              7.0335311959571385,
+              127.75994915053437,
+              5.185772130934566,
+              128.52531601526454,
+              3.9787129783438786,
+              119.22230417831227,
+              2.0648323068794667,
+              119.8028735328212,
+              1.7754400907414976,
+              110.42634575429022,
+              -0.18613047006496686,
+              110.81652639832248,
+              0.4449312554890099,
+              101.45678376645141,
+              -1.5454381978553897,
+              101.65281804711053,
+              0,
+              92.40000000000003,
+              -2,
+              92.40000000000003,
+              0.4449312554890099,
+              83.34321623354867,
+              -1.5454381978553897,
+              83.14718195288955,
+              1.7754400907414833,
+              74.37365424570984,
+              -0.18613047006496686,
+              73.98347360167759,
+              3.9787129783438644,
+              65.5776958216878,
+              2.0648323068794383,
+              64.99712646717887,
+              7.03353119595711,
+              57.0400508494657,
+              5.185772130934538,
+              56.274683984735525,
+              10.910475174211982,
+              48.84294151727784,
+              9.146632645515268,
+              47.90014804362585,
+              15.572207823244796,
+              41.065310468988805,
+              13.909268598639699,
+              39.954170002949596,
+              20.97383410928316,
+              33.782060543279094,
+              19.427813202557687,
+              32.51327397495181,
+              27.063333418363044,
+              27.063333418362973,
+              25.64911985598995,
+              25.64911985598988,
+              33.78206054327917,
+              20.97383410928309,
+              32.51327397495188,
+              19.427813202557616,
+              41.06531046898874,
+              15.572207823244838,
+              39.95417000294954,
+              13.909268598639741,
+              48.84294151727778,
+              10.91047517421201,
+              47.900148043625784,
+              9.14663264551531,
+              57.040050849465636,
+              7.0335311959571385,
+              56.274683984735454,
+              5.185772130934566,
+              65.57769582168757,
+              3.9787129783439354,
+              64.99712646717865,
+              2.0648323068795236,
+              74.37365424570962,
+              1.775440090741526,
+              73.98347360167736,
+              -0.18613047006493844,
+              83.3432162335486,
+              0.4449312554890099,
+              83.14718195288947,
+              -1.5454381978553897,
+              92.39999999999996,
+              0,
+              92.39999999999996,
+              -2
+            ],
+            "complexHit": false,
+            "uvs": [],
+            "color": 16777215,
+            "indices": [
+              0,
+              1,
+              2,
+              1,
+              2,
+              3,
+              2,
+              3,
+              4,
+              3,
+              4,
+              5,
+              4,
+              5,
+              6,
+              5,
+              6,
+              7,
+              6,
+              7,
+              8,
+              7,
+              8,
+              9,
+              8,
+              9,
+              10,
+              9,
+              10,
+              11,
+              10,
+              11,
+              12,
+              11,
+              12,
+              13,
+              12,
+              13,
+              14,
+              13,
+              14,
+              15,
+              14,
+              15,
+              16,
+              15,
+              16,
+              17,
+              16,
+              17,
+              18,
+              17,
+              18,
+              19,
+              18,
+              19,
+              20,
+              19,
+              20,
+              21,
+              20,
+              21,
+              22,
+              21,
+              22,
+              23,
+              22,
+              23,
+              24,
+              23,
+              24,
+              25,
+              24,
+              25,
+              26,
+              25,
+              26,
+              27,
+              26,
+              27,
+              28,
+              27,
+              28,
+              29,
+              28,
+              29,
+              30,
+              29,
+              30,
+              31,
+              30,
+              31,
+              32,
+              31,
+              32,
+              33,
+              32,
+              33,
+              34,
+              33,
+              34,
+              35,
+              34,
+              35,
+              36,
+              35,
+              36,
+              37,
+              36,
+              37,
+              38,
+              37,
+              38,
+              39,
+              38,
+              39,
+              40,
+              39,
+              40,
+              41,
+              40,
+              41,
+              42,
+              41,
+              42,
+              43,
+              42,
+              43,
+              44,
+              43,
+              44,
+              45,
+              44,
+              45,
+              46,
+              45,
+              46,
+              47,
+              46,
+              47,
+              48,
+              47,
+              48,
+              49,
+              48,
+              49,
+              50,
+              49,
+              50,
+              51,
+              50,
+              51,
+              52,
+              51,
+              52,
+              53,
+              52,
+              53,
+              54,
+              53,
+              54,
+              55,
+              54,
+              55,
+              56,
+              55,
+              56,
+              57,
+              56,
+              57,
+              58,
+              57,
+              58,
+              59,
+              58,
+              59,
+              60,
+              59,
+              60,
+              61,
+              60,
+              61,
+              62,
+              61,
+              62,
+              63,
+              62,
+              63,
+              64,
+              63,
+              64,
+              65,
+              64,
+              65,
+              66,
+              65,
+              66,
+              67,
+              66,
+              67,
+              68,
+              67,
+              68,
+              69,
+              68,
+              69,
+              70,
+              69,
+              70,
+              71,
+              70,
+              71,
+              72,
+              71,
+              72,
+              73,
+              72,
+              73,
+              74,
+              73,
+              74,
+              75,
+              74,
+              75,
+              76,
+              75,
+              76,
+              77,
+              76,
+              77,
+              78,
+              77,
+              78,
+              79,
+              78,
+              79,
+              80,
+              79,
+              80,
+              81,
+              80,
+              81,
+              82,
+              81,
+              82,
+              83,
+              82,
+              83,
+              84,
+              83,
+              84,
+              85,
+              84,
+              85,
+              86,
+              85,
+              86,
+              87,
+              86,
+              87,
+              88,
+              87,
+              88,
+              89,
+              88,
+              89,
+              90,
+              89,
+              90,
+              91,
+              90,
+              91,
+              92,
+              91,
+              92,
+              93,
+              92,
+              93,
+              94,
+              93,
+              94,
+              95,
+              94,
+              95,
+              96,
+              95,
+              96,
+              97,
+              96,
+              97,
+              98,
+              97,
+              98,
+              99,
+              98,
+              99,
+              100,
+              99,
+              100,
+              101,
+              100,
+              101,
+              102,
+              101,
+              102,
+              103,
+              102,
+              103,
+              104,
+              103,
+              104,
+              105,
+              104,
+              105,
+              106,
+              105,
+              106,
+              107,
+              106,
+              107,
+              108,
+              107,
+              108,
+              109,
+              108,
+              109,
+              110,
+              109,
+              110,
+              111,
+              110,
+              111,
+              112,
+              111,
+              112,
+              113,
+              112,
+              113,
+              114,
+              113,
+              114,
+              115,
+              114,
+              115,
+              116,
+              115,
+              116,
+              117,
+              116,
+              117,
+              118,
+              117,
+              118,
+              119,
+              118,
+              119,
+              120,
+              119,
+              120,
+              121,
+              120,
+              121,
+              122,
+              121,
+              122,
+              123,
+              122,
+              123,
+              124,
+              123,
+              124,
+              125,
+              124,
+              125,
+              126,
+              125,
+              126,
+              127,
+              126,
+              127,
+              128,
+              127,
+              128,
+              129
+            ],
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 180,
+            "height": 184.8,
+            "translateY": 0,
+            "translateX": 0,
+            "width": 184.8
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "ARC_0",
+              "field": "alpha",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "NONE",
+                  "value": 0
+                },
+                {
+                  "index": 1,
+                  "easing": "LINEAR",
+                  "value": 1
+                },
+                {
+                  "index": 6,
+                  "easing": "LINEAR",
+                  "value": 0
+                },
+                {
+                  "index": 20,
+                  "easing": "LINEAR",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "ARC_0",
+              "field": "radius",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "NONE",
+                  "value": 20
+                },
+                {
+                  "index": 1,
+                  "easing": "LINEAR",
+                  "value": 59
+                },
+                {
+                  "index": 6,
+                  "easing": "LINEAR",
+                  "value": 226
+                },
+                {
+                  "index": 20,
+                  "easing": "LINEAR",
+                  "value": 123
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "ARC_0",
+              "field": "thickness",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "NONE",
+                  "value": 1
+                },
+                {
+                  "index": 6,
+                  "easing": "LINEAR",
+                  "value": 4
+                },
+                {
+                  "index": 20,
+                  "easing": "LINEAR",
+                  "value": 4
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "NGON_0",
+          "entity": "ceramic.Ngon",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 100,
+            "y": 100,
+            "depth": 2,
+            "depthRange": 1,
+            "anchorX": 0.5,
+            "anchorY": 0.5,
+            "scaleX": 0.479,
+            "scaleY": 0.479,
+            "alpha": 0.488,
+            "visible": true,
+            "touchable": true,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "sides": 32,
+            "radius": 91,
+            "vertices": [
+              91,
+              91,
+              182,
+              91,
+              180.25146051669395,
+              108.75321930346767,
+              175.0730374585271,
+              125.82419234522317,
+              166.66373471953162,
+              141.5568912047838,
+              155.34671708797583,
+              155.34671708797583,
+              141.55689120478382,
+              166.66373471953162,
+              125.82419234522317,
+              175.0730374585271,
+              108.75321930346767,
+              180.25146051669395,
+              91,
+              182,
+              73.24678069653234,
+              180.25146051669395,
+              56.17580765477683,
+              175.0730374585271,
+              40.44310879521622,
+              166.66373471953165,
+              26.65328291202418,
+              155.34671708797583,
+              15.336265280468368,
+              141.5568912047838,
+              6.9269625414729035,
+              125.82419234522318,
+              1.7485394833060326,
+              108.7532193034677,
+              0,
+              91.00000000000001,
+              1.7485394833060326,
+              73.24678069653231,
+              6.9269625414729035,
+              56.17580765477684,
+              15.336265280468368,
+              40.44310879521622,
+              26.653282912024167,
+              26.65328291202418,
+              40.443108795216204,
+              15.336265280468382,
+              56.17580765477678,
+              6.926962541472932,
+              73.24678069653228,
+              1.7485394833060468,
+              90.99999999999999,
+              0,
+              108.75321930346767,
+              1.7485394833060326,
+              125.8241923452232,
+              6.926962541472918,
+              141.55689120478377,
+              15.336265280468368,
+              155.3467170879758,
+              26.653282912024167,
+              166.66373471953162,
+              40.443108795216204,
+              175.07303745852707,
+              56.175807654776776,
+              180.25146051669395,
+              73.24678069653228
+            ],
+            "complexHit": false,
+            "uvs": [],
+            "color": 16777215,
+            "indices": [
+              0,
+              1,
+              2,
+              0,
+              2,
+              3,
+              0,
+              3,
+              4,
+              0,
+              4,
+              5,
+              0,
+              5,
+              6,
+              0,
+              6,
+              7,
+              0,
+              7,
+              8,
+              0,
+              8,
+              9,
+              0,
+              9,
+              10,
+              0,
+              10,
+              11,
+              0,
+              11,
+              12,
+              0,
+              12,
+              13,
+              0,
+              13,
+              14,
+              0,
+              14,
+              15,
+              0,
+              15,
+              16,
+              0,
+              16,
+              17,
+              0,
+              17,
+              18,
+              0,
+              18,
+              19,
+              0,
+              19,
+              20,
+              0,
+              20,
+              21,
+              0,
+              21,
+              22,
+              0,
+              22,
+              23,
+              0,
+              23,
+              24,
+              0,
+              24,
+              25,
+              0,
+              25,
+              26,
+              0,
+              26,
+              27,
+              0,
+              27,
+              28,
+              0,
+              28,
+              29,
+              0,
+              29,
+              30,
+              0,
+              30,
+              31,
+              0,
+              31,
+              32,
+              0,
+              32,
+              1
+            ],
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 182,
+            "translateY": 0,
+            "translateX": 0,
+            "width": 182
+          },
+          "tracks": [
+            {
+              "loop": true,
+              "entity": "NGON_0",
+              "field": "alpha",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 0.488
+                },
+                {
+                  "index": 1,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 1
+                },
+                {
+                  "index": 2,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 0.488
+                },
+                {
+                  "index": 5,
+                  "easing": "LINEAR",
+                  "value": 0
+                },
+                {
+                  "index": 20,
+                  "easing": "NONE",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "NGON_0",
+              "field": "color",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "NONE",
+                  "value": 0
+                },
+                {
+                  "index": 1,
+                  "easing": "NONE",
+                  "value": 16777215
+                },
+                {
+                  "index": 20,
+                  "easing": "NONE",
+                  "value": 16777215
+                }
+              ]
+            },
+            {
+              "loop": true,
+              "entity": "NGON_0",
+              "field": "radius",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "NONE",
+                  "value": 52
+                },
+                {
+                  "index": 1,
+                  "easing": "NONE",
+                  "value": 75
+                },
+                {
+                  "index": 5,
+                  "easing": "LINEAR",
+                  "value": 139
+                },
+                {
+                  "index": 20,
+                  "easing": "NONE",
+                  "value": 75
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CREATE_FRAGMENTS",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": 0,
+      "items": [
+        {
+          "id": "CREATE_FRAGMENTS",
+          "entity": "ceramic.Entity",
+          "isVisual": false,
+          "locked": false,
+          "props": {
+            "scriptContent": "CREATE_FRAGMENTS"
+          }
+        },
+        {
+          "id": "LIBRARY",
+          "entity": "ceramic.Entity",
+          "isVisual": false,
+          "locked": false,
+          "props": {
+            "scriptContent": "LIBRARY"
+          }
+        }
+      ]
+    },
+    {
+      "id": "FRAGMENT_9",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": 2,
+      "items": [
+        {
+          "id": "LIBRARY",
+          "entity": "ceramic.Entity",
+          "isVisual": false,
+          "locked": false,
+          "props": {
+            "scriptContent": "LIBRARY"
+          }
+        },
+        {
+          "id": "TEXT_0",
+          "entity": "ceramic.Text",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 35,
+            "y": 94,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0,
+            "anchorY": 0,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "content": "TEXT_0",
+            "scriptContent": null,
+            "shader": null,
+            "fitWidth": -1,
+            "letterSpacing": 0,
+            "color": 16777215,
+            "align": "Left",
+            "font": "RobotoMedium",
+            "maxLineDiff": -1,
+            "pointSize": 144,
+            "lineHeight": 1,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "height": 150.857,
+            "translateY": 0,
+            "translateX": 0,
+            "width": 494.143
+          }
+        },
+        {
+          "id": "SHAPE_0",
+          "entity": "ceramic.Shape",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 340,
+            "y": 386,
+            "depth": 2,
+            "depthRange": 1,
+            "anchorX": 0.5,
+            "anchorY": 0.5,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 100,
+            "points": [
+              0,
+              0,
+              97.087,
+              8.87,
+              100,
+              100,
+              0,
+              100
+            ],
+            "scriptContent": null,
+            "shader": null,
+            "autoComputeSize": true,
+            "holes": null,
+            "triangulation": "Poly2tri",
+            "complexHit": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          }
+        }
+      ]
+    }
+  ],
+  "scripts": [
+    {
+      "id": "INNER_RANDOM",
+      "content": "\n// Empty script\n\nvar quad = new Quad();\nquad.color = Color.random();\nquad.size(visual.width, visual.height);\nvisual.add(quad);\n\nvisual.pos()\n\nvisual.onResize(self, function() {\n    quad.size(visual.width, visual.height);\n});\n"
+    },
+    {
+      "id": "BACKGROUND",
+      "content": ""
+    },
+    {
+      "id": "SCRIPT_0",
+      "content": "\nvar quads:Array<Quad> = [];\n\nfunction init() {\n\n    for (i in 0...100) {\n        var quad = new Quad();\n        quad.size(10, 10);\n        quad.anchor(0.5, 0.5);\n        quad.color = Color.random();\n        quad.rotation = 45;\n        quad.pos(\n            visual.width * Math.random(),\n            visual.height * Math.random()\n        );\n        visual.add(quad);\n        quads.push(quad);\n    }\n\n}\n\nfunction update(delta) {\n\n    for (var quad of quads) {\n\n        quad.x += (Math.random() - 0.5) * 100 * delta;\n        quad.y += (Math.random() - 0.5) * 100 * delta;\n\n        quad.alpha = Math.random();\n        quad.scale(1.0 + Math.random() * 0.2);\n\n    }\n\n}\n"
+    },
+    {
+      "id": "SHAKE_TEXT",
+      "content": "if (visual.edited) return;\n\nvar duration = 2.0;\nvar amplitude = 4.0;\nvar time = Timer.now % duration;\n\nvisual.transform = new Transform();\n//visual.gravityY = 2;\n//visual.allowGravity = true;\n\nfunction update(delta:Float) {\n\n    time = (time + delta) % duration;\n\n    var ratio = Math.sin(time * Math.PI * 2 / duration);\n\n    visual.skewX = amplitude * ratio;\n    visual.transform.tx = amplitude * ratio;\n\n}\n"
+    },
+    {
+      "id": "WALL",
+      "content": "\nif (visual.edited) return;\n\nvisual.immovable = true;\nvisual.allowGravity = false;\napp.group('WALLS').add(visual);\n"
+    },
+    {
+      "id": "MOVING_PLATFORM",
+      "content": "\nif (visual.edited) return;\n\nvisual.immovable = true;\nvisual.allowGravity = false;\napp.group('WALLS').add(visual);\n\nvar speed = 100;\n\nvar sign = 1;\nTimer.delay(self, 1.0, () => {\n    sign = sign * -1;\n    visual.accelerationX = speed * sign;\n    Timer.interval(self, 2.0, () => {\n        sign = sign * -1;\n        visual.accelerationX = speed * sign;\n    });\n});\nvisual.accelerationX = speed * sign;\n"
+    },
+    {
+      "id": "PHYSICS",
+      "content": "\nif (entity.edited) return;\n\nvar arcade = app.arcade;\n\narcade.world.gravityY = 1200;\n\nvar moving:Group<Visual> = app.group('MOVING');\nvar walls:Group<Visual> = app.group('WALLS');\n\nfunction update(delta) {\n    arcade.world.collide(moving, walls);\n}\n"
+    },
+    {
+      "id": "MOVING",
+      "content": "\nif (visual.edited) return;\n\nvisual.mass = 1;\nvisual.group = app.arcade.group('MOVING');"
+    },
+    {
+      "id": "CONTROL",
+      "content": ""
+    },
+    {
+      "id": "CHARACTER",
+      "content": "\nif (visual.edited) return;\n\nconst helpers = module('HELPERS');\n\nfunction init() {\n\n    visual.mass = 1;\n    visual.dragX = 100;\n\n    app.group('MOVING').add(visual);\n\n}\n\nvar moveSpeed = 100;\nvar movingX = 0.0;\n\nfunction update(delta) {\n    if (movingX != 0)\n        visual.velocityX = movingX;\n}\n\napp.onKeyDown(self, key => {\n\n    if (key.keyCode == KeyCode.LEFT) {\n        movingX = -moveSpeed;\n        visual.velocityX = movingX;\n    }\n    else if (key.keyCode == KeyCode.RIGHT) {\n        movingX = moveSpeed;\n        visual.velocityX = movingX;\n    }\n    else if (key.keyCode == KeyCode.SPACE) {\n        if (visual.velocityY == 0) {\n            visual.velocityY = -450;\n        }\n\n        helpers.hello('JUMP!');\n    }\n\n});\n\napp.onKeyUp(self, key => {\n\n    if (key.keyCode == KeyCode.LEFT && movingX < 0) {\n        movingX = 0;\n        visual.velocityX = movingX;\n    }\n    else if (key.keyCode == KeyCode.RIGHT && movingX > 0) {\n        movingX = 0;\n        visual.velocityX = movingX;\n    }\n\n});\n"
+    },
+    {
+      "id": "HELPERS",
+      "content": "\nfunction hello(name:String) {\n\n    log.debug('HELLO: ' + name);\n\n}\n"
+    },
+    {
+      "id": "QUEUE",
+      "content": "\nconst MIN_WIDTH = 10.0;\nconst MAX_WIDTH = 20.0;\nconst MIN_HEIGHT = 50.0;\nconst MAX_HEIGHT = 50.0;\n\nvar quads:Array<Quad> = [];\n\nfunction reset() {\n    // Clear quads\n    for (quad of quads) {\n        quad.destroy();\n    }\n    quads = [];\n\n    // Create new quads\n    var width = fragment.width;\n    var height = fragment.height;\n    var rnd = new SeedRandom(MIN_WIDTH + MAX_WIDTH * 10 + MIN_HEIGHT * 100 + MAX_HEIGHT * 1000 + fragment.width * 10000 + fragment.height * 100000);\n\n    var padX = 2;\n    var padY = 10;\n    var h = 0.0;\n    while (h < height) {\n        var blockHeight = MIN_HEIGHT + (MAX_HEIGHT - MIN_HEIGHT) * rnd.random();\n\n        var w = 0.0;\n        while (w < width) {\n            var blockWidth = MIN_WIDTH + (MAX_WIDTH - MIN_WIDTH) * rnd.random();\n\n            if (w + blockWidth > width) {\n                blockWidth = width - w;\n            }\n            if (h + blockHeight > height) {\n                blockHeight = height - h;\n            }\n\n            addBlock(\n                w,\n                h,\n                blockWidth,\n                blockHeight\n            );\n\n            w += blockWidth + padX;\n        }\n\n        h += blockHeight + padY;\n    }\n}\n\nfunction addBlock(x:Float, y:Float, blockWidth:Float, blockHeight:Float) {\n\n    var quad = new Quad();\n    quad.color = fragment.color;\n    quad.inheritAlpha = true;\n    quad.pos(x, y);\n    quad.size(blockWidth, blockHeight);\n    \n    fragment.add(quad);\n    quads.push(quad);\n\n}\n\nfunction init() {\n\n    trace('init script');\n\n    fragment.onResize(self, (width, height) => {\n        reset();\n    });\n\n    reset();\n\n}\n"
+    },
+    {
+      "id": "CREATE_FRAGMENTS",
+      "content": "\nconst lib = module('LIBRARY');\n\nfunction init() {\n\n    Timer.interval(self, 0.1, () => {\n        lib.animate(\n            'CIRCULAR_ANIM',\n            fragment.width * Math.random(),\n            fragment.height * Math.random()\n        );\n    });\n\n}\n"
+    },
+    {
+      "id": "LIBRARY",
+      "content": "\nvar fragmentDataCache:StringMap<Dynamic> = new StringMap();\nvar fragmentCache:StringMap<Array<Fragment>> = new StringMap();\n\nfunction animate(fragmentId:String, x:Float, y:Float) {\n\n    var fragmentData = fragmentDataCache.get(fragmentId);\n\n    if (fragmentData == null) {\n        fragmentData = Fragment.getData(fragmentId);\n        fragmentDataCache.set(fragmentId, fragmentData);\n    }\n\n    if (fragmentData == null) {\n        log.warning('Failed to find fragment data for id: ' + fragmentId);\n        return;\n    }\n\n    var anim = new Fragment(fragment.assets);\n    anim.fragmentData = fragmentData;\n    anim.anchor(0.5, 0.5);\n\n    fragment.add(anim);\n    anim.pos(x, y);\n\n    anim.createTimelineIfNeeded();\n    anim.timeline.loop = false;\n    Timer.delay(anim, anim.timeline.duration, () => {\n        anim.destroy();\n    });\n}\n"
+    }
+  ]
+}

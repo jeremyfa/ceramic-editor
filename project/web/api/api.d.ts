@@ -23,7 +23,6 @@ const app: App;
 const screen: Screen;
 const audio: Audio;
 const settings: Settings;
-const collections: Collections;
 const log: Logger;
 
 interface Array<T> {
@@ -103,6 +102,7 @@ interface Serializable {
 
 class SaveModel {
     static getSavedOrCreate<T>(modelClass: Class<T>, key: String, args?: Array<Dynamic>?): T;
+    static isBusyKey(key: String): Bool;
     /** Load data from the given key. */
     static loadFromKey(model: Model, key: String): Bool;
     static autoSaveAsKey(model: Model, key: String, appendInterval?: Float, compactInterval?: Float): Void;
@@ -265,6 +265,31 @@ class Autorun extends Entity {
     unbindEvents(): Void;
 }
 
+class Bytes {
+    constructor(data: ArrayBuffer);
+    /**
+		Returns the `Bytes` representation of the given `String`, using the
+		specified encoding (UTF-8 by default).
+	*/
+    static ofString(s: String, encoding?: haxe.io.Encoding?): Bytes;
+    /**
+		Converts the given hexadecimal `String` to `Bytes`. `s` must be a string of
+		even length consisting only of hexadecimal digits. For example:
+		`"0FDA14058916052309"`.
+	*/
+    static ofHex(s: String): Bytes;
+    length: Int;
+    /**
+		Returns the `len`-bytes long string stored at the given position `pos`,
+		interpreted with the given `encoding` (UTF-8 by default).
+	*/
+    getString(pos: Int, len: Int, encoding?: haxe.io.Encoding?): String;
+    /**
+		Returns a `String` representation of the bytes interpreted as UTF-8.
+	*/
+    toString(): String;
+}
+
 /**
 	StringMap allows mapping of String keys to arbitrary values.
 
@@ -278,17 +303,17 @@ class StringMap<T> implements haxe.IMap {
 	*/
     constructor();
     /**
-		See `Map.set`
+		See `Map.exists`
 	*/
-    set(key: String, value: T): Void;
+    exists(key: String): Bool;
     /**
 		See `Map.get`
 	*/
     get(key: String): T?;
     /**
-		See `Map.exists`
+		See `Map.set`
 	*/
-    exists(key: String): Bool;
+    set(key: String, value: T): Void;
     /**
 		See `Map.remove`
 	*/
@@ -311,10 +336,6 @@ class StringMap<T> implements haxe.IMap {
 		See `Map.keyValueIterator`
 	*/
     keyValueIterator(): TAnonymous;
-    /**
-		See `Map.toString`
-	*/
-    toString(): String;
 }
 
 class RotateFrame {
@@ -1550,15 +1571,6 @@ class Texture extends Entity {
     submitPixels(pixels: snow.api.buffers.Uint8Array): Void;
 }
 
-class Texts {
-    /**RobotoMedium.fnt*/
-    static ROBOTO_MEDIUM: AssetId<String>;
-    /**RobotoBold.fnt*/
-    static ROBOTO_BOLD: AssetId<String>;
-    /**entypo.fnt*/
-    static ENTYPO: AssetId<String>;
-}
-
 interface TextInputDelegate {
     /** Returns the position in `toLine` which is closest
         to the position in `fromLine`/`fromPosition` (in X coordinates).
@@ -1705,9 +1717,6 @@ class Text extends Visual {
     unbindEvents(): Void;
 }
 
-class Sounds {
-}
-
 class SoundAsset extends Asset {
     constructor(name: String, options?: Dynamic?);
     /**replaceSound event*/
@@ -1810,8 +1819,6 @@ class Shortcuts {
     static audio: Audio;
     /** Shared settings instance */
     static settings: Settings;
-    /** Shared collections instance */
-    static collections: Collections;
     /** Shared logger instance */
     static log: Logger;
 }
@@ -1835,19 +1842,6 @@ class Shape extends Mesh {
     /** If set to `true`, width and heigh will be computed from shape points. */
     autoComputeSize: Bool;
     computeContent(): Void;
-}
-
-class Shaders {
-    /**tintBlack.vert, tintBlack.frag*/
-    static TINT_BLACK: AssetId<String>;
-    /**textured.frag, textured.vert*/
-    static TEXTURED: AssetId<String>;
-    /**pixelArt.vert, pixelArt.frag*/
-    static PIXEL_ART: AssetId<String>;
-    /**msdf.frag, msdf.vert*/
-    static MSDF: AssetId<String>;
-    /**fxaa.vert, fxaa.frag*/
-    static FXAA: AssetId<String>;
 }
 
 class ShaderAttribute {
@@ -1973,6 +1967,10 @@ class Settings implements Observable {
     offTitleChange(handleCurrentPrevious?: ((current: String, previous: String) => Void)?): Void;
     /**Event when title field changes.*/
     listensTitleChange(): Bool;
+    /** App collections. */
+    collections: (() => ceramic.AutoCollections);
+    /** App info (useful when dynamically loaded, not needed otherwise). */
+    appInfo: Dynamic;
     /** Antialiasing value (0 means disabled). */
     antialiasing: Int;
     /** Whether the window can be resized or not. */
@@ -3684,6 +3682,10 @@ class InitSettings {
     title: String;
     /** Antialiasing value (0 means disabled). */
     antialiasing: Int;
+    /** App collections. */
+    collections: (() => ceramic.AutoCollections);
+    /** App info (useful when dynamically loaded, not needed otherwise). */
+    appInfo: Dynamic;
     /** Whether the window can be resized or not. */
     resizable: Bool;
     /** Assets path. */
@@ -3694,17 +3696,6 @@ class InitSettings {
     defaultFont: AssetId<String>;
     /** Default shader asset */
     defaultShader: AssetId<String>;
-}
-
-class Images {
-    /**white.png*/
-    static WHITE: AssetId<String>;
-    /**RobotoMedium.png*/
-    static ROBOTO_MEDIUM: AssetId<String>;
-    /**RobotoBold.png*/
-    static ROBOTO_BOLD: AssetId<String>;
-    /**entypo.png*/
-    static ENTYPO: AssetId<String>;
 }
 
 class ImageAsset extends Asset {
@@ -3730,6 +3721,29 @@ class ImageAsset extends Asset {
     load(): Void;
     destroy(): Void;
     unbindEvents(): Void;
+}
+
+class HttpResponse {
+    constructor(status: Int, content: String, error?: String?, headers: haxe.ds.Map<K, V>);
+    status: Int;
+    content: String;
+    error: String;
+    headers: haxe.ds.Map<K, V>;
+}
+
+    /** Augmented and higher level HTTP request options. */
+interface HttpRequestOptions {
+    content?: String?;
+    headers?: haxe.ds.Map<K, V>?;
+    method?: HttpMethod?;
+    params?: haxe.ds.Map<K, V>?;
+    timeout?: Int?;
+    url: String;
+}
+
+/** A cross-platform and high level HTTP request utility */
+class Http {
+    static request(options: TAnonymous, done: ((arg1: HttpResponse) => Void)): Void;
 }
 
 /** An utility to encode strings with hashes, allowing to check their validity on decode. */
@@ -3969,15 +3983,6 @@ class Fragment extends Layer {
     createTimelineIfNeeded(): Void;
     paused: Bool;
     unbindEvents(): Void;
-}
-
-class Fonts {
-    /**RobotoMedium.fnt*/
-    static ROBOTO_MEDIUM: AssetId<String>;
-    /**RobotoBold.fnt*/
-    static ROBOTO_BOLD: AssetId<String>;
-    /**entypo.fnt*/
-    static ENTYPO: AssetId<String>;
 }
 
 class FontAsset extends Asset {
@@ -4282,9 +4287,6 @@ class DecomposedTransform {
     skewY: Float;
 }
 
-class Databases {
-}
-
 class DatabaseAsset extends Asset {
     constructor(name: String, options?: Dynamic?);
     database: Array<haxe.DynamicAccess<String>>;
@@ -4372,16 +4374,6 @@ interface Component {
         initializer from the component.
         This field is automatically added to implementing class by ComponentMacro */
     initializerName: String;
-}
-
-class Collections {
-    constructor();
-    /** Converts an array to an equivalent collection */
-    static toCollection<T>(array: Array<T>): Collection<ValueEntry<T>>;
-    /** Returns a filtered collection from the provided collection and filter. */
-    static filtered<T>(collection: Collection<T>, filter: ((arg1: Array<T>) => Array<T>), cacheKey?: String?): Collection<T>;
-    /** Returns a combined collection from the provided ones. */
-    static combined<T>(collections: Array<Collection<T>>, cache?: Bool): Collection<T>;
 }
 
 class CollectionEntry {
@@ -4584,19 +4576,15 @@ class Audio extends Entity {
 
 class Assets extends Entity {
     constructor();
+    static all: Array<String>;
+    static allDirs: Array<String>;
+    static allByName: haxe.ds.Map<K, V>;
+    static allDirsByName: haxe.ds.Map<K, V>;
     static decodePath(path: String): AssetPathInfo;
     static addAssetKind(kind: String, add: ((arg1: Assets, arg2: String, arg3?: Dynamic) => Void), extensions: Array<String>, dir: Bool, types: Array<String>): Void;
     static assetNameFromPath(path: String): String;
     static realAssetPath(path: String, runtimeAssets?: RuntimeAssets?): String;
     static getReloadCount(realAssetPath: String): Int;
-    /**All asset file paths array*/
-    static all: Array<String>;
-    /**All asset directory paths array*/
-    static allDirs: Array<String>;
-    /**Assets by base name*/
-    static allByName: haxe.ds.Map<K, V>;
-    /**Asset directories by base name*/
-    static allDirsByName: haxe.ds.Map<K, V>;
     /**complete event*/
     onComplete(owner: Entity?, handleSuccess: ((success: Bool) => Void)): Void;
     /**complete event*/
@@ -5148,8 +5136,6 @@ class App extends Entity {
     renderTextures: Array<RenderTexture>;
     /** App level assets. Used to load default bitmap font */
     assets: Assets;
-    /** App level collections */
-    collections: Collections;
     /** Default textured shader */
     defaultTexturedShader: Shader;
     /** Default white texture */
@@ -5175,6 +5161,54 @@ class App extends Entity {
     unbindEvents(): Void;
     /**App info extracted from `ceramic.yml`*/
     info: TAnonymous;
+}
+
+class Texts {
+    /**RobotoMedium.fnt*/
+    static ROBOTO_MEDIUM: AssetId<String>;
+    /**RobotoBold.fnt*/
+    static ROBOTO_BOLD: AssetId<String>;
+    /**entypo.fnt*/
+    static ENTYPO: AssetId<String>;
+}
+
+class Sounds {
+}
+
+class Shaders {
+    /**tintBlack.vert, tintBlack.frag*/
+    static TINT_BLACK: AssetId<String>;
+    /**textured.frag, textured.vert*/
+    static TEXTURED: AssetId<String>;
+    /**pixelArt.vert, pixelArt.frag*/
+    static PIXEL_ART: AssetId<String>;
+    /**msdf.frag, msdf.vert*/
+    static MSDF: AssetId<String>;
+    /**fxaa.vert, fxaa.frag*/
+    static FXAA: AssetId<String>;
+}
+
+class Images {
+    /**white.png*/
+    static WHITE: AssetId<String>;
+    /**RobotoMedium.png*/
+    static ROBOTO_MEDIUM: AssetId<String>;
+    /**RobotoBold.png*/
+    static ROBOTO_BOLD: AssetId<String>;
+    /**entypo.png*/
+    static ENTYPO: AssetId<String>;
+}
+
+class Fonts {
+    /**RobotoMedium.fnt*/
+    static ROBOTO_MEDIUM: AssetId<String>;
+    /**RobotoBold.fnt*/
+    static ROBOTO_BOLD: AssetId<String>;
+    /**entypo.fnt*/
+    static ENTYPO: AssetId<String>;
+}
+
+class Databases {
 }
 
 /**
@@ -6037,6 +6071,87 @@ class Body {
 }
 
 /**
+	The Haxe Reflection API allows retrieval of type information at runtime.
+
+	This class complements the more lightweight Reflect class, with a focus on
+	class and enum instances.
+
+	@see https://haxe.org/manual/types.html
+	@see https://haxe.org/manual/std-reflection.html
+*/
+class Type {
+    /**
+		Creates an instance of class `cl`, using `args` as arguments to the
+		class constructor.
+
+		This function guarantees that the class constructor is called.
+
+		Default values of constructors arguments are not guaranteed to be
+		taken into account.
+
+		If `cl` or `args` are null, or if the number of elements in `args` does
+		not match the expected number of constructor arguments, or if any
+		argument has an invalid type,  or if `cl` has no own constructor, the
+		result is unspecified.
+
+		In particular, default values of constructor arguments are not
+		guaranteed to be taken into account.
+	*/
+    static createInstance<T>(cl: Class<T>, args: Array<Dynamic>): T;
+    /**
+		Creates an instance of enum `e` by calling its constructor `constr` with
+		arguments `params`.
+
+		If `e` or `constr` is null, or if enum `e` has no constructor named
+		`constr`, or if the number of elements in `params` does not match the
+		expected number of constructor arguments, or if any argument has an
+		invalid type, the result is unspecified.
+	*/
+    static createEnum<T>(e: Enum<T>, constr: String, params?: Array<Dynamic>?): T;
+    /**
+		Returns a list of the instance fields of class `c`, including
+		inherited fields.
+
+		This only includes fields which are known at compile-time. In
+		particular, using `getInstanceFields(getClass(obj))` will not include
+		any fields which were added to `obj` at runtime.
+
+		The order of the fields in the returned Array is unspecified.
+
+		If `c` is null, the result is unspecified.
+	*/
+    static getInstanceFields(c: Class<Dynamic>): Array<String>;
+    /**
+		Returns the runtime type of value `v`.
+
+		The result corresponds to the type `v` has at runtime, which may vary
+		per platform. Assumptions regarding this should be minimized to avoid
+		surprises.
+	*/
+    static typeof(v: Dynamic): ValueType;
+    /**
+		Recursively compares two enum instances `a` and `b` by value.
+
+		Unlike `a == b`, this function performs a deep equality check on the
+		arguments of the constructors, if exists.
+
+		If `a` or `b` are null, the result is unspecified.
+	*/
+    static enumEq<T>(a: T, b: T): Bool;
+    /**
+		Returns a list of the constructor arguments of enum instance `e`.
+
+		If `e` has no arguments, the result is [].
+
+		Otherwise the result are the values that were used as arguments to `e`,
+		in the order of their declaration.
+
+		If `e` is null, the result is unspecified.
+	*/
+    static enumParameters(e: EnumValue): Array<Dynamic>;
+}
+
+/**
 	This class provides advanced methods on Strings. It is ideally used with
 	`using StringTools` and then acts as an [extension](https://haxe.org/manual/lf-static-extension.html)
 	to the `String` class.
@@ -6220,13 +6335,6 @@ class Math {
     static tan(v: Float): Float;
 }
 
-/**
-	An Array is a storage for values. You can access it using indexes or
-	with its API.
-
-	@see https://haxe.org/manual/std-Array.html
-	@see https://haxe.org/manual/lf-array-comprehension.html
-*/
 interface Array<T> {
     /**
 		Creates a new Array.
@@ -6394,6 +6502,6 @@ interface Array<T> {
     /**
 		Returns an iterator of the Array values.
 	*/
-    iterator(): TAnonymous;
+    iterator(): haxe.iterators.ArrayIterator<T>;
 }
 

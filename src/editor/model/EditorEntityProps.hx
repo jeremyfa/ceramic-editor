@@ -176,8 +176,11 @@ class EditorEntityProps extends Model {
                             case 'scaleX' | 'scaleY':
                                 if (Math.round(prevValue * 1000) == Math.round(value * 1000))
                                     shouldCreateKeyframe = false;
-                            case 'skewX' | 'skewY' | 'rotation':
+                            case 'skewX' | 'skewY':
                                 if (Math.round(prevValue * 100) == Math.round(value * 100))
+                                    shouldCreateKeyframe = false;
+                            case 'rotation':
+                                if (Math.round(prevValue * 360) == Math.round(value * 360))
                                     shouldCreateKeyframe = false;
                             default:
                         }

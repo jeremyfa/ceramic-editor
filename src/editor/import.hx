@@ -2,6 +2,9 @@
 import ceramic.*;
 import ceramic.ui.*;
 import ceramic.Shortcuts.*;
+
+import assets.*;
+
 import tracker.Autorun.*;
 import tracker.Observable;
 import tracker.Model;

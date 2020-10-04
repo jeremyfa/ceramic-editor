@@ -39,6 +39,8 @@ class EditorEntityData extends Model {
 
     var didInit:Bool = false;
 
+    var didCreateKeyframeByField:Map<String,Int> = new Map();
+
     public function new() {
 
         super();
@@ -350,6 +352,9 @@ class EditorEntityData extends Model {
 
         var keyframe = track.keyframeAtIndex(index);
         if (keyframe == null) {
+
+            addDidCreateKeyframe(field);
+
             keyframe = new EditorTimelineKeyframe();
             keyframe.easing = model.project.lastSelectedEasing;
             keyframe.index = index;
@@ -429,6 +434,28 @@ class EditorEntityData extends Model {
             else if (field.name == fieldB) return 1;
         }
         return 0;
+
+    }
+
+    public function shouldIgnoreEditableItemUpdate(field:String) {
+
+        return didCreateKeyframeByField.exists(field) && didCreateKeyframeByField.get(field) > 0;
+
+    }
+
+    function addDidCreateKeyframe(field:String) {
+
+        var n = 0;
+        if (didCreateKeyframeByField.exists(field)) {
+            n = didCreateKeyframeByField.get(field);
+        }
+        n++;
+        didCreateKeyframeByField.set(field, n);
+
+        Timer.delay(this, 0.25, () -> {
+            var n2 = didCreateKeyframeByField.get(field);
+            didCreateKeyframeByField.set(field, n2 - 1);
+        });
 
     }
 

@@ -4,13 +4,20 @@ class EditorTimelineTrack extends Model {
 
     @serialize public var entityData:EditorEntityData;
 
-    @serialize public var loop:Bool = true;
+    @serialize public var loop:Bool = false;
 
     @serialize public var entity:String;
 
     @serialize public var field:String;
 
     @serialize public var keyframes:ReadOnlyMap<Int, EditorTimelineKeyframe> = new Map();
+
+    override function didDeserialize() {
+
+        // For now. TODO remove and expose loop option in editor
+        this.loop = false;
+
+    }
 
     @compute public function keyframeIndexes():ReadOnlyArray<Int> {
 
