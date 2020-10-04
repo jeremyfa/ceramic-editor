@@ -16,6 +16,8 @@ class TimelineKeyframeMarkerView extends View implements Observable {
 
     var dragging:Bool = false;
 
+    var draggingAllAfter:Bool = false;
+
     public function new() {
 
         super();
@@ -115,6 +117,7 @@ class TimelineKeyframeMarkerView extends View implements Observable {
         }
 
         dragging = true;
+        draggingAllAfter = app.keyCodePressed(KeyCode.LALT) || app.keyCodePressed(KeyCode.RALT);
 
         click.cancel();
         doubleClick.cancel();
@@ -139,28 +142,80 @@ class TimelineKeyframeMarkerView extends View implements Observable {
                 var prevFrame = model.animationState.currentFrame;
                 if (prevFrame != frame) {
 
-                    var canMove = true;
+                    if (draggingAllAfter) {
 
-                    for (track in selectedItem.selectedTimelineTracks) {
-                        var keyframeToMove = track.keyframeAtIndex(prevFrame);
-                        var keyframeToOverwrite = track.keyframeAtIndex(frame);
-                        if (keyframeToMove != null && keyframeToOverwrite != null) {
-                            canMove = false;
-                            break;
-                        }
-                    }
-            
-                    if (canMove) {
+                        var canMove = true;
+
                         for (track in selectedItem.selectedTimelineTracks) {
-                            var keyframeToMove = track.keyframeAtIndex(prevFrame);
-                            var keyframeToOverwrite = track.keyframeAtIndex(frame);
-                            if (keyframeToMove != null && keyframeToOverwrite == null) {
-                                track.removeKeyframeAtIndex(prevFrame);
-                                track.setKeyframe(frame, keyframeToMove);
+                            //var keyframeToMove = track.keyframeAtIndex(prevFrame);
+                            if (frame < prevFrame) {
+                                var f = prevFrame - 1;
+                                while (f >= frame) {
+                                    var keyframeToOverwrite = track.keyframeAtIndex(f);
+                                    if (keyframeToOverwrite != null) {
+                                        canMove = false;
+                                        break;
+                                    }
+                                    f--;
+                                }
+                                if (!canMove)
+                                    break;
                             }
                         }
                 
-                        model.animationState.currentFrame = frame;
+                        if (canMove) {
+                            for (track in selectedItem.selectedTimelineTracks) {
+                                var frameIndexes = [];
+                                for (f in track.keyframes.keys()) {
+                                    if (f >= prevFrame) {
+                                        frameIndexes.push(f);
+                                    }
+                                }
+                                if (frame < prevFrame) {
+                                    frameIndexes.sort((a, b) -> a - b);
+                                }
+                                else {
+                                    frameIndexes.sort((a, b) -> b - a);
+                                }
+                                for (f in frameIndexes) {
+                                    var keyframeToMove = track.keyframeAtIndex(f);
+                                    //var keyframeToOverwrite = track.keyframeAtIndex(f + frame - prevFrame);
+                                    if (keyframeToMove != null) {// && keyframeToOverwrite == null) {
+                                        track.removeKeyframeAtIndex(f);
+                                        track.setKeyframe(f + frame - prevFrame, keyframeToMove);
+                                    }
+                                }
+                            }
+                    
+                            model.animationState.currentFrame = frame;
+                        }
+
+                    }
+                    else {
+
+                        var canMove = true;
+
+                        for (track in selectedItem.selectedTimelineTracks) {
+                            var keyframeToMove = track.keyframeAtIndex(prevFrame);
+                            var keyframeToOverwrite = track.keyframeAtIndex(frame);
+                            if (keyframeToMove != null && keyframeToOverwrite != null) {
+                                canMove = false;
+                                break;
+                            }
+                        }
+                
+                        if (canMove) {
+                            for (track in selectedItem.selectedTimelineTracks) {
+                                var keyframeToMove = track.keyframeAtIndex(prevFrame);
+                                var keyframeToOverwrite = track.keyframeAtIndex(frame);
+                                if (keyframeToMove != null && keyframeToOverwrite == null) {
+                                    track.removeKeyframeAtIndex(prevFrame);
+                                    track.setKeyframe(frame, keyframeToMove);
+                                }
+                            }
+                    
+                            model.animationState.currentFrame = frame;
+                        }
                     }
                 }
             }
