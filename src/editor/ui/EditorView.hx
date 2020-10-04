@@ -11,6 +11,8 @@ class EditorView extends View implements Observable {
 
     @observe public var panelTabsView:PanelTabsView;
 
+    var panelTabsFilter:Filter;
+
     var editorMenu:RowLayout;
 
     var bottomBar:RowLayout;
@@ -59,9 +61,39 @@ class EditorView extends View implements Observable {
         add(leftSpacerBorder);
 
         // Panels tabs
-        panelTabsView = new PanelTabsView();
-        panelTabsView.depth = 10;
-        add(panelTabsView);
+        panelTabsFilter = new Filter();
+        panelTabsFilter.autoRender = false;
+        panelTabsFilter.explicitRender = true;
+        //panelTabsFilter.enabled = false;
+        add(panelTabsFilter);
+        {
+            panelTabsView = new PanelTabsView();
+            panelTabsView.depth = 10;
+            panelTabsView.customParentView = this;
+            panelTabsView.onLayout(this, () -> {
+                if (panelTabsFilter.explicitRender)
+                    panelTabsFilter.render();
+            });
+        }
+        panelTabsFilter.content.add(panelTabsView);
+        screen.onPointerMove(this, info -> {
+            if (panelTabsView.hits(info.x, info.y)) {
+                panelTabsFilter.autoRender = true;
+                panelTabsFilter.explicitRender = false;
+            }
+            else {
+                panelTabsFilter.autoRender = false;
+                panelTabsFilter.explicitRender = true;
+            }
+        });
+        /*panelTabsFilter.onPointerOver(this, _ -> {
+            panelTabsFilter.autoRender = true;
+            panelTabsFilter.explicitRender = false;
+        });
+        panelTabsFilter.onPointerOut(this, _ -> {
+            panelTabsFilter.autoRender = false;
+            panelTabsFilter.explicitRender = true;
+        });*/
 
         // Left side menu
         editorMenu = new RowLayout();
@@ -376,7 +408,10 @@ class EditorView extends View implements Observable {
         panelTabsView.viewSize(panelsTabsWidth, height - editorMenuHeight);
         panelTabsView.computeSize(panelsTabsWidth, height - editorMenuHeight, ViewLayoutMask.FIXED, true);
         panelTabsView.applyComputedSize();
-        panelTabsView.pos(width - panelTabsView.width, editorMenuHeight);
+        panelTabsView.pos(0, 0);
+
+        panelTabsFilter.pos(width - panelTabsView.width, editorMenuHeight);
+        panelTabsFilter.size(panelTabsView.width, panelTabsView.height);
 
         editorMenu.viewSize(width, editorMenuHeight);
         editorMenu.computeSize(width, editorMenuHeight, ViewLayoutMask.FIXED, true);
