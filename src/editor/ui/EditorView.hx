@@ -62,13 +62,13 @@ class EditorView extends View implements Observable {
 
         // Panels tabs
         panelTabsFilter = new Filter();
+        panelTabsFilter.depth = 10;
         panelTabsFilter.autoRender = false;
         panelTabsFilter.explicitRender = true;
         //panelTabsFilter.enabled = false;
         add(panelTabsFilter);
         {
             panelTabsView = new PanelTabsView();
-            panelTabsView.depth = 10;
             panelTabsView.customParentView = this;
             panelTabsView.onLayout(this, () -> {
                 if (panelTabsFilter.explicitRender)
