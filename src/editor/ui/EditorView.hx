@@ -806,32 +806,41 @@ class EditorView extends View implements Observable {
     function handleKeyDown(key:Key) {
 
         if (key.scanCode == ScanCode.BACKSPACE) {
-            // Delete selected item?
-            var selectedItem = getSelectedItemIfFocusedInFragment();
-            if (selectedItem != null) {
-                var fragment = model.project.lastSelectedFragment;
-                fragment.removeItem(selectedItem);
-                app.onceUpdate(this, _ -> {
-                    selectedItem.destroy();
-                    selectedItem = null;
-                });
-                return;
-            }
+            if (!isFocusedInField()) {
 
-            // Delete keyframes?
-            var fragment = model.project.lastSelectedFragment;
-            if (fragment != null) {
-                var selectedItem = fragment.selectedItem;
+                // Delete selected item?
+                var selectedItem = getSelectedItemIfFocusedInFragment();
                 if (selectedItem != null) {
-                    var currentFrame = model.animationState.currentFrame;
-                    for (track in selectedItem.timelineTracks) {
-                        if (selectedItem.selectedTimelineTracks.indexOf(track) != -1) {
-                            track.removeKeyframeAtIndex(currentFrame);
+                    var fragment = model.project.lastSelectedFragment;
+                    fragment.removeItem(selectedItem);
+                    app.onceUpdate(this, _ -> {
+                        selectedItem.destroy();
+                        selectedItem = null;
+                    });
+                    return;
+                }
+    
+                // Delete keyframes?
+                var fragment = model.project.lastSelectedFragment;
+                if (fragment != null) {
+                    var selectedItem = fragment.selectedItem;
+                    if (selectedItem != null) {
+                        var currentFrame = model.animationState.currentFrame;
+                        for (track in selectedItem.timelineTracks) {
+                            if (selectedItem.selectedTimelineTracks.indexOf(track) != -1) {
+                                track.removeKeyframeAtIndex(currentFrame);
+                            }
                         }
                     }
                 }
             }
         }
+
+    }
+
+    function isFocusedInField():Bool {
+
+        return FieldManager.manager.focusedField != null;
 
     }
 
@@ -842,7 +851,7 @@ class EditorView extends View implements Observable {
         if (fragment != null) {
             var selectedItem = fragment.selectedItem;
             if (selectedItem != null) {
-                if (FieldManager.manager.focusedField == null && popup.contentView == null && screen.focusedVisual != null) {
+                if (!isFocusedInField() && popup.contentView == null && screen.focusedVisual != null) {
                     if (!screen.focusedVisual.hasIndirectParent(timelineEditorView)) {
                         var selectedTab = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
                         if (selectedTab == 'Visuals' || (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentEditorView))) {

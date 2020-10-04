@@ -283,6 +283,104 @@ class EntityFieldUtils {
                 fieldView.disabled = implicitSize;
             });
         }
+        if (type == 'Int' || type == 'Float') {
+            var _setTextValue = fieldView.setTextValue;
+            fieldView.setTextValue = function(field:TextFieldView, textValue:String):Void {
+
+                var addIndex = textValue.indexOf('+');
+                var subtractIndex = textValue.indexOf('-');
+                var multiplyIndex = textValue.indexOf('*');
+                var divideIndex = textValue.indexOf('/');
+                if (addIndex > 0 && !(subtractIndex > 0 || multiplyIndex > 0 || divideIndex > 0)) {
+                    field.textValue = textValue.trim();
+                    return;
+                }
+                if (subtractIndex > 0 && !(addIndex > 0 || multiplyIndex > 0 || divideIndex > 0)) {
+                    field.textValue = textValue.trim();
+                    return;
+                }
+                if (multiplyIndex > 0 && !(addIndex > 0 || subtractIndex > 0 || divideIndex > 0)) {
+                    field.textValue = textValue.trim();
+                    return;
+                }
+                if (divideIndex > 0 && !(addIndex > 0 || multiplyIndex > 0 || subtractIndex > 0)) {
+                    field.textValue = textValue.trim();
+                    return;
+                }
+
+                _setTextValue(field, textValue);
+            };
+
+            function applyOperationIfNeeded() {
+
+                var textValue = fieldView.textValue;
+                var addIndex = textValue.indexOf('+');
+                var subtractIndex = textValue.indexOf('-');
+                var multiplyIndex = textValue.indexOf('*');
+                var divideIndex = textValue.indexOf('/');
+                if (addIndex > 0) {
+                    var before = textValue.substr(0, addIndex).trim();
+                    var after = textValue.substr(addIndex + 1).trim();
+                    var result = Std.parseFloat(before) + Std.parseFloat(after);
+                    if (!Math.isNaN(result)) {
+                        _setTextValue(fieldView, ''+result);
+                    }
+                    else {
+                        _setTextValue(fieldView, before);
+                    }
+                }
+                else if (subtractIndex > 0) {
+                    var before = textValue.substr(0, subtractIndex).trim();
+                    var after = textValue.substr(subtractIndex + 1).trim();
+                    var result = Std.parseFloat(before) - Std.parseFloat(after);
+                    if (!Math.isNaN(result)) {
+                        _setTextValue(fieldView, ''+result);
+                    }
+                    else {
+                        _setTextValue(fieldView, before);
+                    }
+                }
+                else if (multiplyIndex > 0) {
+                    var before = textValue.substr(0, multiplyIndex).trim();
+                    var after = textValue.substr(multiplyIndex + 1).trim();
+                    var result = Std.parseFloat(before) * Std.parseFloat(after);
+                    if (!Math.isNaN(result)) {
+                        _setTextValue(fieldView, ''+result);
+                    }
+                    else {
+                        _setTextValue(fieldView, before);
+                    }
+                }
+                else if (divideIndex > 0) {
+                    var before = textValue.substr(0, divideIndex).trim();
+                    var after = textValue.substr(divideIndex + 1).trim();
+                    var result = Std.parseFloat(before) / Std.parseFloat(after);
+                    if (!Math.isNaN(result)) {
+                        _setTextValue(fieldView, ''+result);
+                    }
+                    else {
+                        _setTextValue(fieldView, before);
+                    }
+                }
+
+            }
+
+            var wasFocused = false;
+            fieldView.autorun(function() {
+                var isFocused = fieldView.focused;
+                unobserve();
+                if (wasFocused && !isFocused) {
+                    applyOperationIfNeeded();
+                }
+                wasFocused = isFocused;
+                reobserve();
+            });
+            /*fieldView.onDestroy(item, function(_) {
+                if (wasFocused) {
+                    applyOperationIfNeeded();
+                }
+            });*/
+        }
         return fieldView;
 
     }

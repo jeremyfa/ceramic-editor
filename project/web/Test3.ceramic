@@ -9,8 +9,8 @@
     267829
   ],
   "colorPickerHsluv": false,
-  "selectedEditableIndex": 6,
-  "lastSelectedFragmentIndex": 6,
+  "selectedEditableIndex": 15,
+  "lastSelectedFragmentIndex": 15,
   "selectedScriptIndex": -1,
   "lastSelectedEasing": "ELASTIC_EASE_IN_OUT",
   "exportPath": null,
@@ -1034,7 +1034,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "QUAD_0",
               "field": "x",
               "keyframes": [
@@ -1046,7 +1046,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "QUAD_0",
               "field": "y",
               "keyframes": [
@@ -1069,7 +1069,7 @@
       "color": 0,
       "overflow": false,
       "transparent": true,
-      "selectedItemIndex": -1,
+      "selectedItemIndex": 0,
       "items": [
         {
           "id": "QUAD_1",
@@ -1077,8 +1077,8 @@
           "isVisual": true,
           "locked": false,
           "props": {
-            "x": 111.983,
-            "y": 479.056,
+            "x": 133,
+            "y": 125,
             "depth": 1,
             "depthRange": 1,
             "anchorX": 0.5,
@@ -1094,23 +1094,23 @@
             "shader": null,
             "texture": null,
             "transparent": false,
-            "color": 8196486,
+            "color": 11874096,
             "skewY": 0,
             "skewX": 0,
-            "rotation": 0.028,
+            "rotation": 350.277,
             "translateY": 0,
             "translateX": 0
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "QUAD_1",
               "field": "x",
               "keyframes": [
                 {
                   "index": 0,
                   "easing": "ELASTIC_EASE_IN_OUT",
-                  "value": 118
+                  "value": 133
                 },
                 {
                   "index": 18,
@@ -1130,14 +1130,14 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "QUAD_1",
               "field": "y",
               "keyframes": [
                 {
                   "index": 0,
                   "easing": "ELASTIC_EASE_IN_OUT",
-                  "value": 112
+                  "value": 125
                 },
                 {
                   "index": 18,
@@ -1157,14 +1157,14 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "QUAD_1",
               "field": "rotation",
               "keyframes": [
                 {
                   "index": 0,
                   "easing": "ELASTIC_EASE_IN_OUT",
-                  "value": 350.267
+                  "value": 350.277
                 },
                 {
                   "index": 18,
@@ -1184,14 +1184,14 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "QUAD_1",
               "field": "color",
               "keyframes": [
                 {
                   "index": 0,
                   "easing": "ELASTIC_EASE_IN_OUT",
-                  "value": 11939888
+                  "value": 11874096
                 },
                 {
                   "index": 18,
@@ -1408,12 +1408,12 @@
             "width": 42.869,
             "height": 99.503,
             "points": [
-              -83.5064082847065,
-              3.3312468468574488,
+              -83.61356448302955,
+              3.266730917109491,
               42.869,
               -4.986,
-              -68.82320427193214,
-              18.011476338312765,
+              -68.92403512648963,
+              17.94875299507831,
               -90.704,
               99.503
             ],
@@ -1432,7 +1432,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_0",
               "field": "x",
               "keyframes": [
@@ -1484,7 +1484,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_0",
               "field": "color",
               "keyframes": [
@@ -1501,7 +1501,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_0",
               "field": "points",
               "keyframes": [
@@ -1599,12 +1599,12 @@
             "width": 42.869,
             "height": 99.503,
             "points": [
-              -83.49206299447248,
-              3.3398837689528103,
+              -83.57551736890348,
+              3.2896380842214654,
               42.869,
               -4.986,
-              -70.44163324466204,
-              18.001737846688865,
+              -70.51926967209478,
+              17.95289815658754,
               -90.704,
               99.503
             ],
@@ -1623,7 +1623,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_1",
               "field": "x",
               "keyframes": [
@@ -1675,7 +1675,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_1",
               "field": "color",
               "keyframes": [
@@ -1692,7 +1692,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_1",
               "field": "points",
               "keyframes": [
@@ -1790,12 +1790,12 @@
             "width": 42.869,
             "height": 99.503,
             "points": [
-              -83.5064082847065,
-              3.3312468468574488,
+              -83.61356448302955,
+              3.266730917109491,
               42.869,
               -4.986,
-              -70.45497846583045,
-              17.993342606364802,
+              -70.55466436572243,
+              17.930631986888987,
               -90.704,
               99.503
             ],
@@ -1814,7 +1814,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_2",
               "field": "x",
               "keyframes": [
@@ -1866,7 +1866,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_2",
               "field": "color",
               "keyframes": [
@@ -1883,7 +1883,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_2",
               "field": "points",
               "keyframes": [
@@ -1981,12 +1981,12 @@
             "width": 42.869,
             "height": 99.503,
             "points": [
-              -83.5064082847065,
-              3.3312468468574488,
+              -83.61356448302955,
+              3.266730917109491,
               42.869,
               -4.986,
-              -70.45497846583045,
-              17.993342606364802,
+              -70.55466436572243,
+              17.930631986888987,
               -90.704,
               99.503
             ],
@@ -2005,7 +2005,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_3",
               "field": "x",
               "keyframes": [
@@ -2057,7 +2057,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_3",
               "field": "color",
               "keyframes": [
@@ -2074,7 +2074,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_3",
               "field": "points",
               "keyframes": [
@@ -2171,20 +2171,20 @@
             "touchable": true,
             "thickness": 1.778,
             "points": [
-              -50.70069622599133,
-              -8.311315806661874,
-              -0.038931207887845015,
-              -66.0795622774688,
-              55.233263224144885,
-              -20.42449463307342,
-              91.4516561502446,
-              -47.69217524220616,
-              89.70301071327277,
-              -113.75178724745005,
-              127.20382296772114,
-              -162.7791035435279,
-              266.365,
-              -223.007
+              -50.35603895568218,
+              -9.345803512179296,
+              -0.07747448638960185,
+              -65.77966878389064,
+              54.959205503153115,
+              -20.623459637021753,
+              91.38688161605208,
+              -47.760561038528586,
+              89.78786545227548,
+              -113.55298925140933,
+              126.81843978795261,
+              -162.38794631277145,
+              264.72230037463675,
+              -222.69115643709955
             ],
             "scriptContent": null,
             "shader": null,
@@ -2205,7 +2205,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "LINE_0",
               "field": "points",
               "keyframes": [
@@ -2341,7 +2341,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "PARTICLES_0",
               "field": "x",
               "keyframes": [
@@ -2368,7 +2368,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "PARTICLES_0",
               "field": "y",
               "keyframes": [
@@ -2395,7 +2395,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "PARTICLES_0",
               "field": "rotation",
               "keyframes": [
@@ -2510,7 +2510,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_2",
               "field": "scaleX",
               "keyframes": [
@@ -2537,7 +2537,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_2",
               "field": "scaleY",
               "keyframes": [
@@ -2564,7 +2564,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_2",
               "field": "rotation",
               "keyframes": [
@@ -2591,7 +2591,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "SHAPE_2",
               "field": "points",
               "keyframes": [
@@ -2674,7 +2674,7 @@
             "anchorY": 0.5,
             "scaleX": 1,
             "scaleY": 1,
-            "alpha": 0.8,
+            "alpha": 0,
             "visible": true,
             "touchable": true,
             "scriptContent": null,
@@ -2683,8 +2683,8 @@
             "sides": 64,
             "borderPosition": "Outside",
             "angle": 360,
-            "thickness": 2,
-            "radius": 92.4,
+            "thickness": 1,
+            "radius": 20,
             "vertices": [
               92.39999999999999,
               0,
@@ -3346,7 +3346,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "ARC_0",
               "field": "alpha",
               "keyframes": [
@@ -3373,7 +3373,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "ARC_0",
               "field": "radius",
               "keyframes": [
@@ -3400,7 +3400,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "ARC_0",
               "field": "thickness",
               "keyframes": [
@@ -3444,7 +3444,7 @@
             "shader": null,
             "texture": null,
             "sides": 32,
-            "radius": 91,
+            "radius": 52,
             "vertices": [
               91,
               91,
@@ -3515,7 +3515,7 @@
             ],
             "complexHit": false,
             "uvs": [],
-            "color": 16777215,
+            "color": 0,
             "indices": [
               0,
               1,
@@ -3624,7 +3624,7 @@
           },
           "tracks": [
             {
-              "loop": true,
+              "loop": false,
               "entity": "NGON_0",
               "field": "alpha",
               "keyframes": [
@@ -3656,7 +3656,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "NGON_0",
               "field": "color",
               "keyframes": [
@@ -3678,7 +3678,7 @@
               ]
             },
             {
-              "loop": true,
+              "loop": false,
               "entity": "NGON_0",
               "field": "radius",
               "keyframes": [
@@ -3836,6 +3836,155 @@
             "translateY": 0,
             "translateX": 0
           }
+        }
+      ]
+    },
+    {
+      "id": "FRAGMENT_10",
+      "width": 512,
+      "height": 96,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": -1,
+      "items": [
+        {
+          "id": "QUAD_0",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": 512,
+            "y": 48,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0.5,
+            "anchorY": 0.5,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 32,
+            "height": 64,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": false,
+              "entity": "QUAD_0",
+              "field": "x",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": -0.272
+                },
+                {
+                  "index": 15,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 64
+                },
+                {
+                  "index": 30,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 128
+                },
+                {
+                  "index": 45,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 192
+                },
+                {
+                  "index": 60,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 256
+                },
+                {
+                  "index": 75,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 320
+                },
+                {
+                  "index": 90,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 384
+                },
+                {
+                  "index": 105,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 448
+                },
+                {
+                  "index": 120,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 512
+                }
+              ]
+            },
+            {
+              "loop": false,
+              "entity": "QUAD_0",
+              "field": "rotation",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 359.617
+                },
+                {
+                  "index": 15,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 90
+                },
+                {
+                  "index": 30,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 180
+                },
+                {
+                  "index": 45,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 270
+                },
+                {
+                  "index": 60,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 0
+                },
+                {
+                  "index": 75,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 90
+                },
+                {
+                  "index": 90,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 180
+                },
+                {
+                  "index": 105,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 270
+                },
+                {
+                  "index": 120,
+                  "easing": "ELASTIC_EASE_IN_OUT",
+                  "value": 0
+                }
+              ]
+            }
+          ]
         }
       ]
     }
