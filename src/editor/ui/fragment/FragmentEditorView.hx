@@ -184,6 +184,8 @@ class FragmentEditorView extends View implements Observable {
         editedFragment.timeline.autorun(() -> {
             var time = model.animationState.currentFrame / editedFragment.fps;
             var prevTime = this.editedFragmentTimelineTime;
+            var numUndo = model.numUndo;
+            var numRedo = model.numRedo;
             unobserve();
 
             // Update timeline position
@@ -364,7 +366,7 @@ class FragmentEditorView extends View implements Observable {
 
     function bindItemData(item:EditorEntityData) {
 
-        if (model.loading > 0)
+        if (model.loading > 0 || model.didUndoOrRedo > 0)
             return;
 
         var selectedFragment = this.selectedFragment;
@@ -377,15 +379,17 @@ class FragmentEditorView extends View implements Observable {
         var fragmentItem = item.toFragmentItem();
         unobserve();
         model.popUsedFragmentId();
-        editedFragment.putItem(fragmentItem);
-        app.oncePostFlushImmediate(() -> {
-            if (!destroyed) {
+        if (model.didUndoOrRedo == 0) {
+            editedFragment.putItem(fragmentItem);
+            app.oncePostFlushImmediate(() -> {
+                if (!destroyed) {
+                    TimelineUtils.setEveryTimelinePaused(editedFragment, !model.animationState.animating);
+                }
+            });
+            app.onceUpdate(this, _ -> {
                 TimelineUtils.setEveryTimelinePaused(editedFragment, !model.animationState.animating);
-            }
-        });
-        app.onceUpdate(this, _ -> {
-            TimelineUtils.setEveryTimelinePaused(editedFragment, !model.animationState.animating);
-        });
+            });
+        }
         reobserve();
 
     }
@@ -647,10 +651,12 @@ class FragmentEditorView extends View implements Observable {
         if (selectedFragment == null)
             return;
 
+        var numUndo = model.numUndo;
+        var numRedo = model.numRedo;
+
         var trackItem = track.toTimelineTrackData();
         unobserve();
         if (editedFragment.get(trackItem.entity) != null) {
-            //log.debug('PUT TRACK ' + trackItem.entity + '#' + trackItem.field);
             editedFragment.putTrack(trackItem);
         }
         reobserve();

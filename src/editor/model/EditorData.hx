@@ -56,6 +56,12 @@ class EditorData extends Model {
 
     @observe public var requireHighFps(default,null):Int = 0;
 
+    @observe public var numUndo(default,null):Int = 0;
+
+    @observe public var numRedo(default,null):Int = 0;
+
+    public var didUndoOrRedo(default,null):Int = 0;
+
     public var lockKeyframes:Int = 0;
 
     var clearStatusMessageDelay:Void->Void = null;
@@ -80,6 +86,8 @@ class EditorData extends Model {
 
         history = new History();
         history.step();
+        history.onUndo(this, handleHistoryUndo);
+        history.onRedo(this, handleHistoryRedo);
 
         serializer.onChangeset(this, changeset -> {
             if (ignoreUnsaved == 0)
@@ -104,6 +112,28 @@ class EditorData extends Model {
 
         trace('MODEL DESTROY');
         
+    }
+
+    function handleHistoryUndo() {
+
+        numUndo++;
+
+        didUndoOrRedo++;
+        Timer.delay(this, 0.25, () -> {
+            didUndoOrRedo--;
+        });
+
+    }
+
+    function handleHistoryRedo() {
+
+        numRedo++;
+
+        didUndoOrRedo++;
+        Timer.delay(this, 0.25, () -> {
+            didUndoOrRedo--;
+        });
+
     }
 
     public function status(message:String, color:Color = Color.WHITE, duration:Float = 60) {

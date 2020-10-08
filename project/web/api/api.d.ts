@@ -155,6 +155,22 @@ class Model extends Entity implements Serializable, Observable {
 
 class History extends Entity implements Component {
     constructor();
+    /**undo event*/
+    onUndo(owner: Entity?, handle: (() => Void)): Void;
+    /**undo event*/
+    onceUndo(owner: Entity?, handle: (() => Void)): Void;
+    /**undo event*/
+    offUndo(handle?: (() => Void)?): Void;
+    /**Does it listen to undo event*/
+    listensUndo(): Bool;
+    /**redo event*/
+    onRedo(owner: Entity?, handle: (() => Void)): Void;
+    /**redo event*/
+    onceRedo(owner: Entity?, handle: (() => Void)): Void;
+    /**redo event*/
+    offRedo(handle?: (() => Void)?): Void;
+    /**Does it listen to redo event*/
+    listensRedo(): Bool;
     entity: Model;
     /**
      * If provided, number of available steps will be limited to this value,
@@ -183,6 +199,7 @@ class History extends Entity implements Component {
      */
     redo(): Void;
     initializerName: String;
+    unbindEvents(): Void;
 }
 
 /** Events allows to add strictly typed events to classes.
@@ -1691,6 +1708,11 @@ class Text extends Visual {
     lineHeight: Float;
     letterSpacing: Float;
     font: BitmapFont;
+    clipTextX: Float;
+    clipTextY: Float;
+    clipTextWidth: Float;
+    clipTextHeight: Float;
+    clipText(x: Float, y: Float, width: Float, height: Float): Void;
     preRenderedSize: Int;
     align: TextAlign;
     /** If set to `true`, text will be displayed with line breaks
@@ -3966,7 +3988,7 @@ class Fragment extends Layer {
     removeAllItems(): Void;
     destroy(): Void;
     computeInstanceContentIfNeeded(itemId: String, entity?: Entity?): Void;
-    updateEditableFieldsFromInstance(itemId: String): Void;
+    updateEditableFieldsFromInstance(itemId: String, forceChange?: Bool): Void;
     /** Fragment components mapping. Does not contain components
         created separatelywith `component()` or macro-based components or components property. */
     fragmentComponents: Map<String, Component>;
@@ -4601,6 +4623,14 @@ class Assets extends Entity {
     offUpdate(handleAsset?: ((asset: Asset) => Void)?): Void;
     /**Does it listen to update event*/
     listensUpdate(): Bool;
+    /**progress event*/
+    onProgress(owner: Entity?, handleLoadedTotalSuccess: ((loaded: Int, total: Int, success: Bool) => Void)): Void;
+    /**progress event*/
+    onceProgress(owner: Entity?, handleLoadedTotalSuccess: ((loaded: Int, total: Int, success: Bool) => Void)): Void;
+    /**progress event*/
+    offProgress(handleLoadedTotalSuccess?: ((loaded: Int, total: Int, success: Bool) => Void)?): Void;
+    /**Does it listen to progress event*/
+    listensProgress(): Bool;
     /**assetFilesChange event*/
     onAssetFilesChange(owner: Entity?, handleNewFilesPreviousFiles: ((newFiles: Map<String, Float>, previousFiles: Map<String, Float>) => Void)): Void;
     /**assetFilesChange event*/
@@ -4612,6 +4642,11 @@ class Assets extends Entity {
     /** If set, will be provided to each added asset in this `Assets` instance. */
     runtimeAssets: RuntimeAssets;
     defaultImageOptions: Dynamic;
+    /**
+     * If set to `true`, will ensure asset loading is non blocking, at least between each asset.
+     * This is useful when we need to update screen during asset loading
+     */
+    nonBlocking: Bool;
     destroy(): Void;
     /** Destroy assets that have their refCount at `0`. */
     flush(): Void;
