@@ -172,9 +172,11 @@ class TimelineKeyframeMarkerView extends View implements Observable {
                                     }
                                 }
                                 if (frame < prevFrame) {
+                                    // Sort ascending
                                     frameIndexes.sort((a, b) -> a - b);
                                 }
                                 else {
+                                    // Sort descending
                                     frameIndexes.sort((a, b) -> b - a);
                                 }
                                 for (f in frameIndexes) {

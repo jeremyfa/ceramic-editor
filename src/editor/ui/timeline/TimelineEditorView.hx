@@ -13,6 +13,8 @@ class TimelineEditorView extends View implements Observable {
 
     public static final TRACK_HEIGHT:Float = 26;
 
+    public static final LABELS_HEIGHT:Float = 24;
+
     public static final RULER_HEIGHT:Float = 24;
 
     public static final MIN_FRAME_STEP_WIDTH:Float = 1;
@@ -42,6 +44,8 @@ class TimelineEditorView extends View implements Observable {
     var editorView:EditorView;
 
     var titleText:TextView;
+
+    var labelsView:TimelineLabelsView;
 
     var rulerView:TimelineRulerView;
 
@@ -159,6 +163,10 @@ class TimelineEditorView extends View implements Observable {
             tracksLayout.layoutView.selectedItem = selectedItem;
         });
         add(tracksLayout);
+
+        labelsView = new TimelineLabelsView(this);
+        labelsView.depth = 4;
+        add(labelsView);
 
         rulerView = new TimelineRulerView(this);
         rulerView.depth = 5;
@@ -381,6 +389,7 @@ class TimelineEditorView extends View implements Observable {
     override function layout() {
 
         var headerViewHeight = 32;
+        var labelsViewHeight = LABELS_HEIGHT;
         var rulerViewHeight = RULER_HEIGHT;
 
         headerView.viewSize(width, headerViewHeight);
@@ -388,16 +397,19 @@ class TimelineEditorView extends View implements Observable {
         headerView.applyComputedSize();
         headerView.pos(0, 0);
 
-        rulerView.pos(0, headerViewHeight);
+        labelsView.pos(0, headerViewHeight);
+        labelsView.size(width, labelsViewHeight);
+
+        rulerView.pos(0, headerViewHeight + labelsViewHeight);
         rulerView.size(width, rulerViewHeight);
 
-        tracksLayout.pos(0, headerViewHeight + rulerViewHeight);
+        tracksLayout.pos(0, headerViewHeight + labelsViewHeight + rulerViewHeight);
         tracksLayout.size(width + 1, height - headerViewHeight - rulerViewHeight);
 
         chooseTracksView.pos(0, headerViewHeight);
         chooseTracksView.size(width, height - headerViewHeight);
 
-        cursorView.pos(cursorX, headerViewHeight);
+        cursorView.pos(cursorX, headerViewHeight + labelsViewHeight);
         cursorView.verticalLineExtraHeight = height - headerViewHeight - rulerViewHeight;
 
     }
