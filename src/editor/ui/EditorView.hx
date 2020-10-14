@@ -63,8 +63,12 @@ class EditorView extends View implements Observable {
         // Panels tabs
         panelTabsFilter = new Filter();
         panelTabsFilter.depth = 10;
-        panelTabsFilter.autoRender = false;
-        panelTabsFilter.explicitRender = true;
+        panelTabsFilter.autoRender = true;
+        panelTabsFilter.explicitRender = false;
+        var clearPanelTabDelay = Timer.delay(this, 1.0, () -> {
+            panelTabsFilter.autoRender = false;
+            panelTabsFilter.explicitRender = true;
+        });
         //panelTabsFilter.enabled = false;
         add(panelTabsFilter);
         {
@@ -76,8 +80,13 @@ class EditorView extends View implements Observable {
             });
         }
         panelTabsFilter.content.add(panelTabsView);
+        var forcePanelRender = 0;
         screen.onPointerMove(this, info -> {
-            if (panelTabsView.hits(info.x, info.y)) {
+            if (clearPanelTabDelay != null) {
+                clearPanelTabDelay();
+                clearPanelTabDelay = null;
+            }
+            if (forcePanelRender > 0 || panelTabsView.hits(info.x, info.y)) {
                 panelTabsFilter.autoRender = true;
                 panelTabsFilter.explicitRender = false;
             }
@@ -85,6 +94,14 @@ class EditorView extends View implements Observable {
                 panelTabsFilter.autoRender = false;
                 panelTabsFilter.explicitRender = true;
             }
+        });
+        panelTabsFilter.onRenderTextureChange(this, (_, _) -> {
+            panelTabsFilter.autoRender = true;
+            panelTabsFilter.explicitRender = false;
+            forcePanelRender++;
+            Timer.delay(this, 0.5, () -> {
+                forcePanelRender--;
+            });
         });
         /*panelTabsFilter.onPointerOver(this, _ -> {
             panelTabsFilter.autoRender = true;

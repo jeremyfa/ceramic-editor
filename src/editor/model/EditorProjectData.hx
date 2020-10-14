@@ -88,8 +88,23 @@ class EditorProjectData extends Model {
         }
     }
     function set_selectedFragment(selectedFragment:EditorFragmentData):EditorFragmentData {
+        unobserve();
+        var prevSelectedEditableIndex = selectedEditableIndex;
+        var prevLastSelectedFragmentIndex = lastSelectedFragmentIndex;
+        
         selectedEditableIndex = editables.indexOf(selectedFragment);
         lastSelectedFragmentIndex = fragments.indexOf(selectedFragment);
+
+        if (prevSelectedEditableIndex != selectedEditableIndex ||
+            prevLastSelectedFragmentIndex != lastSelectedFragmentIndex) {
+
+            // When changing fragment, go back to frame zero to avoid animations issues
+            model.animationState.animating = false;
+            model.animationState.currentFrame = 0;
+
+            model.history.step();
+        }
+        reobserve();
         return selectedFragment;
     }
 

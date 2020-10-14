@@ -4038,8 +4038,18 @@ type Float32Array = snow.api.buffers.Float32Array;
 
 /** A visuals that displays its children through a filter. A filter draws its children into a `RenderTexture`
     allowing to process the result through a shader, apply blending or alpha on the final result... */
-class Filter extends Quad {
+class Filter extends Quad implements Observable {
     constructor();
+    /**Event when any observable value as changed on this instance.*/
+    onObservedDirty(owner: Entity?, handleInstanceFromSerializedField: ((instance: Filter, fromSerializedField: Bool) => Void)): Void;
+    /**Event when any observable value as changed on this instance.*/
+    onceObservedDirty(owner: Entity?, handleInstanceFromSerializedField: ((instance: Filter, fromSerializedField: Bool) => Void)): Void;
+    /**Event when any observable value as changed on this instance.*/
+    offObservedDirty(handleInstanceFromSerializedField?: ((instance: Filter, fromSerializedField: Bool) => Void)?): Void;
+    /**Event when any observable value as changed on this instance.*/
+    listensObservedDirty(): Bool;
+    /**Default is `false`, automatically set to `true` when any of this instance's observable variables has changed.*/
+    observedDirty: Bool;
     /** If provided, this id will be assigned to `renderTexture.id`. */
     textureId: String;
     content: Quad;
@@ -4063,11 +4073,21 @@ class Filter extends Quad {
     textureTilePacker: TextureTilePacker;
     textureTile: TextureTile;
     renderTexture: RenderTexture;
+    invalidateRenderTexture(): Void;
+    /**Event when renderTexture field changes.*/
+    onRenderTextureChange(owner: Entity?, handleCurrentPrevious: ((current: RenderTexture, previous: RenderTexture) => Void)): Void;
+    /**Event when renderTexture field changes.*/
+    onceRenderTextureChange(owner: Entity?, handleCurrentPrevious: ((current: RenderTexture, previous: RenderTexture) => Void)): Void;
+    /**Event when renderTexture field changes.*/
+    offRenderTextureChange(handleCurrentPrevious?: ((current: RenderTexture, previous: RenderTexture) => Void)?): Void;
+    /**Event when renderTexture field changes.*/
+    listensRenderTextureChange(): Bool;
     density: Float;
     render(requestFullUpdate?: Bool, done?: (() => Void)?): Void;
     visualInContentHits(visual: Visual, x: Float, y: Float): Bool;
     computeContent(): Void;
     destroy(): Void;
+    unbindEvents(): Void;
 }
 
 /** Filesystem-related utilities. Only work on sys targets and/or nodejs depending on the methods */
