@@ -1024,6 +1024,11 @@ class Visual extends Entity implements Collidable {
     anchorY: Float;
     width: Float;
     height: Float;
+    /**
+     * If `true`, matrix translation (tx & ty) will be rounded.
+     * May be useful to render pixel perfect scenes onto `ceramic.Filter`.
+     */
+    roundTranslation: Bool;
     rotation: Float;
     alpha: Float;
     /**

@@ -264,7 +264,7 @@ class FragmentEditorView extends View implements Observable {
             titleText.content = selectedFragment.fragmentId;
             if (prevSelectedFragment != selectedFragment) {
                 #if ceramic_editor_debug_fragment
-                trace('this is a new fragment being loaded, reset items');
+                trace('this is a new fragment being loaded (${selectedFragment.fragmentId}), reset items');
                 #end
                 resetFragment();
                 copied.items = [];
@@ -688,6 +688,7 @@ class FragmentEditorView extends View implements Observable {
             return;
 
         //var editedFragmentTimelineTime = this.editedFragmentTimelineTime;
+        var editedFragment = this.editedFragment;
 
         var selectedFragment = this.selectedFragment;
         if (selectedFragment == null)
@@ -701,6 +702,14 @@ class FragmentEditorView extends View implements Observable {
         if (editedFragment.get(trackItem.entity) != null) {
             log.success('PUT TRACK ${trackItem.entity} ${trackItem.field}');
             editedFragment.putTrack(trackItem);
+        }
+        else {
+            // Needed sometimes when fragment entities are not ready yet
+            app.oncePostFlushImmediate(function() {
+                if (editedFragment == this.editedFragment) {
+                    editedFragment.putTrack(trackItem);
+                }
+            });
         }
         reobserve();
 
