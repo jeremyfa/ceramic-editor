@@ -1101,6 +1101,10 @@ class Visual extends Entity implements Collidable {
         the current visual contains this child or one of
         its direct or indirect children does. */
     contains(child: Visual, recursive?: Bool): Bool;
+    /** Will set this visual size to screen size */
+    bindToScreenSize(): Void;
+    /** Will set this visual size to target size (`settings.targetWidth` and `settings.targetHeight`) */
+    bindToTargetSize(): Void;
     unbindEvents(): Void;
 }
 
@@ -1921,7 +1925,7 @@ class Settings implements Observable {
     listensObservedDirty(): Bool;
     /**Default is `false`, automatically set to `true` when any of this instance's observable variables has changed.*/
     observedDirty: Bool;
-    /** Target width. Affects window size at startup
+    /** Target width. Affects window size at startup (unless `windowWidth` is specified)
         and affects screen scaling at any time.
         Ignored if set to 0 (default) */
     targetWidth: Int;
@@ -1934,7 +1938,7 @@ class Settings implements Observable {
     offTargetWidthChange(handleCurrentPrevious?: ((current: Int, previous: Int) => Void)?): Void;
     /**Event when targetWidth field changes.*/
     listensTargetWidthChange(): Bool;
-    /** Target height. Affects window size at startup
+    /** Target height. Affects window size at startup (unless `windowHeight` is specified)
         and affects screen scaling at any time.
         Ignored if set to 0 (default) */
     targetHeight: Int;
@@ -1947,6 +1951,30 @@ class Settings implements Observable {
     offTargetHeightChange(handleCurrentPrevious?: ((current: Int, previous: Int) => Void)?): Void;
     /**Event when targetHeight field changes.*/
     listensTargetHeightChange(): Bool;
+    /** Target window width at startup
+        Use `targetWidth` as fallback if set to 0 (default) */
+    windowWidth: Int;
+    invalidateWindowWidth(): Void;
+    /**Event when windowWidth field changes.*/
+    onWindowWidthChange(owner: Entity?, handleCurrentPrevious: ((current: Int, previous: Int) => Void)): Void;
+    /**Event when windowWidth field changes.*/
+    onceWindowWidthChange(owner: Entity?, handleCurrentPrevious: ((current: Int, previous: Int) => Void)): Void;
+    /**Event when windowWidth field changes.*/
+    offWindowWidthChange(handleCurrentPrevious?: ((current: Int, previous: Int) => Void)?): Void;
+    /**Event when windowWidth field changes.*/
+    listensWindowWidthChange(): Bool;
+    /** Target window height at startup
+        Use `targetHeight` as fallback if set to 0 (default) */
+    windowHeight: Int;
+    invalidateWindowHeight(): Void;
+    /**Event when windowHeight field changes.*/
+    onWindowHeightChange(owner: Entity?, handleCurrentPrevious: ((current: Int, previous: Int) => Void)): Void;
+    /**Event when windowHeight field changes.*/
+    onceWindowHeightChange(owner: Entity?, handleCurrentPrevious: ((current: Int, previous: Int) => Void)): Void;
+    /**Event when windowHeight field changes.*/
+    offWindowHeightChange(handleCurrentPrevious?: ((current: Int, previous: Int) => Void)?): Void;
+    /**Event when windowHeight field changes.*/
+    listensWindowHeightChange(): Bool;
     /** Target density. Affects the quality of textures
         being loaded. Changing it at runtime will update
         texture quality if needed.
@@ -3696,6 +3724,12 @@ class InitSettings {
         and affects screen scaling at any time.
         Ignored if set to 0 (default) */
     targetHeight: Int;
+    /** Target window width at startup
+        Use `targetWidth` as fallback if set to 0 (default) */
+    windowWidth: Int;
+    /** Target window height at startup
+        Use `targetHeight` as fallback if set to 0 (default) */
+    windowHeight: Int;
     /** Target density. Affects the quality of textures
         being loaded. Changing it at runtime will update
         texture quality if needed.
@@ -4043,7 +4077,7 @@ type Float32Array = snow.api.buffers.Float32Array;
 
 /** A visuals that displays its children through a filter. A filter draws its children into a `RenderTexture`
     allowing to process the result through a shader, apply blending or alpha on the final result... */
-class Filter extends Quad implements Observable {
+class Filter extends Layer implements Observable {
     constructor();
     /**Event when any observable value as changed on this instance.*/
     onObservedDirty(owner: Entity?, handleInstanceFromSerializedField: ((instance: Filter, fromSerializedField: Bool) => Void)): Void;

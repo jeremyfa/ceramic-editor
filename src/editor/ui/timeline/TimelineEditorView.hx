@@ -154,6 +154,10 @@ class TimelineEditorView extends View implements Observable {
 
         tracksLayout = new ScrollingLayout(new TimelineTracksView(this));
         tracksLayout.depthRange = -1;
+        tracksLayout.filter.depthRange = -1;
+        tracksLayout.filter.content.depthRange = -1;
+        tracksLayout.filter.enabled = false;
+        tracksLayout.layoutView.depthRange = -1;
         tracksLayout.scroller.depthRange = -1;
         tracksLayout.contentView.depthRange = -1;
         tracksLayout.scroller.scrollbar = new Scrollbar();

@@ -39,6 +39,7 @@ class TimelineTracksView extends View implements Observable {
                 if (trackView == null) {
                     trackView = new TimelineTrackView(timelineEditorView);
                     trackView.depth = 10;
+                    trackView.depthRange = -1;
                     add(trackView);
                     trackViews[i] = trackView;
                 }
