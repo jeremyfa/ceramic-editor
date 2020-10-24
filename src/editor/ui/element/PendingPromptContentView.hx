@@ -100,6 +100,18 @@ class PendingPromptContentView extends View {
                     item.field.textValue = '' + (isInt ? Std.int(param.value) : param.value);
                     form.add(item);
                 }
+                else if (param.type == 'String') {
+                    var item = new LabeledFieldView(new TextFieldView(TEXT));
+                    item.label = param.name;
+                    item.field.setEmptyValue = function(field) {
+                        result[i] = param.value;
+                    };
+                    item.field.setValue = function(field, value) {
+                        result[i] = value;
+                    };
+                    item.field.textValue = '' + param.value;
+                    form.add(item);
+                }
             })(param, i);
 
         }
