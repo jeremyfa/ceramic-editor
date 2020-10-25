@@ -1409,24 +1409,24 @@ class Timer {
     Create subclasses to implement details */
 class TimelineTrack<K extends TimelineKeyframe> extends Entity {
     constructor();
-    /** Track duration. Default `0`, meaning this track won't do anything.
-        By default, because `autoFitDuration` is `true`, adding new keyframes to this
-        track will update `duration` accordingly so it may not be needed to update `duration` explicitly.
-        Setting `duration` to `-1` means the track will never finish. */
-    duration: Float;
+    /** Track size. Default `0`, meaning this track won't do anything.
+        By default, because `autoFitSize` is `true`, adding new keyframes to this
+        track will update `size` accordingly so it may not be needed to update `size` explicitly.
+        Setting `size` to `-1` means the track will never finish. */
+    size: Float;
     /** If set to `true` (default), adding keyframes to this track will update
-        its duration accordingly to match last keyframe time. */
-    autoFitDuration: Bool;
-    /** Whether this track should loop. Ignored if track's `duration` is `-1` (not defined). */
+        its size accordingly to match last keyframe time. */
+    autoFitSize: Bool;
+    /** Whether this track should loop. Ignored if track's `size` is `-1` (not defined). */
     loop: Bool;
     /** Whether this track is locked or not.
         A locked track doesn't get updated by the timeline it is attached to, if any. */
     locked: Bool;
     /** Timeline on which this track is added to */
     timeline: Timeline;
-    /** Elapsed time on this track.
-        Gets back to zero when `loop=true` and time reaches a defined `duration`. */
-    time: Float;
+    /** Position on this track.
+        Gets back to zero when `loop=true` and position reaches a defined `size`. */
+    position: Float;
     /** The key frames on this track. */
     keyframes: Array<K>;
     /** The keyframe right before or equal to current time, if any. */
@@ -1434,28 +1434,28 @@ class TimelineTrack<K extends TimelineKeyframe> extends Entity {
     /** The keyframe right after current time, if any. */
     after: K;
     destroy(): Void;
-    /** Seek the given time (in seconds) in the track.
-        Will take care of clamping `time` or looping it depending on `duration` and `loop` properties. */
-    seek(targetTime: Float): Void;
+    /** Seek the given position (in frames) in the track.
+        Will take care of clamping `position` or looping it depending on `size` and `loop` properties. */
+    seek(targetPosition: Float): Void;
     /** Add a keyframe to this track */
     add(keyframe: K): Void;
     /** Remove a keyframe from this track */
     remove(keyframe: K): Void;
-    /** Update `duration` property to make it fit
-        the time of the last keyframe on this track. */
-    fitDuration(): Void;
+    /** Update `size` property to make it fit
+        the index of the last keyframe on this track. */
+    fitSize(): Void;
     /** Apply changes that this track is responsible of. Usually called after `update(delta)` or `seek(time)`. */
     apply(forceChange?: Bool): Void;
-    findKeyframeAtTime(time: Float): K?;
-    /** Find the keyframe right before or equal to given `time` */
-    findKeyframeBefore(time: Float): K?;
-    /** Find the keyframe right after given `time` */
-    findKeyframeAfter(time: Float): K?;
+    findKeyframeAtIndex(index: Int): K?;
+    /** Find the keyframe right before or equal to given `position` */
+    findKeyframeBefore(position: Float): K?;
+    /** Find the keyframe right after given `position` */
+    findKeyframeAfter(position: Float): K?;
 }
 
 class TimelineKeyframe {
-    constructor(time: Float, easing: Easing);
-    time: Float;
+    constructor(index: Int, easing: Easing);
+    index: Int;
     easing: Easing;
 }
 
@@ -1475,7 +1475,7 @@ class TimelineFloatTrack extends TimelineTrack<TimelineFloatKeyframe> {
 }
 
 class TimelineFloatKeyframe extends TimelineKeyframe {
-    constructor(value: Float, time: Float, easing: Easing);
+    constructor(value: Float, index: Int, easing: Easing);
     value: Float;
 }
 
@@ -1510,45 +1510,51 @@ class TimelineColorTrack extends TimelineTrack<TimelineColorKeyframe> {
 }
 
 class TimelineColorKeyframe extends TimelineKeyframe {
-    constructor(value: Color, time: Float, easing: Easing);
+    constructor(value: Color, index: Int, easing: Easing);
     value: Color;
 }
 
 class Timeline extends Entity implements Component {
     constructor();
-    /** Timeline duration. Default `0`, meaning this timeline won't do anything.
-        By default, because `autoFitDuration` is `true`, adding or updating tracks on this
-        timeline will update timeline `duration` accordingly so it may not be needed to update `duration` explicitly.
-        Setting `duration` to `-1` means the timeline will never finish. */
-    duration: Float;
+    /** Timeline size. Default `0`, meaning this timeline won't do anything.
+        By default, because `autoFitSize` is `true`, adding or updating tracks on this
+        timeline will update timeline `size` accordingly so it may not be needed to update `size` explicitly.
+        Setting `size` to `-1` means the timeline will never finish. */
+    size: Float;
     /** If set to `true` (default), adding or updating tracks on this timeline will update
-        timeline duration accordingly to match longest track duration. */
-    autoFitDuration: Bool;
-    /** Whether this timeline should loop. Ignored if timeline's `duration` is `-1` (not defined). */
+        timeline size accordingly to match longest track size. */
+    autoFitSize: Bool;
+    /** Whether this timeline should loop. Ignored if timeline's `size` is `-1` (not defined). */
     loop: Bool;
     /** Whether this timeline should bind itself to update cycle automatically or not (default `true`). */
     autoUpdate: Bool;
-    /** Elapsed time on this timeline.
-        Gets back to zero when `loop=true` and time reaches a defined `duration`. */
-    time: Float;
+    /**
+     * Frames per second on this timeline.
+     * Note: a lower fps doesn't mean animations won't be interpolated between frames.
+     * Thus using 30 fps is still fine even if screen refreshes at 60 fps.
+     */
+    fps: Int;
+    /** Position on this timeline.
+        Gets back to zero when `loop=true` and position reaches a defined `size`. */
+    position: Float;
     /** The tracks updated by this timeline */
     tracks: Array<TimelineTrack<TimelineKeyframe>>;
     /** Whether this timeline is paused or not. */
     paused: Bool;
     update(delta: Float): Void;
-    /** Seek the given time (in seconds) in the timeline.
-        Will take care of clamping `time` or looping it depending on `duration` and `loop` properties. */
-    seek(targetTime: Float): Void;
-    /** Apply (or re-apply) every track of this timeline at the current time */
+    /** Seek the given position (in frames) in the timeline.
+        Will take care of clamping `position` or looping it depending on `size` and `loop` properties. */
+    seek(targetPosition: Float): Void;
+    /** Apply (or re-apply) every track of this timeline at the current position */
     apply(forceChange?: Bool): Void;
     /** Add a track to this timeline */
     add(track: TimelineTrack<TimelineKeyframe>): Void;
     get(trackId: String): TimelineTrack<TimelineKeyframe>;
     /** Remove a track from this timeline */
     remove(track: TimelineTrack<TimelineKeyframe>): Void;
-    /** Update `duration` property to make it fit
-        the duration of the longuest track. */
-    fitDuration(): Void;
+    /** Update `size` property to make it fit
+        the size of the longuest track. */
+    fitSize(): Void;
     entity: Entity;
     initializerName: String;
 }

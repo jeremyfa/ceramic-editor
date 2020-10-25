@@ -101,16 +101,33 @@ class PendingPromptContentView extends View {
                     form.add(item);
                 }
                 else if (param.type == 'String') {
-                    var item = new LabeledFieldView(new TextFieldView(TEXT));
-                    item.label = param.name;
-                    item.field.setEmptyValue = function(field) {
-                        result[i] = param.value;
-                    };
-                    item.field.setValue = function(field, value) {
+                    var field:TextFieldView;
+                    if (param.name != null) {
+                        var item = new LabeledFieldView(new TextFieldView(TEXT));
+                        item.label = param.name;
+                        field = item.field;
+                        form.add(item);
+                    }
+                    else {
+                        field = new TextFieldView(TEXT);
+                        form.add(field);
+                    }
+                    field.setValue = function(field, value) {
                         result[i] = value;
                     };
-                    item.field.textValue = '' + param.value;
-                    form.add(item);
+                    field.textValue = '' + param.value;
+
+                    if (pendingPrompt.params.length == 1) {
+                        // Focus if this is the only field to display
+                        field.focus();
+
+                        // Also confirm on enter
+                        app.onKeyDown(this, key -> {
+                            if (key.scanCode == ScanCode.ENTER) {
+                                pendingPrompt.callback(result);
+                            }
+                        });
+                    }
                 }
             })(param, i);
 

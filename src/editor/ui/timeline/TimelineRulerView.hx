@@ -16,7 +16,12 @@ class TimelineRulerView extends View {
 
     var lastPointerX:Float = -1;
 
-    var dragging:Bool = false;
+    var dragging(default, set):Bool = false;
+    function set_dragging(dragging:Bool):Bool {
+        this.dragging = dragging;
+        timelineEditorView.draggingCursor = dragging;
+        return dragging;
+    }
         
     var rulerStart = TimelineEditorView.TRACK_TITLE_WIDTH + TimelineEditorView.TRACK_TITLE_GAP + TimelineEditorView.TRACK_LEFT_PADDING;
 
@@ -194,7 +199,9 @@ class TimelineRulerView extends View {
         if (frame < 0)
             frame = 0;
 
-        model.animationState.currentFrame = frame;
+        if (frame != model.animationState.currentFrame) {
+            model.animationState.currentFrame = frame;
+        }
 
     }
 

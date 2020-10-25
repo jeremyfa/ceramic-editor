@@ -31,7 +31,7 @@ class TimelineUtils {
 
     }
 
-    public static function setEveryTimelineTime(fragment:Fragment, time:Float) {
+    public static function setEveryTimelinePosition(fragment:Fragment, position:Float) {
 
         var entities = fragment.entities;
         for (i in 0...entities.length) {
@@ -39,9 +39,9 @@ class TimelineUtils {
             if (Std.is(entity, Fragment)) {
                 var subFragment:Fragment = cast entity;
                 if (subFragment.timeline != null && subFragment.autoUpdateTimeline) {
-                    subFragment.timeline.seek(time);
+                    subFragment.timeline.seek(position);
                 }
-                setEveryTimelineTime(subFragment, time);
+                setEveryTimelinePosition(subFragment, position);
             }
         }
 

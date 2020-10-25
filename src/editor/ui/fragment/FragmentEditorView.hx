@@ -18,7 +18,7 @@ class FragmentEditorView extends View implements Observable {
 
     @observe public var editedFragment(default, null):Fragment = null;
 
-    @observe var editedFragmentTimelineTime:Float = 0;
+    @observe var editedFragmentTimelinePosition:Float = 0;
 
     public var fragmentOverlay(default, null):Quad;
 
@@ -131,6 +131,10 @@ class FragmentEditorView extends View implements Observable {
         // Styles
         autorun(updateStyle);
 
+        app.onceUpdate(this, _ -> {
+            autorun(autoFlushTemporizedEditableItemUpdates);
+        });
+
     }
 
     public function getEntity(entityId:String):Null<Entity> {
@@ -174,7 +178,7 @@ class FragmentEditorView extends View implements Observable {
                 editedFragment.timeline.paused = !animating;
                 TimelineUtils.setEveryTimelinePaused(editedFragment, !animating);
                 if (wasAnimating && !animating) {
-                    model.animationState.currentFrame = Math.floor(editedFragment.timeline.time * editedFragment.fps);
+                    model.animationState.currentFrame = Math.floor(editedFragment.timeline.position);
                     model.animationState.invalidateCurrentFrame();
                 }
                 wasAnimating = animating;
@@ -191,21 +195,21 @@ class FragmentEditorView extends View implements Observable {
             unobserve();
             if (editedFragment == this.editedFragment) {
                 reobserve();
-                var time = model.animationState.currentFrame / editedFragment.fps;
-                var prevTime = this.editedFragmentTimelineTime;
+                var position = model.animationState.currentFrame;
+                var prevPosition = this.editedFragmentTimelinePosition;
                 var numUndo = model.numUndo;
                 var numRedo = model.numRedo;
                 unobserve();
 
                 // Update timeline position
-                editedFragment.timeline.seek(time);
-                if (time == prevTime) {
+                editedFragment.timeline.seek(position);
+                if (position == prevPosition) {
                     editedFragment.timeline.apply(true);
                 }
-                TimelineUtils.setEveryTimelineTime(editedFragment, time);
+                TimelineUtils.setEveryTimelinePosition(editedFragment, position);
 
-                // Invalidate timeline time
-                this.editedFragmentTimelineTime = time;
+                // Invalidate timeline position
+                this.editedFragmentTimelinePosition = position;
 
                 // Then retrieve changes made from timeline to report them to edited data
                 app.oncePostFlushImmediate(() -> {
@@ -392,9 +396,14 @@ class FragmentEditorView extends View implements Observable {
         model.pushUsedFragmentId(selectedFragment.fragmentId);
         reobserve();
         var fragmentItem = item.toFragmentItem();
+        //var draggingCursor = editorView.timelineEditorView.draggingCursor;
         unobserve();
         model.popUsedFragmentId();
-        if (model.didUndoOrRedo == 0) {
+        /*if (draggingCursor) {
+            // Ignore changes when dragging cursor
+            log.warning('Ignore changes (dragging cursor)');
+        }
+        else */if (model.didUndoOrRedo == 0) {
             editedFragment.putItem(fragmentItem);
             app.oncePostFlushImmediate(() -> {
                 if (!destroyed && editedFragment == this.editedFragment) {
@@ -428,14 +437,67 @@ class FragmentEditorView extends View implements Observable {
 
     }
 
+    var temporizedEditableItemUpdates:Array<FragmentItem> = null;
+
+    function temporizeEditableItemUpdate(fragmentItem:FragmentItem) {
+
+        if (temporizedEditableItemUpdates == null) {
+            temporizedEditableItemUpdates = [];
+        }
+
+        var id = fragmentItem.id;
+        var existingIndex = -1;
+        for (i in 0...temporizedEditableItemUpdates.length) {
+            var item = temporizedEditableItemUpdates[i];
+            if (item.id == id) {
+                existingIndex = i;
+                break;
+            }
+        }
+        if (existingIndex != -1) {
+            temporizedEditableItemUpdates.splice(existingIndex, 1);
+        }
+
+        temporizedEditableItemUpdates.push(fragmentItem);
+
+    }
+
+    function autoFlushTemporizedEditableItemUpdates() {
+
+        if (!editorView.timelineEditorView.draggingCursor) {
+            unobserve();
+            flushTemporizedEditableItemUpdates();
+            reobserve();
+        }
+
+    }
+
+    function flushTemporizedEditableItemUpdates() {
+
+        if (temporizedEditableItemUpdates != null) {
+            var items = temporizedEditableItemUpdates;
+            temporizedEditableItemUpdates = null;
+            for (item in items) {
+                handleEditableItemUpdate(item);
+            }
+        }
+
+    }
+
     function handleEditableItemUpdate(fragmentItem:FragmentItem) {
 
         #if editor_debug_item_update
-        log.debug('ITEM UPDATED: ${fragmentItem.id} w=${fragmentItem.props.width} h=${fragmentItem.props.height}');
+        log.debug('ITEM UPDATED: ${fragmentItem.id}');
         #end
 
         var editedFragment = this.editedFragment;
         if (editedFragment == null) {
+            return;
+        }
+
+        var draggingCursor = editorView.timelineEditorView.draggingCursor;
+        if (draggingCursor) {
+            temporizeEditableItemUpdate(fragmentItem);
             return;
         }
 
@@ -447,12 +509,13 @@ class FragmentEditorView extends View implements Observable {
         var currentFrame = model.animationState.currentFrame;
         var timelineFrame = 0;
         if (editedFragment.timeline != null) {
-            timelineFrame = Math.round(editedFragment.timeline.time * editedFragment.fps);
+            timelineFrame = Math.floor(editedFragment.timeline.position);
         }
+        var timelineSize = editedFragment.timeline.size;
         var item = this.selectedFragment.get(fragmentItem.id);
 
         var props = fragmentItem.props;
-        var shouldInvalidateTimelineTime = false;
+        var shouldInvalidateTimelinePosition = false;
         if (item != null && props != null) {
             for (key in Reflect.fields(fragmentItem.props)) {
                 var value:Dynamic = Reflect.field(props, key);
@@ -465,9 +528,9 @@ class FragmentEditorView extends View implements Observable {
                         // Got a timeline track. Ensure fragment also has a track in sync
                         // otherwise ignore changes for now
                         var track = editedFragment.getTrack(item.entityId, key);
-                        if (track == null || timelineFrame != currentFrame) {
-                            shouldInvalidateTimelineTime = true;
-                            //log.warning('Ignore entity changes because tracks are not in sync $timelineFrame');
+                        if (track == null || (timelineFrame % timelineSize != currentFrame % timelineSize)) {
+                            shouldInvalidateTimelinePosition = true;
+                            log.warning('Ignore entity changes because tracks are not in sync $timelineFrame % $timelineSize != ($currentFrame % $timelineSize)');
                             reobserve();
                             continue;
                         }
@@ -497,15 +560,15 @@ class FragmentEditorView extends View implements Observable {
 
         // When fragment's timeline is not in sync with edited data, explicitly invalidate
         // timeline time to recompute it
-        if (shouldInvalidateTimelineTime) {
+        if (shouldInvalidateTimelinePosition) {
             app.oncePostFlushImmediate(() -> {
                 if (!destroyed && editedFragment == this.editedFragment) {
-                    invalidateEditedFragmentTimelineTime();
+                    invalidateEditedFragmentTimelinePosition();
                 }
             });
             app.onceUpdate(this, _ -> {
                 if (editedFragment == this.editedFragment) {
-                    invalidateEditedFragmentTimelineTime();
+                    invalidateEditedFragmentTimelinePosition();
                 }
             });
         }
@@ -687,7 +750,6 @@ class FragmentEditorView extends View implements Observable {
         if (model.loading > 0)
             return;
 
-        //var editedFragmentTimelineTime = this.editedFragmentTimelineTime;
         var editedFragment = this.editedFragment;
 
         var selectedFragment = this.selectedFragment;

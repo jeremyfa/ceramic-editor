@@ -31,6 +31,8 @@ class TimelineEditorView extends View implements Observable {
 
     @observe public var timelineOffsetX:Float = 0;
 
+    @observe public var draggingCursor:Bool = false;
+
     /**
      * The gap between eatch frame marker in the ruler.
      * Changing this value will make content zoom accordingly
@@ -378,7 +380,7 @@ class TimelineEditorView extends View implements Observable {
         if (editedFragment == null || editedFragment.timeline == null)
             return;
 
-        var currentFrame = editedFragment.timeline.time * editedFragment.fps;
+        var currentFrame = editedFragment.timeline.position;
 
         var cursorX = TRACK_TITLE_WIDTH + TRACK_TITLE_GAP + TRACK_LEFT_PADDING;
         cursorX += frameStepWidth * currentFrame + timelineOffsetX;

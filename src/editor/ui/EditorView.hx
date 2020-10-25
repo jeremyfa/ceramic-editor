@@ -17,7 +17,7 @@ class EditorView extends View implements Observable {
 
     var bottomBar:RowLayout;
 
-    var popup:PopupView = null;
+    public var popup(default, null):PopupView = null;
 
     var statusText:TextView;
 
