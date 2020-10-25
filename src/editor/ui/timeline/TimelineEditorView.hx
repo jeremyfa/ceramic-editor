@@ -384,6 +384,8 @@ class TimelineEditorView extends View implements Observable {
 
         var cursorX = TRACK_TITLE_WIDTH + TRACK_TITLE_GAP + TRACK_LEFT_PADDING;
         cursorX += frameStepWidth * currentFrame + timelineOffsetX;
+        
+        cursorView.updateFrame(Math.floor(currentFrame));
 
         if (this.cursorX != cursorX) {
             this.cursorX = cursorX;

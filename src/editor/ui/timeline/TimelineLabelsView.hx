@@ -201,7 +201,7 @@ class TimelineLabelsView extends View {
                         labelDelimiters[usedVisuals] = labelDelimiter;
                         labelDelimiter.color = theme.lightBorderColor;
                         labelDelimiter.anchor(0, 0);
-                        labelDelimiter.depth = 17;
+                        labelDelimiter.depth = 16;
                         add(labelDelimiter);
                     }
 

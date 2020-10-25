@@ -10,7 +10,7 @@ class TimelineCursorView extends View implements Observable {
 
     var triangle:Triangle;
 
-    var text:Text;
+    var text:TextView;
 
     public function new(timelineEditorView:TimelineEditorView) {
 
@@ -20,10 +20,14 @@ class TimelineCursorView extends View implements Observable {
 
         transparent = true;
 
-        text = new Text();
+        text = new TextView();
         text.anchor(0.5, 1);
+        text.align = CENTER;
+        text.verticalAlign = BOTTOM;
         text.preRenderedSize = 20;
         text.pointSize = 11;
+        text.transparent = false;
+        text.content = '';
         add(text);
         
         triangle = new Triangle();
@@ -38,6 +42,9 @@ class TimelineCursorView extends View implements Observable {
     }
 
     function updateInfo() {
+        
+        if (model.animationState.animating)
+            return;
 
         var verticalLineExtraHeight = this.verticalLineExtraHeight;
         var frame = model.animationState.currentFrame;
@@ -50,11 +57,19 @@ class TimelineCursorView extends View implements Observable {
 
     }
 
+    public function updateFrame(frame:Int) {
+
+        text.content = '' + frame;
+        layoutDirty = true;
+
+    }
+
     override function layout() {
 
         var spikeY = TimelineEditorView.RULER_HEIGHT * 0.6;
 
         text.pos(1, spikeY - 1);
+        text.autoComputeSizeIfNeeded(true);
 
         triangle.size(11, 8);
         triangle.anchor(0.5, 1);
@@ -70,7 +85,8 @@ class TimelineCursorView extends View implements Observable {
 
         triangle.color = theme.timelineCursorColor;
         verticalLine.color = theme.timelineCursorColor;
-        text.color = theme.timelineCursorColor;
+        text.textColor = theme.timelineCursorColor;
+        text.color = theme.darkBackgroundColor;
         text.font = theme.mediumFont;
 
     }

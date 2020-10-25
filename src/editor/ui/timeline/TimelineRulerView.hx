@@ -6,7 +6,7 @@ class TimelineRulerView extends View {
 
     var quads:Array<Quad> = [];
 
-    var texts:Array<Text> = [];
+    var texts:Array<TextView> = [];
 
     var timelineEditorView:TimelineEditorView;
 
@@ -28,6 +28,8 @@ class TimelineRulerView extends View {
     public function new(timelineEditorView:TimelineEditorView) {
 
         super();
+
+        depthRange = -1;
 
         this.timelineEditorView = timelineEditorView;
 
@@ -106,7 +108,7 @@ class TimelineRulerView extends View {
             var quad = quads[q];
             if (quad == null) {
                 quad = new Quad();
-                quad.depth = 2;
+                quad.depth = 5.2;
                 quads[q] = quad;
                 add(quad);
             }
@@ -121,20 +123,26 @@ class TimelineRulerView extends View {
 
                 var text = texts[t];
                 if (text == null) {
-                    text = new Text();
-                    text.depth = 3;
+                    text = new TextView();
+                    text.depth = 17;
+                    text.depthRange = 0.1;
+                    text.align = CENTER;
+                    text.verticalAlign = BOTTOM;
+                    text.transparent = false;
+                    text.color = theme.darkBackgroundColor;
                     texts[t] = text;
                     add(text);
                 }
                 t++;
 
                 text.anchor(0.5, 1);
-                text.color = quad.color;
+                text.textColor = quad.color;
                 text.content = '' + unit;
                 text.preRenderedSize = 20;
                 text.pointSize = 11;
                 text.font = theme.mediumFont;
                 text.pos(quad.x + 1, quad.y - quad.height - 1);
+                text.autoComputeSizeIfNeeded(true);
             }
             else {
                 quad.size(1, height * 0.2);
