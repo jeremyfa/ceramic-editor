@@ -266,7 +266,7 @@ class TimelineEditorView extends View implements Observable {
                 selectEasing.value = null;
             }
             else {
-                selectEasing.nullValueText = '';
+                selectEasing.nullValueText = null;
 
                 reobserve();
                 var selectedKeyframe = getSelectedKeyframe();
