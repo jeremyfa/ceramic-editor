@@ -149,32 +149,36 @@ class TimelineTrackView extends View implements Observable {
 
         inline function addInterpolationQuad(prevIndex:Int, index:Int) {
 
-            var quad = quads[q];
-            if (quad == null) {
-                quad = new Quad();
-                quads[q] = quad;
-                add(quad);
+            if ((index >= minIndex && index <= maxIndex) || (prevIndex >= minIndex && prevIndex <= maxIndex)) {
+
+                var quad = quads[q];
+                if (quad == null) {
+                    quad = new Quad();
+                    quads[q] = quad;
+                    add(quad);
+                }
+                quad.depth = 19;
+                quad.anchor(0, 0.5);
+                quad.pos(
+                    rulerStart + prevIndex * frameStepWidth + timelineOffsetX + 0.5,
+                    height * 0.5 + 0.5
+                );
+                quad.size(
+                    (index - prevIndex) * frameStepWidth,
+                    1
+                );
+                if (quad.x < titleView.width) {
+                    var diff = titleView.width - quad.x;
+                    quad.x += diff;
+                    quad.width -= diff;
+                }
+                if (quad.x + quad.width > width) {
+                    quad.width = width - quad.x;
+                }
+                quad.color = theme.timelineKeyframeInterpolationColor;
+                q++;
+
             }
-            quad.depth = 19;
-            quad.anchor(0, 0.5);
-            quad.pos(
-                rulerStart + prevIndex * frameStepWidth + timelineOffsetX + 0.5,
-                height * 0.5 + 0.5
-            );
-            quad.size(
-                (index - prevIndex) * frameStepWidth,
-                1
-            );
-            if (quad.x < titleView.width) {
-                var diff = titleView.width - quad.x;
-                quad.x += diff;
-                quad.width -= diff;
-            }
-            if (quad.x + quad.width > width) {
-                quad.width = width - quad.x;
-            }
-            quad.color = theme.timelineKeyframeInterpolationColor;
-            q++;
 
         }
 
@@ -182,7 +186,7 @@ class TimelineTrackView extends View implements Observable {
             for (keyframe in keyframes) {
                 var index = keyframe.index;
 
-                if (index >= minIndex && index <= maxIndex) {
+                //if (index >= minIndex && index <= maxIndex) {
                     if (index > lastUsedIndex) {
                         lastUsedIndex = index;
                     }
@@ -193,19 +197,23 @@ class TimelineTrackView extends View implements Observable {
                         add(marker);
                         keyframeMarkers[n] = marker;
                     }
+
+                    marker.active = (index >= minIndex && index <= maxIndex);
     
-                    marker.depth = 20;
-                    marker.anchor(0.5, 0.5);
-                    marker.size(
-                        Math.min(TimelineEditorView.KEYFRAME_MARKER_WIDTH, width * 0.5),
-                        TimelineEditorView.KEYFRAME_MARKER_HEIGHT
-                    );
-                    marker.pos(
-                        rulerStart + index * frameStepWidth + timelineOffsetX + 0.5,
-                        height * 0.5 + 0.5
-                    );
-                    marker.index = index;
-                    marker.timelineTrackView = this;
+                    if (marker.active) {
+                        marker.depth = 20;
+                        marker.anchor(0.5, 0.5);
+                        marker.size(
+                            Math.min(TimelineEditorView.KEYFRAME_MARKER_WIDTH, width * 0.5),
+                            TimelineEditorView.KEYFRAME_MARKER_HEIGHT
+                        );
+                        marker.pos(
+                            rulerStart + index * frameStepWidth + timelineOffsetX + 0.5,
+                            height * 0.5 + 0.5
+                        );
+                        marker.index = index;
+                        marker.timelineTrackView = this;
+                    }
     
                     n++;
 
@@ -216,7 +224,7 @@ class TimelineTrackView extends View implements Observable {
                             addInterpolationQuad(prevIndex, index);
                         }
                     }
-                }
+                //}
             }
 
             if (lastUsedIndex != -1) {

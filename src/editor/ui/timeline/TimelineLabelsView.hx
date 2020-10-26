@@ -26,6 +26,8 @@ class TimelineLabelsView extends View {
 
     var labelDelimiters:Array<Quad> = [];
 
+    var draggingLabels:Int = 0;
+
     @component var click:Click;
 
     @component var doubleClick:DoubleClick;
@@ -65,7 +67,10 @@ class TimelineLabelsView extends View {
         if (editedLabelFrozen())
             return;
 
-        if (hits(info.x, info.y)) {
+        if (draggingLabels > 0) {
+            editedLabelPointer.active = false;
+        }
+        else if (hits(info.x, info.y)) {
             updateEditedLabelPointerX(info.x, info.y);
         }
         else {
@@ -149,10 +154,13 @@ class TimelineLabelsView extends View {
         screenToVisual(screenX, screenY, _point);
         var x = _point.x;
 
-        var editedLabelPointerX = Math.round((x - rulerStart) / frameStepWidth) * frameStepWidth + timelineOffsetX - Math.round(timelineOffsetX / frameStepWidth) * frameStepWidth;
-        if (this.editedLabelPointerX != Math.max(timelineOffsetX, editedLabelPointerX)) {
-            this.editedLabelPointerX = Math.max(timelineOffsetX, editedLabelPointerX);
-            editedLabelFrame = Math.floor((this.editedLabelPointerX - timelineOffsetX) / frameStepWidth);
+        var editedLabelPointerX = x - rulerStart;
+        var clampedEditedLabelPointerX = Math.max(timelineOffsetX, editedLabelPointerX);
+        var closestFrame = Math.round((clampedEditedLabelPointerX - timelineOffsetX) / frameStepWidth);
+        editedLabelPointerX = frameStepWidth * closestFrame + timelineOffsetX;
+        if (this.editedLabelPointerX != editedLabelPointerX) {
+            this.editedLabelPointerX = editedLabelPointerX;
+            editedLabelFrame = closestFrame;
             layoutDirty = true;
         }
 
@@ -191,50 +199,62 @@ class TimelineLabelsView extends View {
         var minFrame = Std.int(Math.max(0, -timelineOffsetX - rulerStart) / frameStepWidth);
         var maxFrame = minFrame + Std.int((width + Math.min(0, -timelineOffsetX - rulerStart)) / frameStepWidth);
 
-        if (timelineLabels != null) {
-            for (timelineLabel in timelineLabels) {
-                var labelIndex = timelineLabel.index;
-                if (labelIndex >= minFrame && labelIndex <= maxFrame) {
-                    
-                    var labelText = timelineLabel.label;
-
-                    unobserve();
-
-                    var labelVisual = labelVisuals[usedVisuals];
-                    if (labelVisual == null) {
-                        labelVisual = new TimelineLabelView(this, labelIndex);
-                        labelVisuals[usedVisuals] = labelVisual;
-                        labelVisual.depth = 4.3;
-                        labelVisual.depthRange = 0.1;
-                        labelVisual.viewSize(auto(), height - 8);
-                        add(labelVisual);
-                    }
-
-                    var labelDelimiter = labelDelimiters[usedVisuals];
-                    if (labelDelimiter == null) {
-                        labelDelimiter = new Quad();
-                        labelDelimiters[usedVisuals] = labelDelimiter;
-                        labelDelimiter.color = theme.lightBorderColor;
-                        labelDelimiter.anchor(0, 0);
-                        labelDelimiter.depth = 16;
-                        add(labelDelimiter);
-                    }
-
-                    usedVisuals++;
-
-                    labelVisual.index = labelIndex;
-                    labelVisual.content = labelText;
-                    labelVisual.pos(
-                        1 + rulerStart + timelineOffsetX + labelIndex * frameStepWidth,
-                        height * 0.5
-                    );
-                    labelVisual.autoComputeSizeIfNeeded(true);
-
-                    labelDelimiter.pos(labelVisual.x - 1, 0);
-                    labelDelimiter.size(1, timelineEditorView.height - 0);
-
-                    reobserve();
-
+        if (maxFrame >= minFrame) {
+            var labelDepthN = 0.0;
+            if (timelineLabels != null) {
+                for (timelineLabel in timelineLabels) {
+                    var labelIndex = timelineLabel.index;
+                    //if (labelIndex >= minFrame && labelIndex <= maxFrame) {
+                        
+                        var labelText = timelineLabel.label;
+    
+                        unobserve();
+    
+                        var labelVisual = labelVisuals[usedVisuals];
+                        if (labelVisual == null) {
+                            labelVisual = new TimelineLabelView(this, labelIndex);
+                            labelVisuals[usedVisuals] = labelVisual;
+                            labelVisual.depthRange = 0.01;
+                            labelVisual.viewSize(auto(), height - 8);
+                            add(labelVisual);
+                        }
+    
+                        labelVisual.active = (labelIndex >= minFrame && labelIndex <= maxFrame);
+    
+                        var labelDelimiter = labelDelimiters[usedVisuals];
+                        if (labelDelimiter == null) {
+                            labelDelimiter = new Quad();
+                            labelDelimiters[usedVisuals] = labelDelimiter;
+                            labelDelimiter.color = theme.lightBorderColor;
+                            labelDelimiter.anchor(0, 0);
+                            labelDelimiter.depth = 16;
+                            add(labelDelimiter);
+                        }
+    
+                        labelDelimiter.active = labelVisual.active;
+    
+                        usedVisuals++;
+    
+                        if (labelVisual.active) {
+                            labelVisual.depth = 4.3 + labelDepthN;
+                            labelDepthN += 0.01;
+                            labelVisual.index = labelIndex;
+                            labelVisual.content = labelText;
+                            labelVisual.pos(
+                                1 + rulerStart + timelineOffsetX + labelIndex * frameStepWidth,
+                                height * 0.5
+                            );
+                            labelVisual.autoComputeSizeIfNeeded(true);
+                        }
+    
+                        if (labelDelimiter.active) {
+                            labelDelimiter.pos(labelVisual.x - 1, 0);
+                            labelDelimiter.size(1, timelineEditorView.height - 0);
+                        }
+    
+                        reobserve();
+    
+                    //}
                 }
             }
         }
