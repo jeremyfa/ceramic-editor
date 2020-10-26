@@ -28,6 +28,8 @@ class TimelineLabelsView extends View {
 
     @component var click:Click;
 
+    @component var doubleClick:DoubleClick;
+
     public function new(timelineEditorView:TimelineEditorView) {
 
         super();
@@ -53,6 +55,9 @@ class TimelineLabelsView extends View {
         click.threshold = 4;
         click.onClick(this, handleClick);
 
+        doubleClick = new DoubleClick();
+        doubleClick.onDoubleClick(this, handleDoubleClick);
+
     }
 
     function handlePointerMove(info:TouchInfo) {
@@ -70,6 +75,16 @@ class TimelineLabelsView extends View {
     }
 
     function handleClick() {
+
+        if (editedLabelPointer.active) {
+
+            // TODO select group
+
+        }
+
+    }
+
+    function handleDoubleClick() {
 
         if (editedLabelPointer.active) {
 
