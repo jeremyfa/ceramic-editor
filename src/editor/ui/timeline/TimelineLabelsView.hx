@@ -1,6 +1,6 @@
 package editor.ui.timeline;
 
-class TimelineLabelsView extends View {
+class TimelineLabelsView extends View implements Observable {
 
     static var _point = new Point(0, 0);
 
@@ -26,7 +26,7 @@ class TimelineLabelsView extends View {
 
     var labelDelimiters:Array<Quad> = [];
 
-    var draggingLabels:Int = 0;
+    @observe public var draggingLabel:String = null;
 
     @component var click:Click;
 
@@ -67,7 +67,7 @@ class TimelineLabelsView extends View {
         if (editedLabelFrozen())
             return;
 
-        if (draggingLabels > 0) {
+        if (draggingLabel != null) {
             editedLabelPointer.active = false;
         }
         else if (hits(info.x, info.y)) {
@@ -117,12 +117,11 @@ class TimelineLabelsView extends View {
                     {
                         name: null,
                         type: 'String',
-                        value: existingLabel != null ? existingLabel.label : ''
+                        value: existingLabel != null ? existingLabel.name : ''
                     }
                 ],
                 true,
                 result -> {
-                    trace('result: $result');
                     editedLabelPointer.active = false;
                     var labelName:String = result[0];
                     if (labelName == null || labelName.trim() == '') {
@@ -206,7 +205,7 @@ class TimelineLabelsView extends View {
                     var labelIndex = timelineLabel.index;
                     //if (labelIndex >= minFrame && labelIndex <= maxFrame) {
                         
-                        var labelText = timelineLabel.label;
+                        var labelText = timelineLabel.name;
     
                         unobserve();
     
@@ -239,7 +238,7 @@ class TimelineLabelsView extends View {
                             labelVisual.depth = 4.3 + labelDepthN;
                             labelDepthN += 0.01;
                             labelVisual.index = labelIndex;
-                            labelVisual.content = labelText;
+                            labelVisual.labelName = labelText;
                             labelVisual.pos(
                                 1 + rulerStart + timelineOffsetX + labelIndex * frameStepWidth,
                                 height * 0.5

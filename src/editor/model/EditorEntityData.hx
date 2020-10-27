@@ -167,6 +167,14 @@ class EditorEntityData extends Model {
             json.tracks = jsonTracks;
         }
 
+        if (timelineLabels != null && timelineLabels.length > 0) {
+            var jsonLabels = [];
+            for (timelineLabel in timelineLabels) {
+                jsonLabels.push(timelineLabel.toJson());
+            }
+            json.labels = jsonLabels;
+        }
+
         return json;
 
     }
@@ -222,6 +230,19 @@ class EditorEntityData extends Model {
                 tracks.push(timelineTrack);
             }
             this.timelineTracks = cast tracks;
+        }
+
+        if (json.labels != null) {
+            if (!Validate.array(json.labels))
+                throw 'Invalid entity labels';
+            var jsonLabels:Array<Dynamic> = json.labels;
+            var labels = [];
+            for (jsonLabel in jsonLabels) {
+                var timelineLabel = new EditorTimelineLabel(-1, null);
+                timelineLabel.fromJson(jsonLabel);
+                labels.push(timelineLabel);
+            }
+            this.timelineLabels = cast labels;
         }
 
     }
@@ -459,7 +480,7 @@ class EditorEntityData extends Model {
 
         for (i in 0...timelineLabels.length) {
             var label = timelineLabels[i];
-            if (label.label == name)
+            if (label.name == name)
                 return label;
         }
 
@@ -467,26 +488,26 @@ class EditorEntityData extends Model {
 
     }
 
-    public function setTimelineLabel(index:Int, label:String) {
+    public function setTimelineLabel(index:Int, name:String) {
 
-        if (label == null) {
+        if (name == null) {
             removeTimelineLabel(index);
         }
         else {
             var existing = timelineLabelAtIndex(index);
             if (existing != null) {
                 // Update existing label
-                existing.label = label;
+                existing.name = name;
             }
             else {
-                var existingForName = timelineLabelWithName(label);
+                var existingForName = timelineLabelWithName(name);
                 if (existingForName != null) {
                     // Remove label with same name
                     removeTimelineLabel(existingForName.index);
                 }
 
                 // Create new label
-                var timelineLabel = new EditorTimelineLabel(index, label);
+                var timelineLabel = new EditorTimelineLabel(index, name);
                 var newTimelineLabels = [].concat(timelineLabels.original);
                 newTimelineLabels.push(timelineLabel);
                 newTimelineLabels.sort((a, b) -> {

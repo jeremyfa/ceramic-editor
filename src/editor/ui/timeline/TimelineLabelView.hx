@@ -14,7 +14,14 @@ class TimelineLabelView extends TextView implements Observable {
 
     var draggingOffsetX:Float = 0;
 
-    var draggingStartIndex:Int = 0;
+    var draggingLabel:String = null;
+
+    @observe public var labelName(default, set):String = '';
+    function set_labelName(labelName:String):String {
+        this.labelName = labelName;
+        this.content = labelName;
+        return labelName;
+    }
 
     @observe var hover:Bool = false;
 
@@ -51,8 +58,8 @@ class TimelineLabelView extends TextView implements Observable {
 
     override function destroy() {
 
-        if (dragging) {
-            @:privateAccess timelineLabelsView.draggingLabels--;
+        if (dragging && timelineLabelsView.draggingLabel == draggingLabel) {
+            timelineLabelsView.draggingLabel = null;
         }
         dragging = false;
 
@@ -68,7 +75,7 @@ class TimelineLabelView extends TextView implements Observable {
         if (selectedItem != null) {
             screenToVisual(info.x, info.y, _point);
             draggingOffsetX = _point.x;
-            draggingStartIndex = index;
+            draggingLabel = labelName;
             screen.onPointerMove(this, handlePointerMove);
         }
 
@@ -77,7 +84,7 @@ class TimelineLabelView extends TextView implements Observable {
     function handlePointerMove(info:TouchInfo) {
 
         if (!dragging) {
-            @:privateAccess timelineLabelsView.draggingLabels++;
+            timelineLabelsView.draggingLabel = draggingLabel;
         }
         dragging = true;
         draggingAllAfter = app.keyCodePressed(KeyCode.LALT) || app.keyCodePressed(KeyCode.RALT);
@@ -98,40 +105,82 @@ class TimelineLabelView extends TextView implements Observable {
         var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
 
         if (selectedItem != null) {
-            var validFrame = draggingStartIndex;
-            if (validFrame < frame) {
-                while (validFrame < frame) {
-                    var existingFrame = selectedItem.timelineLabelAtIndex(validFrame + 1);
-                    if (existingFrame == null || existingFrame.label == content) {
-                        validFrame++;
+
+            var canMove = true;
+            var mainLabel = selectedItem.timelineLabelWithName(draggingLabel);
+            var prevFrame = mainLabel.index;
+
+            if (frame != prevFrame) {
+
+                if (draggingAllAfter) {
+                    
+                    if (frame < prevFrame) {
+                        var f = prevFrame - 1;
+                        while (f >= frame) {
+                            var labelToOverwrite = selectedItem.timelineLabelAtIndex(f);
+                            if (labelToOverwrite != null) {
+                                canMove = false;
+                                break;
+                            }
+                            f--;
+                        }
                     }
-                    else {
-                        break;
+            
+                    if (canMove) {
+                        var frameIndexes = [];
+                        for (aLabel in selectedItem.timelineLabels) {
+                            if (aLabel.index >= prevFrame) {
+                                frameIndexes.push(aLabel.index);
+                            }
+                        }
+                        if (frame < prevFrame) {
+                            // Sort ascending
+                            frameIndexes.sort((a, b) -> a - b);
+                        }
+                        else {
+                            // Sort descending
+                            frameIndexes.sort((a, b) -> b - a);
+                        }
+                        for (f in frameIndexes) {
+                            var labelToMove = selectedItem.timelineLabelAtIndex(f);
+                            //var keyframeToOverwrite = track.keyframeAtIndex(f + frame - prevFrame);
+                            if (labelToMove != null) {// && keyframeToOverwrite == null) {
+                                selectedItem.removeTimelineLabel(f);
+                                selectedItem.setTimelineLabel(f + frame - prevFrame, labelToMove.name);
+                            }
+                        }
+                    }
+                }
+                else {
+
+                    var labelToMove = selectedItem.timelineLabelAtIndex(prevFrame);
+                    var labelToOverwrite = selectedItem.timelineLabelAtIndex(frame);
+                    if (labelToMove != null && labelToOverwrite != null) {
+                        canMove = false;
+                    }
+            
+                    if (canMove) {
+                        var labelToMove = selectedItem.timelineLabelAtIndex(prevFrame);
+                        var labelToOverwrite = selectedItem.timelineLabelAtIndex(frame);
+                        if (labelToMove != null && labelToOverwrite == null) {
+                            selectedItem.removeTimelineLabel(prevFrame);
+                            selectedItem.setTimelineLabel(frame, labelToMove.name);
+                        }
                     }
                 }
             }
-            else if (validFrame > frame) {
-                while (validFrame > frame) {
-                    var existingFrame = selectedItem.timelineLabelAtIndex(validFrame - 1);
-                    if (existingFrame == null || existingFrame.label == content) {
-                        validFrame--;
-                    }
-                    else {
-                        break;
-                    }
-                }
-            }
-            selectedItem.setTimelineLabel(validFrame, content);
+                
         }
 
     }
 
     function handlePointerUp(info:TouchInfo) {
 
-        if (dragging) {
-            @:privateAccess timelineLabelsView.draggingLabels--;
+        if (dragging && timelineLabelsView.draggingLabel == draggingLabel) {
+            timelineLabelsView.draggingLabel = null;
         }
         dragging = false;
+        draggingLabel = null;
 
         screen.offPointerMove(handlePointerMove);
 
@@ -163,7 +212,7 @@ class TimelineLabelView extends TextView implements Observable {
 
         font = theme.boldFont;
         textColor = theme.lightTextColor;
-        color = hover || dragging ? theme.lightBackgroundColor : theme.darkBackgroundColor;
+        color = (timelineLabelsView.draggingLabel == null && hover) || timelineLabelsView.draggingLabel == labelName ? theme.lightBackgroundColor : theme.darkBackgroundColor;
 
     }
 
