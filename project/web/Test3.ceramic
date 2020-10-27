@@ -3857,7 +3857,7 @@
           "isVisual": true,
           "locked": false,
           "props": {
-            "x": 128,
+            "x": 0,
             "y": 48,
             "depth": 1,
             "depthRange": 1,
@@ -3986,6 +3986,20 @@
                   "value": 0
                 }
               ]
+            }
+          ],
+          "labels": [
+            {
+              "index": 0,
+              "name": "IN"
+            },
+            {
+              "index": 16,
+              "name": "LOOP"
+            },
+            {
+              "index": 30,
+              "name": "OUT"
             }
           ]
         }
