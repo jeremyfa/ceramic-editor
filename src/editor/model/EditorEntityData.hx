@@ -520,6 +520,8 @@ class EditorEntityData extends Model {
                 });
                 timelineLabels = cast newTimelineLabels;
             }
+
+            model.history.step();
         }
 
     }
@@ -541,6 +543,8 @@ class EditorEntityData extends Model {
             var newTimelineLabels = [].concat(timelineLabels.original);
             newTimelineLabels.splice(existingIndexInArray, 1);
             this.timelineLabels = cast newTimelineLabels;
+
+            model.history.step();
         }
 
     }
