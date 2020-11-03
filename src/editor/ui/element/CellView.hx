@@ -16,7 +16,14 @@ class CellView extends LayersLayout implements Observable {
 
     @observe public var subTitle:String = null;
 
-    @observe public var itemIndex:Int = -1;
+    @observe public var itemIndex(default, set):Int = -1;
+    function set_itemIndex(itemIndex:Int):Int {
+        if (this.itemIndex != itemIndex) {
+            this.itemIndex = itemIndex;
+            hover = false;
+        }
+        return itemIndex;
+    }
 
     @observe public var collectionView:CellCollectionView = null;
 
