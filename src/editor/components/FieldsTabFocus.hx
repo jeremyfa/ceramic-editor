@@ -18,8 +18,8 @@ class FieldsTabFocus extends Entity implements Component {
 
     function bindAsComponent() {
 
-        app.onKeyDown(this, handleKeyDown);
-        app.onKeyUp(this, handleKeyUp);
+        input.onKeyDown(this, handleKeyDown);
+        input.onKeyUp(this, handleKeyUp);
 
     }
 

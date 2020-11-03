@@ -159,7 +159,7 @@ class Editable extends Entity implements Component implements Observable {
     function bindKeyboard() {
 
         // Keyboard events
-        app.onKeyDown(this, function(key) {
+        input.onKeyDown(this, function(key) {
 
             if (key.keyCode == KeyCode.LSHIFT) {
                 leftShiftPressed = true;
@@ -193,7 +193,7 @@ class Editable extends Entity implements Component implements Observable {
 
         });
 
-        app.onKeyUp(this, function(key) {
+        input.onKeyUp(this, function(key) {
 
             if (key.keyCode == KeyCode.LSHIFT) {
                 leftShiftPressed = false;

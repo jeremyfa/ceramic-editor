@@ -334,11 +334,11 @@ class EditorData extends Model {
             location = PLAY(project.lastSelectedFragment.fragmentId);
             function handlePlayEscape(key:Key) {
                 if (key.scanCode == ScanCode.ESCAPE) {
-                    app.offKeyDown(handlePlayEscape);
+                    input.offKeyDown(handlePlayEscape);
                     location = DEFAULT;
                 }
             }
-            app.onKeyDown(null, handlePlayEscape);
+            input.onKeyDown(null, handlePlayEscape);
         }
 
     }

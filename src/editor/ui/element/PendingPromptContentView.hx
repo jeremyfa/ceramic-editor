@@ -122,7 +122,7 @@ class PendingPromptContentView extends View {
                         field.focus();
 
                         // Also confirm on enter
-                        app.onKeyDown(this, key -> {
+                        input.onKeyDown(this, key -> {
                             if (key.scanCode == ScanCode.ENTER) {
                                 pendingPrompt.callback(result);
                             }

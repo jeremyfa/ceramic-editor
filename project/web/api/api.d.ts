@@ -1555,6 +1555,12 @@ class Timeline extends Entity implements Component {
     /** Update `size` property to make it fit
         the size of the longuest track. */
     fitSize(): Void;
+    seekLabel(name: String): Void;
+    labelAtIndex(index: Int): String;
+    indexOfLabel(name: String): Int;
+    setLabel(index: Int, name: String): Void;
+    removeLabelAtIndex(index: Int): Bool;
+    removeLabel(name: String): Bool;
     entity: Entity;
     initializerName: String;
 }
@@ -1854,6 +1860,8 @@ class Shortcuts {
     static screen: Screen;
     /** Shared audio instance */
     static audio: Audio;
+    /** Shared input instance */
+    static input: ceramic.Input;
     /** Shared settings instance */
     static settings: Settings;
     /** Shared logger instance */
@@ -4222,6 +4230,15 @@ class Entity implements Lazy, Events {
     script: Script;
     events: DynamicEvents<String>;
     destroyed: Bool;
+    disposed: Bool;
+    /**dispose event*/
+    onDispose(owner: Entity?, handleEntity: ((entity: Entity) => Void)): Void;
+    /**dispose event*/
+    onceDispose(owner: Entity?, handleEntity: ((entity: Entity) => Void)): Void;
+    /**dispose event*/
+    offDispose(handleEntity?: ((entity: Entity) => Void)?): Void;
+    /**Does it listen to dispose event*/
+    listensDispose(): Bool;
     /**destroy event*/
     onDestroy(owner: Entity?, handleEntity: ((entity: Entity) => Void)): Void;
     /**destroy event*/
@@ -4236,6 +4253,10 @@ class Entity implements Lazy, Events {
         method on a subclass (a macro is inserting a code to marke the object
         as destroyed at the beginning of every `destroy()` override function. */
     destroy(): Void;
+    /**
+     * Schedules destroy, at the end of the current frame.
+     */
+    dispose(): Void;
     /** Remove all events handlers from this entity. */
     unbindEvents(): Void;
     autoruns: Array<Autorun>;
@@ -5014,94 +5035,6 @@ class App extends Entity {
      * @param delta The elapsed delta time since last frame
      */
     listensPostUpdate(): Bool;
-    /**
-     * @event keyDown
-     * Triggered when a key from the keyboard is being pressed.
-     * @param key The key being pressed
-     */
-    onKeyDown(owner: Entity?, handleKey: ((key: Key) => Void)): Void;
-    /**
-     * @event keyDown
-     * Triggered when a key from the keyboard is being pressed.
-     * @param key The key being pressed
-     */
-    onceKeyDown(owner: Entity?, handleKey: ((key: Key) => Void)): Void;
-    /**
-     * @event keyDown
-     * Triggered when a key from the keyboard is being pressed.
-     * @param key The key being pressed
-     */
-    offKeyDown(handleKey?: ((key: Key) => Void)?): Void;
-    /**
-     * @event keyDown
-     * Triggered when a key from the keyboard is being pressed.
-     * @param key The key being pressed
-     */
-    listensKeyDown(): Bool;
-    /**
-     * @event keyUp
-     * Triggered when a key from the keyboard is being released.
-     * @param key The key being released
-     */
-    onKeyUp(owner: Entity?, handleKey: ((key: Key) => Void)): Void;
-    /**
-     * @event keyUp
-     * Triggered when a key from the keyboard is being released.
-     * @param key The key being released
-     */
-    onceKeyUp(owner: Entity?, handleKey: ((key: Key) => Void)): Void;
-    /**
-     * @event keyUp
-     * Triggered when a key from the keyboard is being released.
-     * @param key The key being released
-     */
-    offKeyUp(handleKey?: ((key: Key) => Void)?): Void;
-    /**
-     * @event keyUp
-     * Triggered when a key from the keyboard is being released.
-     * @param key The key being released
-     */
-    listensKeyUp(): Bool;
-    /**controllerAxis event*/
-    onControllerAxis(owner: Entity?, handleControllerIdAxisIdValue: ((controllerId: Int, axisId: Int, value: Float) => Void)): Void;
-    /**controllerAxis event*/
-    onceControllerAxis(owner: Entity?, handleControllerIdAxisIdValue: ((controllerId: Int, axisId: Int, value: Float) => Void)): Void;
-    /**controllerAxis event*/
-    offControllerAxis(handleControllerIdAxisIdValue?: ((controllerId: Int, axisId: Int, value: Float) => Void)?): Void;
-    /**Does it listen to controllerAxis event*/
-    listensControllerAxis(): Bool;
-    /**controllerDown event*/
-    onControllerDown(owner: Entity?, handleControllerIdButtonId: ((controllerId: Int, buttonId: Int) => Void)): Void;
-    /**controllerDown event*/
-    onceControllerDown(owner: Entity?, handleControllerIdButtonId: ((controllerId: Int, buttonId: Int) => Void)): Void;
-    /**controllerDown event*/
-    offControllerDown(handleControllerIdButtonId?: ((controllerId: Int, buttonId: Int) => Void)?): Void;
-    /**Does it listen to controllerDown event*/
-    listensControllerDown(): Bool;
-    /**controllerUp event*/
-    onControllerUp(owner: Entity?, handleControllerIdButtonId: ((controllerId: Int, buttonId: Int) => Void)): Void;
-    /**controllerUp event*/
-    onceControllerUp(owner: Entity?, handleControllerIdButtonId: ((controllerId: Int, buttonId: Int) => Void)): Void;
-    /**controllerUp event*/
-    offControllerUp(handleControllerIdButtonId?: ((controllerId: Int, buttonId: Int) => Void)?): Void;
-    /**Does it listen to controllerUp event*/
-    listensControllerUp(): Bool;
-    /**controllerEnable event*/
-    onControllerEnable(owner: Entity?, handleControllerIdName: ((controllerId: Int, name: String) => Void)): Void;
-    /**controllerEnable event*/
-    onceControllerEnable(owner: Entity?, handleControllerIdName: ((controllerId: Int, name: String) => Void)): Void;
-    /**controllerEnable event*/
-    offControllerEnable(handleControllerIdName?: ((controllerId: Int, name: String) => Void)?): Void;
-    /**Does it listen to controllerEnable event*/
-    listensControllerEnable(): Bool;
-    /**controllerDisable event*/
-    onControllerDisable(owner: Entity?, handleControllerId: ((controllerId: Int) => Void)): Void;
-    /**controllerDisable event*/
-    onceControllerDisable(owner: Entity?, handleControllerId: ((controllerId: Int) => Void)): Void;
-    /**controllerDisable event*/
-    offControllerDisable(handleControllerId?: ((controllerId: Int) => Void)?): Void;
-    /**Does it listen to controllerDisable event*/
-    listensControllerDisable(): Bool;
     /** Assets events */
     onDefaultAssetsLoad(owner: Entity?, handleAssets: ((assets: Assets) => Void)): Void;
     /** Assets events */
@@ -5232,6 +5165,8 @@ class App extends Entity {
     visuals: Array<Visual>;
     /** Groups */
     groups: Array<Group<Entity>>;
+    /** Input */
+    input: ceramic.Input;
     /** Render Textures */
     renderTextures: Array<RenderTexture>;
     /** App level assets. Used to load default bitmap font */
@@ -5251,12 +5186,6 @@ class App extends Entity {
     converters: haxe.ds.Map<K, V>;
     timelines: ceramic.Timelines;
     arcade: ArcadePhysics;
-    keyCodePressed(keyCode: Int): Bool;
-    keyCodeJustPressed(keyCode: Int): Bool;
-    scanCodePressed(scanCode: Int): Bool;
-    scanCodeJustPressed(scanCode: Int): Bool;
-    keyPressed(key: Key): Bool;
-    keyJustPressed(key: Key): Bool;
     group(id: String, createIfNeeded?: Bool): Group<Entity>;
     unbindEvents(): Void;
     /**App info extracted from `ceramic.yml`*/

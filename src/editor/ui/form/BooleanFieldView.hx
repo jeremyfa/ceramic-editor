@@ -64,7 +64,7 @@ class BooleanFieldView extends FieldView implements Observable {
         });
         #end
 
-        app.onKeyDown(this, handleKeyDown);
+        input.onKeyDown(this, handleKeyDown);
 
     }
 

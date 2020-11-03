@@ -667,7 +667,7 @@ class EditorView extends View implements Observable {
 
     function bindKeyBindings() {
 
-        app.onKeyDown(this, handleKeyDown);
+        input.onKeyDown(this, handleKeyDown);
 
         var keyBindings = new KeyBindings();
 

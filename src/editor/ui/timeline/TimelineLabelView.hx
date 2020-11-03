@@ -87,7 +87,7 @@ class TimelineLabelView extends TextView implements Observable {
             timelineLabelsView.draggingLabel = draggingLabel;
         }
         dragging = true;
-        draggingAllAfter = app.keyCodePressed(KeyCode.LALT) || app.keyCodePressed(KeyCode.RALT);
+        draggingAllAfter = input.keyCodePressed(KeyCode.LALT) || input.keyCodePressed(KeyCode.RALT);
 
         var timelineLabelsView = this.timelineLabelsView;
         var rulerStart = @:privateAccess timelineLabelsView.rulerStart;

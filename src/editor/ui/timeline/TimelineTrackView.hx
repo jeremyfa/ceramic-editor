@@ -81,7 +81,7 @@ class TimelineTrackView extends View implements Observable {
     function handlePointerDown(info:TouchInfo) {
 
         if (selectedItem != null) {
-            var shiftPressed = app.keyCodePressed(KeyCode.LSHIFT) || app.keyCodePressed(KeyCode.RSHIFT);
+            var shiftPressed = input.keyCodePressed(KeyCode.LSHIFT) || input.keyCodePressed(KeyCode.RSHIFT);
             selectedItem.toggleTimelineTrack(timelineTrack, shiftPressed);
         }
         

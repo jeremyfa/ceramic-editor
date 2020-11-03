@@ -122,7 +122,7 @@ class ColorFieldView extends FieldView implements Observable {
         });
 
         // Some keyboard shortcuts
-        app.onKeyDown(this, key -> {
+        input.onKeyDown(this, key -> {
             if (key.scanCode == ScanCode.ESCAPE) {
                 pickerVisible = false;
             }
