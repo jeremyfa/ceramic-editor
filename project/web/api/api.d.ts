@@ -3989,6 +3989,31 @@ class Fragment extends Layer {
     offFloatDChange(handleFloatDPrevFloatD?: ((floatD: Float, prevFloatD: Float) => Void)?): Void;
     /**Does it listen to floatDChange event*/
     listensFloatDChange(): Bool;
+    /**
+     * Emit this event to change current location.
+     * Behavior depends on how this event is handled and does nothing by default.
+     */
+    emitLocation(location: String): Void;
+    /**
+     * Emit this event to change current location.
+     * Behavior depends on how this event is handled and does nothing by default.
+     */
+    onLocation(owner: Entity?, handleLocation: ((location: String) => Void)): Void;
+    /**
+     * Emit this event to change current location.
+     * Behavior depends on how this event is handled and does nothing by default.
+     */
+    onceLocation(owner: Entity?, handleLocation: ((location: String) => Void)): Void;
+    /**
+     * Emit this event to change current location.
+     * Behavior depends on how this event is handled and does nothing by default.
+     */
+    offLocation(handleLocation?: ((location: String) => Void)?): Void;
+    /**
+     * Emit this event to change current location.
+     * Behavior depends on how this event is handled and does nothing by default.
+     */
+    listensLocation(): Bool;
     editedItems: Bool;
     assets: Assets;
     entities: Array<Entity>;

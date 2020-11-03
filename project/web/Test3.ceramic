@@ -11,7 +11,7 @@
   "colorPickerHsluv": false,
   "selectedEditableIndex": 15,
   "lastSelectedFragmentIndex": 15,
-  "selectedScriptIndex": -1,
+  "selectedScriptIndex": 14,
   "lastSelectedEasing": "ELASTIC_EASE_IN_OUT",
   "exportPath": null,
   "fragments": [
@@ -3849,15 +3849,24 @@
       "color": 0,
       "overflow": false,
       "transparent": true,
-      "selectedItemIndex": 0,
+      "selectedItemIndex": 1,
       "items": [
+        {
+          "id": "ENTITY_0",
+          "entity": "ceramic.Entity",
+          "isVisual": false,
+          "locked": false,
+          "props": {
+            "scriptContent": "CHANGE_FRAG"
+          }
+        },
         {
           "id": "QUAD_0",
           "entity": "ceramic.Quad",
           "isVisual": true,
           "locked": false,
           "props": {
-            "x": 0,
+            "x": 51.962,
             "y": 48,
             "depth": 1,
             "depthRange": 1,
@@ -3877,7 +3886,7 @@
             "color": 16777215,
             "skewY": 0,
             "skewX": 0,
-            "rotation": 0,
+            "rotation": 73.072,
             "translateY": 0,
             "translateX": 0,
             "roundTranslation": false
@@ -3991,15 +4000,15 @@
           "labels": [
             {
               "index": 0,
-              "name": "IN"
+              "name": "BEGIN"
             },
             {
-              "index": 16,
-              "name": "LOOP"
+              "index": 60,
+              "name": "MIDDLE"
             },
             {
-              "index": 30,
-              "name": "OUT"
+              "index": 120,
+              "name": "END"
             }
           ]
         }
@@ -4284,6 +4293,10 @@
     {
       "id": "LIBRARY",
       "content": "\nvar fragmentDataCache:StringMap<Dynamic> = new StringMap();\nvar fragmentCache:StringMap<Array<Fragment>> = new StringMap();\n\nfunction animate(fragmentId:String, x:Float, y:Float) {\n\n    var fragmentData = fragmentDataCache.get(fragmentId);\n\n    if (fragmentData == null) {\n        fragmentData = Fragment.getData(fragmentId);\n        fragmentDataCache.set(fragmentId, fragmentData);\n    }\n\n    if (fragmentData == null) {\n        log.warning('Failed to find fragment data for id: ' + fragmentId);\n        return;\n    }\n\n    var anim = new Fragment(fragment.assets);\n    anim.fragmentData = fragmentData;\n    anim.anchor(0.5, 0.5);\n\n    fragment.add(anim);\n    anim.pos(x, y);\n\n    anim.createTimelineIfNeeded();\n    anim.timeline.loop = false;\n    Timer.delay(anim, anim.timeline.duration, () => {\n        anim.destroy();\n    });\n}\n"
+    },
+    {
+      "id": "CHANGE_FRAG",
+      "content": "if (entity.edited) return;\n\nfunction init() {\n\n    Timer.delay(self, 4.0, () => {\n\n        fragment.emitLocation('CIRCULAR_ANIM');\n\n    });\n\n}"
     }
   ]
 }

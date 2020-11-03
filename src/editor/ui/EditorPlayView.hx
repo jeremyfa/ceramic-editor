@@ -49,6 +49,7 @@ class EditorPlayView extends View {
         var fragmentData = editorFragmentData.toFragmentData();
 
         fragment = new Fragment(editor.contentAssets, false);
+        fragment.onLocation(this, handleFragmentLocation);
         add(fragment);
 
         fragment.fragmentData = fragmentData;
@@ -60,6 +61,18 @@ class EditorPlayView extends View {
         else {
             color = Color.BLACK;
             transparent = true;
+        }
+
+    }
+
+    function handleFragmentLocation(location:String) {
+
+        switch model.location {
+            case PLAY(fragmentId):
+                if (location != fragmentId) {
+                    model.location = PLAY(location);
+                }
+            default:
         }
 
     }
