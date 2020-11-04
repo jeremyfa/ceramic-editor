@@ -473,6 +473,7 @@ class EditorFragmentData extends EditorEditableElementData {
             width: width,
             height: height,
             color: color,
+            overflow: overflow,
             transparent: transparent,
             components: fragmentComponentsToDynamic(),
             items: fragmentItems()
