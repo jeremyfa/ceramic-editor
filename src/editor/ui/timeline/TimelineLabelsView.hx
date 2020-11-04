@@ -104,10 +104,9 @@ class TimelineLabelsView extends View implements Observable {
         this.editedLabelFrame = frame;
 
         var selectedFragment = model.project.lastSelectedFragment;
-        var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
 
-        if (selectedItem != null) {
-            var existingLabel = selectedItem.timelineLabelAtIndex(editedLabelFrame);
+        if (selectedFragment != null) {
+            var existingLabel = selectedFragment.timelineLabelAtIndex(editedLabelFrame);
             var frame = editedLabelFrame;
 
             Prompt.promptWithParams(
@@ -125,10 +124,10 @@ class TimelineLabelsView extends View implements Observable {
                     editedLabelPointer.active = false;
                     var labelName:String = result[0];
                     if (labelName == null || labelName.trim() == '') {
-                        selectedItem.removeTimelineLabel(frame);
+                        selectedFragment.removeTimelineLabel(frame);
                     }
                     else {
-                        selectedItem.setTimelineLabel(frame, labelName.trim());
+                        selectedFragment.setTimelineLabel(frame, labelName.trim());
                     }
                 }
             );
@@ -190,8 +189,7 @@ class TimelineLabelsView extends View implements Observable {
     function updateFromTimelineLabels() {
 
         var selectedFragment = model.project.lastSelectedFragment;
-        var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
-        var timelineLabels = selectedItem != null ? selectedItem.timelineLabels : null;
+        var timelineLabels = selectedFragment != null ? selectedFragment.timelineLabels : null;
 
         var usedVisuals = 0;
 

@@ -1,5 +1,6 @@
 package editor.model;
 
+import haxe.DynamicAccess;
 import haxe.ds.ArraySort;
 
 class EditorFragmentData extends EditorEditableElementData {
@@ -459,7 +460,7 @@ class EditorFragmentData extends EditorEditableElementData {
 
     }
 
-    public function toFragmentData(includeTracks:Bool = true):FragmentData {
+    public function toFragmentData(includeTimelineData:Bool = true):FragmentData {
 
         if (model.isFragmentIdUsed(fragmentId)) {
             return null;
@@ -479,7 +480,8 @@ class EditorFragmentData extends EditorEditableElementData {
             items: fragmentItems()
         };
 
-        if (includeTracks) {
+        if (includeTimelineData) {
+            // Tracks
             var tracks = [];
             for (item in items) {
                 var timelineTracks = item.timelineTracks;
@@ -491,6 +493,12 @@ class EditorFragmentData extends EditorEditableElementData {
             }
             if (tracks.length > 0) {
                 result.tracks = tracks;
+            }
+            
+            // Labels
+            var labels = fragmentLabels();
+            if (labels != null) {
+                result.labels = labels;
             }
         }
 
@@ -523,6 +531,18 @@ class EditorFragmentData extends EditorEditableElementData {
 
     }
 
+    public function fragmentLabels():DynamicAccess<Int> {
+
+        var result:DynamicAccess<Int> = null;
+        for (label in timelineLabels) {
+            if (result == null)
+                result = {};
+            result.set(label.name, label.index);
+        }
+        return result;
+
+    }
+
     public function toJson():Dynamic {
 
         var json:Dynamic = {};
@@ -548,6 +568,14 @@ class EditorFragmentData extends EditorEditableElementData {
             jsonItems.push(item.toJson());
         }
         json.items = jsonItems;
+
+        if (timelineLabels != null && timelineLabels.length > 0) {
+            var jsonLabels = [];
+            for (timelineLabel in timelineLabels) {
+                jsonLabels.push(timelineLabel.toJson());
+            }
+            json.labels = jsonLabels;
+        }
 
         return json;
 
@@ -639,6 +667,19 @@ class EditorFragmentData extends EditorEditableElementData {
         }
         else {
             items = [];
+        }
+
+        if (json.labels != null) {
+            if (!Validate.array(json.labels))
+                throw 'Invalid entity labels';
+            var jsonLabels:Array<Dynamic> = json.labels;
+            var labels = [];
+            for (jsonLabel in jsonLabels) {
+                var timelineLabel = new EditorTimelineLabel(-1, null);
+                timelineLabel.fromJson(jsonLabel);
+                labels.push(timelineLabel);
+            }
+            this.timelineLabels = cast labels;
         }
         
         json.selectedItemIndex = selectedItemIndex;
@@ -808,6 +849,110 @@ class EditorFragmentData extends EditorEditableElementData {
             else {
                 return TextUtils.compareStrings(itemA.entityId, itemB.entityId);
             }
+        }
+
+    }
+
+    @serialize public var timelineLabels:ReadOnlyArray<EditorTimelineLabel> = [];
+
+    @serialize var timelineLoopLabel:String = null;
+
+    public function timelineLabelAtIndex(index:Int):Null<EditorTimelineLabel> {
+
+        var timelineLabels = this.timelineLabels;
+
+        for (i in 0...timelineLabels.length) {
+            var label = timelineLabels[i];
+            if (label.index == index)
+                return label;
+        }
+
+        return null;
+
+    }
+
+    public function timelineLabelWithName(name:String):Null<EditorTimelineLabel> {
+
+        var timelineLabels = this.timelineLabels;
+
+        for (i in 0...timelineLabels.length) {
+            var label = timelineLabels[i];
+            if (label.name == name)
+                return label;
+        }
+
+        return null;
+
+    }
+
+    public function setTimelineLabel(index:Int, name:String) {
+
+        if (name == null) {
+            removeTimelineLabel(index);
+        }
+        else {
+            var existing = timelineLabelAtIndex(index);
+            if (existing != null) {
+                // Update existing label
+                existing.name = name;
+            }
+            else {
+                var existingForName = timelineLabelWithName(name);
+                if (existingForName != null) {
+                    // Remove label with same name
+                    removeTimelineLabel(existingForName.index);
+                }
+
+                // Create new label
+                var timelineLabel = new EditorTimelineLabel(index, name);
+                var newTimelineLabels = [].concat(timelineLabels.original);
+                newTimelineLabels.push(timelineLabel);
+                newTimelineLabels.sort((a, b) -> {
+                    if (a.index > b.index)
+                        return 1;
+                    else if (a.index < b.index)
+                        return -1;
+                    else
+                        return 0;
+                });
+                timelineLabels = cast newTimelineLabels;
+            }
+
+            model.history.step();
+        }
+
+    }
+
+    public function removeTimelineLabel(index:Int) {
+
+        var timelineLabels = this.timelineLabels;
+        var existingIndexInArray = -1;
+
+        for (i in 0...timelineLabels.length) {
+            var label = timelineLabels[i];
+            if (label.index == index) {
+                existingIndexInArray = i;
+                break;
+            }
+        }
+        
+        if (existingIndexInArray != -1) {
+            var newTimelineLabels = [].concat(timelineLabels.original);
+            newTimelineLabels.splice(existingIndexInArray, 1);
+            this.timelineLabels = cast newTimelineLabels;
+
+            model.history.step();
+        }
+
+    }
+
+    public function timelineToggleLoopSection() {
+
+        if (timelineLoopLabel != null) {
+            timelineLoopLabel = null;
+        }
+        else {
+            // TODO
         }
 
     }

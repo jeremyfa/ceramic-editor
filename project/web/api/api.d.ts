@@ -1413,7 +1413,7 @@ class TimelineTrack<K extends TimelineKeyframe> extends Entity {
         By default, because `autoFitSize` is `true`, adding new keyframes to this
         track will update `size` accordingly so it may not be needed to update `size` explicitly.
         Setting `size` to `-1` means the track will never finish. */
-    size: Float;
+    size: Int;
     /** If set to `true` (default), adding keyframes to this track will update
         its size accordingly to match last keyframe time. */
     autoFitSize: Bool;
@@ -1516,11 +1516,63 @@ class TimelineColorKeyframe extends TimelineKeyframe {
 
 class Timeline extends Entity implements Component {
     constructor();
+    /**
+     * Triggered when position reaches an existing label
+     * @param index label index (position)
+     * @param name label name
+     */
+    onStartLabel(owner: Entity?, handleIndexName: ((index: Int, name: String) => Void)): Void;
+    /**
+     * Triggered when position reaches an existing label
+     * @param index label index (position)
+     * @param name label name
+     */
+    onceStartLabel(owner: Entity?, handleIndexName: ((index: Int, name: String) => Void)): Void;
+    /**
+     * Triggered when position reaches an existing label
+     * @param index label index (position)
+     * @param name label name
+     */
+    offStartLabel(handleIndexName?: ((index: Int, name: String) => Void)?): Void;
+    /**
+     * Triggered when position reaches an existing label
+     * @param index label index (position)
+     * @param name label name
+     */
+    listensStartLabel(): Bool;
+    /**
+     * Triggered when position reaches the end of an area following the given label.
+     * Either when a new label was reached or when end of timeline was reached
+     * @param index label index (position)
+     * @param name label name
+     */
+    onEndLabel(owner: Entity?, handleIndexName: ((index: Int, name: String) => Void)): Void;
+    /**
+     * Triggered when position reaches the end of an area following the given label.
+     * Either when a new label was reached or when end of timeline was reached
+     * @param index label index (position)
+     * @param name label name
+     */
+    onceEndLabel(owner: Entity?, handleIndexName: ((index: Int, name: String) => Void)): Void;
+    /**
+     * Triggered when position reaches the end of an area following the given label.
+     * Either when a new label was reached or when end of timeline was reached
+     * @param index label index (position)
+     * @param name label name
+     */
+    offEndLabel(handleIndexName?: ((index: Int, name: String) => Void)?): Void;
+    /**
+     * Triggered when position reaches the end of an area following the given label.
+     * Either when a new label was reached or when end of timeline was reached
+     * @param index label index (position)
+     * @param name label name
+     */
+    listensEndLabel(): Bool;
     /** Timeline size. Default `0`, meaning this timeline won't do anything.
         By default, because `autoFitSize` is `true`, adding or updating tracks on this
         timeline will update timeline `size` accordingly so it may not be needed to update `size` explicitly.
         Setting `size` to `-1` means the timeline will never finish. */
-    size: Float;
+    size: Int;
     /** If set to `true` (default), adding or updating tracks on this timeline will update
         timeline size accordingly to match longest track size. */
     autoFitSize: Bool;
@@ -1545,6 +1597,29 @@ class Timeline extends Entity implements Component {
     /** Seek the given position (in frames) in the timeline.
         Will take care of clamping `position` or looping it depending on `size` and `loop` properties. */
     seek(targetPosition: Float): Void;
+    /**
+     * Animate starting from the given label name and calls complete when
+     * reaching the end of label area (= when animation finishes).
+     * If animation is interrupted (by playing another animation, seeking another position...),
+     * complete won't be called.
+     * @param name Label name
+     * @param complete callback fired when animation finishes.
+     */
+    animate(name: String, complete: (() => Void)): Void;
+    /**
+     * Seek position to match the given label
+     * @param name Label name
+     * @return The index (position) of the looping label, or -1 if no label was found
+     */
+    seekLabel(name: String): Int;
+    /**
+     * Seek position to match the given label and set startPosition and endPosition
+     * so that it will loop through the whole area following this label, up to the
+     * position of the next label or the end of the timeline.
+     * @param name Label name
+     * @return The index (position) of the looping label, or -1 if no label was found
+     */
+    loopLabel(name: String): Int;
     /** Apply (or re-apply) every track of this timeline at the current position */
     apply(forceChange?: Bool): Void;
     /** Add a track to this timeline */
@@ -1555,7 +1630,7 @@ class Timeline extends Entity implements Component {
     /** Update `size` property to make it fit
         the size of the longuest track. */
     fitSize(): Void;
-    seekLabel(name: String): Void;
+    indexOfLabelBeforeIndex(index: Int): Int;
     labelAtIndex(index: Int): String;
     indexOfLabel(name: String): Int;
     setLabel(index: Int, name: String): Void;
@@ -1563,6 +1638,7 @@ class Timeline extends Entity implements Component {
     removeLabel(name: String): Bool;
     entity: Entity;
     initializerName: String;
+    unbindEvents(): Void;
 }
 
 /** Incremental texture tile packer that allows to alloc, release and reuse tiles as needed. */
@@ -3250,6 +3326,14 @@ class ParticleItem {
     reset(): Void;
 }
 
+class Ngon extends Mesh {
+    constructor();
+    static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
+    sides: Int;
+    radius: Float;
+    computeContent(): Void;
+}
+
 class NapePhysics extends Entity {
     constructor();
 }
@@ -3916,8 +4000,6 @@ interface FragmentItem {
 }
 
 interface FragmentData {
-    /** Timeline tracks for each named animation */
-    animationTracks?: haxe.DynamicAccess<Array<TAnonymous>>?;
     /** Fragment color (if not transparent, default `BLACK`) */
     color?: Color?;
     /** Fragment-level components */
@@ -3937,6 +4019,10 @@ interface FragmentData {
     id: String;
     /** Fragment items (visuals or other entities) */
     items?: Array<TAnonymous>?;
+    /** Timeline labels */
+    labels?: haxe.DynamicAccess<Int>?;
+    /** Whether fragment background overflows (no effect on fragment itself, depends on player implementation) */
+    overflow?: Bool?;
     /** Timeline tracks */
     tracks?: Array<TAnonymous>?;
     /** Fragment being transparent or not (default `true`) */
@@ -4924,6 +5010,17 @@ class ArcadePhysics extends Entity {
     createWorld(autoAdd?: Bool): ArcadeWorld;
     addWorld(world: ArcadeWorld): Void;
     removeWorld(world: ArcadeWorld): Void;
+}
+
+class Arc extends Mesh {
+    constructor();
+    static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
+    sides: Int;
+    radius: Float;
+    angle: Float;
+    borderPosition: BorderPosition;
+    thickness: Float;
+    computeContent(): Void;
 }
 
 /**

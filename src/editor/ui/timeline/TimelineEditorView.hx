@@ -142,9 +142,12 @@ class TimelineEditorView extends View implements Observable {
             button.icon = LOOP;
             button.viewSize(w, fill());
             button.pointSize = s;
-            button.tooltip('Loop');
+            button.tooltip('Loop section');
             button.onClick(this, () -> {
-                //
+                var selectedFragment = model.project.lastSelectedFragment;
+                if (selectedFragment != null) {
+                    selectedFragment.timelineToggleLoopSection();
+                }
             });
             headerView.add(button);
 

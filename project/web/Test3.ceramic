@@ -13,7 +13,7 @@
   "lastSelectedFragmentIndex": 15,
   "selectedScriptIndex": 14,
   "lastSelectedEasing": "ELASTIC_EASE_IN_OUT",
-  "exportPath": null,
+  "exportPath": "../Users/jeremyfa/Developer/ceramic-player/assets",
   "fragments": [
     {
       "id": "FRAGMENT_1",
@@ -3793,7 +3793,8 @@
             "height": 150.857,
             "translateY": 0,
             "translateX": 0,
-            "width": 494.143
+            "width": 494.143,
+            "roundTranslation": false
           }
         },
         {
@@ -3836,7 +3837,8 @@
             "skewX": 0,
             "rotation": 0,
             "translateY": 0,
-            "translateX": 0
+            "translateX": 0,
+            "roundTranslation": false
           }
         }
       ]
@@ -3849,7 +3851,7 @@
       "color": 0,
       "overflow": false,
       "transparent": true,
-      "selectedItemIndex": 1,
+      "selectedItemIndex": -1,
       "items": [
         {
           "id": "ENTITY_0",
@@ -3866,7 +3868,7 @@
           "isVisual": true,
           "locked": false,
           "props": {
-            "x": 51.962,
+            "x": 0,
             "y": 48,
             "depth": 1,
             "depthRange": 1,
@@ -3886,7 +3888,7 @@
             "color": 16777215,
             "skewY": 0,
             "skewX": 0,
-            "rotation": 73.072,
+            "rotation": 0,
             "translateY": 0,
             "translateX": 0,
             "roundTranslation": false
@@ -3940,7 +3942,7 @@
                 {
                   "index": 120,
                   "easing": "ELASTIC_EASE_IN_OUT",
-                  "value": 512
+                  "value": 0
                 }
               ]
             },
@@ -3996,21 +3998,21 @@
                 }
               ]
             }
-          ],
-          "labels": [
-            {
-              "index": 0,
-              "name": "BEGIN"
-            },
-            {
-              "index": 60,
-              "name": "MIDDLE"
-            },
-            {
-              "index": 120,
-              "name": "END"
-            }
           ]
+        }
+      ],
+      "labels": [
+        {
+          "index": 0,
+          "name": "IN"
+        },
+        {
+          "index": 30,
+          "name": "LOOP"
+        },
+        {
+          "index": 60,
+          "name": "OUT"
         }
       ]
     },

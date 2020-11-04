@@ -70,9 +70,8 @@ class TimelineLabelView extends TextView implements Observable {
     function handlePointerDown(info:TouchInfo) {
 
         var selectedFragment = model.project.lastSelectedFragment;
-        var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
         
-        if (selectedItem != null) {
+        if (selectedFragment != null) {
             screenToVisual(info.x, info.y, _point);
             draggingOffsetX = _point.x;
             draggingLabel = labelName;
@@ -102,12 +101,11 @@ class TimelineLabelView extends TextView implements Observable {
             frame = 0;
 
         var selectedFragment = model.project.lastSelectedFragment;
-        var selectedItem = selectedFragment != null ? selectedFragment.selectedItem : null;
 
-        if (selectedItem != null) {
+        if (selectedFragment != null) {
 
             var canMove = true;
-            var mainLabel = selectedItem.timelineLabelWithName(draggingLabel);
+            var mainLabel = selectedFragment.timelineLabelWithName(draggingLabel);
             var prevFrame = mainLabel.index;
 
             if (frame != prevFrame) {
@@ -117,7 +115,7 @@ class TimelineLabelView extends TextView implements Observable {
                     if (frame < prevFrame) {
                         var f = prevFrame - 1;
                         while (f >= frame) {
-                            var labelToOverwrite = selectedItem.timelineLabelAtIndex(f);
+                            var labelToOverwrite = selectedFragment.timelineLabelAtIndex(f);
                             if (labelToOverwrite != null) {
                                 canMove = false;
                                 break;
@@ -128,7 +126,7 @@ class TimelineLabelView extends TextView implements Observable {
             
                     if (canMove) {
                         var frameIndexes = [];
-                        for (aLabel in selectedItem.timelineLabels) {
+                        for (aLabel in selectedFragment.timelineLabels) {
                             if (aLabel.index >= prevFrame) {
                                 frameIndexes.push(aLabel.index);
                             }
@@ -142,29 +140,29 @@ class TimelineLabelView extends TextView implements Observable {
                             frameIndexes.sort((a, b) -> b - a);
                         }
                         for (f in frameIndexes) {
-                            var labelToMove = selectedItem.timelineLabelAtIndex(f);
+                            var labelToMove = selectedFragment.timelineLabelAtIndex(f);
                             //var keyframeToOverwrite = track.keyframeAtIndex(f + frame - prevFrame);
                             if (labelToMove != null) {// && keyframeToOverwrite == null) {
-                                selectedItem.removeTimelineLabel(f);
-                                selectedItem.setTimelineLabel(f + frame - prevFrame, labelToMove.name);
+                                selectedFragment.removeTimelineLabel(f);
+                                selectedFragment.setTimelineLabel(f + frame - prevFrame, labelToMove.name);
                             }
                         }
                     }
                 }
                 else {
 
-                    var labelToMove = selectedItem.timelineLabelAtIndex(prevFrame);
-                    var labelToOverwrite = selectedItem.timelineLabelAtIndex(frame);
+                    var labelToMove = selectedFragment.timelineLabelAtIndex(prevFrame);
+                    var labelToOverwrite = selectedFragment.timelineLabelAtIndex(frame);
                     if (labelToMove != null && labelToOverwrite != null) {
                         canMove = false;
                     }
             
                     if (canMove) {
-                        var labelToMove = selectedItem.timelineLabelAtIndex(prevFrame);
-                        var labelToOverwrite = selectedItem.timelineLabelAtIndex(frame);
+                        var labelToMove = selectedFragment.timelineLabelAtIndex(prevFrame);
+                        var labelToOverwrite = selectedFragment.timelineLabelAtIndex(frame);
                         if (labelToMove != null && labelToOverwrite == null) {
-                            selectedItem.removeTimelineLabel(prevFrame);
-                            selectedItem.setTimelineLabel(frame, labelToMove.name);
+                            selectedFragment.removeTimelineLabel(prevFrame);
+                            selectedFragment.setTimelineLabel(frame, labelToMove.name);
                         }
                     }
                 }
