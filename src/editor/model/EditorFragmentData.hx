@@ -216,6 +216,10 @@ class EditorFragmentData extends EditorEditableElementData {
         autorun(updateFragmentDataWithoutItems);
         autorun(updateItemsFragmentData);
 
+        app.onceUpdate(this, _ -> {
+            autorun(updateTimelineLoopLabel);
+        });
+
     }
 
 /// Internal
@@ -577,6 +581,8 @@ class EditorFragmentData extends EditorEditableElementData {
             json.labels = jsonLabels;
         }
 
+        json.loopLabel = timelineLoopLabel;
+
         return json;
 
     }
@@ -682,7 +688,13 @@ class EditorFragmentData extends EditorEditableElementData {
             this.timelineLabels = cast labels;
         }
         
-        json.selectedItemIndex = selectedItemIndex;
+        selectedItemIndex = json.selectedItemIndex;
+
+        if (json.loopLabel != null) {
+            if (!Validate.nonEmptyString(json.loopLabel))
+                throw 'Invalid loopLabel value';
+            timelineLoopLabel = json.loopLabel;
+        }
 
     }
 
@@ -855,7 +867,30 @@ class EditorFragmentData extends EditorEditableElementData {
 
     @serialize public var timelineLabels:ReadOnlyArray<EditorTimelineLabel> = [];
 
-    @serialize var timelineLoopLabel:String = null;
+    @serialize public var timelineLoopLabel:String = null;
+
+    @compute public function timelineSize():Int {
+        
+        var size:Int = 0;
+
+        for (item in items) {
+            var tracks = item.timelineTracks;
+            if (tracks != null) {
+                for (track in tracks) {
+                    var keyframes = track.keyframes;
+                    if (keyframes != null) {
+                        for (index in keyframes.keys()) {
+                            if (index > size)
+                                size = index;
+                        }
+                    }
+                }
+            }
+        }
+
+        return size;
+
+    }
 
     public function timelineLabelAtIndex(index:Int):Null<EditorTimelineLabel> {
 
@@ -879,6 +914,20 @@ class EditorFragmentData extends EditorEditableElementData {
             var label = timelineLabels[i];
             if (label.name == name)
                 return label;
+        }
+
+        return null;
+
+    }
+
+    public function timelineLabelAfterLabel(label:EditorTimelineLabel):Null<EditorTimelineLabel> {
+
+        var timelineLabels = this.timelineLabels;
+
+        for (i in 0...timelineLabels.length) {
+            var aLabel = timelineLabels[i];
+            if (aLabel.index > label.index)
+                return aLabel;
         }
 
         return null;
@@ -946,14 +995,77 @@ class EditorFragmentData extends EditorEditableElementData {
 
     }
 
+    public function findTimelineLabelBeforeOrAtIndex(index:Int):Null<EditorTimelineLabel> {
+
+        var timelineLabels = this.timelineLabels;
+
+        var i = timelineLabels.length - 1;
+        while (i >= 0) {
+            var label = timelineLabels[i];
+            if (label.index <= index) {
+                return label;
+            }
+            i--;
+        }
+
+        return null;
+
+    }
+
+    function updateTimelineLoopLabel() {
+
+        var frame = model.animationState.currentFrame;
+        var animating = model.animationState.animating;
+
+        unobserve();
+        var prevTimelineLoopLabel = this.timelineLoopLabel;
+
+        if (animating || prevTimelineLoopLabel == null) {
+            reobserve();
+            return;
+        }
+
+        reobserve();
+        var label = timelineLoopLabel != null ? timelineLabelWithName(timelineLoopLabel) : null;
+        unobserve();
+        var nextLabel = label != null ? timelineLabelAfterLabel(label) : null;
+
+        if (label != null) {
+            if (frame < label.index || (nextLabel != null && frame > nextLabel.index)) {
+                // Update if needed
+                var label = findTimelineLabelBeforeOrAtIndex(frame);
+                if (label != null) {
+                    this.timelineLoopLabel = label.name;
+                }
+                else {
+                    this.timelineLoopLabel = null;
+                }
+            }
+        }
+        else {
+            this.timelineLoopLabel = null;
+        }
+
+        reobserve();
+
+    }
+
     public function timelineToggleLoopSection() {
 
         if (timelineLoopLabel != null) {
             timelineLoopLabel = null;
         }
         else {
-            // TODO
+            var label = findTimelineLabelBeforeOrAtIndex(model.animationState.currentFrame);
+            if (label != null) {
+                timelineLoopLabel = label.name;
+            }
+            else {
+                timelineLoopLabel = null;
+            }
         }
+
+        trace('LOOP LABEL: $timelineLoopLabel');
 
     }
 

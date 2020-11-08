@@ -8,6 +8,9 @@ app:
     libs:
         - arcade
     
+    paths:
+        - src-project
+    
     #spine: true
     plugins:
         - dialogs

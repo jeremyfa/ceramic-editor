@@ -1593,6 +1593,20 @@ class Timeline extends Entity implements Component {
     tracks: Array<TimelineTrack<TimelineKeyframe>>;
     /** Whether this timeline is paused or not. */
     paused: Bool;
+    /**
+     * Used in pair with `labelIndexes` to manage timeline labels
+     */
+    labels: Array<String>;
+    /**
+     * If >= 0, timeline will start from this index.
+     * When timeline is looping, it will reset to this index as well at each iteration.
+     */
+    startPosition: Int;
+    /**
+     * If provided, timeline will stop at this index.
+     * When timeline is looping, it will reset to startIndex (if >= 0).
+     */
+    endPosition: Int;
     update(delta: Float): Void;
     /** Seek the given position (in frames) in the timeline.
         Will take care of clamping `position` or looping it depending on `size` and `loop` properties. */
@@ -1612,6 +1626,10 @@ class Timeline extends Entity implements Component {
      * @return The index (position) of the looping label, or -1 if no label was found
      */
     seekLabel(name: String): Int;
+    /**
+     * Reset `startPosition` and `endPosition`
+     */
+    resetStartAndEndPositions(): Void;
     /**
      * Seek position to match the given label and set startPosition and endPosition
      * so that it will loop through the whole area following this label, up to the
@@ -4167,6 +4185,34 @@ class Fragment extends Layer {
     getTrack(entity: String, field: String): TAnonymous;
     removeTrack(entity: String, field: String): Void;
     createTimelineIfNeeded(): Void;
+    /**
+     * Create or update a timeline label from the provided label index and name
+     * @param index Label index (position)
+     * @param name Label name
+     */
+    putLabel(index: Int, name: String): Void;
+    /**
+     * Return the index (position) of the given label name or -1 if no such label exists.
+     * @param name 
+     * @return Int
+     */
+    indexOfLabel(name: String): Int;
+    /**
+     * Return the label at the given index (position), if any exists.
+     * @param index 
+     * @return Int
+     */
+    labelAtIndex(index: Int): String;
+    /**
+     * Remove label with the given name
+     * @param name Label name
+     */
+    removeLabel(name: String): Void;
+    /**
+     * Remove label at the given index (position)
+     * @param index Label index
+     */
+    removeLabelAtIndex(index: Int): Void;
     paused: Bool;
     unbindEvents(): Void;
 }
@@ -5346,6 +5392,10 @@ class Images {
     static ROBOTO_MEDIUM: AssetId<String>;
     /**RobotoBold.png*/
     static ROBOTO_BOLD: AssetId<String>;
+    /**generative/VERA_MOLNAR_UNTITLED_1985.jpg*/
+    static GENERATIVE__VERA_MOLNAR_UNTITLED_1985: AssetId<String>;
+    /**generative/LEWIT_MASS_MOCA.png*/
+    static GENERATIVE__LEWIT_MASS_MOCA: AssetId<String>;
     /**entypo.png*/
     static ENTYPO: AssetId<String>;
 }

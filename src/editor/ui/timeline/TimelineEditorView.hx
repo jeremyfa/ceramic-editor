@@ -37,7 +37,16 @@ class TimelineEditorView extends View implements Observable {
      * The gap between eatch frame marker in the ruler.
      * Changing this value will make content zoom accordingly
      */
-    @observe public var frameStepWidth:Float = 10.0;
+    public var frameStepWidth(get, set):Float;
+    function get_frameStepWidth():Float {
+        return model.project.timelineFrameStepWidth;
+    }
+    function set_frameStepWidth(frameStepWidth:Float):Float {
+        unobserve();
+        var project = model.project;
+        reobserve();
+        return project.timelineFrameStepWidth = frameStepWidth;
+    }
 
     var headerView:RowLayout;
 

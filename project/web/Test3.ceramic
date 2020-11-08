@@ -9,10 +9,11 @@
     267829
   ],
   "colorPickerHsluv": false,
-  "selectedEditableIndex": 15,
-  "lastSelectedFragmentIndex": 15,
-  "selectedScriptIndex": 14,
-  "lastSelectedEasing": "ELASTIC_EASE_IN_OUT",
+  "timelineFrameStepWidth": 4,
+  "selectedEditableIndex": 19,
+  "lastSelectedFragmentIndex": 19,
+  "selectedScriptIndex": -1,
+  "lastSelectedEasing": "QUINT_EASE_IN_OUT",
   "exportPath": "../Users/jeremyfa/Developer/ceramic-player/assets",
   "fragments": [
     {
@@ -211,7 +212,8 @@
             "translateX": 0
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_0",
@@ -411,7 +413,8 @@
             "translateX": 0
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_2",
@@ -609,7 +612,8 @@
             "translateX": 0
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_3",
@@ -620,7 +624,8 @@
       "overflow": false,
       "transparent": true,
       "selectedItemIndex": -1,
-      "items": []
+      "items": [],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_4",
@@ -789,7 +794,8 @@
             "translateX": 0
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "PHYSICS",
@@ -1059,7 +1065,8 @@
             }
           ]
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "ANIMATION_TEST",
@@ -1212,7 +1219,8 @@
             }
           ]
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_5",
@@ -1376,7 +1384,8 @@
             "floatB": 0
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "ANIMATED_SHAPE",
@@ -2273,7 +2282,8 @@
             }
           ]
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_6",
@@ -2454,7 +2464,8 @@
             "translateX": 0
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_7",
@@ -2627,7 +2638,8 @@
             }
           ]
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_8",
@@ -2648,7 +2660,8 @@
             "scriptContent": "QUEUE"
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "CIRCULAR_ANIM",
@@ -3708,7 +3721,8 @@
             }
           ]
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "CREATE_FRAGMENTS",
@@ -3738,7 +3752,8 @@
             "scriptContent": "LIBRARY"
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_9",
@@ -3841,7 +3856,8 @@
             "roundTranslation": false
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "MOVE_ROTATE_RIGHT",
@@ -3851,7 +3867,7 @@
       "color": 0,
       "overflow": false,
       "transparent": true,
-      "selectedItemIndex": -1,
+      "selectedItemIndex": 1,
       "items": [
         {
           "id": "ENTITY_0",
@@ -3942,7 +3958,7 @@
                 {
                   "index": 120,
                   "easing": "ELASTIC_EASE_IN_OUT",
-                  "value": 0
+                  "value": 512
                 }
               ]
             },
@@ -4007,14 +4023,15 @@
           "name": "IN"
         },
         {
-          "index": 30,
+          "index": 28,
           "name": "LOOP"
         },
         {
-          "index": 60,
+          "index": 59,
           "name": "OUT"
         }
-      ]
+      ],
+      "loopLabel": "IN"
     },
     {
       "id": "COMPOSED_ANIMATION",
@@ -4104,7 +4121,8 @@
             "roundTranslation": false
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "COMPOSED_2",
@@ -4192,7 +4210,8 @@
             "width": 512
           }
         }
-      ]
+      ],
+      "loopLabel": null
     },
     {
       "id": "FRAGMENT_10",
@@ -4236,7 +4255,195 @@
             "roundTranslation": false
           }
         }
-      ]
+      ],
+      "loopLabel": null
+    },
+    {
+      "id": "FRAGMENT_11",
+      "width": 800,
+      "height": 600,
+      "bundle": null,
+      "color": 0,
+      "overflow": false,
+      "transparent": true,
+      "selectedItemIndex": 0,
+      "items": [
+        {
+          "id": "QUAD_0",
+          "entity": "ceramic.Quad",
+          "isVisual": true,
+          "locked": false,
+          "props": {
+            "x": -60,
+            "y": 300,
+            "depth": 1,
+            "depthRange": 1,
+            "anchorX": 0.5,
+            "anchorY": 0.5,
+            "scaleX": 1,
+            "scaleY": 1,
+            "alpha": 1,
+            "visible": true,
+            "touchable": true,
+            "width": 100,
+            "height": 50,
+            "scriptContent": null,
+            "shader": null,
+            "texture": null,
+            "transparent": false,
+            "color": 16777215,
+            "skewY": 0,
+            "skewX": 0,
+            "roundTranslation": false,
+            "rotation": 0,
+            "translateY": 0,
+            "translateX": 0
+          },
+          "tracks": [
+            {
+              "loop": false,
+              "entity": "QUAD_0",
+              "field": "x",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": -60
+                },
+                {
+                  "index": 30,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 400
+                },
+                {
+                  "index": 35,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 500
+                },
+                {
+                  "index": 40,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 400
+                },
+                {
+                  "index": 45,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 300
+                },
+                {
+                  "index": 50,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 400
+                },
+                {
+                  "index": 80,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 860
+                }
+              ]
+            },
+            {
+              "loop": false,
+              "entity": "QUAD_0",
+              "field": "y",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 300
+                },
+                {
+                  "index": 30,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 300
+                },
+                {
+                  "index": 35,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 267
+                },
+                {
+                  "index": 40,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 160
+                },
+                {
+                  "index": 45,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 267
+                },
+                {
+                  "index": 50,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 300
+                },
+                {
+                  "index": 80,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 300
+                }
+              ]
+            },
+            {
+              "loop": false,
+              "entity": "QUAD_0",
+              "field": "rotation",
+              "keyframes": [
+                {
+                  "index": 0,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 0
+                },
+                {
+                  "index": 30,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 0
+                },
+                {
+                  "index": 35,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 270
+                },
+                {
+                  "index": 40,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 180
+                },
+                {
+                  "index": 45,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 90
+                },
+                {
+                  "index": 50,
+                  "easing": "SINE_EASE_IN_OUT",
+                  "value": 0
+                },
+                {
+                  "index": 80,
+                  "easing": "QUINT_EASE_IN_OUT",
+                  "value": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "labels": [
+        {
+          "index": 0,
+          "name": "IN"
+        },
+        {
+          "index": 30,
+          "name": "LOOP"
+        },
+        {
+          "index": 50,
+          "name": "OUT"
+        }
+      ],
+      "loopLabel": "IN"
     }
   ],
   "scripts": [

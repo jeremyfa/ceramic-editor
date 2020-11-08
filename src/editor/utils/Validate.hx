@@ -78,6 +78,15 @@ class Validate {
 
     }
 
+    public static function float(input:Dynamic) {
+
+        if (input == null || (!Std.is(input, Int) && !Std.is(input, Float)))
+            return false;
+
+        return true;
+
+    }
+
     public static function intDimension(input:Dynamic) {
 
         if (input == null || !Std.is(input, Int))

@@ -6,9 +6,9 @@ class TimelineLabelsView extends View implements Observable {
 
     var timelineEditorView:TimelineEditorView;
 
-    var frameStepWidth:Float;
+    @observe var frameStepWidth:Float;
 
-    var timelineOffsetX:Float;
+    @observe var timelineOffsetX:Float;
 
     var editedLabelPointer:Quad;
 
@@ -25,6 +25,8 @@ class TimelineLabelsView extends View implements Observable {
     var labelVisuals:Array<TimelineLabelView> = [];
 
     var labelDelimiters:Array<Quad> = [];
+
+    var loopLabelIndicator:Quad = null;
 
     @observe public var draggingLabel:String = null;
 
@@ -50,6 +52,7 @@ class TimelineLabelsView extends View implements Observable {
         autorun(updateFromTimelineEditorView);
         autorun(updateFromTimelineLabels);
         autorun(updateStyle);
+        autorun(updateLoopLabelIndicator);
 
         screen.onPointerMove(this, handlePointerMove);
 
@@ -265,6 +268,46 @@ class TimelineLabelsView extends View implements Observable {
 
     }
 
+    function updateLoopLabelIndicator() {
+
+        var selectedFragment = model.project.lastSelectedFragment;
+        var timelineLoopLabel = selectedFragment != null ? selectedFragment.timelineLoopLabel : null;
+        var label = timelineLoopLabel != null ? selectedFragment.timelineLabelWithName(timelineLoopLabel) : null;
+        var nextLabel = label != null ? selectedFragment.timelineLabelAfterLabel(label) : null;
+        
+        unobserve();
+
+        if (label != null) {
+            if (loopLabelIndicator == null) {
+                loopLabelIndicator = new Quad();
+                add(loopLabelIndicator);
+            }
+            loopLabelIndicator.color = theme.focusedFieldBorderColor;
+            loopLabelIndicator.depth = 4.4;
+            loopLabelIndicator.alpha = 0.25;
+            loopLabelIndicator.blending = ADD;
+            reobserve();
+            var x = rulerStart + timelineOffsetX + label.index * frameStepWidth;
+            var width = frameStepWidth * ((nextLabel != null ? nextLabel.index : selectedFragment.timelineSize) - label.index);
+            unobserve();
+
+            loopLabelIndicator.pos(
+                x,
+                0
+            );
+            loopLabelIndicator.size(width, height);
+        }
+        else {
+            if (loopLabelIndicator != null) {
+                loopLabelIndicator.destroy();
+                loopLabelIndicator = null;
+            }
+        }
+
+        reobserve();
+
+    }
+
     override function layout() {
 
         var labelPad = 4;
@@ -272,6 +315,10 @@ class TimelineLabelsView extends View implements Observable {
         editedLabelPointer.size(1, height - labelPad * 2);
 
         updateFromTimelineLabels();
+
+        if (loopLabelIndicator != null) {
+            loopLabelIndicator.height = height;
+        }
 
     }
 

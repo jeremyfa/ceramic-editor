@@ -125,6 +125,7 @@ class FragmentEditorView extends View implements Observable {
         autorun(updateEditedFragment);
         autorun(updateFragmentItems);
         autorun(updateFragmentTracks);
+        autorun(updateFragmentLabels);
 
         autorun(() -> updateSelectedEditable(true));
 
@@ -133,6 +134,15 @@ class FragmentEditorView extends View implements Observable {
 
         app.onceUpdate(this, _ -> {
             autorun(autoFlushTemporizedEditableItemUpdates);
+        });
+
+        autorun(function() {
+            var selectedFragment = this.selectedFragment;
+            if (selectedFragment != null) {
+                app.onceUpdate(this, _ -> {
+                    selectedFragment.invalidateTimelineLoopLabel();
+                });
+            }
         });
 
     }
@@ -199,7 +209,18 @@ class FragmentEditorView extends View implements Observable {
                 var prevPosition = this.editedFragmentTimelinePosition;
                 var numUndo = model.numUndo;
                 var numRedo = model.numRedo;
+                var selectedFragment = model.project.selectedFragment;
+                var timelineLoopLabel = selectedFragment != null ? selectedFragment.timelineLoopLabel : null;
+                var label = timelineLoopLabel != null ? selectedFragment.timelineLabelWithName(timelineLoopLabel) : null;
+                //var nextLabel = label != null ? selectedFragment.timelineLabelAfterLabel(label) : null;
                 unobserve();
+
+                if (label != null && editedFragment.timeline.indexOfLabel(label.name) != -1) {
+                    editedFragment.timeline.loopLabel(label.name);
+                }
+                else {
+                    editedFragment.timeline.resetStartAndEndPositions();
+                }
 
                 // Update timeline position
                 editedFragment.timeline.seek(position);
@@ -512,6 +533,11 @@ class FragmentEditorView extends View implements Observable {
             timelineFrame = Math.floor(editedFragment.timeline.position);
         }
         var timelineSize = editedFragment.timeline.size;
+        var startPosition = editedFragment.timeline.startPosition;
+        var endPosition = editedFragment.timeline.endPosition;
+        var playedSize = startPosition != -1 && endPosition != -1 && endPosition > startPosition ? endPosition - startPosition : timelineSize;
+        if (startPosition < 0)
+            startPosition = 0;
         var item = this.selectedFragment.get(fragmentItem.id);
 
         var props = fragmentItem.props;
@@ -528,9 +554,9 @@ class FragmentEditorView extends View implements Observable {
                         // Got a timeline track. Ensure fragment also has a track in sync
                         // otherwise ignore changes for now
                         var track = editedFragment.getTrack(item.entityId, key);
-                        if (track == null || (timelineFrame % timelineSize != currentFrame % timelineSize)) {
+                        if (track == null || ((timelineFrame % playedSize) != (currentFrame % playedSize))) {
                             shouldInvalidateTimelinePosition = true;
-                            log.warning('Ignore entity changes because tracks are not in sync $timelineFrame % $timelineSize != ($currentFrame % $timelineSize)');
+                            log.warning('Ignore entity changes because tracks are not in sync $timelineFrame % $playedSize != ($currentFrame % $playedSize) track=${track != null}');
                             reobserve();
                             continue;
                         }
@@ -736,12 +762,55 @@ class FragmentEditorView extends View implements Observable {
                 }
                 if (toRemove != null) {
                     for (info in toRemove) {
-                        log.debug('REMOVE TRACK ${info[0]} ${info[1]}');
                         editedFragment.removeTrack(info[0], info[1]);
                     }
                 }
             }
         }
+
+    }
+
+    function updateFragmentLabels() {
+
+        if (model.loading > 0)
+            return;
+
+        var selectedFragment = this.selectedFragment;
+        var editedFragment = this.editedFragment;
+
+        if (editedFragment == null)
+            return;
+
+        unobserve();
+
+        var stillUsed:Map<String,Bool> = null;
+
+        if (selectedFragment != null) {
+            reobserve();
+            var labels = selectedFragment.timelineLabels;
+            unobserve();
+            for (label in labels) {
+                reobserve();
+                var index = label.index;
+                var name = label.name;
+                unobserve();
+                editedFragment.putLabel(index, name);
+                if (stillUsed == null)
+                    stillUsed = new Map();
+                stillUsed.set(name, true);
+            }
+        }
+
+        if (editedFragment.timeline != null) {
+            var timeline = editedFragment.timeline;
+            for (existingLabel in [].concat(timeline.labels.original)) {
+                if (stillUsed == null || !stillUsed.exists(existingLabel)) {
+                    editedFragment.removeLabel(existingLabel);
+                }
+            }
+        }
+
+        reobserve();
 
     }
 
@@ -762,7 +831,6 @@ class FragmentEditorView extends View implements Observable {
         var trackItem = track.toTimelineTrackData();
         unobserve();
         if (editedFragment.get(trackItem.entity) != null) {
-            log.success('PUT TRACK ${trackItem.entity} ${trackItem.field}');
             editedFragment.putTrack(trackItem);
         }
         else {

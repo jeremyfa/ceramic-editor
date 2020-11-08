@@ -37,7 +37,7 @@ class Project {
         #if editor
         new Editor(settings, {
             #if (cpp || (web && ceramic_use_electron))
-            assets: webWithoutElectron ? null : DefinesMacro.getDefine('assets_path')
+            //assets: webWithoutElectron ? null : DefinesMacro.getDefine('assets_path')
             #end
         });
         #end

@@ -52,6 +52,8 @@ class EditorProjectData extends Model {
 
     @serialize public var paletteColors:ReadOnlyArray<Color> = [];
 
+    @serialize public var timelineFrameStepWidth:Float = 10;
+
 /// Computed data
 
     @compute public function defaultBundle():String {
@@ -141,6 +143,8 @@ class EditorProjectData extends Model {
         colorPickerHsluv = false;
 
         paletteColors = [];
+
+        timelineFrameStepWidth = 10;
 
         exportPath = null;
 
@@ -368,6 +372,7 @@ class EditorProjectData extends Model {
 
         json.paletteColors = paletteColors;
         json.colorPickerHsluv = colorPickerHsluv;
+        json.timelineFrameStepWidth = timelineFrameStepWidth;
         json.selectedEditableIndex = selectedEditableIndex;
         json.lastSelectedFragmentIndex = lastSelectedFragmentIndex;
         json.selectedScriptIndex = selectedScriptIndex;
@@ -418,6 +423,16 @@ class EditorProjectData extends Model {
         }
         else {
             paletteColors = [];
+        }
+
+        if (json.timelineFrameStepWidth != null) {
+            if (!Validate.float(json.timelineFrameStepWidth))
+                throw 'Invalid project timelineFrameStepWidth value';
+            
+            timelineFrameStepWidth = json.timelineFrameStepWidth;
+        }
+        else {
+            timelineFrameStepWidth = 10;
         }
 
         if (json.colorPickerHsluv != null) {
