@@ -65,9 +65,18 @@ class EditorView extends View implements Observable {
         panelTabsFilter.depth = 10;
         panelTabsFilter.autoRender = true;
         panelTabsFilter.explicitRender = false;
-        var clearPanelTabDelay = Timer.delay(this, 1.0, () -> {
-            panelTabsFilter.autoRender = false;
-            panelTabsFilter.explicitRender = true;
+        var forcePanelRender = 0;
+        var clearPanelTabDelay = null;
+        clearPanelTabDelay = Timer.delay(this, 1.0, () -> {
+            clearPanelTabDelay = null;
+            if (forcePanelRender > 0 || panelTabsView.hits(screen.pointerX, screen.pointerY)) {
+                panelTabsFilter.autoRender = false;
+                panelTabsFilter.explicitRender = true;
+            }
+            else {
+                panelTabsFilter.autoRender = false;
+                panelTabsFilter.explicitRender = true;
+            }
         });
         //panelTabsFilter.enabled = false;
         add(panelTabsFilter);
@@ -80,7 +89,6 @@ class EditorView extends View implements Observable {
             });
         }
         panelTabsFilter.content.add(panelTabsView);
-        var forcePanelRender = 0;
         screen.onPointerMove(this, info -> {
             if (clearPanelTabDelay != null) {
                 clearPanelTabDelay();
@@ -93,6 +101,18 @@ class EditorView extends View implements Observable {
             else {
                 panelTabsFilter.autoRender = false;
                 panelTabsFilter.explicitRender = true;
+            }
+        });
+        Timer.interval(this, 0.1, () -> {
+            if (clearPanelTabDelay == null) {
+                if (forcePanelRender > 0 || panelTabsView.hits(screen.pointerX, screen.pointerY)) {
+                    panelTabsFilter.autoRender = true;
+                    panelTabsFilter.explicitRender = false;
+                }
+                else {
+                    panelTabsFilter.autoRender = false;
+                    panelTabsFilter.explicitRender = true;
+                }
             }
         });
         panelTabsFilter.onRenderTextureChange(this, (_, _) -> {
