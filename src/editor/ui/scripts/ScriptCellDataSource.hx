@@ -101,6 +101,25 @@ class ScriptCellDataSource implements CollectionViewDataSource {
 
         });
 
+        cell.bindDragDrop(click, function(itemIndex) {
+            if (itemIndex != cell.itemIndex) {
+
+                var script = model.project.scripts[cell.itemIndex];
+                if (script == null)
+                    return;
+                var otherScript = model.project.scripts[itemIndex];
+                if (otherScript == null)
+                    return;
+
+                if (itemIndex > cell.itemIndex) {
+                    model.project.moveScriptAboveScript(script, otherScript);
+                }
+                else {
+                    model.project.moveScriptBelowScript(script, otherScript);
+                }
+            }
+        });
+
         cell.handleTrash = function() {
 
             var script = model.project.scripts[cell.itemIndex];

@@ -424,13 +424,13 @@ class TimelineEditorView extends View implements Observable {
         rulerView.size(width, rulerViewHeight);
 
         tracksLayout.pos(0, headerViewHeight + labelsViewHeight + rulerViewHeight);
-        tracksLayout.size(width + 1, height - headerViewHeight - rulerViewHeight);
+        tracksLayout.size(width + 1, height - headerViewHeight - rulerViewHeight - labelsViewHeight);
 
         chooseTracksView.pos(0, headerViewHeight);
         chooseTracksView.size(width, height - headerViewHeight);
 
         cursorView.pos(cursorX, headerViewHeight + labelsViewHeight);
-        cursorView.verticalLineExtraHeight = height - headerViewHeight - rulerViewHeight;
+        cursorView.verticalLineExtraHeight = height - headerViewHeight - rulerViewHeight - labelsViewHeight;
 
     }
 

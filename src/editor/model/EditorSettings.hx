@@ -8,4 +8,6 @@ class EditorSettings extends Model {
 
     @serialize public var editorsSeparatorOffset:Float = 0;
 
+    @serialize public var maximizeViewport:Bool = false;
+
 }

@@ -362,6 +362,134 @@ class EditorProjectData extends Model {
 
     }
 
+    public function moveEditableAboveEditable(editable:EditorEditableElementData, otherEditable:EditorEditableElementData) {
+
+        if (Std.is(editable, EditorFragmentData) && Std.is(otherEditable, EditorFragmentData)) {
+            moveFragmentAboveFragment(cast editable, cast otherEditable);
+        }
+        else if (Std.is(editable, EditorTilemapData) && Std.is(otherEditable, EditorTilemapData)) {
+            // TODO
+        }
+
+    }
+
+    public function moveEditableBelowEditable(editable:EditorEditableElementData, otherEditable:EditorEditableElementData) {
+
+        if (Std.is(editable, EditorFragmentData) && Std.is(otherEditable, EditorFragmentData)) {
+            moveFragmentBelowFragment(cast editable, cast otherEditable);
+        }
+        else if (Std.is(editable, EditorTilemapData) && Std.is(otherEditable, EditorTilemapData)) {
+            // TODO
+        }
+
+        /*
+        lockSortItems = true;
+
+        visual.props.set('depth', otherVisual.props.get('depth') - 0.001);
+
+        lockSortItems = false;
+
+        normalizeVisualsDepth();
+        */
+
+    }
+
+    public function moveFragmentAboveFragment(fragment:EditorFragmentData, otherFragment:EditorFragmentData) {
+
+        var lastSelectedFragment = this.lastSelectedFragment;
+
+        var fragments = this.fragments;
+        var result = [];
+
+        for (i in 0...fragments.length) {
+            if (fragments[i] != fragment) {
+                result.push(fragments[i]);
+                if (fragments[i] == otherFragment) {
+                    result.push(fragment);
+                }
+            }
+        }
+
+        this.fragments = cast result;
+
+        if (lastSelectedFragment != null) {
+            this.selectedFragment = lastSelectedFragment;
+        }
+        
+    }
+
+    public function moveFragmentBelowFragment(fragment:EditorFragmentData, otherFragment:EditorFragmentData) {
+
+        var lastSelectedFragment = this.lastSelectedFragment;
+
+        var fragments = this.fragments;
+        var result = [];
+
+        for (i in 0...fragments.length) {
+            if (fragments[i] != fragment) {
+                if (fragments[i] == otherFragment) {
+                    result.push(fragment);
+                }
+                result.push(fragments[i]);
+            }
+        }
+
+        this.fragments = cast result;
+
+        if (lastSelectedFragment != null) {
+            this.selectedFragment = lastSelectedFragment;
+        }
+        
+    }
+
+    public function moveScriptAboveScript(script:EditorScriptData, otherScript:EditorScriptData) {
+
+        var selectedScript = this.selectedScript;
+
+        var scripts = this.scripts;
+        var result = [];
+
+        for (i in 0...scripts.length) {
+            if (scripts[i] != script) {
+                result.push(scripts[i]);
+                if (scripts[i] == otherScript) {
+                    result.push(script);
+                }
+            }
+        }
+
+        this.scripts = cast result;
+
+        if (selectedScript != null) {
+            this.selectedScript = selectedScript;
+        }
+        
+    }
+
+    public function moveScriptBelowScript(script:EditorScriptData, otherScript:EditorScriptData) {
+
+        var selectedScript = this.selectedScript;
+
+        var scripts = this.scripts;
+        var result = [];
+
+        for (i in 0...scripts.length) {
+            if (scripts[i] != script) {
+                if (scripts[i] == otherScript) {
+                    result.push(script);
+                }
+                result.push(scripts[i]);
+            }
+        }
+
+        this.scripts = cast result;
+
+        if (selectedScript != null) {
+            this.selectedScript = selectedScript;
+        }
+        
+    }
+
     public function toJson(projectPath:String):Dynamic {
 
         var projectDir = projectPath != null ? Path.directory(projectPath) : null;

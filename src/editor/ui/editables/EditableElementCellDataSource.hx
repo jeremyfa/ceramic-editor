@@ -73,7 +73,7 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
                 cell.subTitle = bundle != null ? bundle + '.fragments' : project.defaultBundle + '.fragments';
                 cell.kindIcon = DOC;
             }
-            else if (Std.is(editable, EditorScriptData)) {
+            /*else if (Std.is(editable, EditorScriptData)) {
                 var script:EditorScriptData = cast editable;
 
                 if (!selected && project.selectedScript == script) {
@@ -83,7 +83,7 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
                 cell.title = script.scriptId;
                 cell.subTitle = 'script';
                 cell.kindIcon = DOC_TEXT;
-            }
+            }*/
             else if (Std.is(editable, EditorTilemapData)) {
                 // TODO
             }
@@ -113,7 +113,7 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
                         model.project.selectedFragment = fragment;
                     }
                 }
-                else if (Std.is(editable, EditorScriptData)) {
+                /*else if (Std.is(editable, EditorScriptData)) {
                     var script:EditorScriptData = cast editable;
                     if (model.project.selectedScript == script) {
                         model.project.selectedEditableIndex = -1;
@@ -123,7 +123,7 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
                         model.project.selectedEditableIndex = cell.itemIndex;
                         model.project.selectedScript = script;
                     }
-                }
+                }*/
                 else if (Std.is(editable, EditorTilemapData)) {
                     // TODO
                 }
@@ -135,10 +135,10 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
                 if (Std.is(editable, EditorFragmentData)) {
                     model.project.selectedFragment = null;
                 }
-                else if (Std.is(editable, EditorScriptData)) {
+                /*else if (Std.is(editable, EditorScriptData)) {
                     var script:EditorScriptData = cast editable;
                     model.project.selectedScript = null;
-                }
+                }*/
                 else if (Std.is(editable, EditorTilemapData)) {
                     // TODO
                 }
@@ -148,15 +148,34 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
 
         });
 
+        cell.bindDragDrop(click, function(itemIndex) {
+            if (itemIndex != cell.itemIndex) {
+
+                var editable = model.project.editables[cell.itemIndex];
+                if (editable == null)
+                    return;
+                var otherEditable = model.project.editables[itemIndex];
+                if (otherEditable == null)
+                    return;
+
+                if (itemIndex > cell.itemIndex) {
+                    model.project.moveEditableAboveEditable(editable, otherEditable);
+                }
+                else {
+                    model.project.moveEditableBelowEditable(editable, otherEditable);
+                }
+            }
+        });
+
         cell.handleTrash = function() {
 
             var editable = model.project.editables[cell.itemIndex];
             if (Std.is(editable, EditorFragmentData)) {
                 model.project.removeFragment(cast editable);
             }
-            else if (Std.is(editable, EditorScriptData)) {
+            /*else if (Std.is(editable, EditorScriptData)) {
                 model.project.removeScript(cast editable);
-            }
+            }*/
             else if (Std.is(editable, EditorTilemapData)) {
                 // TODO
             }
@@ -168,9 +187,9 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
             if (Std.is(editable, EditorFragmentData)) {
                 model.project.duplicateFragment(cast editable);
             }
-            else if (Std.is(editable, EditorScriptData)) {
+            /*else if (Std.is(editable, EditorScriptData)) {
                 model.project.duplicateScript(cast editable);
-            }
+            }*/
             else if (Std.is(editable, EditorTilemapData)) {
                 // TODO
             }

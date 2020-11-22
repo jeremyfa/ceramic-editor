@@ -405,6 +405,7 @@ class CellView extends LayersLayout implements Observable {
         cloned.itemIndex = itemIndex;
         cloned.inputStyle = inputStyle;
         cloned.displaysEmptyValue = displaysEmptyValue;
+        cloned.kindIcon = kindIcon;
         cloned.locked = locked;
         cloned.handleTrash = handleTrash;
         cloned.handleLock = handleLock;

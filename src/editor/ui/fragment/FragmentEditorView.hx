@@ -485,11 +485,15 @@ class FragmentEditorView extends View implements Observable {
 
     function autoFlushTemporizedEditableItemUpdates() {
 
+        #if !editor_no_timeline
         if (!editorView.timelineEditorView.draggingCursor) {
+        #end
             unobserve();
             flushTemporizedEditableItemUpdates();
             reobserve();
+        #if !editor_no_timeline
         }
+        #end
 
     }
 
@@ -516,11 +520,13 @@ class FragmentEditorView extends View implements Observable {
             return;
         }
 
+        #if !editor_no_timeline
         var draggingCursor = editorView.timelineEditorView.draggingCursor;
         if (draggingCursor) {
             temporizeEditableItemUpdate(fragmentItem);
             return;
         }
+        #end
 
         if (model.animationState.animating) {
             // Ignore changes when animating

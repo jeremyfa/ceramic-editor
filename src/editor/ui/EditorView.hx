@@ -25,13 +25,19 @@ class EditorView extends View implements Observable {
 
     var leftSpacerBorder:View;
 
+    var rightSpacerView:View;
+
+    var rightBorderView:View;
+
     var editorsSeparator:View;
 
     public var fragmentEditorView(default, null):FragmentEditorView;
 
     public var scriptEditorView(default, null):ScriptEditorView;
 
+    #if !editor_no_timeline
     public var timelineEditorView(default, null):TimelineEditorView;
+    #end
 
     //var scriptEditorView:ScriptEditorView;
 
@@ -59,6 +65,14 @@ class EditorView extends View implements Observable {
         leftSpacerBorder = new View();
         leftSpacerBorder.depth = 4;
         add(leftSpacerBorder);
+
+        rightSpacerView = new View();
+        rightSpacerView.depth = 4;
+        add(rightSpacerView);
+
+        rightBorderView = new View();
+        rightBorderView.depth = 11;
+        add(rightBorderView);
 
         // Panels tabs
         panelTabsFilter = new Filter();
@@ -293,6 +307,25 @@ class EditorView extends View implements Observable {
             var filler = new RowSeparator();
             filler.viewSize(16, fill());
             editorMenu.add(filler);
+
+            var settingsButton = new ClickableIconView();
+            settingsButton.viewSize(w, fill());
+            settingsButton.pointSize = s;
+            var playButton = settingsButton;
+            playButton.autorun(() -> {
+                var maximize = model.settings.maximizeViewport;
+                settingsButton.icon = maximize ? RESIZE_SMALL : RESIZE_FULL;
+                settingsButton.tooltip(maximize ? 'Minimize viewport' : 'Maximize viewport');
+            });
+            settingsButton.onClick(this, () -> {
+                model.settings.maximizeViewport = !model.settings.maximizeViewport;
+                layoutDirty = true;
+            });
+            editorMenu.add(settingsButton);
+
+            var filler = new RowSeparator();
+            filler.viewSize(16, fill());
+            editorMenu.add(filler);
         }
         add(editorMenu);
 
@@ -328,6 +361,7 @@ class EditorView extends View implements Observable {
         });
         add(scriptEditorView);
 
+        #if !editor_no_timeline
         // Timeline editor view
         timelineEditorView = new TimelineEditorView(this);
         timelineEditorView.depth = 9;
@@ -335,6 +369,7 @@ class EditorView extends View implements Observable {
             timelineEditorView.selectedFragment = model.project.lastSelectedFragment;
         });
         add(timelineEditorView);
+        #end
 
         editorsSeparator = new View();
         editorsSeparator.active = false;
@@ -410,7 +445,10 @@ class EditorView extends View implements Observable {
     }
         
     var editorMenuHeight = 40;
-    var panelsTabsWidth = 320;
+    var panelsTabsWidth(get,never):Float;
+    inline function get_panelsTabsWidth():Float {
+        return model.settings.maximizeViewport ? leftSpacerSize : 320;
+    }
     var bottomBarHeight = 18;
     var leftSpacerSize = 6;
 
@@ -426,7 +464,7 @@ class EditorView extends View implements Observable {
 
     var timelineHeight(get,never):Float;
     inline function get_timelineHeight():Float {
-        return Math.max(height * 0.2, 220);
+        return model.settings.maximizeViewport ? 0 : Math.max(height * 0.2, 220);
     }
 
     var baseScriptEditorWidth(get,never):Float;
@@ -442,13 +480,21 @@ class EditorView extends View implements Observable {
         leftSpacerBorder.size(1, availableViewportHeight + timelineHeight);
         leftSpacerBorder.pos(leftSpacerSize, editorMenuHeight);
 
+        rightBorderView.size(1, availableViewportHeight + timelineHeight);
+        rightBorderView.pos(leftSpacerSize + availableViewportWidth + 1, editorMenuHeight);
+
         panelTabsView.viewSize(panelsTabsWidth, height - editorMenuHeight);
         panelTabsView.computeSize(panelsTabsWidth, height - editorMenuHeight, ViewLayoutMask.FIXED, true);
         panelTabsView.applyComputedSize();
         panelTabsView.pos(0, 0);
+        panelTabsView.active = !model.settings.maximizeViewport;
 
         panelTabsFilter.pos(width - panelTabsView.width, editorMenuHeight);
         panelTabsFilter.size(panelTabsView.width, panelTabsView.height);
+
+        rightSpacerView.size(panelsTabsWidth, height - editorMenuHeight);
+        rightSpacerView.pos(width - rightSpacerView.width, editorMenuHeight);
+        rightSpacerView.active = model.settings.maximizeViewport;
 
         editorMenu.viewSize(width, editorMenuHeight);
         editorMenu.computeSize(width, editorMenuHeight, ViewLayoutMask.FIXED, true);
@@ -505,8 +551,11 @@ class EditorView extends View implements Observable {
             fragmentEditorView.active = false;
         }
 
+        #if !editor_no_timeline
         timelineEditorView.size(availableViewportWidth, timelineHeight);
         timelineEditorView.pos(1 + leftSpacerSize, editorMenuHeight + availableViewportHeight);
+        timelineEditorView.active = !model.settings.maximizeViewport;
+        #end
 
         popup.anchor(0.5, 0.5);
         popup.pos(width * 0.5, height * 0.5);
@@ -889,12 +938,16 @@ class EditorView extends View implements Observable {
             var selectedItem = fragment.selectedItem;
             if (selectedItem != null) {
                 if (!isFocusedInField() && popup.contentView == null && screen.focusedVisual != null) {
+                    #if !editor_no_timeline
                     if (!screen.focusedVisual.hasIndirectParent(timelineEditorView)) {
+                    #end
                         var selectedTab = panelTabsView.tabViews.tabs[panelTabsView.tabViews.selectedIndex];
                         if (selectedTab == 'Visuals' || (screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentEditorView))) {
                             return selectedItem;
                         }
+                    #if !editor_no_timeline
                     }
+                    #end
                 }
             }
         }
@@ -907,6 +960,7 @@ class EditorView extends View implements Observable {
 
         var fragment = model.project.lastSelectedFragment;
 
+        #if !editor_no_timeline
         if (fragment != null) {
             var selectedItem = fragment.selectedItem;
             if (selectedItem != null) {
@@ -928,6 +982,7 @@ class EditorView extends View implements Observable {
                 }
             }
         }
+        #end
 
         return null;
 
@@ -942,6 +997,12 @@ class EditorView extends View implements Observable {
 
         leftSpacerBorder.transparent = false;
         leftSpacerBorder.color = theme.darkBorderColor;
+
+        rightSpacerView.transparent = false;
+        rightSpacerView.color = theme.lightBackgroundColor;
+
+        rightBorderView.transparent = false;
+        rightBorderView.color = theme.darkBorderColor;
 
         editorsSeparator.transparent = false;
         editorsSeparator.color = theme.lightBackgroundColor;
@@ -966,10 +1027,12 @@ class EditorView extends View implements Observable {
 
     override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float, touchIndex:Int, buttonId:Int):Bool {
 
+        #if !editor_no_timeline
         // Forbid touch outside timeline editor view when animating
         if (model.animationState.animating && !hittingVisual.hasIndirectParent(timelineEditorView)) {
             model.animationState.animating = false;
         }
+        #end
 
         return false;
 
