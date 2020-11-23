@@ -111,6 +111,20 @@ class EditableElementCellDataSource implements CollectionViewDataSource {
                     else {
                         model.project.selectedEditableIndex = cell.itemIndex;
                         model.project.selectedFragment = fragment;
+
+                        var item = fragment.get(fragment.fragmentId);
+                        if (item != null && fragment.entities.indexOf(item) != -1) {
+                            var entityData:EditorEntityData = cast item;
+                            // Auto-select related script (if any)
+                            trace('SELECT SCRIPT FROM ENTITY');
+                            var scriptId = entityData.props.get('scriptContent');
+                            if (scriptId != null) {
+                                var script = model.project.scriptById(scriptId);
+                                if (script != null) {
+                                    model.project.selectedScript = script;
+                                }
+                            }
+                        }
                     }
                 }
                 /*else if (Std.is(editable, EditorScriptData)) {
