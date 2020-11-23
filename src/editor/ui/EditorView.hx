@@ -129,13 +129,19 @@ class EditorView extends View implements Observable {
                 }
             }
         });
-        panelTabsFilter.onRenderTextureChange(this, (_, _) -> {
+        inline function doForcePanelRender() {
             panelTabsFilter.autoRender = true;
             panelTabsFilter.explicitRender = false;
             forcePanelRender++;
             Timer.delay(this, 0.5, () -> {
                 forcePanelRender--;
             });
+        }
+        panelTabsFilter.onRenderTextureChange(this, (_, _) -> {
+            doForcePanelRender();
+        });
+        model.settings.onMaximizeViewportChange(this, (_, _) -> {
+            doForcePanelRender();
         });
         /*panelTabsFilter.onPointerOver(this, _ -> {
             panelTabsFilter.autoRender = true;

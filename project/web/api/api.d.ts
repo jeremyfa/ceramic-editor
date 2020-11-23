@@ -5406,34 +5406,6 @@ class Images {
     static ROBOTO_MEDIUM: AssetId<String>;
     /**RobotoBold.png*/
     static ROBOTO_BOLD: AssetId<String>;
-    /**generative/webgl.png*/
-    static GENERATIVE__WEBGL: AssetId<String>;
-    /**generative/VERA_MOLNAR_UNTITLED_1985.jpg*/
-    static GENERATIVE__VERA_MOLNAR_UNTITLED_1985: AssetId<String>;
-    /**generative/VERA_MOLNAR_DESORDRES.jpg*/
-    static GENERATIVE__VERA_MOLNAR_DESORDRES: AssetId<String>;
-    /**generative/unity-logo.png*/
-    static GENERATIVE__UNITY_LOGO: AssetId<String>;
-    /**generative/Reddit-Logomark-Color-Logo.wine.png*/
-    static GENERATIVE__REDDIT_LOGOMARK_COLOR_LOGO_WINE: AssetId<String>;
-    /**generative/reddit-logo.png*/
-    static GENERATIVE__REDDIT_LOGO: AssetId<String>;
-    /**generative/Processing.png*/
-    static GENERATIVE__PROCESSING: AssetId<String>;
-    /**generative/LEWIT_MASS_MOCA.png*/
-    static GENERATIVE__LEWIT_MASS_MOCA: AssetId<String>;
-    /**generative/js.png*/
-    static GENERATIVE__JS: AssetId<String>;
-    /**generative/instagram.png*/
-    static GENERATIVE__INSTAGRAM: AssetId<String>;
-    /**generative/haxe-logo.png*/
-    static GENERATIVE__HAXE_LOGO: AssetId<String>;
-    /**generative/github_PNG15.png*/
-    static GENERATIVE__GITHUB_PNG15: AssetId<String>;
-    /**generative/GEORGE_NEES_UNTITLED_RED_BLACK.jpg*/
-    static GENERATIVE__GEORGE_NEES_UNTITLED_RED_BLACK: AssetId<String>;
-    /**generative/GEORGE_NEES_SCHOTTER_GRAVEL.png*/
-    static GENERATIVE__GEORGE_NEES_SCHOTTER_GRAVEL: AssetId<String>;
     /**entypo.png*/
     static ENTYPO: AssetId<String>;
 }
