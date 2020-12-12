@@ -459,7 +459,7 @@ class TimelineEditorView extends View implements Observable {
 
     function handlePointerDown(info:TouchInfo) {
 
-        if (info.buttonId == 3) {
+        if (info.buttonId == 2) {
             // Right click
             @:privateAccess rulerView.handlePointerDown(info);
         }
@@ -468,7 +468,7 @@ class TimelineEditorView extends View implements Observable {
 
     function handlePointerUp(info:TouchInfo) {
 
-        if (info.buttonId == 3) {
+        if (info.buttonId == 2) {
             // Right click
             @:privateAccess rulerView.handlePointerUp(info);
         }

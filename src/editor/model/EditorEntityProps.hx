@@ -104,7 +104,7 @@ class EditorEntityProps extends Model {
 
         unobserve();
         var valueHasChanged = false;
-        var prevValue = get(key);
+        var prevValue:Dynamic = get(key);
         if (!Equal.equal(prevValue, value))
             valueHasChanged = true;
 

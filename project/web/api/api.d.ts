@@ -1165,6 +1165,8 @@ class Utils {
     static upperCaseToCamelCase(input: String, firstLetterUppercase?: Bool): String;
     /** Transforms `SomeIdentifier`/`someIdentifier`/`some identifier` to `SOME_IDENTIFIER` */
     static camelCaseToUpperCase(input: String, firstLetterUppercase?: Bool): String;
+    static functionEquals(functionA: Dynamic, functionB: Dynamic): Bool;
+    static decodeUriParams(raw: String): haxe.ds.Map<K, V>;
 }
 
 type UInt8Array = snow.api.buffers.Uint8Array;
@@ -1788,8 +1790,10 @@ class TextInput implements Events {
     moveDown(): Void;
     enter(): Void;
     escape(): Void;
-    shiftDown(): Void;
-    shiftUp(): Void;
+    lshiftDown(): Void;
+    lshiftUp(): Void;
+    rshiftDown(): Void;
+    rshiftUp(): Void;
     unbindEvents(): Void;
 }
 
@@ -2924,6 +2928,11 @@ Usage:
 
 */
 class Runner {
+    /**
+     * Returns `true` if current running thread is main thread
+     * @return Bool
+     */
+    static currentIsMainThread(): Bool;
     /** Returns `true` if _running in background_ is emulated on this platform by
         running _background_ code in main thread instead of using background thread. */
     static isEmulatingBackgroundWithMain(): Bool;
@@ -4317,7 +4326,6 @@ class Filter extends Layer implements Observable {
 /** Filesystem-related utilities. Only work on sys targets and/or nodejs depending on the methods */
 class Files {
     static haveSameContent(filePath1: String, filePath2: String): Bool;
-    /** Only works in nodejs for now. */
     static haveSameLastModified(filePath1: String, filePath2: String): Bool;
     /** Only works in nodejs for now. */
     static setToSameLastModified(srcFilePath: String, dstFilePath: String): Void;
@@ -5343,8 +5351,24 @@ class App extends Entity {
     settings: Settings;
     /** Logger. Used by log.info() shortcut */
     logger: Logger;
-    /** Visuals (ordered) */
+    /**
+     * Visuals (ordered)
+     * Active list of visuals being managed by ceramic.
+     * This list is ordered and updated at every frame.
+     * In between, it could contain destroyed visuals as they
+     * are removed only at the end of the frame for performance reasons.
+     */
     visuals: Array<Visual>;
+    /**
+     * Pending visuals: visuals that have been created this frame
+     * but were not added to the `visual` list yet
+     */
+    pendingVisuals: Array<Visual>;
+    /**
+     * Pending destroyed visuals: visuals that have been destroyed this frame
+     * but were not removed to the `visual` list yet
+     */
+    destroyedVisuals: Array<Visual>;
     /** Groups */
     groups: Array<Group<Entity>>;
     /** Input */

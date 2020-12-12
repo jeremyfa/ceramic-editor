@@ -231,8 +231,11 @@ class Editor extends Entity implements Observable {
         else {
             for (key in Reflect.fields(Images)) {
                 var value:Dynamic = Reflect.field(Images, key);
-                if (value != null && Std.is(value, String) && value.startsWith('image:')) {
-                    images.push(value.substring(6));
+                if (value != null && Std.is(value, String)) {
+                    var valueStr:String = value;
+                    if (valueStr.startsWith('image:')) {
+                        images.push(valueStr.substring(6));
+                    }
                 }
             }
         }
@@ -249,8 +252,11 @@ class Editor extends Entity implements Observable {
         else {
             for (key in Reflect.fields(Texts)) {
                 var value:Dynamic = Reflect.field(Texts, key);
-                if (value != null && Std.is(value, String) && value.startsWith('text:')) {
-                    texts.push(value.substring(5));
+                if (value != null && Std.is(value, String)) {
+                    var valueStr:String = value;
+                    if (valueStr.startsWith('text:')) {
+                        texts.push(valueStr.substring(5));
+                    }
                 }
             }
         }
@@ -267,8 +273,11 @@ class Editor extends Entity implements Observable {
         else {
             for (key in Reflect.fields(Sounds)) {
                 var value:Dynamic = Reflect.field(Sounds, key);
-                if (value != null && Std.is(value, String) && value.startsWith('sound:')) {
-                    sounds.push(value.substring(6));
+                if (value != null && Std.is(value, String)) {
+                    var valueStr:String = value;
+                    if (valueStr.startsWith('sound:')) {
+                        sounds.push(valueStr.substring(6));
+                    }
                 }
             }
         }
@@ -285,8 +294,11 @@ class Editor extends Entity implements Observable {
         else {
             for (key in Reflect.fields(Fonts)) {
                 var value:Dynamic = Reflect.field(Fonts, key);
-                if (value != null && Std.is(value, String) && value.startsWith('font:')) {
-                    fonts.push(value.substring(5));
+                if (value != null && Std.is(value, String)) {
+                    var valueStr:String = value;
+                    if (valueStr.startsWith('font:')) {
+                        fonts.push(valueStr.substring(5));
+                    }
                 }
             }
         }
@@ -303,8 +315,11 @@ class Editor extends Entity implements Observable {
         else {
             for (key in Reflect.fields(Databases)) {
                 var value:Dynamic = Reflect.field(Databases, key);
-                if (value != null && Std.is(value, String) && value.startsWith('database:')) {
-                    databases.push(value.substring(9));
+                if (value != null && Std.is(value, String)) {
+                    var valueStr:String = value;
+                    if (valueStr.startsWith('database:')) {
+                        databases.push(valueStr.substring(9));
+                    }
                 }
             }
         }
@@ -321,8 +336,11 @@ class Editor extends Entity implements Observable {
         else {
             for (key in Reflect.fields(Shaders)) {
                 var value:Dynamic = Reflect.field(Shaders, key);
-                if (value != null && Std.is(value, String) && value.startsWith('shader:')) {
-                    shaders.push(value.substring(7));
+                if (value != null && Std.is(value, String)) {
+                    var valueStr:String = value;
+                    if (valueStr.startsWith('shader:')) {
+                        shaders.push(valueStr.substring(7));
+                    }
                 }
             }
         }

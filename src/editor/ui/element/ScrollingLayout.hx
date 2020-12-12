@@ -50,6 +50,9 @@ class ScrollingLayout<T:View> extends ScrollView {
         scroller.pos(0, 0);
         scroller.size(width, height);
 
+        // Needed on C# target
+        var layoutView:View = cast this.layoutView;
+
         if (direction == VERTICAL) {
             layoutView.computeSize(width, height, ViewLayoutMask.INCREASE_HEIGHT, true);
             layoutView.size(layoutView.computedWidth, Math.max(layoutView.computedHeight, height));

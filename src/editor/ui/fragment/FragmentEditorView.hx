@@ -809,9 +809,11 @@ class FragmentEditorView extends View implements Observable {
 
         if (editedFragment.timeline != null) {
             var timeline = editedFragment.timeline;
-            for (existingLabel in [].concat(timeline.labels.original)) {
-                if (stillUsed == null || !stillUsed.exists(existingLabel)) {
-                    editedFragment.removeLabel(existingLabel);
+            if (timeline.labels != null) {
+                for (existingLabel in [].concat(timeline.labels.original)) {
+                    if (stillUsed == null || !stillUsed.exists(existingLabel)) {
+                        editedFragment.removeLabel(existingLabel);
+                    }
                 }
             }
         }
@@ -914,7 +916,7 @@ class FragmentEditorView extends View implements Observable {
 
     function handlePointerDown(info:TouchInfo) {
 
-        if (info.buttonId == 3) {
+        if (info.buttonId == 2) {
             // Right click
             draggingFragment = true;
             screenToVisual(info.x, info.y, _point);
@@ -926,7 +928,7 @@ class FragmentEditorView extends View implements Observable {
                 draggingFragment = false;
             });
         }
-        else if (info.buttonId == 2) {
+        else if (info.buttonId == 1) {
             // Middle click
             fragmentTransform.identity();
         }

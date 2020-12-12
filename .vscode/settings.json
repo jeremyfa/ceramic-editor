@@ -11,5 +11,10 @@
         "**/tmp": true,
         "**/out": true,
         "project/web": true
-    }
+    },
+    "haxe.configurations": [
+        [
+            "completion.hxml"
+        ]
+    ]
 }
