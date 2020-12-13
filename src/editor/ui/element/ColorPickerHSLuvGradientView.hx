@@ -6,9 +6,9 @@ class ColorPickerHSLuvGradientView extends View {
 
     @event function updateColorFromPointer();
 
-    static var PRECISION_X:Int = 64;
+    static var PRECISION_X:Int = 32;
 
-    static var PRECISION_Y:Int = 32;
+    static var PRECISION_Y:Int = 8;
 
     static var _point = new Point();
 
