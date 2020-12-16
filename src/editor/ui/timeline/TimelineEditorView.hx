@@ -442,7 +442,7 @@ class TimelineEditorView extends View implements Observable {
         }
 
         // Do not accept right or middle click unless hittingVisual is the timeline editor view itself
-        if (buttonId == 3 || buttonId == 2) {
+        if (buttonId == 2 || buttonId == 1) {
             if (hittingVisual == this && !headerView.hits(x, y)) {
                 // Handle right click
                 return false;

@@ -1167,6 +1167,18 @@ class Utils {
     static camelCaseToUpperCase(input: String, firstLetterUppercase?: Bool): String;
     static functionEquals(functionA: Dynamic, functionB: Dynamic): Bool;
     static decodeUriParams(raw: String): haxe.ds.Map<K, V>;
+    /**
+     * Transforms a value between 0 and 1 to another value between 0 and 1 following a sinusoidal curve
+     * @param value a value between 0 and 1. If giving a value > 1, its modulo 1 will be used.
+     * @return Float
+     */
+    static sinRatio(value: Float): Float;
+    /**
+     * Transforms a value between 0 and 1 to another value between 0 and 1 following a cosinusoidal curve
+     * @param value a value between 0 and 1. If giving a value > 1, its modulo 1 will be used.
+     * @return Float
+     */
+    static cosRatio(value: Float): Float;
 }
 
 type UInt8Array = snow.api.buffers.Uint8Array;
@@ -2653,255 +2665,6 @@ class Screen extends Entity implements Observable {
     unbindEvents(): Void;
 }
 
-/** The scanCode class. The values below come directly from SDL header include files,
-but they aren't specific to SDL so they are used generically */
-class ScanCode {
-    /** Convert a scanCode to a readable name */
-    static name(scanCode: Int): String;
-    static MASK: Int;
-    static UNKNOWN: Int;
-    static KEY_A: Int;
-    static KEY_B: Int;
-    static KEY_C: Int;
-    static KEY_D: Int;
-    static KEY_E: Int;
-    static KEY_F: Int;
-    static KEY_G: Int;
-    static KEY_H: Int;
-    static KEY_I: Int;
-    static KEY_J: Int;
-    static KEY_K: Int;
-    static KEY_L: Int;
-    static KEY_M: Int;
-    static KEY_N: Int;
-    static KEY_O: Int;
-    static KEY_P: Int;
-    static KEY_Q: Int;
-    static KEY_R: Int;
-    static KEY_S: Int;
-    static KEY_T: Int;
-    static KEY_U: Int;
-    static KEY_V: Int;
-    static KEY_W: Int;
-    static KEY_X: Int;
-    static KEY_Y: Int;
-    static KEY_Z: Int;
-    static KEY_1: Int;
-    static KEY_2: Int;
-    static KEY_3: Int;
-    static KEY_4: Int;
-    static KEY_5: Int;
-    static KEY_6: Int;
-    static KEY_7: Int;
-    static KEY_8: Int;
-    static KEY_9: Int;
-    static KEY_0: Int;
-    static ENTER: Int;
-    static ESCAPE: Int;
-    static BACKSPACE: Int;
-    static TAB: Int;
-    static SPACE: Int;
-    static MINUS: Int;
-    static EQUALS: Int;
-    static LEFTBRACKET: Int;
-    static RIGHTBRACKET: Int;
-    static BACKSLASH: Int;
-    static NONUSHASH: Int;
-    static SEMICOLON: Int;
-    static APOSTROPHE: Int;
-    static GRAVE: Int;
-    static COMMA: Int;
-    static PERIOD: Int;
-    static SLASH: Int;
-    static CAPSLOCK: Int;
-    static F1: Int;
-    static F2: Int;
-    static F3: Int;
-    static F4: Int;
-    static F5: Int;
-    static F6: Int;
-    static F7: Int;
-    static F8: Int;
-    static F9: Int;
-    static F10: Int;
-    static F11: Int;
-    static F12: Int;
-    static PRINTSCREEN: Int;
-    static SCROLLLOCK: Int;
-    static PAUSE: Int;
-    static INSERT: Int;
-    static HOME: Int;
-    static PAGEUP: Int;
-    static DELETE: Int;
-    static END: Int;
-    static PAGEDOWN: Int;
-    static RIGHT: Int;
-    static LEFT: Int;
-    static DOWN: Int;
-    static UP: Int;
-    static NUMLOCKCLEAR: Int;
-    static KP_DIVIDE: Int;
-    static KP_MULTIPLY: Int;
-    static KP_MINUS: Int;
-    static KP_PLUS: Int;
-    static KP_ENTER: Int;
-    static KP_1: Int;
-    static KP_2: Int;
-    static KP_3: Int;
-    static KP_4: Int;
-    static KP_5: Int;
-    static KP_6: Int;
-    static KP_7: Int;
-    static KP_8: Int;
-    static KP_9: Int;
-    static KP_0: Int;
-    static KP_PERIOD: Int;
-    static NONUSBACKSLASH: Int;
-    static APPLICATION: Int;
-    static POWER: Int;
-    static KP_EQUALS: Int;
-    static F13: Int;
-    static F14: Int;
-    static F15: Int;
-    static F16: Int;
-    static F17: Int;
-    static F18: Int;
-    static F19: Int;
-    static F20: Int;
-    static F21: Int;
-    static F22: Int;
-    static F23: Int;
-    static F24: Int;
-    static EXECUTE: Int;
-    static HELP: Int;
-    static MENU: Int;
-    static SELECT: Int;
-    static STOP: Int;
-    static AGAIN: Int;
-    static UNDO: Int;
-    static CUT: Int;
-    static COPY: Int;
-    static PASTE: Int;
-    static FIND: Int;
-    static MUTE: Int;
-    static VOLUMEUP: Int;
-    static VOLUMEDOWN: Int;
-    static KP_COMMA: Int;
-    static KP_EQUALSAS400: Int;
-    static INTERNATIONAL1: Int;
-    static INTERNATIONAL2: Int;
-    static INTERNATIONAL3: Int;
-    static INTERNATIONAL4: Int;
-    static INTERNATIONAL5: Int;
-    static INTERNATIONAL6: Int;
-    static INTERNATIONAL7: Int;
-    static INTERNATIONAL8: Int;
-    static INTERNATIONAL9: Int;
-    static LANG1: Int;
-    static LANG2: Int;
-    static LANG3: Int;
-    static LANG4: Int;
-    static LANG5: Int;
-    static LANG6: Int;
-    static LANG7: Int;
-    static LANG8: Int;
-    static LANG9: Int;
-    static ALTERASE: Int;
-    static SYSREQ: Int;
-    static CANCEL: Int;
-    static CLEAR: Int;
-    static PRIOR: Int;
-    static RETURN2: Int;
-    static SEPARATOR: Int;
-    static OUT: Int;
-    static OPER: Int;
-    static CLEARAGAIN: Int;
-    static CRSEL: Int;
-    static EXSEL: Int;
-    static KP_00: Int;
-    static KP_000: Int;
-    static THOUSANDSSEPARATOR: Int;
-    static DECIMALSEPARATOR: Int;
-    static CURRENCYUNIT: Int;
-    static CURRENCYSUBUNIT: Int;
-    static KP_LEFTPAREN: Int;
-    static KP_RIGHTPAREN: Int;
-    static KP_LEFTBRACE: Int;
-    static KP_RIGHTBRACE: Int;
-    static KP_TAB: Int;
-    static KP_BACKSPACE: Int;
-    static KP_A: Int;
-    static KP_B: Int;
-    static KP_C: Int;
-    static KP_D: Int;
-    static KP_E: Int;
-    static KP_F: Int;
-    static KP_XOR: Int;
-    static KP_POWER: Int;
-    static KP_PERCENT: Int;
-    static KP_LESS: Int;
-    static KP_GREATER: Int;
-    static KP_AMPERSAND: Int;
-    static KP_DBLAMPERSAND: Int;
-    static KP_VERTICALBAR: Int;
-    static KP_DBLVERTICALBAR: Int;
-    static KP_COLON: Int;
-    static KP_HASH: Int;
-    static KP_SPACE: Int;
-    static KP_AT: Int;
-    static KP_EXCLAM: Int;
-    static KP_MEMSTORE: Int;
-    static KP_MEMRECALL: Int;
-    static KP_MEMCLEAR: Int;
-    static KP_MEMADD: Int;
-    static KP_MEMSUBTRACT: Int;
-    static KP_MEMMULTIPLY: Int;
-    static KP_MEMDIVIDE: Int;
-    static KP_PLUSMINUS: Int;
-    static KP_CLEAR: Int;
-    static KP_CLEARENTRY: Int;
-    static KP_BINARY: Int;
-    static KP_OCTAL: Int;
-    static KP_DECIMAL: Int;
-    static KP_HEXADECIMAL: Int;
-    static LCTRL: Int;
-    static LSHIFT: Int;
-    static LALT: Int;
-    static LMETA: Int;
-    static RCTRL: Int;
-    static RSHIFT: Int;
-    static RALT: Int;
-    static RMETA: Int;
-    static MODE: Int;
-    static AUDIONEXT: Int;
-    static AUDIOPREV: Int;
-    static AUDIOSTOP: Int;
-    static AUDIOPLAY: Int;
-    static AUDIOMUTE: Int;
-    static MEDIASELECT: Int;
-    static WWW: Int;
-    static MAIL: Int;
-    static CALCULATOR: Int;
-    static COMPUTER: Int;
-    static AC_SEARCH: Int;
-    static AC_HOME: Int;
-    static AC_BACK: Int;
-    static AC_FORWARD: Int;
-    static AC_STOP: Int;
-    static AC_REFRESH: Int;
-    static AC_BOOKMARKS: Int;
-    static BRIGHTNESSDOWN: Int;
-    static BRIGHTNESSUP: Int;
-    static DISPLAYSWITCH: Int;
-    static KBDILLUMTOGGLE: Int;
-    static KBDILLUMDOWN: Int;
-    static KBDILLUMUP: Int;
-    static EJECT: Int;
-    static SLEEP: Int;
-    static APP1: Int;
-    static APP2: Int;
-}
-
 /** Runtime utilities to compute asset lists/names from raw (relative) file list.
     Code is very similar to AssetsMacro, but for runtime execution, with any list of asset. */
 class RuntimeAssets {
@@ -3538,255 +3301,6 @@ class Layer extends Quad {
     unbindEvents(): Void;
 }
 
-/** The keyCode class, with conversion helpers for scanCodes. The values below come directly from SDL header include files,
-but they aren't specific to SDL so they are used generically */
-class KeyCode {
-    /** Convert a scanCode to a keyCode for comparison */
-    static fromScanCode(scanCode: Int): Int;
-    /** Convert a keyCode to a scanCode if possible.
-        NOTE - this will only map a large % but not all keys,
-        there is a list of unmapped keys commented in the code. */
-    static toScanCode(keyCode: Int): Int;
-    /** Convert a keyCode to string */
-    static name(keyCode: Int): String;
-    static UNKNOWN: Int;
-    static ENTER: Int;
-    static ESCAPE: Int;
-    static BACKSPACE: Int;
-    static TAB: Int;
-    static SPACE: Int;
-    static EXCLAIM: Int;
-    static QUOTEDBL: Int;
-    static HASH: Int;
-    static PERCENT: Int;
-    static DOLLAR: Int;
-    static AMPERSAND: Int;
-    static QUOTE: Int;
-    static LEFTPAREN: Int;
-    static RIGHTPAREN: Int;
-    static ASTERISK: Int;
-    static PLUS: Int;
-    static COMMA: Int;
-    static MINUS: Int;
-    static PERIOD: Int;
-    static SLASH: Int;
-    static KEY_0: Int;
-    static KEY_1: Int;
-    static KEY_2: Int;
-    static KEY_3: Int;
-    static KEY_4: Int;
-    static KEY_5: Int;
-    static KEY_6: Int;
-    static KEY_7: Int;
-    static KEY_8: Int;
-    static KEY_9: Int;
-    static COLON: Int;
-    static SEMICOLON: Int;
-    static LESS: Int;
-    static EQUALS: Int;
-    static GREATER: Int;
-    static QUESTION: Int;
-    static AT: Int;
-    static LEFTBRACKET: Int;
-    static BACKSLASH: Int;
-    static RIGHTBRACKET: Int;
-    static CARET: Int;
-    static UNDERSCORE: Int;
-    static BACKQUOTE: Int;
-    static KEY_A: Int;
-    static KEY_B: Int;
-    static KEY_C: Int;
-    static KEY_D: Int;
-    static KEY_E: Int;
-    static KEY_F: Int;
-    static KEY_G: Int;
-    static KEY_H: Int;
-    static KEY_I: Int;
-    static KEY_J: Int;
-    static KEY_K: Int;
-    static KEY_L: Int;
-    static KEY_M: Int;
-    static KEY_N: Int;
-    static KEY_O: Int;
-    static KEY_P: Int;
-    static KEY_Q: Int;
-    static KEY_R: Int;
-    static KEY_S: Int;
-    static KEY_T: Int;
-    static KEY_U: Int;
-    static KEY_V: Int;
-    static KEY_W: Int;
-    static KEY_X: Int;
-    static KEY_Y: Int;
-    static KEY_Z: Int;
-    static CAPSLOCK: Int;
-    static F1: Int;
-    static F2: Int;
-    static F3: Int;
-    static F4: Int;
-    static F5: Int;
-    static F6: Int;
-    static F7: Int;
-    static F8: Int;
-    static F9: Int;
-    static F10: Int;
-    static F11: Int;
-    static F12: Int;
-    static PRINTSCREEN: Int;
-    static SCROLLLOCK: Int;
-    static PAUSE: Int;
-    static INSERT: Int;
-    static HOME: Int;
-    static PAGEUP: Int;
-    static DELETE: Int;
-    static END: Int;
-    static PAGEDOWN: Int;
-    static RIGHT: Int;
-    static LEFT: Int;
-    static DOWN: Int;
-    static UP: Int;
-    static NUMLOCKCLEAR: Int;
-    static KP_DIVIDE: Int;
-    static KP_MULTIPLY: Int;
-    static KP_MINUS: Int;
-    static KP_PLUS: Int;
-    static KP_ENTER: Int;
-    static KP_1: Int;
-    static KP_2: Int;
-    static KP_3: Int;
-    static KP_4: Int;
-    static KP_5: Int;
-    static KP_6: Int;
-    static KP_7: Int;
-    static KP_8: Int;
-    static KP_9: Int;
-    static KP_0: Int;
-    static KP_PERIOD: Int;
-    static APPLICATION: Int;
-    static POWER: Int;
-    static KP_EQUALS: Int;
-    static F13: Int;
-    static F14: Int;
-    static F15: Int;
-    static F16: Int;
-    static F17: Int;
-    static F18: Int;
-    static F19: Int;
-    static F20: Int;
-    static F21: Int;
-    static F22: Int;
-    static F23: Int;
-    static F24: Int;
-    static EXECUTE: Int;
-    static HELP: Int;
-    static MENU: Int;
-    static SELECT: Int;
-    static STOP: Int;
-    static AGAIN: Int;
-    static UNDO: Int;
-    static CUT: Int;
-    static COPY: Int;
-    static PASTE: Int;
-    static FIND: Int;
-    static MUTE: Int;
-    static VOLUMEUP: Int;
-    static VOLUMEDOWN: Int;
-    static KP_COMMA: Int;
-    static KP_EQUALSAS400: Int;
-    static ALTERASE: Int;
-    static SYSREQ: Int;
-    static CANCEL: Int;
-    static CLEAR: Int;
-    static PRIOR: Int;
-    static RETURN2: Int;
-    static SEPARATOR: Int;
-    static OUT: Int;
-    static OPER: Int;
-    static CLEARAGAIN: Int;
-    static CRSEL: Int;
-    static EXSEL: Int;
-    static KP_00: Int;
-    static KP_000: Int;
-    static THOUSANDSSEPARATOR: Int;
-    static DECIMALSEPARATOR: Int;
-    static CURRENCYUNIT: Int;
-    static CURRENCYSUBUNIT: Int;
-    static KP_LEFTPAREN: Int;
-    static KP_RIGHTPAREN: Int;
-    static KP_LEFTBRACE: Int;
-    static KP_RIGHTBRACE: Int;
-    static KP_TAB: Int;
-    static KP_BACKSPACE: Int;
-    static KP_A: Int;
-    static KP_B: Int;
-    static KP_C: Int;
-    static KP_D: Int;
-    static KP_E: Int;
-    static KP_F: Int;
-    static KP_XOR: Int;
-    static KP_POWER: Int;
-    static KP_PERCENT: Int;
-    static KP_LESS: Int;
-    static KP_GREATER: Int;
-    static KP_AMPERSAND: Int;
-    static KP_DBLAMPERSAND: Int;
-    static KP_VERTICALBAR: Int;
-    static KP_DBLVERTICALBAR: Int;
-    static KP_COLON: Int;
-    static KP_HASH: Int;
-    static KP_SPACE: Int;
-    static KP_AT: Int;
-    static KP_EXCLAM: Int;
-    static KP_MEMSTORE: Int;
-    static KP_MEMRECALL: Int;
-    static KP_MEMCLEAR: Int;
-    static KP_MEMADD: Int;
-    static KP_MEMSUBTRACT: Int;
-    static KP_MEMMULTIPLY: Int;
-    static KP_MEMDIVIDE: Int;
-    static KP_PLUSMINUS: Int;
-    static KP_CLEAR: Int;
-    static KP_CLEARENTRY: Int;
-    static KP_BINARY: Int;
-    static KP_OCTAL: Int;
-    static KP_DECIMAL: Int;
-    static KP_HEXADECIMAL: Int;
-    static LCTRL: Int;
-    static LSHIFT: Int;
-    static LALT: Int;
-    static LMETA: Int;
-    static RCTRL: Int;
-    static RSHIFT: Int;
-    static RALT: Int;
-    static RMETA: Int;
-    static MODE: Int;
-    static AUDIONEXT: Int;
-    static AUDIOPREV: Int;
-    static AUDIOSTOP: Int;
-    static AUDIOPLAY: Int;
-    static AUDIOMUTE: Int;
-    static MEDIASELECT: Int;
-    static WWW: Int;
-    static MAIL: Int;
-    static CALCULATOR: Int;
-    static COMPUTER: Int;
-    static AC_SEARCH: Int;
-    static AC_HOME: Int;
-    static AC_BACK: Int;
-    static AC_FORWARD: Int;
-    static AC_STOP: Int;
-    static AC_REFRESH: Int;
-    static AC_BOOKMARKS: Int;
-    static BRIGHTNESSDOWN: Int;
-    static BRIGHTNESSUP: Int;
-    static DISPLAYSWITCH: Int;
-    static KBDILLUMTOGGLE: Int;
-    static KBDILLUMDOWN: Int;
-    static KBDILLUMUP: Int;
-    static EJECT: Int;
-    static SLEEP: Int;
-}
-
 class KeyBindings extends Entity {
     constructor();
     destroy(): Void;
@@ -3812,18 +3326,18 @@ enum KeyAcceleratorItem {
 }
 
 namespace KeyAcceleratorItem {
-    export function SCAN(scanCode: Int): KeyAcceleratorItem;
-    export function KEY(keyCode: Int): KeyAcceleratorItem;
+    export function SCAN(scanCode: ScanCode): KeyAcceleratorItem;
+    export function KEY(keyCode: KeyCode): KeyAcceleratorItem;
 }
 
 class Key {
-    constructor(keyCode: Int, scanCode: Int);
+    constructor(keyCode: KeyCode, scanCode: ScanCode);
     /** Key code (localized key) depends on keyboard mapping (QWERTY, AZERTY, ...) */
-    keyCode: Int;
+    keyCode: KeyCode;
     /** Name associated to the key code (localized key) */
     keyCodeName: String;
     /** Scan code (US international key) doesn't depend on keyboard mapping (QWERTY, AZERTY, ...) */
-    scanCode: Int;
+    scanCode: ScanCode;
     /** Name associated to the scan code (US international key) */
     scanCodeName: String;
 }
@@ -5080,13 +4594,31 @@ class ArcadePhysics extends Entity {
     removeWorld(world: ArcadeWorld): Void;
 }
 
+/**
+ * Convenience mesh subclass to draw arc, pie, ring or disc geometry
+ */
 class Arc extends Mesh {
     constructor();
     static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
+    /**
+     * Number of sides. Higher is smoother but needs more vertices
+     */
     sides: Int;
+    /**
+     * Radius of the arc
+     */
     radius: Float;
+    /**
+     * Angle (from 0 to 360). 360 will make it draw a full circle/ring
+     */
     angle: Float;
+    /**
+     * Position of the drawn border
+     */
     borderPosition: BorderPosition;
+    /**
+     * Thickness of the arc. If same value as radius and borderPosition is `INSIDE`, will draw a pie.
+     */
     thickness: Float;
     computeContent(): Void;
 }
@@ -5417,10 +4949,18 @@ class Shaders {
     static TEXTURED: AssetId<String>;
     /**pixelArt.vert, pixelArt.frag*/
     static PIXEL_ART: AssetId<String>;
+    /**outline.vert, outline.frag*/
+    static OUTLINE: AssetId<String>;
     /**msdf.frag, msdf.vert*/
     static MSDF: AssetId<String>;
+    /**glow.vert, glow.frag*/
+    static GLOW: AssetId<String>;
     /**fxaa.vert, fxaa.frag*/
     static FXAA: AssetId<String>;
+    /**blur.vert, blur.frag*/
+    static BLUR: AssetId<String>;
+    /**bloom.vert, bloom.frag*/
+    static BLOOM: AssetId<String>;
 }
 
 class Images {

@@ -41,3 +41,4 @@ app:
         #- ceramic_debug_multitexture
         #- ceramic_no_multitexture
         #- ceramic_debug_draw_all
+        - unity_urp

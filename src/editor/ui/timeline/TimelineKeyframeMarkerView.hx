@@ -44,7 +44,7 @@ class TimelineKeyframeMarkerView extends View implements Observable {
         if (timelineTrackView != null && timelineTrackView.timelineTrack != null && index != -1) {
             var selectedItem = timelineTrackView.selectedItem;
             if (selectedItem != null) {
-                var shiftPressed = input.keyCodePressed(KeyCode.LSHIFT) || input.keyCodePressed(KeyCode.RSHIFT);
+                var shiftPressed = input.keyPressed(LSHIFT) || input.keyPressed(RSHIFT);
                 if (model.animationState.currentFrame != index) {
                     model.animationState.currentFrame = index;
                     selectedItem.selectTimelineTrack(timelineTrackView.timelineTrack, shiftPressed);
@@ -102,7 +102,7 @@ class TimelineKeyframeMarkerView extends View implements Observable {
             if (timelineTrackView != null && timelineTrackView.timelineTrack != null && index != -1) {
                 var selectedItem = timelineTrackView.selectedItem;
                 if (selectedItem != null) {
-                    var shiftPressed = input.keyCodePressed(KeyCode.LSHIFT) || input.keyCodePressed(KeyCode.RSHIFT);
+                    var shiftPressed = input.keyPressed(LSHIFT) || input.keyPressed(RSHIFT);
                     if (model.animationState.currentFrame != index) {
                         model.animationState.currentFrame = index;
                     }
@@ -117,7 +117,7 @@ class TimelineKeyframeMarkerView extends View implements Observable {
         }
 
         dragging = true;
-        draggingAllAfter = input.keyCodePressed(KeyCode.LALT) || input.keyCodePressed(KeyCode.RALT);
+        draggingAllAfter = input.keyPressed(LALT) || input.keyPressed(RALT);
 
         click.cancel();
         doubleClick.cancel();
