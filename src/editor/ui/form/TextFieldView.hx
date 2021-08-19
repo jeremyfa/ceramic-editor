@@ -3,7 +3,6 @@ package editor.ui.form;
 import ceramic.Dialogs;
 
 using StringTools;
-using unifill.Unifill;
 
 class TextFieldView extends FieldView implements Observable {
 
@@ -170,7 +169,7 @@ class TextFieldView extends FieldView implements Observable {
                 editText.focus();
             }
         }
-        
+
     }
 
 /// Layout
@@ -178,7 +177,7 @@ class TextFieldView extends FieldView implements Observable {
     override function layout() {
 
         super.layout();
-        
+
     }
 
 /// Internal
@@ -201,7 +200,7 @@ class TextFieldView extends FieldView implements Observable {
         var focused = this.focused;
 
         unobserve();
-        
+
         placeholderView.content = placeholder != null ? placeholder : '';
         placeholderView.visible = (displayedText == '' && !focused);
 
@@ -217,7 +216,7 @@ class TextFieldView extends FieldView implements Observable {
         var prevSelectionEnd = selectText.selectionEnd;
 
         setTextValue(this, text);
-        
+
         var sanitizedText = this.textValue;
 
         var prevBefore = prevText.substring(0, prevSelectionStart - 1);
@@ -264,11 +263,11 @@ class TextFieldView extends FieldView implements Observable {
         if (inputStyle == OVERLAY) {
             color = Color.WHITE;
             alpha = 0.1;
-        
+
             borderSize = 0;
             borderPosition = INSIDE;
             transparent = false;
-    
+
             textView.textColor = theme.fieldTextColor;
             textView.font = theme.mediumFont;
 
@@ -278,17 +277,17 @@ class TextFieldView extends FieldView implements Observable {
         else {
             color = theme.darkBackgroundColor;
             alpha = 1;
-        
+
             borderSize = 1;
             borderPosition = INSIDE;
             transparent = false;
-    
+
             textView.textColor = theme.fieldTextColor;
             textView.font = theme.mediumFont;
 
             placeholderView.textColor = theme.fieldPlaceholderColor;
             placeholderView.font = theme.mediumFont;
-    
+
             if (disabled) {
                 borderColor = theme.mediumBorderColor;
                 textView.text.alpha = 0.5;

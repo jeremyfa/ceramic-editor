@@ -36,7 +36,7 @@ class FieldView extends LinearLayout {
     }
 
     public function makeVisibleInForm():Void {
-        
+
         var scrollingLayout = getScrollingLayout();
         if (scrollingLayout == null) {
             // Nothing to do if there is no scrolling layout

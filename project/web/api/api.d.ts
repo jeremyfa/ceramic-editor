@@ -324,10 +324,6 @@ class StringMap<T> implements haxe.IMap {
 	*/
     constructor();
     /**
-		See `Map.exists`
-	*/
-    exists(key: String): Bool;
-    /**
 		See `Map.get`
 	*/
     get(key: String): T?;
@@ -335,10 +331,6 @@ class StringMap<T> implements haxe.IMap {
 		See `Map.set`
 	*/
     set(key: String, value: T): Void;
-    /**
-		See `Map.remove`
-	*/
-    remove(key: String): Bool;
     /**
 		See `Map.keys`
 
@@ -359,95 +351,110 @@ class StringMap<T> implements haxe.IMap {
     keyValueIterator(): TAnonymous;
 }
 
-class RotateFrame {
-    static NONE: Int;
-    static ROTATE_90: Int;
-}
-
-/** A typed (mouse) button id */
+/**
+ * A typed (mouse) button id
+ */
 class MouseButton {
-    /** No mouse buttons */
+    /**
+     * No mouse buttons
+     */
     static NONE: Int;
-    /** Left mouse button */
+    /**
+     * Left mouse button
+     */
     static LEFT: Int;
-    /** Middle mouse button */
+    /**
+     * Middle mouse button
+     */
     static MIDDLE: Int;
-    /** Right mouse button */
+    /**
+     * Right mouse button
+     */
     static RIGHT: Int;
-    /** Extra button pressed (4) */
+    /**
+     * Extra button pressed (4)
+     */
     static EXTRA1: Int;
-    /** Extra button pressed (5) */
+    /**
+     * Extra button pressed (5)
+     */
     static EXTRA2: Int;
 }
 
 class MeshColorMapping {
-    /** Map a single color to the whole mesh. */
+    /**
+     * Map a single color to the whole mesh.
+     */
     static MESH: Int;
-    /** Map a color to each indice. */
+    /**
+     * Map a color to each indice.
+     */
     static INDICES: Int;
-    /** Map a color to each vertex. */
+    /**
+     * Map a color to each vertex.
+     */
     static VERTICES: Int;
 }
 
 interface Map<K, V> {
     /**
-		Maps `key` to `value`.
+        Maps `key` to `value`.
 
-		If `key` already has a mapping, the previous value disappears.
+        If `key` already has a mapping, the previous value disappears.
 
-		If `key` is `null`, the result is unspecified.
-	*/
+        If `key` is `null`, the result is unspecified.
+    */
     set(key: K, value: V): Void;
     /**
-		Returns the current mapping of `key`.
+        Returns the current mapping of `key`.
 
-		If no such mapping exists, `null` is returned.
+        If no such mapping exists, `null` is returned.
 
-		Note that a check like `map.get(key) == null` can hold for two reasons:
+        Note that a check like `map.get(key) == null` can hold for two reasons:
 
-		1. the map has no mapping for `key`
-		2. the map has a mapping with a value of `null`
+        1. the map has no mapping for `key`
+        2. the map has a mapping with a value of `null`
 
-		If it is important to distinguish these cases, `exists()` should be
-		used.
+        If it is important to distinguish these cases, `exists()` should be
+        used.
 
-		If `key` is `null`, the result is unspecified.
-	*/
+        If `key` is `null`, the result is unspecified.
+    */
     get(key: K): V;
     /**
-		Returns true if `key` has a mapping, false otherwise.
+        Returns true if `key` has a mapping, false otherwise.
 
-		If `key` is `null`, the result is unspecified.
-	*/
+        If `key` is `null`, the result is unspecified.
+    */
     exists(key: K): Bool;
     /**
-		Removes the mapping of `key` and returns true if such a mapping existed,
-		false otherwise.
+        Removes the mapping of `key` and returns true if such a mapping existed,
+        false otherwise.
 
-		If `key` is `null`, the result is unspecified.
-	*/
+        If `key` is `null`, the result is unspecified.
+    */
     remove(key: K): Bool;
     /**
-		Returns an Iterator over the keys of `this` Map.
+        Returns an Iterator over the keys of `this` Map.
 
-		The order of keys is undefined.
-	*/
+        The order of keys is undefined.
+    */
     keys(): TAnonymous;
     /**
-		Returns an Iterator over the values of `this` Map.
+        Returns an Iterator over the values of `this` Map.
 
-		The order of values is undefined.
-	*/
+        The order of values is undefined.
+    */
     iterator(): TAnonymous;
     /**
-		Returns an Iterator over the keys and values of `this` Map.
+        Returns an Iterator over the keys and values of `this` Map.
 
-		The order of values is undefined.
-	*/
+        The order of values is undefined.
+    */
     keyValueIterator(): TAnonymous;
     /**
-		Removes all keys from `this` Map.
-	*/
+        Removes all keys from `this` Map.
+    */
     clear(): Void;
 }
 
@@ -676,26 +683,40 @@ class Color {
 }
 
 class Blending {
-    /** Automatic/default blending in ceramic. Internally, this translates to premultiplied alpha blending as textures
-        are already transformed for this blending at asset copy phase, except in some situations (render to texture) where
-        ceramic may use some more specific blendings as needed. */
+    /**
+     * Automatic/default blending in ceramic. Internally, this translates to premultiplied alpha blending as textures
+     * are already transformed for this blending at asset copy phase, except in some situations (render to texture) where
+     * ceramic may use some more specific blendings as needed.
+     */
     static AUTO: Int;
-    /** Explicit premultiplied alpha blending */
+    /**
+     * Explicit premultiplied alpha blending
+     */
     static PREMULTIPLIED_ALPHA: Int;
-    /** Additive blending */
+    /**
+     * Additive blending
+     */
     static ADD: Int;
-    /** Set blending */
+    /**
+     * Set blending
+     */
     static SET: Int;
-    /** Blending used by ceramic when rendering to texture. */
+    /**
+     * Blending used by ceramic when rendering to texture.
+     */
     static RENDER_TO_TEXTURE: Int;
-    /** Traditional alpha blending. This should only be used on very specific cases. Used instead of `NORMAL` blending
-        when the visual is drawing a RenderTexture. */
+    /**
+     * Traditional alpha blending. This should only be used on very specific cases. Used instead of `NORMAL` blending
+     * when the visual is drawing a RenderTexture.
+     */
     static ALPHA: Int;
 }
 
-/** RGBA Color stored as integer.
-    Can be decomposed to Color/Int (RGB) + Float (A) and
-    constructed from Color/Int (RGB) + Float (A). */
+/**
+ * RGBA Color stored as integer.
+ * Can be decomposed to Color/Int (RGB) + Float (A) and
+ * constructed from Color/Int (RGB) + Float (A).
+ */
 class AlphaColor {
 }
 
@@ -728,386 +749,943 @@ class VisualTransition extends Entity implements Component {
 }
 
 class VisualNapePhysics extends Entity {
-    constructor();
+    constructor(bodyType: ceramic.NapePhysicsBodyType, shape?: nape.shape.Polygon?, material?: nape.phys.Material?, x: Float, y: Float, width: Float, height: Float, rotation: Float);
+    visual: Visual;
+    body: nape.phys.Body;
+    destroy(): Void;
 }
 
 class VisualArcadePhysics extends Entity {
-    constructor(x: Float, y: Float, width: Float, height: Float, rotation: Float);
+    constructor();
     static fromBody(body: Body): VisualArcadePhysics;
-    /** Dispatched when this visual body collides with another body. */
+    /**
+     * Dispatched when this visual body collides with another body.
+     */
     onCollideBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
-    /** Dispatched when this visual body collides with another body. */
+    /**
+     * Dispatched when this visual body collides with another body.
+     */
     onceCollideBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
-    /** Dispatched when this visual body collides with another body. */
+    /**
+     * Dispatched when this visual body collides with another body.
+     */
     offCollideBody(handleVisualBody?: ((visual: Visual, body: Body) => Void)?): Void;
-    /** Dispatched when this visual body collides with another body. */
+    /**
+     * Dispatched when this visual body collides with another body.
+     */
     listensCollideBody(): Bool;
-    /** Dispatched when this visual body overlaps with another body. */
+    /**
+     * Dispatched when this visual body overlaps with another body.
+     */
     onOverlapBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
-    /** Dispatched when this visual body overlaps with another body. */
+    /**
+     * Dispatched when this visual body overlaps with another body.
+     */
     onceOverlapBody(owner: Entity?, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
-    /** Dispatched when this visual body overlaps with another body. */
+    /**
+     * Dispatched when this visual body overlaps with another body.
+     */
     offOverlapBody(handleVisualBody?: ((visual: Visual, body: Body) => Void)?): Void;
-    /** Dispatched when this visual body overlaps with another body. */
+    /**
+     * Dispatched when this visual body overlaps with another body.
+     */
     listensOverlapBody(): Bool;
-    /** Dispatched when this visual body collides with another visual's body. */
+    /**
+     * Dispatched when this visual body collides with another visual's body.
+     */
     onCollide(owner: Entity?, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
-    /** Dispatched when this visual body collides with another visual's body. */
+    /**
+     * Dispatched when this visual body collides with another visual's body.
+     */
     onceCollide(owner: Entity?, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
-    /** Dispatched when this visual body collides with another visual's body. */
+    /**
+     * Dispatched when this visual body collides with another visual's body.
+     */
     offCollide(handleVisual1Visual2?: ((visual1: Visual, visual2: Visual) => Void)?): Void;
-    /** Dispatched when this visual body collides with another visual's body. */
+    /**
+     * Dispatched when this visual body collides with another visual's body.
+     */
     listensCollide(): Bool;
-    /** Dispatched when this visual body overlaps with another visual's body. */
+    /**
+     * Dispatched when this visual body overlaps with another visual's body.
+     */
     onOverlap(owner: Entity?, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
-    /** Dispatched when this visual body overlaps with another visual's body. */
+    /**
+     * Dispatched when this visual body overlaps with another visual's body.
+     */
     onceOverlap(owner: Entity?, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
-    /** Dispatched when this visual body overlaps with another visual's body. */
+    /**
+     * Dispatched when this visual body overlaps with another visual's body.
+     */
     offOverlap(handleVisual1Visual2?: ((visual1: Visual, visual2: Visual) => Void)?): Void;
-    /** Dispatched when this visual body overlaps with another visual's body. */
+    /**
+     * Dispatched when this visual body overlaps with another visual's body.
+     */
     listensOverlap(): Bool;
-    /** Dispatched when this visual body collides with the world bounds. */
+    /**
+     * Dispatched when this visual body collides with the world bounds.
+     */
     onWorldBounds(owner: Entity?, handleVisualUpDownLeftRight: ((visual: Visual, up: Bool, down: Bool, left: Bool, right: Bool) => Void)): Void;
-    /** Dispatched when this visual body collides with the world bounds. */
+    /**
+     * Dispatched when this visual body collides with the world bounds.
+     */
     onceWorldBounds(owner: Entity?, handleVisualUpDownLeftRight: ((visual: Visual, up: Bool, down: Bool, left: Bool, right: Bool) => Void)): Void;
-    /** Dispatched when this visual body collides with the world bounds. */
+    /**
+     * Dispatched when this visual body collides with the world bounds.
+     */
     offWorldBounds(handleVisualUpDownLeftRight?: ((visual: Visual, up: Bool, down: Bool, left: Bool, right: Bool) => Void)?): Void;
-    /** Dispatched when this visual body collides with the world bounds. */
+    /**
+     * Dispatched when this visual body collides with the world bounds.
+     */
     listensWorldBounds(): Bool;
     visual: Visual;
     body: Body;
     world: ArcadeWorld;
+    offsetX: Float;
+    offsetY: Float;
+    initBody(x: Float, y: Float, width: Float, height: Float, rotation: Float): Void;
     destroy(): Void;
     unbindEvents(): Void;
 }
 
+/**
+ * Visuals are the building blocks to display things on screen.
+ * A raw visual doesn't display anything but can have children
+ * that can be more specialized visuals like `Quad`, `Mesh` or `Text` etc...
+ * 
+ * ```haxe
+ * var visual = new Visual();
+ * visual.pos(x, y);
+ * visual.size(someWidth, someHeight);
+ * visual.onPointerDown(this, info -> {
+ *     trace('clicked');
+ * });
+ * ```
+ */
 class Visual extends Entity implements Collidable {
+    /**
+     * Create a new `Visual`
+     */
     constructor();
     static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
-    /**pointerDown event*/
+    /**
+     * Fired when a pointer (touch or mouse) is down on the visual
+     * @param info The info related to this pointer event
+     */
     onPointerDown(owner: Entity?, handleInfo: ((info: TouchInfo) => Void)): Void;
-    /**pointerDown event*/
+    /**
+     * Fired when a pointer (touch or mouse) is down on the visual
+     * @param info The info related to this pointer event
+     */
     oncePointerDown(owner: Entity?, handleInfo: ((info: TouchInfo) => Void)): Void;
-    /**pointerDown event*/
+    /**
+     * Fired when a pointer (touch or mouse) is down on the visual
+     * @param info The info related to this pointer event
+     */
     offPointerDown(handleInfo?: ((info: TouchInfo) => Void)?): Void;
-    /**Does it listen to pointerDown event*/
+    /**
+     * Fired when a pointer (touch or mouse) is down on the visual
+     * @param info The info related to this pointer event
+     */
     listensPointerDown(): Bool;
-    /**pointerUp event*/
+    /**
+     * Fired when a pointer (touch or mouse) was down on the visual and is not anymore
+     * @param info The info related to this pointer event
+     */
     onPointerUp(owner: Entity?, handleInfo: ((info: TouchInfo) => Void)): Void;
-    /**pointerUp event*/
+    /**
+     * Fired when a pointer (touch or mouse) was down on the visual and is not anymore
+     * @param info The info related to this pointer event
+     */
     oncePointerUp(owner: Entity?, handleInfo: ((info: TouchInfo) => Void)): Void;
-    /**pointerUp event*/
+    /**
+     * Fired when a pointer (touch or mouse) was down on the visual and is not anymore
+     * @param info The info related to this pointer event
+     */
     offPointerUp(handleInfo?: ((info: TouchInfo) => Void)?): Void;
-    /**Does it listen to pointerUp event*/
+    /**
+     * Fired when a pointer (touch or mouse) was down on the visual and is not anymore
+     * @param info The info related to this pointer event
+     */
     listensPointerUp(): Bool;
-    /**pointerOver event*/
+    /**
+     * Fired when a pointer (touch or mouse) is over the visual
+     * @param info The info related to this pointer event
+     */
     onPointerOver(owner: Entity?, handleInfo: ((info: TouchInfo) => Void)): Void;
-    /**pointerOver event*/
+    /**
+     * Fired when a pointer (touch or mouse) is over the visual
+     * @param info The info related to this pointer event
+     */
     oncePointerOver(owner: Entity?, handleInfo: ((info: TouchInfo) => Void)): Void;
-    /**pointerOver event*/
+    /**
+     * Fired when a pointer (touch or mouse) is over the visual
+     * @param info The info related to this pointer event
+     */
     offPointerOver(handleInfo?: ((info: TouchInfo) => Void)?): Void;
-    /**Does it listen to pointerOver event*/
+    /**
+     * Fired when a pointer (touch or mouse) is over the visual
+     * @param info The info related to this pointer event
+     */
     listensPointerOver(): Bool;
-    /**pointerOut event*/
+    /**
+     * Fired when a pointer (touch or mouse) was over the visual and is not anymore
+     * @param info The info related to this pointer event
+     */
     onPointerOut(owner: Entity?, handleInfo: ((info: TouchInfo) => Void)): Void;
-    /**pointerOut event*/
+    /**
+     * Fired when a pointer (touch or mouse) was over the visual and is not anymore
+     * @param info The info related to this pointer event
+     */
     oncePointerOut(owner: Entity?, handleInfo: ((info: TouchInfo) => Void)): Void;
-    /**pointerOut event*/
+    /**
+     * Fired when a pointer (touch or mouse) was over the visual and is not anymore
+     * @param info The info related to this pointer event
+     */
     offPointerOut(handleInfo?: ((info: TouchInfo) => Void)?): Void;
-    /**Does it listen to pointerOut event*/
+    /**
+     * Fired when a pointer (touch or mouse) was over the visual and is not anymore
+     * @param info The info related to this pointer event
+     */
     listensPointerOut(): Bool;
-    /**focus event*/
+    /**
+     * Fired when this visual gains focus (after handling a pointer event)
+     */
     onFocus(owner: Entity?, handle: (() => Void)): Void;
-    /**focus event*/
+    /**
+     * Fired when this visual gains focus (after handling a pointer event)
+     */
     onceFocus(owner: Entity?, handle: (() => Void)): Void;
-    /**focus event*/
+    /**
+     * Fired when this visual gains focus (after handling a pointer event)
+     */
     offFocus(handle?: (() => Void)?): Void;
-    /**Does it listen to focus event*/
+    /**
+     * Fired when this visual gains focus (after handling a pointer event)
+     */
     listensFocus(): Bool;
-    /**blur event*/
+    /**
+     * Fired when this visual loses focus
+     */
     onBlur(owner: Entity?, handle: (() => Void)): Void;
-    /**blur event*/
+    /**
+     * Fired when this visual loses focus
+     */
     onceBlur(owner: Entity?, handle: (() => Void)): Void;
-    /**blur event*/
+    /**
+     * Fired when this visual loses focus
+     */
     offBlur(handle?: (() => Void)?): Void;
-    /**Does it listen to blur event*/
+    /**
+     * Fired when this visual loses focus
+     */
     listensBlur(): Bool;
-    /** The arcade physics body bound to this visual. */
+    /**
+     * The arcade physics body bound to this visual.
+     */
     arcade: VisualArcadePhysics;
-    /** Init arcade physics (body) bound to this visual. */
+    /**
+     * Init arcade physics (body) bound to this visual.
+     * @param world
+     *      (optional) A world instance where the body will be attached.
+     *      If none is provided, default world (app.arcade.world) will be used.
+     * @return A `VisualArcadePhysics` instance
+     */
     initArcadePhysics(world?: ArcadeWorld?): VisualArcadePhysics;
-    /** The arcade physics body linked to this visual */
+    /**
+     * The arcade physics body linked to this visual
+     */
     body: Body;
-    /** Allow this visual to be rotated by arcade physics, via `angularVelocity`, etc... */
+    /**
+     * Allow this visual to be rotated by arcade physics, via `angularVelocity`, etc...
+     */
     allowRotation: Bool;
-    /** An immovable visual will not receive any impacts from other visual bodies. **Two** immovable visuas can't separate or exchange momentum and will pass through each other. */
+    /**
+     * An immovable visual will not receive any impacts from other visual bodies. **Two** immovable visuas can't separate or exchange momentum and will pass through each other.
+     */
     immovable: Bool;
-    /** The x velocity, or rate of change the visual position. Measured in points per second. */
+    /**
+     * If set to `true`, arcade world will always separate on the X axis before Y when this body is involved. Otherwise it will check gravity totals first.
+     */
+    forceX: Bool;
+    /**
+     * The x velocity, or rate of change the visual position. Measured in points per second.
+     */
     velocityX: Float;
-    /** The y velocity, or rate of change the visual position. Measured in points per second. */
+    /**
+     * The y velocity, or rate of change the visual position. Measured in points per second.
+     */
     velocityY: Float;
-    /** The velocity, or rate of change the visual position. Measured in points per second. */
+    /**
+     * Set velocity, or rate of change of the visual position. Measured in points per second.
+     * @param velocityX The velocity on **x** axis
+     * @param velocityY The velocity on **y** axis
+     */
     velocity(velocityX: Float, velocityY: Float): Void;
-    /** The maximum x velocity that the visual can reach. */
+    /**
+     * The maximum x velocity that the visual can reach.
+     */
     maxVelocityX: Float;
-    /** The maximum y velocity that the visual can reach. */
+    /**
+     * The maximum y velocity that the visual can reach.
+     */
     maxVelocityY: Float;
-    /** The maximum velocity that the visual can reach. */
+    /**
+     * Set maximum velocity that the visual can reach.
+     * @param maxVelocityX The max velocity on **x** axis
+     * @param maxVelocityY The max velocity on **y** axis
+     */
     maxVelocity(maxVelocityX: Float, maxVelocityY: Float): Void;
-    /** The x acceleration is the rate of change of the x velocity. Measured in points per second squared. */
+    /**
+     * The x acceleration is the rate of change of the x velocity. Measured in points per second squared.
+     */
     accelerationX: Float;
-    /** The y acceleration is the rate of change of the y velocity. Measured in points per second squared. */
+    /**
+     * The y acceleration is the rate of change of the y velocity. Measured in points per second squared.
+     */
     accelerationY: Float;
-    /** The acceleration is the rate of change of the y velocity. Measured in points per second squared. */
+    /**
+     * Set acceleration, which is the rate of change of the velocity. Measured in points per second squared.
+     * @param accelerationX The acceleration on **x** axis
+     * @param accelerationY The acceleration on **y** axis
+     */
     acceleration(accelerationX: Float, accelerationY: Float): Void;
-    /** Allow this visual to be influenced by drag */
+    /**
+     * Allow this visual to be influenced by drag
+     */
     allowDrag: Bool;
-    /** The x drag is the rate of reduction of the x velocity, kind of deceleration. Measured in points per second squared. */
+    /**
+     * The x drag is the rate of reduction of the x velocity, kind of deceleration. Measured in points per second squared.
+     */
     dragX: Float;
-    /** The y drag is the rate of reduction of the y velocity, kind of deceleration. Measured in points per second squared. */
+    /**
+     * The y drag is the rate of reduction of the y velocity, kind of deceleration. Measured in points per second squared.
+     */
     dragY: Float;
-    /** The drag is the rate of reduction of the velocity, kind of deceleration. Measured in points per second squared. */
+    /**
+     * Set drag, which is the rate of reduction of the velocity, kind of deceleration. Measured in points per second squared.
+     * @param dragX The drag value on **x** axis
+     * @param dragY The drag value on **y** axis
+     */
     drag(dragX: Float, dragY: Float): Void;
-    /** The x elasticity of the visual when colliding. `bounceX = 1` means full rebound, `bounceX = 0.5` means 50% rebound velocity. */
+    /**
+     * The x elasticity of the visual when colliding. `bounceX = 1` means full rebound, `bounceX = 0.5` means 50% rebound velocity.
+     */
     bounceX: Float;
-    /** The y elasticity of the visual when colliding. `bounceY = 1` means full rebound, `bounceY = 0.5` means 50% rebound velocity. */
+    /**
+     * The y elasticity of the visual when colliding. `bounceY = 1` means full rebound, `bounceY = 0.5` means 50% rebound velocity.
+     */
     bounceY: Float;
-    /** The elasticity of the visual when colliding. `1` means full rebound, `0.5` means 50% rebound velocity. */
+    /**
+     * Set elasticity of the visual when colliding. `1` means full rebound, `0.5` means 50% rebound velocity.
+     * @param bounceX The bounce value on **x** axis
+     * @param bounceY The bounce value on **y** axis
+     */
     bounce(bounceX: Float, bounceY: Float): Void;
-    /** Enable or disable world bounds specific bounce value with `worldBounceX` and `worldBounceY`.
-        Disabled by default, meaning `bounceX` and `bounceY` are used by default. */
+    /**
+     * Enable or disable world bounds specific bounce value with `worldBounceX` and `worldBounceY`.
+     * Disabled by default, meaning `bounceX` and `bounceY` are used by default.
+     */
     useWorldBounce: Bool;
-    /** The x elasticity of the visual when colliding with world bounds. Ignored if `useWorldBounce` is `false` (`bounceX` used instead). */
+    /**
+     * The x elasticity of the visual when colliding with world bounds. Ignored if `useWorldBounce` is `false` (`bounceX` used instead).
+     */
     worldBounceX: Float;
-    /** The y elasticity of the visual when colliding with world bounds. Ignored if `useWorldBounce` is `false` (`bounceY` used instead). */
+    /**
+     * The y elasticity of the visual when colliding with world bounds. Ignored if `useWorldBounce` is `false` (`bounceY` used instead).
+     */
     worldBounceY: Float;
-    /** The elasticity of the visual when colliding with world bounds. Ignored if `useWorldBounce` is `false` (`bounceY` used instead). */
+    /**
+     * The elasticity of the visual when colliding with world bounds. Ignored if `useWorldBounce` is `false` (`bounceY` used instead).
+     * @param worldBounceX The elasticity value on **x** axis
+     * @param worldBounceY The elasticity value on **y** axis
+     */
     worldBounce(worldBounceX: Float, worldBounceY: Float): Void;
-    /** The maximum x delta per frame. `0` (default) means no maximum delta. */
+    /**
+     * The maximum x delta per frame. `0` (default) means no maximum delta.
+     */
     maxDeltaX: Float;
-    /** The maximum y delta per frame. `0` (default) means no maximum delta. */
+    /**
+     * The maximum y delta per frame. `0` (default) means no maximum delta.
+     */
     maxDeltaY: Float;
-    /** The maxDelta, or rate of change the visual position. Measured in points per second. */
+    /**
+     * The max delta, or rate of change the visual position. Measured in points per second.
+     * @param maxDeltaX The max delta value on **x** axis
+     * @param maxDeltaY The max delta value on **y** axis
+     */
     maxDelta(maxDeltaX: Float, maxDeltaY: Float): Void;
-    /** Allow this visual to be influenced by gravity, either world or local. */
+    /**
+     * Allow this visual to be influenced by gravity, either world or local.
+     */
     allowGravity: Bool;
-    /** This visual's local y gravity, **added** to any world gravity, unless `allowGravity` is set to false. */
+    /**
+     * This visual's local y gravity, **added** to any world gravity, unless `allowGravity` is set to false.
+     */
     gravityX: Float;
-    /** This visual's local x gravity, **added** to any world gravity, unless `allowGravity` is set to false. */
+    /**
+     * This visual's local x gravity, **added** to any world gravity, unless `allowGravity` is set to false.
+     */
     gravityY: Float;
-    /** This visual's local gravity, **added** to any world gravity, unless `allowGravity` is set to false. */
+    /**
+     * This visual's local gravity, **added** to any world gravity, unless `allowGravity` is set to false.
+     * @param gravityX The gravity on **x** axis
+     * @param gravityY The gravity on **y** axis
+     */
     gravity(gravityX: Float, gravityY: Float): Void;
-    /** If this visual is `immovable` and moving, and another visual body is 'riding' this one, this is the amount of motion the riding body receives on x axis. */
+    /**
+     * If this visual is `immovable` and moving, and another visual body is 'riding' this one, this is the amount of motion the riding body receives on **x** axis.
+     */
     frictionX: Float;
-    /** If this visual is `immovable` and moving, and another visual body is 'riding' this one, this is the amount of motion the riding body receives on y axis. */
+    /**
+     * If this visual is `immovable` and moving, and another visual body is 'riding' this one, this is the amount of motion the riding body receives on **y** axis.
+     */
     frictionY: Float;
-    /** If this visual is `immovable` and moving, and another visual body is 'riding' this one, this is the amount of motion the riding body receives on x & y axis. */
+    /**
+     * If this visual is `immovable` and moving, and another visual body is 'riding' this one, this is the amount of motion the riding body receives on x & y axis.
+     * @param frictionX The friction on **x** axis
+     * @param frictionY The friction on **y** axis
+     */
     friction(frictionX: Float, frictionY: Float): Void;
-    /** The angular velocity is the rate of change of the visual's rotation. It is measured in degrees per second. */
+    /**
+     * The angular velocity is the rate of change of the visual's rotation. It is measured in degrees per second.
+     */
     angularVelocity: Float;
-    /** The maximum angular velocity in degrees per second that the visual can reach. */
+    /**
+     * The maximum angular velocity in degrees per second that the visual can reach.
+     */
     maxAngularVelocity: Float;
-    /** The angular acceleration is the rate of change of the angular velocity. Measured in degrees per second squared. */
+    /**
+     * The angular acceleration is the rate of change of the angular velocity. Measured in degrees per second squared.
+     */
     angularAcceleration: Float;
-    /** The angular drag is the rate of reduction of the angular velocity. Measured in degrees per second squared. */
+    /**
+     * The angular drag is the rate of reduction of the angular velocity. Measured in degrees per second squared.
+     */
     angularDrag: Float;
-    /** The mass of the visual's body. When two bodies collide their mass is used in the calculation to determine the exchange of velocity. */
+    /**
+     * The mass of the visual's body. When two bodies collide their mass is used in the calculation to determine the exchange of velocity.
+     */
     mass: Float;
-    /** The speed of the visual's body (read only). Equal to the magnitude of the velocity. */
+    /**
+     * The speed of the visual's body (read only). Equal to the magnitude of the velocity.
+     */
     speed: Float;
-    /** Whether the physics system should update the visual's position and rotation based on its velocity, acceleration, drag, and gravity. */
+    /**
+     * Whether the physics system should update the visual's position and rotation based on its velocity, acceleration, drag, and gravity.
+     */
     moves: Bool;
-    /** When this visual's body collides with another, the amount of overlap (x axis) is stored here. */
+    /**
+     * When this visual's body collides with another, the amount of overlap (x axis) is stored here.
+     */
     overlapX: Float;
-    /** When this visual's body collides with another, the amount of overlap (y axis) is stored here. */
+    /**
+     * When this visual's body collides with another, the amount of overlap (y axis) is stored here.
+     */
     overlapY: Float;
-    /** If a visual's body is overlapping with another body, but neither of them are moving (maybe they spawned on-top of each other?) this is set to `true`. */
+    /**
+     * If a visual's body is overlapping with another body, but neither of them are moving (maybe they spawned on-top of each other?) this is set to `true`.
+     */
     embedded: Bool;
-    /** A visual body can be set to collide against the world bounds automatically and rebound back into the world if this is set to true. Otherwise it will leave the world. */
+    /**
+     * A visual body can be set to collide against the world bounds automatically and rebound back into the world if this is set to true. Otherwise it will leave the world.
+     */
     collideWorldBounds: Bool;
-    /** Dispatched when this visual body collides with another visual's body. */
-    onCollide(owner: Entity, handleVisual1Visual2: ((arg1: Visual, arg2: Visual) => Void)): Void;
-    /** Dispatched when this visual body collides with another visual's body. */
-    onceCollide(owner: Entity, handleVisual1Visual2: ((arg1: Visual, arg2: Visual) => Void)): Void;
-    /** Dispatched when this visual body collides with another visual's body. */
-    offCollide(handleVisual1Visual2?: ((arg1: Visual, arg2: Visual) => Void)?): Void;
-    /** Dispatched when this visual body collides with another visual's body. */
+    onCollide(owner: Entity, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
+    onceCollide(owner: Entity, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
+    offCollide(handleVisual1Visual2?: ((visual1: Visual, visual2: Visual) => Void)?): Void;
     listensCollide(): Bool;
-    /** Dispatched when this visual body collides with another body. */
-    onCollideBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: Body) => Void)): Void;
-    /** Dispatched when this visual body collides with another body. */
-    onceCollideBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: Body) => Void)): Void;
-    /** Dispatched when this visual body collides with another body. */
-    offCollideBody(handleVisualBody?: ((arg1: Visual, arg2: Body) => Void)?): Void;
-    /** Dispatched when this visual body collides with another body. */
+    onCollideBody(owner: Entity, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
+    onceCollideBody(owner: Entity, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
+    offCollideBody(handleVisualBody?: ((visual: Visual, body: Body) => Void)?): Void;
     listensCollideBody(): Bool;
-    /** Dispatched when this visual body overlaps with another visual's body. */
-    onOverlap(owner: Entity, handleVisual1Visual2: ((arg1: Visual, arg2: Visual) => Void)): Void;
-    /** Dispatched when this visual body overlaps with another visual's body. */
-    onceOverlap(owner: Entity, handleVisual1Visual2: ((arg1: Visual, arg2: Visual) => Void)): Void;
-    /** Dispatched when this visual body overlaps with another visual's body. */
-    offOverlap(handleVisual1Visual2?: ((arg1: Visual, arg2: Visual) => Void)?): Void;
-    /** Dispatched when this visual body overlaps with another visual's body. */
+    onOverlap(owner: Entity, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
+    onceOverlap(owner: Entity, handleVisual1Visual2: ((visual1: Visual, visual2: Visual) => Void)): Void;
+    offOverlap(handleVisual1Visual2?: ((visual1: Visual, visual2: Visual) => Void)?): Void;
     listensOverlap(): Bool;
-    /** Dispatched when this visual body overlaps with another body. */
-    onOverlapBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: Body) => Void)): Void;
-    /** Dispatched when this visual body overlaps with another body. */
-    onceOverlapBody(owner: Entity, handleVisualBody: ((arg1: Visual, arg2: Body) => Void)): Void;
-    /** Dispatched when this visual body overlaps with another body. */
-    offOverlapBody(handleVisualBody?: ((arg1: Visual, arg2: Body) => Void)?): Void;
-    /** Dispatched when this visual body overlaps with another body. */
+    onOverlapBody(owner: Entity, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
+    onceOverlapBody(owner: Entity, handleVisualBody: ((visual: Visual, body: Body) => Void)): Void;
+    offOverlapBody(handleVisualBody?: ((visual: Visual, body: Body) => Void)?): Void;
     listensOverlapBody(): Bool;
-    /** Dispatched when this visual body collides with the world bounds. */
-    onWorldBounds(owner: Entity, handleVisualUpDownLeftRight: ((arg1: Visual, arg2: Bool, arg3: Bool, arg4: Bool, arg5: Bool) => Void)): Void;
-    /** Dispatched when this visual body collides with the world bounds. */
-    onceWorldBounds(owner: Entity, handleVisualUpDownLeftRight: ((arg1: Visual, arg2: Bool, arg3: Bool, arg4: Bool, arg5: Bool) => Void)): Void;
-    /** Dispatched when this visual body collides with the world bounds. */
-    offWorldBounds(handleVisualUpDownLeftRight?: ((arg1: Visual, arg2: Bool, arg3: Bool, arg4: Bool, arg5: Bool) => Void)?): Void;
-    /** Dispatched when this visual body collides with the world bounds. */
+    onWorldBounds(owner: Entity, handleVisualUpDownLeftRight: ((visual: Visual, up: Bool, down: Bool, left: Bool, right: Bool) => Void)): Void;
+    onceWorldBounds(owner: Entity, handleVisualUpDownLeftRight: ((visual: Visual, up: Bool, down: Bool, left: Bool, right: Bool) => Void)): Void;
+    offWorldBounds(handleVisualUpDownLeftRight?: ((visual: Visual, up: Bool, down: Bool, left: Bool, right: Bool) => Void)?): Void;
     listensWorldBounds(): Bool;
-    /** Get this visual typed as `Quad` or null if it isn't a `Quad` */
+    /**
+     * The nape physics (body) of this visual.
+     */
+    nape: VisualNapePhysics;
+    /**
+     * Init nape physics body bound to this visual.
+     * @param type Physics body type (`STATIC`, `KINEMATIC` or `DYNAMIC`)
+     * @param space (optional) Related nape spaces. Will use default space if not provided.
+     * @param shape (optional) Shape used for this body. Default is a box matching visual bounds.
+     * @param material (optional) A custom material to use with this body.
+     * @return A `VisualNapePhysics` instance
+     */
+    initNapePhysics(type: ceramic.NapePhysicsBodyType, space?: nape.space.Space?, shape?: nape.shape.Polygon?, material?: nape.phys.Material?): VisualNapePhysics;
+    /**
+     * Get this visual typed as `Quad` or null if it isn't a `Quad`
+     */
     asQuad: Quad;
-    /** Get this visual typed as `Mesh` or null if it isn't a `Mesh` */
+    /**
+     * Get this visual typed as `Mesh` or null if it isn't a `Mesh`
+     */
     asMesh: Mesh;
-    /** When enabled, this visual will receive as many up/down/click/over/out events as
-        there are fingers or mouse pointer interacting with it.
-        Default is `false`, ensuring there is never multiple up/down/click/over/out that
-        overlap each other. In that case, it triggers `pointer down` when the first finger/pointer hits
-        the visual and trigger `pointer up` when the last finger/pointer stops touching it. Behavior is
-        similar for `pointer over` and `pointer out` events. */
+    /**
+     * When enabled, this visual will receive as many up/down/click/over/out events as
+     * there are fingers or mouse pointer interacting with it.
+     * Default is `false`, ensuring there is never multiple up/down/click/over/out that
+     * overlap each other. In that case, it triggers `pointer down` when the first finger/pointer hits
+     * the visual and trigger `pointer up` when the last finger/pointer stops touching it. Behavior is
+     * similar for `pointer over` and `pointer out` events.
+     */
     multiTouch: Bool;
-    /** Whether this visual is between a `pointer down` and an `pointer up` event or not. */
+    /**
+     * Whether this visual is between a `pointer down` and an `pointer up` event or not.
+     */
     isPointerDown: Bool;
-    /** Whether this visual is between a `pointer over` and an `pointer out` event or not. */
+    /**
+     * Whether this visual is between a `pointer over` and an `pointer out` event or not.
+     */
     isPointerOver: Bool;
-    /** Use the given visual's bounds as clipping area. */
+    /**
+     * Use the given visual's bounds as clipping area for **every children**.
+     * The clipping only affect childrens and not the visual it is assigned to.
+     * Clipping areas cannot be combined. That means if `clip` is not null and current
+     * visual instance is already clipped by a parent visual, its children's won't be clipped
+     * by it anymore as they are instead clipped by this `clip` property instead.
+     */
     clip: Visual;
-    /** Whether this visual should inherit its parent alpha state or not. */
+    /**
+     * Whether this visual should inherit its parent alpha value or not.
+     * If it inherits, parent alpha value will be multiplied with current visual's own `alpha` property.
+     */
     inheritAlpha: Bool;
     /**
      * Stop this visual, whatever that means (override in subclasses).
-     * When arcade physics are enabled, they are also stopped from this call.
+     * When arcade physics are enabled, visual's body is stopped from this call.
      */
     stop(): Void;
-    /** Computed flag that tells whether this visual is only translated,
-        thus not rotated, skewed nor scaled.
-        When this is `true`, matrix computation may be a bit faster as it
-        will skip some unneeded matrix computation. */
+    /**
+     * Computed flag that tells whether this visual is only translated,
+     * thus not rotated, skewed nor scaled.
+     * When this is `true`, matrix computation may be a bit faster as it
+     * will skip some unneeded matrix computation.
+     */
     translatesOnly: Bool;
-    /** Whether we should re-check if this visual is only translating or having a more complex transform */
+    /**
+     * Whether we should re-check if this visual is only translating or having a more complex transform
+     */
     translatesOnlyDirty: Bool;
-    /** Setting this to true will force the visual to recompute its displayed content */
+    /**
+     * Setting this to true will force the visual to recompute its displayed content
+     */
     contentDirty: Bool;
-    /** Setting this to true will force the visual's matrix to be re-computed */
+    /**
+     * Setting this to true will force the visual's matrix to be re-computed
+     */
     matrixDirty: Bool;
-    /** Setting this to true will force the visual's computed render target to be re-computed */
+    /**
+     * Setting this to true will force the visual's computed render target to be re-computed
+     */
     renderTargetDirty: Bool;
-    /** Setting this to true will force the visual to compute it's visility in hierarchy */
+    /**
+     * Setting this to true will force the visual to compute it's visility in hierarchy
+     */
     visibilityDirty: Bool;
-    /** Setting this to true will force the visual to compute it's touchability in hierarchy */
+    /**
+     * Setting this to true will force the visual to compute it's touchability in hierarchy
+     */
     touchableDirty: Bool;
-    /** Setting this to true will force the visual to compute it's clipping state in hierarchy */
+    /**
+     * Setting this to true will force the visual to compute it's clipping state in hierarchy
+     */
     clipDirty: Bool;
-    /** If set, the visual will be rendered into this target RenderTexture instance
-        instead of being drawn onto screen directly. */
+    /**
+     * If set, the visual will be rendered into this target RenderTexture instance
+     * instead of being drawn onto screen directly.
+     */
     renderTarget: RenderTexture;
     blending: Blending;
+    /**
+     * Set to `false` to make this visual (and all of its children) invisible and not rendered.
+     */
     visible: Bool;
+    /**
+     * Set to `false` to make this visual (and all of its children) not touchable
+     */
     touchable: Bool;
+    /**
+     * Set this visual's depth.
+     * Visuals are rendered from back to front of the screen.
+     * Given two visuals, a visual with higher depth will be rendered **above** a visual with lower depth.
+     * In practice, it is advised to use integer values like `1`, `2`, `3`... to order your visuals,
+     * like you would do with z-index on CSS elements.
+     */
     depth: Float;
-    /** If set, children will be sort by depth and their computed depth
-        will be within range [parent.depth, parent.depth + depthRange] */
+    /**
+     * If set to `1` (default), children will be sort by depth and their computed depth
+     * will be within range [parent.depth, parent.depth + depthRange].
+     * You'll usually won't need to change this value,
+     * unless you want to do advanced drawing where different
+     * hierarchies of visuals are blending with each other.
+     * 
+     * ```haxe
+     * // Children computed depths will be relative to their parent visual depth.
+     * // This is the default value and recommended approach in most situations as
+     * // its behaviour is similar to display trees, z-index etc...
+     * visual.depthRange = 1;
+     * 
+     * // More advanced, two visuals: visual2 above visual1 because of higher depth, but
+     * // visual1's depth range is `8`, so its children computed depths will be distributed
+     * // between `1` and `1 + 8` (9 excluded). That means some of visual1's children
+     * // can be above visual2's children. Can be useful on some specific edge cases,
+     * // but not recommended in general.
+     * visual1.depthRange = 8;
+     * visual1.depth = 1;
+     * visual2.depth = 2;
+     * 
+     * // Another case: two visuals with the same depth and depthRange.
+     * // There children will share the same computed depth space, so a child of visual1 at `depth = 6`
+     * // will be above a child of visual2 at `depth = 4`.
+     * // Resulting computed depths will be between `1` and `1 + 16` (17 excluded).
+     * visual1.depthRange = 16
+     * visual2.depthRange = 16
+     * visual1.depth = 1;
+     * visual2.depth = 1;
+     * 
+     * // Children computed depths won't be relative to their parent visual depth.
+     * // Instead, it will be relative to the higher parent (of the parent) in hierarchy that has a positive `depthRange` value,
+     * visual.depthRange = -1;
+     * ```
+     */
     depthRange: Float;
+    /**
+     * The **x** position of this visual.
+     * Relative to its parent, or screen if this visual has no parent.
+     */
     x: Float;
+    /**
+     * The **y** position of this visual.
+     * Relative to its parent, or screen if this visual has no parent.
+     */
     y: Float;
+    /**
+     * The **scaleX** value of this visual.
+     */
     scaleX: Float;
+    /**
+     * The **scaleY** value of this visual.
+     */
     scaleY: Float;
+    /**
+     * The **skewX** value of this visual.
+     */
     skewX: Float;
+    /**
+     * The **skewY** value of this visual.
+     */
     skewY: Float;
+    /**
+     * The **anchorX** value of this visual.
+     * Affects how position, scale, rotation and skew of the visual are rendered.
+     * Default is `0`, which means: anchor relative to the **left** of the visual.
+     * Use `1` to make it relative to the **right** of the visual, or `0.5` to make it
+     * relative to the **horizontal center** of the visual.
+     */
     anchorX: Float;
+    /**
+     * The **anchorY** value of this visual.
+     * Affects how position, scale, rotation and skew of the visual are rendered.
+     * Default is `0`, which means: anchor relative to the **top** of the visual.
+     * Use `1` to make it relative to the **bottom** of the visual, or `0.5` to make it
+     * relative to the **vertical center** of the visual.
+     */
     anchorY: Float;
+    /**
+     * The **width** of the visual.
+     * Default is `0`. Can be set to an explicit value.
+     * Some subclasses of `Visual` are computing it automatically
+     * like `Text` from its textual content or `Quad` when a texture is assigned to it.
+     */
     width: Float;
+    /**
+     * The **height** of the visual.
+     * Default is `0`. Can be set to an explicit value.
+     * Some subclasses of `Visual` are computing it automatically
+     * like `Text` from its textual content or `Quad` when a texture is assigned to it.
+     */
     height: Float;
     /**
-     * If `true`, matrix translation (tx & ty) will be rounded.
+     * If set to a value above zero, matrix translation (tx & ty) will be rounded.
+     * 
+     * ```haxe
+     * roundTranslation = 0; // No rounding (default)
+     * roundTranslation = 1; // Pixel perfect rounding
+     * roundTranslation = 2; // Half-pixel rounding
+     * ```
+     * 
      * May be useful to render pixel perfect scenes onto `ceramic.Filter`.
      */
-    roundTranslation: Bool;
+    roundTranslation: Int;
+    /**
+     * Rotation of the visual in degrees.
+     * The center of the rotation depends on `anchorX` and `anchorY`.
+     */
     rotation: Float;
+    /**
+     * Alpha of the visual. Must be a value between `0` (transparent) and `1` (fully opaque)
+     */
     alpha: Float;
     /**
      * Visual X translation.
      * This is a shorthand equivalent to assigning a `Transform` object to
-     * the visual with a `tx` value of `translateX`
+     * the visual with a `tx` value of `translateX`.
+     * Only recommended for advanced usage as `x` property should be used in general instead.
      */
     translateX: Float;
     /**
      * Visual Y translation.
      * This is a shorthand equivalent to assigning a `Transform` object to
-     * the visual with a `ty` value of `translateY`
+     * the visual with a `ty` value of `translateY`.
+     * Only recommended for advanced usage as `y` property should be used in general instead.
      */
     translateY: Float;
-    /** Set additional matrix-based transform to this visual. Default is null. */
+    /**
+     * Set additional matrix-based transform to this visual. Default is `null`.
+     * A `Transform` object will affect of the visual is rendered.
+     * The transform is applied after visual's properties (position, rotation, scale, skew).
+     */
     transform: Transform;
-    /** Assign a shader to this visual. */
+    /**
+     * Assign a shader to this visual.
+     * When none is assigned, default shader will be used.
+     */
     shader: Shader;
-    /** Read and write arbitrary boolean flags on this visual.
-        Index should be between 0 (included) and 16 (excluded) or result is undefined. */
+    /**
+     * Read and write arbitrary boolean flags on this visual.
+     * Index should be between 0 (included) and 16 (excluded) or result is undefined.
+     * @param index The index of the flag to change, between 0 (included) and 16 (excluded)
+     * @param value (optional) The boolean value to set, or no value to simply read current value
+     * @return The existing value if just reading, or the new value if writing
+     */
     flag(index: Int, value?: Bool?): Bool;
-    /** Whether this visual is `active`. Default is **true**. When setting it to **false**,
-        the visual won't be `visible` nor `touchable` anymore (these get set to **false**).
-        When restoring `active` to **true**, `visible` and `touchable` will also get back
-        their previous state. */
+    /**
+     * Whether this visual is `active`. Default is **true**. When setting it to **false**,
+     * the visual won't be `visible` nor `touchable` anymore (these get set to **false**).
+     * When restoring `active` to **true**, `visible` and `touchable` will also get back
+     * their previous state.
+     * If you want to keep a visual around without it being displayed or interactive, simply
+     * set its `active` property to `false`. It will be almost like it doesn't exist and its
+     * impact on rendering will be minimal.
+     */
     active: Bool;
+    /**
+     * Computed visible value. This is `true` if this visual is `visible` and all
+     * of its parents are `visible`. If you want to know if a visual is visible on screen,
+     * you should check with this property and not `visible` property, which doesn't account
+     * for parent visibility.
+     */
     computedVisible: Bool;
+    /**
+     * Computed alpha value. This is the combination of this visual's alpha and its parent alpha
+     * if `inheritAlpha` is `true`
+     */
     computedAlpha: Float;
+    /**
+     * Computed depth value. This is the final depth used by rendering, computed from this visual's `depth`
+     * and `depthRange` properties and its hierarchy of parent visuals.
+     */
     computedDepth: Float;
+    /**
+     * Computed render target. When a visual has a `renderTarget` assigned, its `computedRenderTarget` will
+     * be assigned with the same instance, and its children's `computedRenderTarget` property as well.
+     */
     computedRenderTarget: RenderTexture;
+    /**
+     * Computed touchable value. This is `true` if this visual is `touchable` and all
+     * of its parents are `touchable`.
+     */
     computedTouchable: Bool;
+    /**
+     * If any parent of this visual has a `clip` visual assigned, `computedClip` will be `true`.
+     */
     computedClip: Bool;
+    /**
+     * A visual can have **children**.
+     * Children positions and transformations are relative to their parent.
+     * This property is read only. Use `add()` to add children to this visual
+     * and `remove()` to remove them.
+     * The order on the visuals in `children` should not be used to predict the order in which visuals are rendered.
+     * If you want to control the order of rendering of visuals, use `depth` property on the children instead.
+     */
     children: Array<Visual>;
+    /**
+     * The **parent visual** if there is any, or `null` if this visual doesn't have any parent.
+     */
     parent: Visual;
+    /**
+     * Shorthand to set `width` and `height` in a single call.
+     * @param width The width to set to the visual
+     * @param height The height to set to the visual
+     */
     size(width: Float, height: Float): Void;
+    /**
+     * Shorthand to set `anchorX` and `anchorY` in a single call.
+     * @param anchorX The anchor to set to the visual on **x** axis
+     * @param anchorY The anchor to set to the visual on **y** axis
+     */
     anchor(anchorX: Float, anchorY: Float): Void;
+    /**
+     * Shorthand to set `x` and `y` in a single call.
+     * @param x The x position to set to the visual
+     * @param y The y position to set to the visual
+     */
     pos(x: Float, y: Float): Void;
+    /**
+     * Shorthand to set `scaleX` and `scaleY` in a single call.
+     * @param scaleX The scale to set to the visual on **x** axis
+     * @param scaleY (optional) The scale to set to the visual on **y** axis. If not provided, will use scaleX value.
+     */
     scale(scaleX: Float, scaleY?: Float): Void;
+    /**
+     * Shorthand to set `skewX` and `skewY` in a single call.
+     * @param skewX The skew to set to the visual on **x** axis
+     * @param skewY The skew to set to the visual on **y** axis
+     */
     skew(skewX: Float, skewY: Float): Void;
+    /**
+     * Shorthand to set `translateX` and `translateY` in a single call.
+     * @param translateX The translation to set to the visual on **x** axis
+     * @param translateY The translation to set to the visual on **y** axis
+     */
     translate(translateX: Float, translateY: Float): Void;
-    /** Change the visual's anchor but update its x and y values to make
-        it keep its current position. */
+    /**
+     * Change the visual's anchor but ensure the visual keeps its current position.
+     * This is similar to `anchor(anchorX, anchorY)` but visual with have its `x` and `y` properties
+     * updated to ensure it stays at the same position as before changing anchor.
+     * @param anchorX The anchor to set to the visual on **x** axis
+     * @param anchorY The anchor to set to the visual on **y** axis
+     */
     anchorKeepPosition(anchorX: Float, anchorY: Float): Void;
-    /** Returns the first child matching the requested `id` or `null` otherwise. */
+    /**
+     * Returns the first child matching the requested `id` or `null` otherwise.
+     * @param id The requested id
+     * @param recursive (optional) Recursive search in children
+     * @return A matching visual or `null`
+     */
     childWithId(id: String, recursive?: Bool): Visual;
+    /**
+     * Destroy the visual.
+     * When a visual is destroyed, `clear()` is called,
+     * which means all children are removed and destroyed.
+     * Events owned by this visual and events on this visual are
+     * unbound so they don't need to be unbound explicitly.
+     * As soon as `destroy()` is called, the `destroyed` property
+     * becomes `true`.
+     */
     destroy(): Void;
+    /**
+     * Remove and destroy all children.
+     */
     clear(): Void;
-    /** Returns true if screen (x, y) screen coordinates hit/intersect this visual visible bounds */
+    /**
+     * Returns true if screen (x, y) screen coordinates hit/intersect this visual visible bounds
+     * @param x Screen **x** coordinate
+     * @param y Screen **y** coordinate
+     * @return `true` if it hits
+     */
     hits(x: Float, y: Float): Bool;
-    /** Assign X and Y to given point after converting them from screen coordinates to current visual coordinates. */
+    /**
+     * Assign **x** and **y** to given point after converting them from screen coordinates to current visual coordinates.
+     * @param x The **x** coordinate
+     * @param y The **y** coordinate
+     * @param point The point in which resulting x and y coordinate are stored
+     * @param handleFilters (optional) Make it `false` if you want to skip nested filter transformations
+     */
     screenToVisual(x: Float, y: Float, point: Point, handleFilters?: Bool): Void;
-    /** Assign X and Y to given point after converting them from current visual coordinates to screen coordinates. */
+    /**
+     * Assign **x** and **y** to given point after converting them from current visual coordinates to screen coordinates.
+     * @param x The **x** coordinate
+     * @param y The **y** coordinate
+     * @param point The point in which resulting x and y coordinate are stored
+     * @param handleFilters (optional) Make it `false` if you want to skip nested filter transformations
+     */
     visualToScreen(x: Float, y: Float, point: Point, handleFilters?: Bool): Void;
-    /** Assign X and Y to given point after converting them from current visual coordinates to screen coordinates. */
+    /**
+     * Extract current visual transformation and write it into the given `transform`
+     * @param transform The transform object to write data into
+     */
     visualToTransform(transform: Transform): Void;
+    /**
+     * Compute content on this visual.
+     * This method is expected to be overrided in `Visual` subclasses
+     * to compute actual content (raw `Visual` class doesn't do anything).
+     */
     computeContent(): Void;
     /**
      * Will walk on every children and set their depths starting from 
      * `start` and incrementing depth by `step`.
-     * @param start the depth starting value (default 1). First child will have this depth, next child `depthStart + depthStep` etc...
-     * @param step the depth step to use when increment depth for each child
+     * @param start The depth starting value (default 1). First child will have this depth, next child `depthStart + depthStep` etc...
+     * @param step The depth step to use when increment depth for each child
      */
     autoChildrenDepth(start?: Float, step?: Float): Void;
+    /**
+     * Sort children by depth in ascending order.
+     * This will simply reorder children in `children` array.
+     * No depth value will be changed on any child.
+     */
+    sortChildrenByDepth(): Void;
+    /**
+     * This is the equivalent of calling `sortChildrenByDepth()` followed with `autoChildrenDepth()`
+     * @param start The depth starting value (default 1). First child will have this depth, next child `depthStart + depthStep` etc...
+     * @param step The depth step to use when increment depth for each child
+     */
+    normalizeChildrenDepth(start?: Float, step?: Float): Void;
+    /**
+     * Check if current visual has `targetParent` as parent visual. The parent can possibly
+     * be indirect, meaning it can be the parent of the parent of the visual etc...
+     * @param targetParent The target parent to check
+     * @return `true` if the visual has the given target parent as indirect parent
+     */
     hasIndirectParent(targetParent: Visual): Bool;
+    /**
+     * Returns the first parent (can be indirect) of this visual that matches
+     * the given class or `null` if none is matching
+     * @param clazz The requested class
+     * @return A matching parent or `null`
+     */
     firstParentWithClass<T>(clazz: Class<T>): T;
+    /**
+     * Add the given visual as a child.
+     * When a visual is added as a child, it's `parent` property is updated
+     * and it will follow parent transformation in addition to its own.
+     * @param visual The visual to add
+     */
     add(visual: Visual): Void;
+    /**
+     * Remove the child from current visual.
+     * @param visual The child to remove
+     */
     remove(visual: Visual): Void;
-    /** Returns `true` if the current visual contains this child.
-        When `recursive` option is `true`, will return `true` if
-        the current visual contains this child or one of
-        its direct or indirect children does. */
+    /**
+     * Returns `true` if the current visual contains this child.
+     * When `recursive` option is `true`, will return `true` if
+     * the current visual contains this child or one of
+     * its direct or indirect children does.
+     * @param child The child to check in hierarchy
+     * @param recursive (optional) Set to `true` to search recursively on indirect children
+     * @return `true` if the current visual contains this child
+     */
     contains(child: Visual, recursive?: Bool): Bool;
-    /** Will set this visual size to screen size */
+    /**
+     * Will set this visual size to screen size
+     */
     bindToScreenSize(): Void;
-    /** Will set this visual size to target size (`settings.targetWidth` and `settings.targetHeight`) */
+    /**
+     * Will set this visual size to target size (`settings.targetWidth` and `settings.targetHeight`)
+     */
     bindToTargetSize(): Void;
     unbindEvents(): Void;
 }
@@ -1119,27 +1697,37 @@ class Velocity {
     get(): Float;
 }
 
-/** A collection entry that can hold any value */
+/**
+ * A collection entry that can hold any value
+ */
 class ValueEntry<T> extends CollectionEntry {
     constructor(value: T, id?: String?, name?: String?);
     value: T;
 }
 
-/** Various utilities. Some of them are used by ceramic itself or its backends. */
+/**
+ * Various utilities. Some of them are used by ceramic itself or its backends.
+ */
 class Utils {
     static realPath(path: String): String;
     static getRtti<T>(c: Class<T>): TAnonymous;
-    /** Provides an identifier which is garanteed to be unique on this local device.
-        It however doesn't garantee that this identifier is not predictable. */
+    /**
+     * Provides an identifier which is garanteed to be unique on this local device.
+     * It however doesn't garantee that this identifier is not predictable.
+     */
     static uniqueId(): String;
-    /** Provides a random identifier which should be fairly unpredictable and
-        should have an extremely low chance to provide the same identifier twice. */
+    /**
+     * Provides a random identifier which should be fairly unpredictable and
+     * should have an extremely low chance to provide the same identifier twice.
+     */
     static randomId(size?: Int?): String;
-    /** Return a persistent identifier for this device. The identifier is expected
-        to stay the same as long as the user keeps the app installed.
-        Multiple identifiers can be generated/retrieved by using different slots (default 0).
-        Size of the persistent identifier can be provided, but will only have effect when
-        generating a new identifier. */
+    /**
+     * Return a persistent identifier for this device. The identifier is expected
+     * to stay the same as long as the user keeps the app installed.
+     * Multiple identifiers can be generated/retrieved by using different slots (default 0).
+     * Size of the persistent identifier can be provided, but will only have effect when
+     * generating a new identifier.
+     */
     static persistentId(slot?: Int?, size?: Int?): String;
     static resetPersistentId(slot?: Int?): Void;
     static base62Id(val?: Int?): String;
@@ -1147,23 +1735,32 @@ class Utils {
     static stackItemToString(item: haxe.StackItem): String;
     static radToDeg(rad: Float): Float;
     static degToRad(deg: Float): Float;
-    /** Clamp an degrees (angle) value between 0 (included) and 360 (excluded) */
+    static round(value: Float, decimals?: Int): Float;
+    /**
+     * Clamp an degrees (angle) value between 0 (included) and 360 (excluded)
+     */
     static clampDegrees(deg: Float): Float;
     static distance(x1: Float, y1: Float, x2: Float, y2: Float): Float;
     /**
-	 * Java's String.hashCode() method implemented in Haxe.
-	 * source: https://github.com/rjanicek/janicek-core-haxe/blob/master/src/co/janicek/core/math/HashCore.hx
-	 */
+     * Java's String.hashCode() method implemented in Haxe.
+     * source: https://github.com/rjanicek/janicek-core-haxe/blob/master/src/co/janicek/core/math/HashCore.hx
+     */
     static hashCode(s: String): Int;
-    /** Generate an uniform list of the requested size,
-        containing values uniformly repartited from frequencies.
-        @param values the values to put in list
-        @param probabilities the corresponding probability for each value
-        @param size the size of the final list */
+    /**
+     * Generate an uniform list of the requested size,
+     * containing values uniformly repartited from frequencies.
+     * @param values the values to put in list
+     * @param probabilities the corresponding probability for each value
+     * @param size the size of the final list
+     */
     static uniformFrequencyList(values: Array<Int>, frequencies: Array<Float>, size: Int): Array<Int>;
-    /** Transforms `SOME_IDENTIFIER` to `SomeIdentifier` */
+    /**
+     * Transforms `SOME_IDENTIFIER` to `SomeIdentifier`
+     */
     static upperCaseToCamelCase(input: String, firstLetterUppercase?: Bool): String;
-    /** Transforms `SomeIdentifier`/`someIdentifier`/`some identifier` to `SOME_IDENTIFIER` */
+    /**
+     * Transforms `SomeIdentifier`/`someIdentifier`/`some identifier` to `SOME_IDENTIFIER`
+     */
     static camelCaseToUpperCase(input: String, firstLetterUppercase?: Bool): String;
     static functionEquals(functionA: Dynamic, functionB: Dynamic): Bool;
     static decodeUriParams(raw: String): haxe.ds.Map<K, V>;
@@ -1179,15 +1776,26 @@ class Utils {
      * @return Float
      */
     static cosRatio(value: Float): Float;
+    /**
+     * Returns the angle between (x0, y0) and (x1, y1) in degrees.
+     * @param x0 
+     * @param y0 
+     * @param x1 
+     * @param y1 
+     * @return Float
+     */
+    static angleTo(x0: Float, y0: Float, x1: Float, y1: Float): Float;
 }
 
-type UInt8Array = snow.api.buffers.Uint8Array;
+type UInt8Array = clay.buffers.Uint8ArrayImplJS;
 
 class Tween extends Entity {
     constructor(owner: Entity?, easing: Easing, duration: Float, fromValue: Float, toValue: Float);
     static start(owner: Entity?, easing?: Easing?, duration: Float, fromValue: Float, toValue: Float, handleValueTime: ((arg1: Float, arg2: Float) => Void)): Tween;
     static ease(easing: Easing, value: Float): Float;
-    /** Get a tween easing function as a plain Float->Float function. */
+    /**
+     * Get a tween easing function as a plain Float->Float function.
+     */
     static easingFunction(easing: Easing): ((arg1: Float) => Float);
     /**update event*/
     onUpdate(owner: Entity?, handleValueTime: ((value: Float, time: Float) => Void)): Void;
@@ -1220,33 +1828,47 @@ enum TriangulateMethod {
     EARCUT
 }
 
-/** An utility to triangulate indices from a set of vertices */
+/**
+ * An utility to triangulate indices from a set of vertices
+ */
 class Triangulate {
-    /** Triangulate the given vertices and fills the indices array accordingly */
+    /**
+     * Triangulate the given vertices and fills the indices array accordingly
+     */
     static triangulate(vertices: Array<Float>, indices: Array<Int>, holes?: Array<Int>?, method?: TriangulateMethod): Void;
 }
 
-/** A simple colored triangle, to fulfill all your triangle-shaped needs.
-    The triangle is facing top and fits exactly in `width` and `height` */
+/**
+ * A simple colored triangle, to fulfill all your triangle-shaped needs.
+ * The triangle is facing top and fits exactly in `width` and `height`
+ */
 class Triangle extends Mesh {
     constructor();
 }
 
-/** An utility to reuse transform matrix object at application level. */
+/**
+ * An utility to reuse transform matrix object at application level.
+ */
 class TransformPool {
-    /** Get or create a transform. The transform object is ready to be used. */
+    /**
+     * Get or create a transform. The transform object is ready to be used.
+     */
     static get(): Transform;
-    /** Recycle an existing transform. The transform will be cleaned up. */
+    /**
+     * Recycle an existing transform. The transform will be cleaned up.
+     */
     static recycle(transform: Transform): Void;
     static clear(): Void;
 }
 
-/** Transform holds matrix data to make 2d rotate, translate, scale and skew transformations.
-    Angles are in degrees.
-    Representation:
-    | a | c | tx |
-    | b | d | ty |
-    | 0 | 0 | 1  | */
+/**
+ * Transform holds matrix data to make 2d rotate, translate, scale and skew transformations.
+ * Angles are in degrees.
+ * Representation:
+ * | a | c | tx |
+ * | b | d | ty |
+ * | 0 | 0 | 1  |
+ */
 class Transform implements Events {
     constructor(a?: Float, b?: Float, c?: Float, d?: Float, tx?: Float, ty?: Float);
     /**change event*/
@@ -1280,7 +1902,9 @@ class Transform implements Events {
     equals(transform: Transform): Bool;
     identity(): Void;
     invert(): Void;
-    /** Rotate by angle (in radians) */
+    /**
+     * Rotate by angle (in radians)
+     */
     rotate(angle: Float): Void;
     scale(x: Float, y: Float): Void;
     translate(x: Float, y: Float): Void;
@@ -1376,13 +2000,17 @@ class TrackerBackend {
     pathJoin(paths: Array<String>): String;
 }
 
-/** Utility to track a tree of entity objects and perform specific actions when some entities get untracked */
+/**
+ * Utility to track a tree of entity objects and perform specific actions when some entities get untracked
+ */
 class TrackEntities extends Entity implements Component {
     constructor();
     entity: Entity;
     entityMap: haxe.ds.Map<K, V>;
-    /** Compute the whole object tree to see which entities are in it.
-        It will then be possible to compare the result with a previous scan and detect new and unused entities. */
+    /**
+     * Compute the whole object tree to see which entities are in it.
+     * It will then be possible to compare the result with a previous scan and detect new and unused entities.
+     */
     scan(): Void;
     initializerName: String;
 }
@@ -1390,94 +2018,158 @@ class TrackEntities extends Entity implements Component {
 type Touches = IntMap<Touch>;
 
 class TouchInfo {
+    /**@param hits * Whether these info do hit the related visual. This is usually `true`,
+     * Except when we have touch/mouse up events outside of a visual that
+     * initially received a down event.
+@param y * Y coordinate of the input (relative to screen).
+@param x * X coordinate of the input (relative to screen).
+@param buttonId * If the input is a mouse input, this is the id of the mouse button.
+     * Otherwise it will be -1.
+@param touchIndex * If the input is a touch input, this is the index of the touch.
+     * Otherwise it will be -1.
+*/
     constructor(touchIndex: Int, buttonId: Int, x: Float, y: Float, hits: Bool);
-    /** If the input is a touch input, this is the index of the touch.
-        Otherwise it will be -1.*/
+    /**
+     * If the input is a touch input, this is the index of the touch.
+     * Otherwise it will be -1.
+     */
     touchIndex: Int;
-    /** If the input is a mouse input, this is the id of the mouse button.
-        Otherwise it will be -1.*/
+    /**
+     * If the input is a mouse input, this is the id of the mouse button.
+     * Otherwise it will be -1.
+     */
     buttonId: Int;
-    /** X coordinate of the input (relative to screen). */
+    /**
+     * X coordinate of the input (relative to screen).
+     */
     x: Float;
-    /** Y coordinate of the input (relative to screen). */
+    /**
+     * Y coordinate of the input (relative to screen).
+     */
     y: Float;
-    /** Whether these info do hit the related visual. This is usually `true`,
-        Except when we have touch/mouse up events outside of a visual that
-        initially received a down event. */
+    /**
+     * Whether these info do hit the related visual. This is usually `true`,
+     * Except when we have touch/mouse up events outside of a visual that
+     * initially received a down event.
+     */
     hits: Bool;
 }
 
 class Touch {
-    constructor(index: Int, x: Float, y: Float);
+    constructor(index: Int, x: Float, y: Float, deltaX: Float, deltaY: Float);
     index: Int;
     x: Float;
     y: Float;
+    deltaX: Float;
+    deltaY: Float;
 }
 
 class Timer {
-    /** Current time, relative to app.
-        (number of active seconds since app was started) */
+    /**
+     * Current time, relative to app.
+     * (number of active seconds since app was started)
+     */
     static now: Float;
-    /** Current unix time synchronized with ceramic Timer.
-        `Timer.now` and `Timer.timestamp` are garanteed to get incremented
-        exactly at the same rate.
-        (number of seconds since January 1st, 1970) */
+    /**
+     * Current unix time synchronized with ceramic Timer.
+     * `Timer.now` and `Timer.timestamp` are garanteed to get incremented
+     * exactly at the same rate, except when app frame real delta > 1s
+     * (number of seconds since January 1st, 1970)
+     */
     static timestamp: Float;
     static startTimestamp: Float;
-    /** Execute a callback after the given delay in seconds.
-        @return a function to cancel this timer delay */
+    /**
+     * Execute a callback after the given delay in seconds.
+     * @return a function to cancel this timer delay
+     */
     static delay(owner: Entity?, seconds: Float, callback: (() => Void)): (() => Void);
-    /** Execute a callback periodically at the given interval in seconds.
-        @return a function to cancel this timer interval */
+    /**
+     * Execute a callback periodically at the given interval in seconds.
+     * @return a function to cancel this timer interval
+     */
     static interval(owner: Entity?, seconds: Float, callback: (() => Void)): (() => Void);
 }
 
-/** A track meant to be updated by a timeline.
-    Base implementation doesn't do much by itself.
-    Create subclasses to implement details */
+/**
+ * A track meant to be updated by a timeline.
+ * Base implementation doesn't do much by itself.
+ * Create subclasses to implement details
+ */
 class TimelineTrack<K extends TimelineKeyframe> extends Entity {
     constructor();
-    /** Track size. Default `0`, meaning this track won't do anything.
-        By default, because `autoFitSize` is `true`, adding new keyframes to this
-        track will update `size` accordingly so it may not be needed to update `size` explicitly.
-        Setting `size` to `-1` means the track will never finish. */
+    /**
+     * Track size. Default `0`, meaning this track won't do anything.
+     * By default, because `autoFitSize` is `true`, adding new keyframes to this
+     * track will update `size` accordingly so it may not be needed to update `size` explicitly.
+     * Setting `size` to `-1` means the track will never finish.
+     */
     size: Int;
-    /** If set to `true` (default), adding keyframes to this track will update
-        its size accordingly to match last keyframe time. */
+    /**
+     * If set to `true` (default), adding keyframes to this track will update
+     * its size accordingly to match last keyframe time.
+     */
     autoFitSize: Bool;
-    /** Whether this track should loop. Ignored if track's `size` is `-1` (not defined). */
+    /**
+     * Whether this track should loop. Ignored if track's `size` is `-1` (not defined).
+     */
     loop: Bool;
-    /** Whether this track is locked or not.
-        A locked track doesn't get updated by the timeline it is attached to, if any. */
+    /**
+     * Whether this track is locked or not.
+     * A locked track doesn't get updated by the timeline it is attached to, if any.
+     */
     locked: Bool;
-    /** Timeline on which this track is added to */
+    /**
+     * Timeline on which this track is added to
+     */
     timeline: Timeline;
-    /** Position on this track.
-        Gets back to zero when `loop=true` and position reaches a defined `size`. */
+    /**
+     * Position on this track.
+     * Gets back to zero when `loop=true` and position reaches a defined `size`.
+     */
     position: Float;
-    /** The key frames on this track. */
+    /**
+     * The key frames on this track.
+     */
     keyframes: Array<K>;
-    /** The keyframe right before or equal to current time, if any. */
+    /**
+     * The keyframe right before or equal to current time, if any.
+     */
     before: K;
-    /** The keyframe right after current time, if any. */
+    /**
+     * The keyframe right after current time, if any.
+     */
     after: K;
     destroy(): Void;
-    /** Seek the given position (in frames) in the track.
-        Will take care of clamping `position` or looping it depending on `size` and `loop` properties. */
+    /**
+     * Seek the given position (in frames) in the track.
+     * Will take care of clamping `position` or looping it depending on `size` and `loop` properties.
+     */
     seek(targetPosition: Float): Void;
-    /** Add a keyframe to this track */
+    /**
+     * Add a keyframe to this track
+     */
     add(keyframe: K): Void;
-    /** Remove a keyframe from this track */
+    /**
+     * Remove a keyframe from this track
+     */
     remove(keyframe: K): Void;
-    /** Update `size` property to make it fit
-        the index of the last keyframe on this track. */
+    /**
+     * Update `size` property to make it fit
+     * the index of the last keyframe on this track.
+     */
     fitSize(): Void;
-    /** Apply changes that this track is responsible of. Usually called after `update(delta)` or `seek(time)`. */
+    /**
+     * Apply changes that this track is responsible of. Usually called after `update(delta)` or `seek(time)`.
+     */
     apply(forceChange?: Bool): Void;
     findKeyframeAtIndex(index: Int): K?;
-    /** Find the keyframe right before or equal to given `position` */
+    /**
+     * Find the keyframe right before or equal to given `position`
+     */
     findKeyframeBefore(position: Float): K?;
-    /** Find the keyframe right after given `position` */
+    /**
+     * Find the keyframe right after given `position`
+     */
     findKeyframeAfter(position: Float): K?;
 }
 
@@ -1596,17 +2288,25 @@ class Timeline extends Entity implements Component {
      * @param name label name
      */
     listensEndLabel(): Bool;
-    /** Timeline size. Default `0`, meaning this timeline won't do anything.
-        By default, because `autoFitSize` is `true`, adding or updating tracks on this
-        timeline will update timeline `size` accordingly so it may not be needed to update `size` explicitly.
-        Setting `size` to `-1` means the timeline will never finish. */
+    /**
+     * Timeline size. Default `0`, meaning this timeline won't do anything.
+     * By default, because `autoFitSize` is `true`, adding or updating tracks on this
+     * timeline will update timeline `size` accordingly so it may not be needed to update `size` explicitly.
+     * Setting `size` to `-1` means the timeline will never finish.
+     */
     size: Int;
-    /** If set to `true` (default), adding or updating tracks on this timeline will update
-        timeline size accordingly to match longest track size. */
+    /**
+     * If set to `true` (default), adding or updating tracks on this timeline will update
+     * timeline size accordingly to match longest track size.
+     */
     autoFitSize: Bool;
-    /** Whether this timeline should loop. Ignored if timeline's `size` is `-1` (not defined). */
+    /**
+     * Whether this timeline should loop. Ignored if timeline's `size` is `-1` (not defined).
+     */
     loop: Bool;
-    /** Whether this timeline should bind itself to update cycle automatically or not (default `true`). */
+    /**
+     * Whether this timeline should bind itself to update cycle automatically or not (default `true`).
+     */
     autoUpdate: Bool;
     /**
      * Frames per second on this timeline.
@@ -1614,12 +2314,18 @@ class Timeline extends Entity implements Component {
      * Thus using 30 fps is still fine even if screen refreshes at 60 fps.
      */
     fps: Int;
-    /** Position on this timeline.
-        Gets back to zero when `loop=true` and position reaches a defined `size`. */
+    /**
+     * Position on this timeline.
+     * Gets back to zero when `loop=true` and position reaches a defined `size`.
+     */
     position: Float;
-    /** The tracks updated by this timeline */
+    /**
+     * The tracks updated by this timeline
+     */
     tracks: Array<TimelineTrack<TimelineKeyframe>>;
-    /** Whether this timeline is paused or not. */
+    /**
+     * Whether this timeline is paused or not.
+     */
     paused: Bool;
     /**
      * Used in pair with `labelIndexes` to manage timeline labels
@@ -1636,8 +2342,10 @@ class Timeline extends Entity implements Component {
      */
     endPosition: Int;
     update(delta: Float): Void;
-    /** Seek the given position (in frames) in the timeline.
-        Will take care of clamping `position` or looping it depending on `size` and `loop` properties. */
+    /**
+     * Seek the given position (in frames) in the timeline.
+     * Will take care of clamping `position` or looping it depending on `size` and `loop` properties.
+     */
     seek(targetPosition: Float): Void;
     /**
      * Animate starting from the given label name and calls complete when
@@ -1666,15 +2374,23 @@ class Timeline extends Entity implements Component {
      * @return The index (position) of the looping label, or -1 if no label was found
      */
     loopLabel(name: String): Int;
-    /** Apply (or re-apply) every track of this timeline at the current position */
+    /**
+     * Apply (or re-apply) every track of this timeline at the current position
+     */
     apply(forceChange?: Bool): Void;
-    /** Add a track to this timeline */
+    /**
+     * Add a track to this timeline
+     */
     add(track: TimelineTrack<TimelineKeyframe>): Void;
     get(trackId: String): TimelineTrack<TimelineKeyframe>;
-    /** Remove a track from this timeline */
+    /**
+     * Remove a track from this timeline
+     */
     remove(track: TimelineTrack<TimelineKeyframe>): Void;
-    /** Update `size` property to make it fit
-        the size of the longuest track. */
+    /**
+     * Update `size` property to make it fit
+     * the size of the longuest track.
+     */
     fitSize(): Void;
     indexOfLabelBeforeIndex(index: Int): Int;
     labelAtIndex(index: Int): String;
@@ -1687,7 +2403,9 @@ class Timeline extends Entity implements Component {
     unbindEvents(): Void;
 }
 
-/** Incremental texture tile packer that allows to alloc, release and reuse tiles as needed. */
+/**
+ * Incremental texture tile packer that allows to alloc, release and reuse tiles as needed.
+ */
 class TextureTilePacker extends Entity {
     constructor(autoRender: Bool, maxPixelTextureWidth?: Int, maxPixelTextureHeight?: Int, padWidth?: Int, padHeight?: Int, margin?: Int);
     texture: RenderTexture;
@@ -1716,10 +2434,43 @@ enum TextureFilter {
     LINEAR
 }
 
-/** A texture is an image ready to be drawn. */
+/**
+ * A texture is an image ready to be drawn.
+ */
 class Texture extends Entity {
     constructor(backendItem: backend.Texture, density?: Float);
+    /**
+     * Create a new texture from the given pixels buffer
+     * @param width Width of the texture
+     * @param height Height of the texture
+     * @param pixels A pixel buffer in integer RGBA format
+     * @param density (optional) density of the texture
+     * @return Texture
+     */
+    static fromPixels(width: Int, height: Int, pixels: clay.buffers.Uint8ArrayImplJS, density?: Float): Texture;
     isRenderTexture: Bool;
+    /**
+     * The texture ID used by the underlying backend (OpenGL etc...)
+     */
+    textureId: backend.TextureId;
+    /**
+     * The native width of the texture, not depending on texture density
+     */
+    nativeWidth: Int;
+    /**
+     * The native height of the texture, not depending on texture density
+     */
+    nativeHeight: Int;
+    /**
+     * The native actual width of the texture.
+     * Same as native width unless underlying backend needs pot (power of two) sizes.
+     */
+    nativeWidthActual: Int;
+    /**
+     * The native actual height of the texture.
+     * Same as native height unless underlying backend needs pot (power of two) sizes.
+     */
+    nativeHeightActual: Int;
     width: Float;
     height: Float;
     density: Float;
@@ -1727,14 +2478,16 @@ class Texture extends Entity {
     backendItem: backend.Texture;
     asset: ImageAsset;
     destroy(): Void;
-    fetchPixels(result?: snow.api.buffers.Uint8Array?): snow.api.buffers.Uint8Array;
-    submitPixels(pixels: snow.api.buffers.Uint8Array): Void;
+    fetchPixels(result?: clay.buffers.Uint8ArrayImplJS?): clay.buffers.Uint8ArrayImplJS;
+    submitPixels(pixels: clay.buffers.Uint8ArrayImplJS): Void;
 }
 
 interface TextInputDelegate {
-    /** Returns the position in `toLine` which is closest
-        to the position in `fromLine`/`fromPosition` (in X coordinates).
-        Positions are relative to their line. */
+    /**
+     * Returns the position in `toLine` which is closest
+     * to the position in `fromLine`/`fromPosition` (in X coordinates).
+     * Positions are relative to their line.
+     */
     textInputClosestPositionInLine(fromPosition: Int, fromLine: Int, toLine: Int): Int;
     textInputNumberOfLines(): Int;
     textInputIndexForPosInLine(lineNumber: Int, lineOffset: Int): Int;
@@ -1832,8 +2585,10 @@ enum TextAlign {
     CENTER
 }
 
-/** A visual to layout and display text.
-    Works with UTF-8 strings. */
+/**
+ * A visual to layout and display text.
+ * Works with UTF-8 strings.
+ */
 class Text extends Visual {
     constructor();
     static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
@@ -1860,26 +2615,40 @@ class Text extends Visual {
     clipText(x: Float, y: Float, width: Float, height: Float): Void;
     preRenderedSize: Int;
     align: TextAlign;
-    /** If set to `true`, text will be displayed with line breaks
-        as needed so that it fits in the requested width. */
+    /**
+     * If set to `true`, text will be displayed with line breaks
+     * as needed so that it fits in the requested width.
+     */
     fitWidth: Float;
     maxLineDiff: Float;
     destroy(): Void;
     computeContent(): Void;
-    /** Get the line number matching the given `y` position.
-        `y` is relative this `Text` visual. */
+    /**
+     * Get the line number matching the given `y` position.
+     * `y` is relative this `Text` visual.
+     */
     lineForYPosition(y: Float): Int;
-    /** Get the character index position relative to `line` at the requested `x` value.
-        `x` is relative this `Text` visual. */
+    /**
+     * Get the character index position relative to `line` at the requested `x` value.
+     * `x` is relative this `Text` visual.
+     */
     posInLineForX(line: Int, x: Float): Int;
-    /** Get the _global_ character index from the given `line` and `posInLine` index position relative to `line` */
+    /**
+     * Get the _global_ character index from the given `line` and `posInLine` index position relative to `line`
+     */
     indexForPosInLine(line: Int, posInLine: Int): Int;
-    /** Get an `x` position from the given character `index`.
-        `x` is relative to this `Text` visual. */
+    /**
+     * Get an `x` position from the given character `index`.
+     * `x` is relative to this `Text` visual.
+     */
     xPositionAtIndex(index: Int): Float;
-    /** Get the line number (starting from zero) of the character at the given `index` */
+    /**
+     * Get the line number (starting from zero) of the character at the given `index`
+     */
     lineForIndex(index: Int): Int;
-    /** Get a character index position relative to its line from its _global_ `index` position. */
+    /**
+     * Get a character index position relative to its line from its _global_ `index` position.
+     */
     posInLineForIndex(index: Int): Int;
     unbindEvents(): Void;
 }
@@ -1916,16 +2685,26 @@ class Sound extends Entity {
     asset: SoundAsset;
     group: Int;
     destroy(): Void;
-    /** Default volume when playing this sound. */
+    /**
+     * Default volume when playing this sound.
+     */
     volume: Float;
-    /** Default pan when playing this sound. */
+    /**
+     * Default pan when playing this sound.
+     */
     pan: Float;
-    /** Default pitch when playing this sound. */
+    /**
+     * Default pitch when playing this sound.
+     */
     pitch: Float;
-    /** Sound duration. */
+    /**
+     * Sound duration.
+     */
     duration: Float;
-    /** Play the sound at requested position. If volume/pan/pitch are not provided,
-        sound instance properties will be used instead. */
+    /**
+     * Play the sound at requested position. If volume/pan/pitch are not provided,
+     * sound instance properties will be used instead.
+     */
     play(position?: Float, loop?: Bool, volume?: Float?, pan?: Float?, pitch?: Float?): SoundPlayer;
 }
 
@@ -1975,40 +2754,66 @@ class SortRenderTextures {
     static sort(a: Array<RenderTexture>): Void;
 }
 
-/** Shortcuts adds convenience identifiers to access ceramic app, screen, ...
-    Use it by adding `import ceramic.Shortcuts.*;` in your files. */
+/**
+ * Shortcuts adds convenience identifiers to access ceramic app, screen, ...
+ * Use it by adding `import ceramic.Shortcuts.*;` in your files.
+ */
 class Shortcuts {
-    /** Shared app instance */
+    /**
+     * Shared app instance
+     */
     static app: App;
-    /** Shared screen instance */
+    /**
+     * Shared screen instance
+     */
     static screen: Screen;
-    /** Shared audio instance */
+    /**
+     * Shared audio instance
+     */
     static audio: Audio;
-    /** Shared input instance */
+    /**
+     * Shared input instance
+     */
     static input: ceramic.Input;
-    /** Shared settings instance */
+    /**
+     * Shared settings instance
+     */
     static settings: Settings;
-    /** Shared logger instance */
+    /**
+     * Shared logger instance
+     */
     static log: Logger;
+    /**
+     * Systems manager
+     */
+    static systems: ceramic.Systems;
 }
 
-/** Draw shapes by triangulating vertices automatically, with optional holes in it. */
+/**
+ * Draw shapes by triangulating vertices automatically, with optional holes in it.
+ */
 class Shape extends Mesh {
     constructor();
     static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
-    /** A flat array of vertex coordinates to describe the shape.
-        `points = ...` is identical to `vertices = ... ; contentDirty = true ;`
-        Note: when editing array content without reassigning it,
-        `contentDirty` must be set to `true` to let the shape being updated accordingly. */
+    /**
+     * A flat array of vertex coordinates to describe the shape.
+     * `points = ...` is identical to `vertices = ... ; contentDirty = true ;`
+     * Note: when editing array content without reassigning it,
+     * `contentDirty` must be set to `true` to let the shape being updated accordingly.
+     */
     points: Array<Float>;
     triangulation: TriangulateMethod;
-    /** An array of hole indices, if any.
-        (e.g. `[5, 8]` for a 12-vertex input would mean
-        one hole with vertices 5–7 and another with 8–11).
-        Note: when editing array content without reassigning it,
-        `contentDirty` must be set to `true` to let the shape being updated accordingly. */
+    /**
+     * An array of hole indices, if any.
+     * (e.g. `[5, 8]` for a 12-vertex input would mean
+     * one hole with vertices 5–7 and another with 8–11).
+     * Note: when editing array content without reassigning it,
+     * `contentDirty` must be set to `true` to let the shape being updated accordingly.
+     */
     holes: Array<Int>;
-    /** If set to `true`, width and heigh will be computed from shape points. */
+    /**
+     * If set to `true`, width and heigh will be computed from shape points.
+     */
     autoComputeSize: Bool;
     computeContent(): Void;
 }
@@ -2028,9 +2833,11 @@ class ShaderAsset extends Asset {
 
 class Shader extends Entity {
     constructor(backendItem: backend.Shader, customAttributes?: Array<ShaderAttribute>?);
-    /** Instanciates a shader from source.
-        Although it would expect `GLSL` code in default ceramic backends (luxe backend),
-        Expected shading language could be different in some future backend implementations. */
+    /**
+     * Instanciates a shader from source.
+     * Although it would expect `GLSL` code in default ceramic backends (luxe backend),
+     * Expected shading language could be different in some future backend implementations.
+     */
     static fromSource(vertSource: String, fragSource: String): Shader;
     backendItem: backend.Shader;
     asset: ShaderAsset;
@@ -2047,7 +2854,7 @@ class Shader extends Entity {
     setVec3(name: String, x: Float, y: Float, z: Float): Void;
     setVec4(name: String, x: Float, y: Float, z: Float, w: Float): Void;
     setFloatArray(name: String, array: Array<Float>): Void;
-    setTexture(name: String, texture: Texture): Void;
+    setTexture(name: String, slot: Int, texture: Texture): Void;
     setMat4FromTransform(name: String, transform: Transform): Void;
 }
 
@@ -2063,9 +2870,11 @@ class Settings implements Observable {
     listensObservedDirty(): Bool;
     /**Default is `false`, automatically set to `true` when any of this instance's observable variables has changed.*/
     observedDirty: Bool;
-    /** Target width. Affects window size at startup (unless `windowWidth` is specified)
-        and affects screen scaling at any time.
-        Ignored if set to 0 (default) */
+    /**
+     * Target width. Affects window size at startup (unless `windowWidth` is specified)
+     * and affects screen scaling at any time.
+     * Ignored if set to 0 (default)
+     */
     targetWidth: Int;
     invalidateTargetWidth(): Void;
     /**Event when targetWidth field changes.*/
@@ -2076,9 +2885,11 @@ class Settings implements Observable {
     offTargetWidthChange(handleCurrentPrevious?: ((current: Int, previous: Int) => Void)?): Void;
     /**Event when targetWidth field changes.*/
     listensTargetWidthChange(): Bool;
-    /** Target height. Affects window size at startup (unless `windowHeight` is specified)
-        and affects screen scaling at any time.
-        Ignored if set to 0 (default) */
+    /**
+     * Target height. Affects window size at startup (unless `windowHeight` is specified)
+     * and affects screen scaling at any time.
+     * Ignored if set to 0 (default)
+     */
     targetHeight: Int;
     invalidateTargetHeight(): Void;
     /**Event when targetHeight field changes.*/
@@ -2089,8 +2900,10 @@ class Settings implements Observable {
     offTargetHeightChange(handleCurrentPrevious?: ((current: Int, previous: Int) => Void)?): Void;
     /**Event when targetHeight field changes.*/
     listensTargetHeightChange(): Bool;
-    /** Target window width at startup
-        Use `targetWidth` as fallback if set to 0 (default) */
+    /**
+     * Target window width at startup
+     * Use `targetWidth` as fallback if set to 0 (default)
+     */
     windowWidth: Int;
     invalidateWindowWidth(): Void;
     /**Event when windowWidth field changes.*/
@@ -2101,8 +2914,10 @@ class Settings implements Observable {
     offWindowWidthChange(handleCurrentPrevious?: ((current: Int, previous: Int) => Void)?): Void;
     /**Event when windowWidth field changes.*/
     listensWindowWidthChange(): Bool;
-    /** Target window height at startup
-        Use `targetHeight` as fallback if set to 0 (default) */
+    /**
+     * Target window height at startup
+     * Use `targetHeight` as fallback if set to 0 (default)
+     */
     windowHeight: Int;
     invalidateWindowHeight(): Void;
     /**Event when windowHeight field changes.*/
@@ -2113,10 +2928,12 @@ class Settings implements Observable {
     offWindowHeightChange(handleCurrentPrevious?: ((current: Int, previous: Int) => Void)?): Void;
     /**Event when windowHeight field changes.*/
     listensWindowHeightChange(): Bool;
-    /** Target density. Affects the quality of textures
-        being loaded. Changing it at runtime will update
-        texture quality if needed.
-        Ignored if set to 0 (default) */
+    /**
+     * Target density. Affects the quality of textures
+     * being loaded. Changing it at runtime will update
+     * texture quality if needed.
+     * Ignored if set to 0 (default)
+     */
     targetDensity: Int;
     invalidateTargetDensity(): Void;
     /**Event when targetDensity field changes.*/
@@ -2127,7 +2944,9 @@ class Settings implements Observable {
     offTargetDensityChange(handleCurrentPrevious?: ((current: Int, previous: Int) => Void)?): Void;
     /**Event when targetDensity field changes.*/
     listensTargetDensityChange(): Bool;
-    /** Background color. */
+    /**
+     * Background color.
+     */
     background: Color;
     invalidateBackground(): Void;
     /**Event when background field changes.*/
@@ -2138,7 +2957,9 @@ class Settings implements Observable {
     offBackgroundChange(handleCurrentPrevious?: ((current: Color, previous: Color) => Void)?): Void;
     /**Event when background field changes.*/
     listensBackgroundChange(): Bool;
-    /** Screen scaling (FIT, FILL, RESIZE or FIT_RESIZE). */
+    /**
+     * Screen scaling (FIT, FILL, RESIZE or FIT_RESIZE).
+     */
     scaling: ScreenScaling;
     invalidateScaling(): Void;
     /**Event when scaling field changes.*/
@@ -2149,7 +2970,9 @@ class Settings implements Observable {
     offScalingChange(handleCurrentPrevious?: ((current: ScreenScaling, previous: ScreenScaling) => Void)?): Void;
     /**Event when scaling field changes.*/
     listensScalingChange(): Bool;
-    /** App window title. */
+    /**
+     * App window title.
+     */
     title: String;
     invalidateTitle(): Void;
     /**Event when title field changes.*/
@@ -2160,27 +2983,77 @@ class Settings implements Observable {
     offTitleChange(handleCurrentPrevious?: ((current: String, previous: String) => Void)?): Void;
     /**Event when title field changes.*/
     listensTitleChange(): Bool;
-    /** App collections. */
+    /**
+     * Fullscreen enabled or not.
+     */
+    fullscreen: Bool;
+    invalidateFullscreen(): Void;
+    /**Event when fullscreen field changes.*/
+    onFullscreenChange(owner: Entity?, handleCurrentPrevious: ((current: Bool, previous: Bool) => Void)): Void;
+    /**Event when fullscreen field changes.*/
+    onceFullscreenChange(owner: Entity?, handleCurrentPrevious: ((current: Bool, previous: Bool) => Void)): Void;
+    /**Event when fullscreen field changes.*/
+    offFullscreenChange(handleCurrentPrevious?: ((current: Bool, previous: Bool) => Void)?): Void;
+    /**Event when fullscreen field changes.*/
+    listensFullscreenChange(): Bool;
+    /**
+     * Maximum app update delta time.
+     * During app update (at each frame), `app.delta` will be capped to `maxDelta`
+     * if its value is above `maxDelta`.
+     * If needed, use `app.realDelta` to get real elapsed time since last frame.
+     */
+    maxDelta: Float;
+    invalidateMaxDelta(): Void;
+    /**Event when maxDelta field changes.*/
+    onMaxDeltaChange(owner: Entity?, handleCurrentPrevious: ((current: Float, previous: Float) => Void)): Void;
+    /**Event when maxDelta field changes.*/
+    onceMaxDeltaChange(owner: Entity?, handleCurrentPrevious: ((current: Float, previous: Float) => Void)): Void;
+    /**Event when maxDelta field changes.*/
+    offMaxDeltaChange(handleCurrentPrevious?: ((current: Float, previous: Float) => Void)?): Void;
+    /**Event when maxDelta field changes.*/
+    listensMaxDeltaChange(): Bool;
+    /**
+     * Setup screen orientation. Default is `NONE`,
+     * meaning nothing is enforced and project defaults will be used.
+     */
+    orientation: ceramic.ScreenOrientation;
+    /**
+     * App collections.
+     */
     collections: (() => ceramic.AutoCollections);
-    /** App info (useful when dynamically loaded, not needed otherwise). */
+    /**
+     * App info (useful when dynamically loaded, not needed otherwise).
+     */
     appInfo: Dynamic;
-    /** Antialiasing value (0 means disabled). */
+    /**
+     * Antialiasing value (0 means disabled).
+     */
     antialiasing: Int;
-    /** Whether the window can be resized or not. */
+    /**
+     * Whether the window can be resized or not.
+     */
     resizable: Bool;
-    /** Assets path. */
+    /**
+     * Assets path.
+     */
     assetsPath: String;
-    /** Settings passed to backend. */
+    /**
+     * Settings passed to backend.
+     */
     backend: Dynamic;
-    /** Default font */
+    /**
+     * Default font
+     */
     defaultFont: AssetId<String>;
-    /** Default shader */
+    /**
+     * Default shader
+     */
     defaultShader: AssetId<String>;
     unbindEvents(): Void;
 }
 
 class SelectText extends Entity implements Observable, Component {
-    constructor(selectionColor: Color, textCursorColor: Color);
+    constructor(selectionColor: Color, textCursorColor: Color, textCursorOffsetX?: Float, textCursorOffsetY?: Float, textCursorHeightFactor?: Float);
     /**Event when any observable value as changed on this instance.*/
     onObservedDirty(owner: Entity?, handleInstanceFromSerializedField: ((instance: SelectText, fromSerializedField: Bool) => Void)): Void;
     /**Event when any observable value as changed on this instance.*/
@@ -2202,7 +3075,12 @@ class SelectText extends Entity implements Observable, Component {
     entity: Text;
     selectionColor: Color;
     textCursorColor: Color;
-    /** Optional container on which pointer events are bound */
+    textCursorOffsetX: Float;
+    textCursorOffsetY: Float;
+    textCursorHeightFactor: Float;
+    /**
+     * Optional container on which pointer events are bound
+     */
     container: Visual;
     invalidateContainer(): Void;
     /**Event when container field changes.*/
@@ -2277,26 +3155,42 @@ class SelectText extends Entity implements Observable, Component {
     initializerName: String;
 }
 
-/** Seeded random number generator to get reproducible sequences of values. */
+/**
+ * Seeded random number generator to get reproducible sequences of values.
+ */
 class SeedRandom {
     constructor(seed: Float);
     seed: Float;
     initialSeed: Float;
-    /** Returns a float number between [0,1) */
+    /**
+     * Returns a float number between [0,1)
+     */
     random(): Float;
-    /** Return an integer between [min, max). */
+    /**
+     * Return an integer between [min, max).
+     */
     between(min: Int, max: Int): Int;
-    /** Reset the initial value to that of the current seed. */
+    /**
+     * Reset the initial value to that of the current seed.
+     */
     reset(initialSeed?: Float?): Void;
 }
 
 enum ScrollerStatus {
-    /** Being touched, but not dragging yet */
-    TOUCHING    /** Scrolling after dragging has ended */
+    /**
+     * Being touched, but not dragging yet
+     */
+    TOUCHING    /**
+     * Scrolling after dragging has ended
+     */
 ,
-    SCROLLING    /** Nothing happening */
+    SCROLLING    /**
+     * Nothing happening
+     */
 ,
-    IDLE    /** Being dragged by a touch/mouse event */
+    IDLE    /**
+     * Being dragged by a touch/mouse event
+     */
 ,
     DRAGGING
 }
@@ -2368,8 +3262,10 @@ class Scroller extends Visual {
     scrollEnabled: Bool;
     dragEnabled: Bool;
     status: ScrollerStatus;
-    /** When set to `true`, vertical mouse wheel event
-        will also work on horizontal scroller. */
+    /**
+     * When set to `true`, vertical mouse wheel event
+     * will also work on horizontal scroller.
+     */
     verticalToHorizontalWheel: Bool;
     deceleration: Float;
     wheelDeceleration: Float;
@@ -2441,17 +3337,25 @@ class Script extends Entity implements Component {
 }
 
 enum ScreenScaling {
-    /** Screen width and height are automatically resized
-        to exactly match native screen size. */
-    RESIZE    /** Either width or height is increased so that aspect ratio
-        becomes the same as as native screen's aspect ratio.
-        Result is scaled to fit exactly into native screen bounds. */
+    /**
+     * Screen width and height are automatically resized
+     * to exactly match native screen size.
+     */
+    RESIZE    /**
+     * Either width or height is increased so that aspect ratio
+     * becomes the same as as native screen's aspect ratio.
+     * Result is scaled to fit exactly into native screen bounds.
+     */
 ,
-    FIT_RESIZE    /** Screen width and height match target size in settings.
-        Result is scaled to fit into native screen bounds. */
+    FIT_RESIZE    /**
+     * Screen width and height match target size in settings.
+     * Result is scaled to fit into native screen bounds.
+     */
 ,
-    FIT    /** Screen width and height match target size in settings.
-        Result is scaled to fill native screen area. */
+    FIT    /**
+     * Screen width and height match target size in settings.
+     * Result is scaled to fill native screen area.
+     */
 ,
     FILL
 }
@@ -2468,53 +3372,111 @@ class Screen extends Entity implements Observable {
     listensObservedDirty(): Bool;
     /**Default is `false`, automatically set to `true` when any of this instance's observable variables has changed.*/
     observedDirty: Bool;
-    /** Screen density computed from app's logical width/height
-        settings and native width/height. */
+    /**
+     * Screen density computed from app's logical width/height
+     * settings and native width/height.
+     */
     density: Float;
-    /** Logical width used in app to position elements.
-        Updated when the screen is resized. */
+    /**
+     * Logical width used in app to position elements.
+     * Updated when the screen is resized.
+     */
     width: Float;
-    /** Logical height used in app to position elements.
-        Updated when the screen is resized. */
+    /**
+     * Logical height used in app to position elements.
+     * Updated when the screen is resized.
+     */
     height: Float;
-    /** The actual width available on screen, including offsets, in the same unit as `width`.
-        Updated when the screen is resized. */
+    /**
+     * The actual width available on screen, including offsets, in the same unit as `width`.
+     * Updated when the screen is resized.
+     */
     actualWidth: Float;
-    /** The actual height available on screen, including offsets, in the same unit as `width`.
-        Updated when the screen is resized. */
+    /**
+     * The actual height available on screen, including offsets, in the same unit as `width`.
+     * Updated when the screen is resized.
+     */
     actualHeight: Float;
-    /** Logical x offset.
-        Updated when the screen is resized. */
+    /**
+     * Logical x offset.
+     * Updated when the screen is resized.
+     */
     offsetX: Float;
-    /** Logical y offset.
-        Updated when the screen is resized. */
+    /**
+     * Logical y offset.
+     * Updated when the screen is resized.
+     */
     offsetY: Float;
-    /** Native width */
+    /**
+     * Native width
+     */
     nativeWidth: Float;
-    /** Native height */
+    /**
+     * Native height
+     */
     nativeHeight: Float;
-    /** Native pixel ratio/density. */
+    /**
+     * Native pixel ratio/density.
+     */
     nativeDensity: Float;
-    /** Pointer x coordinate, computed from mouse and touch events.
-        When using multiple touch inputs at the same time, x will be
-        the mean value of all touches x value. Use this as a
-        convenience when you don't want to deal with multiple positions. */
+    /**
+     * Pointer x coordinate, computed from mouse and touch events.
+     * When using multiple touch inputs at the same time, x will be
+     * the mean value of all touches x value. Use this as a
+     * convenience when you don't want to deal with multiple positions.
+     */
     pointerX: Float;
-    /** Pointer y coordinate, computed from mouse and touch events.
-        When using multiple touch inputs at the same time, y will be
-        the mean value of all touches y value. Use this as a
-        convenience when you don't want to deal with multiple positions. */
+    /**
+     * Pointer y coordinate, computed from mouse and touch events.
+     * When using multiple touch inputs at the same time, y will be
+     * the mean value of all touches y value. Use this as a
+     * convenience when you don't want to deal with multiple positions.
+     */
     pointerY: Float;
-    /** Mouse x coordinate, computed from mouse events. */
+    /**
+     * Pointer x delta since last frame
+     */
+    pointerDeltaX: Float;
+    /**
+     * Pointer y delta since last frame
+     */
+    pointerDeltaY: Float;
+    /**
+     * Mouse x coordinate, computed from mouse events.
+     */
     mouseX: Float;
-    /** Mouse y coordinate, computed from mouse events. */
+    /**
+     * Mouse y coordinate, computed from mouse events.
+     */
     mouseY: Float;
-    /** Touches x and y coordinates by touch index. */
+    /**
+     * Mouse x delta since last frame
+     */
+    mouseDeltaX: Float;
+    /**
+     * Mouse y delta since last frame
+     */
+    mouseDeltaY: Float;
+    /**
+     * Mouse wheel x delta since last frame
+     */
+    mouseWheelDeltaX: Float;
+    /**
+     * Mouse wheel y delta since last frame
+     */
+    mouseWheelDeltaY: Float;
+    /**
+     * Touches x and y coordinates by touch index.
+     */
     touches: IntMap<Touch>;
-    /** Focused visual */
+    /**
+     * Focused visual
+     */
     focusedVisual: Visual;
-    /** Ideal textures density, computed from settings
-        targetDensity and current screen state. */
+    /**
+     * Ideal textures density, computed from settings
+     * targetDensity and current screen state.
+     */
     texturesDensity: Float;
     invalidateTexturesDensity(): Void;
     /**Event when texturesDensity field changes.*/
@@ -2525,19 +3487,29 @@ class Screen extends Entity implements Observable {
     offTexturesDensityChange(handleCurrentPrevious?: ((current: Float, previous: Float) => Void)?): Void;
     /**Event when texturesDensity field changes.*/
     listensTexturesDensityChange(): Bool;
-    /** Whether the screen is between a `pointer down` and an `pointer up` event or not. */
+    /**
+     * Whether the screen is between a `pointer down` and an `pointer up` event or not.
+     */
     isPointerDown: Bool;
-    /** Resize event occurs once at startup, then each time any
-        of native width, height or density changes. */
+    /**
+     * Resize event occurs once at startup, then each time any
+     * of native width, height or density changes.
+     */
     onResize(owner: Entity?, handle: (() => Void)): Void;
-    /** Resize event occurs once at startup, then each time any
-        of native width, height or density changes. */
+    /**
+     * Resize event occurs once at startup, then each time any
+     * of native width, height or density changes.
+     */
     onceResize(owner: Entity?, handle: (() => Void)): Void;
-    /** Resize event occurs once at startup, then each time any
-        of native width, height or density changes. */
+    /**
+     * Resize event occurs once at startup, then each time any
+     * of native width, height or density changes.
+     */
     offResize(handle?: (() => Void)?): Void;
-    /** Resize event occurs once at startup, then each time any
-        of native width, height or density changes. */
+    /**
+     * Resize event occurs once at startup, then each time any
+     * of native width, height or density changes.
+     */
     listensResize(): Bool;
     /**mouseDown event*/
     onMouseDown(owner: Entity?, handleButtonIdXY: ((buttonId: Int, x: Float, y: Float) => Void)): Void;
@@ -2662,11 +3634,21 @@ class Screen extends Entity implements Observable {
     addHitVisual(visual: Visual): Void;
     removeHitVisual(visual: Visual): Void;
     isHitVisual(visual: Visual): Bool;
+    mousePressed(buttonId: Int): Bool;
+    mouseJustPressed(buttonId: Int): Bool;
+    mouseJustReleased(buttonId: Int): Bool;
+    touchPressed(touchIndex: Int): Bool;
+    touchJustPressed(touchIndex: Int): Bool;
+    touchJustReleased(touchIndex: Int): Bool;
+    touchDeltaX(touchIndex: Int): Float;
+    touchDeltaY(touchIndex: Int): Float;
     unbindEvents(): Void;
 }
 
-/** Runtime utilities to compute asset lists/names from raw (relative) file list.
-    Code is very similar to AssetsMacro, but for runtime execution, with any list of asset. */
+/**
+ * Runtime utilities to compute asset lists/names from raw (relative) file list.
+ * Code is very similar to AssetsMacro, but for runtime execution, with any list of asset.
+ */
 class RuntimeAssets {
     constructor(allAssets: Array<String>, path?: String?);
     static fromPath(path: String): RuntimeAssets;
@@ -2674,7 +3656,9 @@ class RuntimeAssets {
     reset(allAssets: Array<String>, path?: String?): Void;
     getNames(kind: String, extensions?: Array<String>?, dir?: Bool): Array<TAnonymous>;
     getLists(): TAnonymous;
-    /** Same as getLists(), but will transform Maps into JSON-encodable raw objects. */
+    /**
+     * Same as getLists(), but will transform Maps into JSON-encodable raw objects.
+     */
     getEncodableLists(): TAnonymous;
 }
 
@@ -2696,18 +3680,26 @@ class Runner {
      * @return Bool
      */
     static currentIsMainThread(): Bool;
-    /** Returns `true` if _running in background_ is emulated on this platform by
-        running _background_ code in main thread instead of using background thread. */
+    /**
+     * Returns `true` if _running in background_ is emulated on this platform by
+     * running _background_ code in main thread instead of using background thread.
+     */
     static isEmulatingBackgroundWithMain(): Bool;
-    /** Call a function on the primary thread without waiting or blocking.
-        If you want return values see runInMainBlocking */
+    /**
+     * Call a function on the primary thread without waiting or blocking.
+     * If you want return values see runInMainBlocking
+     */
     static runInMain(_fn: (() => Void)): Void;
-    /** Create a background thread using the given function, or just run (deferred) the function if threads are not supported */
+    /**
+     * Create a background thread using the given function, or just run (deferred) the function if threads are not supported
+     */
     static runInBackground(fn: (() => Void)): Void;
 }
 
-/** A reusable array to use in places that need a temporary array many times.
-    Changing array size only increases the backing array size but never decreases it. */
+/**
+ * A reusable array to use in places that need a temporary array many times.
+ * Changing array size only increases the backing array size but never decreases it.
+ */
 class ReusableArray<T> {
     constructor(length: Int);
     length: Int;
@@ -2715,11 +3707,12 @@ class ReusableArray<T> {
     set(index: Int, value: T): Void;
 }
 
-/** An implementation-independant GPU 2D renderer.
-    To be used in pair with a draw backend implementation. */
+/**
+ * An implementation-independant GPU 2D renderer.
+ * To be used in pair with a draw backend implementation.
+ */
 class Renderer extends Entity {
     constructor();
-    maxVerts: Int;
     render(isMainRender: Bool, ceramicVisuals: Array<Visual>): Void;
 }
 
@@ -2731,17 +3724,21 @@ class RenderTexture extends Texture {
     dependingTextures: IntIntMap;
     priority: Float;
     destroy(): Void;
-    /** Draws the given visual onto the render texture.
-        The drawing operation is not done synchronously.
-        It waits for the next draw stage of the app to perform it,
-        then calls done() when finished.
-        This is expected to be used with a texture `autoRender` set to `false`. */
+    /**
+     * Draws the given visual onto the render texture.
+     * The drawing operation is not done synchronously.
+     * It waits for the next draw stage of the app to perform it,
+     * then calls done() when finished.
+     * This is expected to be used with a texture `autoRender` set to `false`.
+     */
     stamp(visual: Visual, done: (() => Void)): Void;
-    /** Clears the texture, or a specific area of it with a fill color and alpha.
-        The drawing operation is not done synchronously.
-        It waits for the next draw stage of the app to perform it,
-        then calls done() when finished.
-        This is expected to be used with a texture `autoRender` set to `false`. */
+    /**
+     * Clears the texture, or a specific area of it with a fill color and alpha.
+     * The drawing operation is not done synchronously.
+     * It waits for the next draw stage of the app to perform it,
+     * then calls done() when finished.
+     * This is expected to be used with a texture `autoRender` set to `false`.
+     */
     clear(color?: Color, alpha?: Float, clipX?: Float, clipY?: Float, clipWidth?: Float, clipHeight?: Float, done: (() => Void)): Void;
 }
 
@@ -2749,14 +3746,15 @@ class Quad extends Visual {
     constructor();
     static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
     color: Color;
-    /** If set to `true`, this quad will be considered
-        transparent thus won't be draw on screen. 
-        Children still behave and get drawn as before:
-        they don't inherit this property. */
+    /**
+     * If set to `true`, this quad will be considered
+     * transparent thus won't be draw on screen. 
+     * Children still behave and get drawn as before:
+     * they don't inherit this property.
+     */
     transparent: Bool;
     tile: TextureTile;
     texture: Texture;
-    rotateFrame: RotateFrame;
     frameX: Float;
     frameY: Float;
     frameWidth: Float;
@@ -2767,8 +3765,10 @@ class Quad extends Visual {
 
 class Point {
     constructor(x?: Float, y?: Float);
+    static get(x?: Float, y?: Float): Point;
     x: Float;
     y: Float;
+    recycle(): Void;
 }
 
 class PersistentData {
@@ -2783,154 +3783,162 @@ class PersistentData {
 }
 
 /**
-	This class provides a convenient way of working with paths. It supports the
-	common path formats:
+    This class provides a convenient way of working with paths. It supports the
+    common path formats:
 
-	- directory1/directory2/filename.extension
-	- directory1\directory2\filename.extension
+    - directory1/directory2/filename.extension
+    - directory1\directory2\filename.extension
 */
 class Path {
     /**
-		Creates a new Path instance by parsing `path`.
+        Creates a new Path instance by parsing `path`.
 
-		Path information can be retrieved by accessing the dir, file and ext
-		properties.
-	*/
+        Path information can be retrieved by accessing the dir, file and ext
+        properties.
+    */
     constructor(path: String);
     /**
-		Returns the String representation of `path` without the file extension.
+        Returns the String representation of `path` without the file extension.
 
-		If `path` is null, the result is unspecified.
-	*/
+        If `path` is null, the result is unspecified.
+    */
     static withoutExtension(path: String): String;
     /**
-		Returns the String representation of `path` without the directory.
+        Returns the String representation of `path` without the directory.
 
-		If `path` is null, the result is unspecified.
-	*/
+        If `path` is null, the result is unspecified.
+    */
     static withoutDirectory(path: String): String;
     /**
-		Returns the directory of `path`.
+        Returns the directory of `path`.
 
-		If the directory is null, the empty String `""` is returned.
+        If the directory is null, the empty String `""` is returned.
 
-		If `path` is null, the result is unspecified.
-	*/
+        If `path` is null, the result is unspecified.
+    */
     static directory(path: String): String;
     /**
-		Returns the extension of `path`.
+        Returns the extension of `path`.
 
-		If the extension is null, the empty String `""` is returned.
+        If the extension is null, the empty String `""` is returned.
 
-		If `path` is null, the result is unspecified.
-	*/
+        If `path` is null, the result is unspecified.
+    */
     static extension(path: String): String;
     /**
-		Returns a String representation of `path` where the extension is `ext`.
+        Returns a String representation of `path` where the extension is `ext`.
 
-		If `path` has no extension, `ext` is added as extension.
+        If `path` has no extension, `ext` is added as extension.
 
-		If `path` or `ext` are null, the result is unspecified.
-	*/
+        If `path` or `ext` are null, the result is unspecified.
+    */
     static withExtension(path: String, ext: String): String;
     /**
-		Joins all paths in `paths` together.
+        Joins all paths in `paths` together.
 
-		If `paths` is empty, the empty String `""` is returned. Otherwise the
-		paths are joined with a slash between them.
+        If `paths` is empty, the empty String `""` is returned. Otherwise the
+        paths are joined with a slash between them.
 
-		If `paths` is null, the result is unspecified.
-	*/
+        If `paths` is null, the result is unspecified.
+    */
     static join(paths: Array<String>): String;
     /**
-		Normalize a given `path` (e.g. make '/usr/local/../lib' to '/usr/lib').
+        Normalize a given `path` (e.g. make '/usr/local/../lib' to '/usr/lib').
 
-		Also replaces backslashes \ with slashes / and afterwards turns
-		multiple slashes into a single one.
+        Also replaces backslashes \ with slashes / and afterwards turns
+        multiple slashes into a single one.
 
-		If `path` is null, the result is unspecified.
-	*/
+        If `path` is null, the result is unspecified.
+    */
     static normalize(path: String): String;
     /**
-		Adds a trailing slash to `path`, if it does not have one already.
+        Adds a trailing slash to `path`, if it does not have one already.
 
-		If the last slash in `path` is a backslash, a backslash is appended to
-		`path`.
+        If the last slash in `path` is a backslash, a backslash is appended to
+        `path`.
 
-		If the last slash in `path` is a slash, or if no slash is found, a slash
-		is appended to `path`. In particular, this applies to the empty String
-		`""`.
+        If the last slash in `path` is a slash, or if no slash is found, a slash
+        is appended to `path`. In particular, this applies to the empty String
+        `""`.
 
-		If `path` is null, the result is unspecified.
-	*/
+        If `path` is null, the result is unspecified.
+    */
     static addTrailingSlash(path: String): String;
     /**
-		Removes trailing slashes from `path`.
+        Removes trailing slashes from `path`.
 
-		If `path` does not end with a `/` or `\`, `path` is returned unchanged.
+        If `path` does not end with a `/` or `\`, `path` is returned unchanged.
 
-		Otherwise the substring of `path` excluding the trailing slashes or
-		backslashes is returned.
+        Otherwise the substring of `path` excluding the trailing slashes or
+        backslashes is returned.
 
-		If `path` is null, the result is unspecified.
-	*/
+        If `path` is null, the result is unspecified.
+    */
     static removeTrailingSlashes(path: String): String;
     /**
-		Returns true if the path is an absolute path, and false otherwise.
-	*/
+        Returns true if the path is an absolute path, and false otherwise.
+    */
     static isAbsolute(path: String): Bool;
     /**
-		The directory.
+        The directory.
 
-		This is the leading part of the path that is not part of the file name
-		and the extension.
+        This is the leading part of the path that is not part of the file name
+        and the extension.
 
-		Does not end with a `/` or `\` separator.
+        Does not end with a `/` or `\` separator.
 
-		If the path has no directory, the value is null.
-	*/
+        If the path has no directory, the value is null.
+    */
     dir: String;
     /**
-		The file name.
+        The file name.
 
-		This is the part of the part between the directory and the extension.
+        This is the part of the part between the directory and the extension.
 
-		If there is no file name, e.g. for ".htaccess" or "/dir/", the value
-		is the empty String "".
-	*/
+        If there is no file name, e.g. for ".htaccess" or "/dir/", the value
+        is the empty String "".
+    */
     file: String;
     /**
-		The file extension.
+        The file extension.
 
-		It is separated from the file name by a dot. This dot is not part of
-		the extension.
+        It is separated from the file name by a dot. This dot is not part of
+        the extension.
 
-		If the path has no extension, the value is null.
-	*/
+        If the path has no extension, the value is null.
+    */
     ext: String;
     /**
-		True if the last directory separator is a backslash, false otherwise.
-	*/
+        True if the last directory separator is a backslash, false otherwise.
+    */
     backslash: Bool;
     /**
-		Returns a String representation of `this` path.
+        Returns a String representation of `this` path.
 
-		If `this.backslash` is true, backslash is used as directory separator,
-		otherwise slash is used. This only affects the separator between
-		`this.dir` and `this.file`.
+        If `this.backslash` is true, backslash is used as directory separator,
+        otherwise slash is used. This only affects the separator between
+        `this.dir` and `this.file`.
 
-		If `this.directory` or `this.extension` is null, their representation
-		is the empty String "".
-	*/
+        If `this.directory` or `this.extension` is null, their representation
+        is the empty String "".
+    */
     toString(): String;
 }
 
-    /** Which status a `Particles` emitter object has. */
+    /**
+ * Which status a `Particles` emitter object has.
+ */
 enum ParticlesStatus {
-    /** Not emitting particles, but previously emitted particles are still spreading */
-    SPREADING    /** Not emitting particles, and no particle is visible. */
+    /**
+     * Not emitting particles, but previously emitted particles are still spreading
+     */
+    SPREADING    /**
+     * Not emitting particles, and no particle is visible.
+     */
 ,
-    IDLE    /** Emitting particles. */
+    IDLE    /**
+     * Emitting particles.
+     */
 ,
     EMITTING
 }
@@ -2940,8 +3948,12 @@ enum ParticlesStatus {
  * Otherwise, particles will just use `velocityX` and `velocityY`.
  */
 enum ParticlesLaunchMode {
-    /** Particles will use `velocityX` and `velocityY` to be launched */
-    SQUARE    /** Particles will use `launchAngle` and `speed` to be launched */
+    /**
+     * Particles will use `velocityX` and `velocityY` to be launched
+     */
+    SQUARE    /**
+     * Particles will use `launchAngle` and `speed` to be launched
+     */
 ,
     CIRCLE
 }
@@ -2992,36 +4004,36 @@ class Particles<T extends ceramic.ParticleEmitter> extends Visual {
      */
     emitterVisualRotationActive: Bool;
     /**
-	 * The width of the emission area.
+     * The width of the emission area.
      * If not defined (`-1`), will use visual's width bound to this `ParticleEmitter` object, if any
-	 */
+     */
     emitterWidth: Float;
     /**
-	 * The height of the emission area.
+     * The height of the emission area.
      * If not defined (`-1`), will use visual's height bound to this `ParticleEmitter` object, if any
-	 */
+     */
     emitterHeight: Float;
     /**
-	 * The x position of the emission, relative to particles parent (if any)
-	 */
+     * The x position of the emission, relative to particles parent (if any)
+     */
     emitterX: Float;
     /**
-	 * The y position of the emission, relative to particles parent (if any)
-	 */
+     * The y position of the emission, relative to particles parent (if any)
+     */
     emitterY: Float;
     /**
      * Enable or disable the velocity range of particles launched from this emitter. Only used with `SQUARE`.
      */
     emitterVelocityActive: Bool;
     /**
-	 * If you are using `acceleration`, you can use `maxVelocity` with it
-	 * to cap the speed automatically (very useful!).
-	 */
+     * If you are using `acceleration`, you can use `maxVelocity` with it
+     * to cap the speed automatically (very useful!).
+     */
     emitterMaxVelocityX: Float;
     /**
-	 * If you are using `acceleration`, you can use `maxVelocity` with it
-	 * to cap the speed automatically (very useful!).
-	 */
+     * If you are using `acceleration`, you can use `maxVelocity` with it
+     * to cap the speed automatically (very useful!).
+     */
     emitterMaxVelocityY: Float;
     /**
      * Sets the velocity range of particles launched from this emitter. Only used with `SQUARE`.
@@ -3057,9 +4069,11 @@ class Particles<T extends ceramic.ParticleEmitter> extends Visual {
     emitterVelocityEndMaxY: Float;
 }
 
-/** A particle item.
-    You should not instanciate this yourself as
-    it is managed by a `Particles` emitter object. */
+/**
+ * A particle item.
+ * You should not instanciate this yourself as
+ * it is managed by a `Particles` emitter object.
+ */
 class ParticleItem {
     constructor();
     visual: Visual;
@@ -3071,11 +4085,17 @@ class ParticleItem {
     active: Bool;
     lifespan: Float;
     age: Float;
-    /** The time relative to app when this particule was emitted */
+    /**
+     * The time relative to app when this particule was emitted
+     */
     time: Float;
-    /** Convenience: hold a random value between 0 and 1 for each particle */
+    /**
+     * Convenience: hold a random value between 0 and 1 for each particle
+     */
     random: Float;
-    /** In case implementation needs to keep a status for each particle, this property can be used for that */
+    /**
+     * In case implementation needs to keep a status for each particle, this property can be used for that
+     */
     status: Int;
     colorRangeActive: Bool;
     colorRangeStart: Color;
@@ -3138,46 +4158,133 @@ class Ngon extends Mesh {
     computeContent(): Void;
 }
 
-class NapePhysics extends Entity {
+class NapeSystem extends ceramic.System {
     constructor();
+    /**
+     * Triggered right before updating/stepping nape spaces
+     */
+    onUpdateSpaces(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
+    /**
+     * Triggered right before updating/stepping nape spaces
+     */
+    onceUpdateSpaces(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
+    /**
+     * Triggered right before updating/stepping nape spaces
+     */
+    offUpdateSpaces(handleDelta?: ((delta: Float) => Void)?): Void;
+    /**
+     * Triggered right before updating/stepping nape spaces
+     */
+    listensUpdateSpaces(): Bool;
+    /**
+     * Triggered right before applying nape bodies to visuals
+     */
+    onBeginUpdateVisuals(owner: Entity?, handle: (() => Void)): Void;
+    /**
+     * Triggered right before applying nape bodies to visuals
+     */
+    onceBeginUpdateVisuals(owner: Entity?, handle: (() => Void)): Void;
+    /**
+     * Triggered right before applying nape bodies to visuals
+     */
+    offBeginUpdateVisuals(handle?: (() => Void)?): Void;
+    /**
+     * Triggered right before applying nape bodies to visuals
+     */
+    listensBeginUpdateVisuals(): Bool;
+    /**
+     * Triggered right after applying nape bodies to visuals
+     */
+    onEndUpdateVisuals(owner: Entity?, handle: (() => Void)): Void;
+    /**
+     * Triggered right after applying nape bodies to visuals
+     */
+    onceEndUpdateVisuals(owner: Entity?, handle: (() => Void)): Void;
+    /**
+     * Triggered right after applying nape bodies to visuals
+     */
+    offEndUpdateVisuals(handle?: (() => Void)?): Void;
+    /**
+     * Triggered right after applying nape bodies to visuals
+     */
+    listensEndUpdateVisuals(): Bool;
+    items: Array<VisualNapePhysics>;
+    /**
+     * All spaces used with nape physics
+     */
+    spaces: Array<nape.space.Space>;
+    /**
+     * Default space for nape physics
+     */
+    space: nape.space.Space;
+    createSpace(autoAdd?: Bool): nape.space.Space;
+    addSpace(space: nape.space.Space): Void;
+    removeSpace(space: nape.space.Space): Void;
+    unbindEvents(): Void;
 }
 
-/** An utility to reuse meshes at application level. */
+/**
+ * An utility to reuse meshes at application level.
+ */
 class MeshPool {
-    /** Get or create a mesh. The mesh is active an ready to be displayed. */
+    /**
+     * Get or create a mesh. The mesh is active an ready to be displayed.
+     */
     static get(): Mesh;
-    /** Recycle an existing mesh. The mesh will be cleaned up and marked as inactive (e.g. not displayed) */
+    /**
+     * Recycle an existing mesh. The mesh will be cleaned up and marked as inactive (e.g. not displayed)
+     */
     static recycle(mesh: Mesh): Void;
     static clear(): Void;
 }
 
-/** Draw anything composed of triangles/vertices. */
+/**
+ * Draw anything composed of triangles/vertices.
+ */
 class Mesh extends Visual {
     constructor();
     static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
     colorMapping: MeshColorMapping;
-    /** The number of floats to add to fill float attributes in vertices array.
-        Default is zero: no custom attributes. Update this value when using shaders with custom attributes. */
+    /**
+     * The number of floats to add to fill float attributes in vertices array.
+     * Default is zero: no custom attributes. Update this value when using shaders with custom attributes.
+     */
     customFloatAttributesSize: Int;
-    /** When set to `true` hit test on this mesh will be performed at vertices level instead
-        of simply using bounds. This make the test substancially more expensive however.
-        Use only when needed. */
+    /**
+     * When set to `true` hit test on this mesh will be performed at vertices level instead
+     * of simply using bounds. This make the test substancially more expensive however.
+     * Use only when needed.
+     */
     complexHit: Bool;
     destroy(): Void;
-    /** On `Mesh` instances, can be used instead of colors array when the mesh is only composed of a single color. */
+    /**
+     * On `Mesh` instances, can be used instead of colors array when the mesh is only composed of a single color.
+     */
     color: Color;
-    /** An array of floats where each pair of numbers is treated as a coordinate location (x,y) */
+    /**
+     * An array of floats where each pair of numbers is treated as a coordinate location (x,y)
+     */
     vertices: Array<Float>;
-    /** An array of integers or indexes, where every three indexes define a triangle. */
+    /**
+     * An array of integers or indexes, where every three indexes define a triangle.
+     */
     indices: Array<Int>;
-    /** An array of colors for each vertex. */
+    /**
+     * An array of colors for each vertex.
+     */
     colors: Array<AlphaColor>;
-    /** The texture used on the mesh (optional) */
+    /**
+     * The texture used on the mesh (optional)
+     */
     texture: Texture;
-    /** An array of normalized coordinates used to apply texture mapping.
-        Required if the texture is set. */
+    /**
+     * An array of normalized coordinates used to apply texture mapping.
+     * Required if the texture is set.
+     */
     uvs: Array<Float>;
-    /** Compute width and height from vertices */
+    /**
+     * Compute width and height from vertices
+     */
     computeSize(): Void;
     /**
      * Compute vertices and indices to obtain a grid with `cols` columns
@@ -3254,33 +4361,51 @@ type LineJoin = polyline.StrokeJoin;
 
 type LineCap = polyline.StrokeCap;
 
-/** Display lines composed of multiple segments, curves... */
+/**
+ * Display lines composed of multiple segments, curves...
+ */
 class Line extends Mesh {
     constructor();
     static editorSetupEntity(entityData: editor.model.EditorEntityData): Void;
-    /** Line points.
-        Note: when editing array content without reassigning it,
-        `contentDirty` must be set to `true` to let the line being updated accordingly. */
+    /**
+     * Line points.
+     * Note: when editing array content without reassigning it,
+     * `contentDirty` must be set to `true` to let the line being updated accordingly.
+     */
     points: Array<Float>;
-    /** The limit before miters turn into bevels. Default 10 */
+    /**
+     * The limit before miters turn into bevels. Default 10
+     */
     miterLimit: Float;
-    /** The line thickness */
+    /**
+     * The line thickness
+     */
     thickness: Float;
-    /** The join type, can be `MITER` or `BEVEL`. Default `BEVEL` */
+    /**
+     * The join type, can be `MITER` or `BEVEL`. Default `BEVEL`
+     */
     join: polyline.StrokeJoin;
-    /** The cap type. Can be `BUTT` or `SQUARE`. Default `BUTT` */
+    /**
+     * The cap type. Can be `BUTT` or `SQUARE`. Default `BUTT`
+     */
     cap: polyline.StrokeCap;
-    /** If `loop` is `true`, will try to join the first and last
-        points together if they are identical. Default `false` */
+    /**
+     * If `loop` is `true`, will try to join the first and last
+     * points together if they are identical. Default `false`
+     */
     loop: Bool;
-    /** If set to `true`, width and heigh will be computed from line points. */
+    /**
+     * If set to `true`, width and heigh will be computed from line points.
+     */
     autoComputeSize: Bool;
     computeContent(): Void;
     computeSize(): Void;
 }
 
-/** Lazy allows to mark any property as lazy.
-    Lazy properties are initialized only at first access. */
+/**
+ * Lazy allows to mark any property as lazy.
+ * Lazy properties are initialized only at first access.
+ */
 interface Lazy {
 }
 
@@ -3332,13 +4457,21 @@ namespace KeyAcceleratorItem {
 
 class Key {
     constructor(keyCode: KeyCode, scanCode: ScanCode);
-    /** Key code (localized key) depends on keyboard mapping (QWERTY, AZERTY, ...) */
+    /**
+     * Key code (localized key) depends on keyboard mapping (QWERTY, AZERTY, ...)
+     */
     keyCode: KeyCode;
-    /** Name associated to the key code (localized key) */
+    /**
+     * Name associated to the key code (localized key)
+     */
     keyCodeName: String;
-    /** Scan code (US international key) doesn't depend on keyboard mapping (QWERTY, AZERTY, ...) */
+    /**
+     * Scan code (US international key) doesn't depend on keyboard mapping (QWERTY, AZERTY, ...)
+     */
     scanCode: ScanCode;
-    /** Name associated to the scan code (US international key) */
+    /**
+     * Name associated to the scan code (US international key)
+     */
     scanCodeName: String;
 }
 
@@ -3347,14 +4480,20 @@ class Json {
     static parse(text: String): Dynamic;
 }
 
-/** An object map that uses integers as key. */
+/**
+ * An object map that uses integers as key.
+ */
 class IntMap<V> {
     constructor(size?: Int, fillFactor?: Float, iterable?: Bool);
-    /** When this map is marked as iterable, this array will contain every key. */
+    /**
+     * When this map is marked as iterable, this array will contain every key.
+     */
     iterableKeys: Array<Int>;
-    /** Values as they are stored.
-        Can be used to iterate on values directly,
-        but can contain null values. */
+    /**
+     * Values as they are stored.
+     * Can be used to iterate on values directly,
+     * but can contain null values.
+     */
     values: haxe.ds.Vector<V>;
     get(key: Int): V;
     getInline(key: Int): V;
@@ -3362,53 +4501,104 @@ class IntMap<V> {
     existsInline(key: Int): Bool;
     set(key: Int, value: V): Void;
     remove(key: Int): Void;
+    copy(): IntMap<V>;
 }
 
-/** Same as Settings, but for app startup (inside Project.new(settings)).
-    Read-only values can still
-    be edited at that stage. */
+/**
+ * Same as Settings, but for app startup (inside Project.new(settings)).
+ * Read-only values can still
+ * be edited at that stage.
+ */
 class InitSettings {
     constructor(settings: Settings);
-    /** Target width. Affects window size at startup
-        and affects screen scaling at any time.
-        Ignored if set to 0 (default) */
+    /**
+     * Target width. Affects window size at startup
+     * and affects screen scaling at any time.
+     * Ignored if set to 0 (default)
+     */
     targetWidth: Int;
-    /** Target height. Affects window size at startup
-        and affects screen scaling at any time.
-        Ignored if set to 0 (default) */
+    /**
+     * Target height. Affects window size at startup
+     * and affects screen scaling at any time.
+     * Ignored if set to 0 (default)
+     */
     targetHeight: Int;
-    /** Target window width at startup
-        Use `targetWidth` as fallback if set to 0 (default) */
+    /**
+     * Target window width at startup
+     * Use `targetWidth` as fallback if set to 0 (default)
+     */
     windowWidth: Int;
-    /** Target window height at startup
-        Use `targetHeight` as fallback if set to 0 (default) */
+    /**
+     * Target window height at startup
+     * Use `targetHeight` as fallback if set to 0 (default)
+     */
     windowHeight: Int;
-    /** Target density. Affects the quality of textures
-        being loaded. Changing it at runtime will update
-        texture quality if needed.
-        Ignored if set to 0 (default) */
+    /**
+     * Target density. Affects the quality of textures
+     * being loaded. Changing it at runtime will update
+     * texture quality if needed.
+     * Ignored if set to 0 (default)
+     */
     targetDensity: Int;
-    /** Background color. */
+    /**
+     * Background color.
+     */
     background: Color;
-    /** Screen scaling (FIT, FILL, RESIZE, FIT_RESIZE). */
+    /**
+     * Screen scaling (FIT, FILL, RESIZE, FIT_RESIZE).
+     */
     scaling: ScreenScaling;
-    /** App window title. */
+    /**
+     * App window title.
+     */
     title: String;
-    /** Antialiasing value (0 means disabled). */
+    /**
+     * Fullscreen enabled or not.
+     */
+    fullscreen: Bool;
+    /**
+     * Maximum app update delta time.
+     * During app update (at each frame), `app.delta` will be capped to `maxDelta`
+     * if its value is above `maxDelta`.
+     * If needed, use `app.realDelta` to get real elapsed time since last frame.
+     */
+    maxDelta: Float;
+    /**
+     * Setup screen orientation. Default is `NONE`,
+     * meaning nothing is enforced and project defaults will be used.
+     */
+    orientation: ceramic.ScreenOrientation;
+    /**
+     * Antialiasing value (0 means disabled).
+     */
     antialiasing: Int;
-    /** App collections. */
+    /**
+     * App collections.
+     */
     collections: (() => ceramic.AutoCollections);
-    /** App info (useful when dynamically loaded, not needed otherwise). */
+    /**
+     * App info (useful when dynamically loaded, not needed otherwise).
+     */
     appInfo: Dynamic;
-    /** Whether the window can be resized or not. */
+    /**
+     * Whether the window can be resized or not.
+     */
     resizable: Bool;
-    /** Assets path. */
+    /**
+     * Assets path.
+     */
     assetsPath: String;
-    /** Settings passed to backend. */
+    /**
+     * Settings passed to backend.
+     */
     backend: Dynamic;
-    /** Default font asset */
+    /**
+     * Default font asset
+     */
     defaultFont: AssetId<String>;
-    /** Default shader asset */
+    /**
+     * Default shader asset
+     */
     defaultShader: AssetId<String>;
 }
 
@@ -3445,7 +4635,9 @@ class HttpResponse {
     headers: haxe.ds.Map<K, V>;
 }
 
-    /** Augmented and higher level HTTP request options. */
+    /**
+ * Augmented and higher level HTTP request options.
+ */
 interface HttpRequestOptions {
     content?: String?;
     headers?: haxe.ds.Map<K, V>?;
@@ -3455,19 +4647,29 @@ interface HttpRequestOptions {
     url: String;
 }
 
-/** A cross-platform and high level HTTP request utility */
+/**
+ * A cross-platform and high level HTTP request utility
+ */
 class Http {
     static request(options: TAnonymous, done: ((arg1: HttpResponse) => Void)): Void;
 }
 
-/** An utility to encode strings with hashes, allowing to check their validity on decode. */
+/**
+ * An utility to encode strings with hashes, allowing to check their validity on decode.
+ */
 class HashedString {
-    /** Encode the given string `str` and return the result. */
+    /**
+     * Encode the given string `str` and return the result.
+     */
     static encode(str: String): String;
-    /** Encode and append `str` to the already encoded string `encoded` and return the results.
-        This is equivalent to `result = encoded + HashedString.encode(str)` */
+    /**
+     * Encode and append `str` to the already encoded string `encoded` and return the results.
+     * This is equivalent to `result = encoded + HashedString.encode(str)`
+     */
     static append(encoded: String, str: String): String;
-    /** Decode the given `encoded` string and return the result. */
+    /**
+     * Decode the given `encoded` string and return the result.
+     */
     static decode(encoded: String): String;
     isLastDecodeIncomplete(): Bool;
 }
@@ -3513,9 +4715,13 @@ class GlyphQuad extends Quad {
     unbindEvents(): Void;
 }
 
-/** Geometry-related utilities. */
+/**
+ * Geometry-related utilities.
+ */
 class GeometryUtils {
-    /** Returns `true` if the point `(x,y)` is inside the given (a,b,c) triangle */
+    /**
+     * Returns `true` if the point `(x,y)` is inside the given (a,b,c) triangle
+     */
     static pointInTriangle(x: Float, y: Float, ax: Float, ay: Float, bx: Float, by: Float, cx: Float, cy: Float): Bool;
 }
 
@@ -3540,26 +4746,44 @@ class Fragments {
 }
 
 interface FragmentItem {
-    /** Entity components. */
+    /**
+     * Entity components.
+     */
     components: Dynamic;
-    /** Arbitrary data hold by this item. */
+    /**
+     * Arbitrary data hold by this item.
+     */
     data?: Dynamic?;
-    /** Entity class (ex: ceramic.Visual, ceramic.Quad, ...). */
+    /**
+     * Entity class (ex: ceramic.Visual, ceramic.Quad, ...).
+     */
     entity: String;
-    /** Entity identifier. */
+    /**
+     * Entity identifier.
+     */
     id: String;
-    /** Entity name. */
+    /**
+     * Entity name.
+     */
     name?: String?;
-    /** Properties assigned after creating entity. */
+    /**
+     * Properties assigned after creating entity.
+     */
     props: Dynamic;
 }
 
 interface FragmentData {
-    /** Fragment color (if not transparent, default `BLACK`) */
+    /**
+     * Fragment color (if not transparent, default `BLACK`)
+     */
     color?: Color?;
-    /** Fragment-level components */
+    /**
+     * Fragment-level components
+     */
     components: haxe.DynamicAccess<String>;
-    /** Arbitrary data hold by this fragment. */
+    /**
+     * Arbitrary data hold by this fragment.
+     */
     data: Dynamic;
     /**
      * Frames per second (used in timeline, default is 30).
@@ -3568,25 +4792,43 @@ interface FragmentData {
      * Frame values are interpolated to match screen frame rate.
      */
     fps?: Int?;
-    /** Fragment height */
+    /**
+     * Fragment height
+     */
     height: Float;
-    /** Identifier of the fragment. */
+    /**
+     * Identifier of the fragment.
+     */
     id: String;
-    /** Fragment items (visuals or other entities) */
+    /**
+     * Fragment items (visuals or other entities)
+     */
     items?: Array<TAnonymous>?;
-    /** Timeline labels */
+    /**
+     * Timeline labels
+     */
     labels?: haxe.DynamicAccess<Int>?;
-    /** Whether fragment background overflows (no effect on fragment itself, depends on player implementation) */
+    /**
+     * Whether fragment background overflows (no effect on fragment itself, depends on player implementation)
+     */
     overflow?: Bool?;
-    /** Timeline tracks */
+    /**
+     * Timeline tracks
+     */
     tracks?: Array<TAnonymous>?;
-    /** Fragment being transparent or not (default `true`) */
+    /**
+     * Fragment being transparent or not (default `true`)
+     */
     transparent?: Bool?;
-    /** Fragment width */
+    /**
+     * Fragment width
+     */
     width: Float;
 }
 
-/** A fragment is a group of visuals rendered from data (.fragment file) */
+/**
+ * A fragment is a group of visuals rendered from data (.fragment file)
+ */
 class Fragment extends Layer {
     constructor(assets?: Assets?, editedItems?: Bool);
     static cacheData(fragmentData: TAnonymous): Void;
@@ -3594,7 +4836,7 @@ class Fragment extends Layer {
      * A static helper to get a fragment data object from fragment id.
      * Fragments need to be cached first with `cacheFragmentData()`,
      * unless an editor instance is being active.
-     * @param fragmentId 
+     * @param fragmentId
      * @return Null<FragmentData>
      */
     static getData(fragmentId: String): TAnonymous?;
@@ -3708,8 +4950,10 @@ class Fragment extends Layer {
     destroy(): Void;
     computeInstanceContentIfNeeded(itemId: String, entity?: Entity?): Void;
     updateEditableFieldsFromInstance(itemId: String, forceChange?: Bool): Void;
-    /** Fragment components mapping. Does not contain components
-        created separatelywith `component()` or macro-based components or components property. */
+    /**
+     * Fragment components mapping. Does not contain components
+     * created separatelywith `component()` or macro-based components or components property.
+     */
     fragmentComponents: Map<String, Component>;
     /**
      * Create or update a timeline track from the provided track data
@@ -3730,13 +4974,13 @@ class Fragment extends Layer {
     putLabel(index: Int, name: String): Void;
     /**
      * Return the index (position) of the given label name or -1 if no such label exists.
-     * @param name 
+     * @param name
      * @return Int
      */
     indexOfLabel(name: String): Int;
     /**
      * Return the label at the given index (position), if any exists.
-     * @param index 
+     * @param index
      * @return Int
      */
     labelAtIndex(index: Int): String;
@@ -3781,10 +5025,12 @@ class FontAsset extends Asset {
     unbindEvents(): Void;
 }
 
-type Float32Array = snow.api.buffers.Float32Array;
+type Float32Array = clay.buffers.Float32ArrayImplJS;
 
-/** A visuals that displays its children through a filter. A filter draws its children into a `RenderTexture`
-    allowing to process the result through a shader, apply blending or alpha on the final result... */
+/**
+ * A visuals that displays its children through a filter. A filter draws its children into a `RenderTexture`
+ * allowing to process the result through a shader, apply blending or alpha on the final result...
+ */
 class Filter extends Layer implements Observable {
     constructor();
     /**Event when any observable value as changed on this instance.*/
@@ -3797,25 +5043,37 @@ class Filter extends Layer implements Observable {
     listensObservedDirty(): Bool;
     /**Default is `false`, automatically set to `true` when any of this instance's observable variables has changed.*/
     observedDirty: Bool;
-    /** If provided, this id will be assigned to `renderTexture.id`. */
+    /**
+     * If provided, this id will be assigned to `renderTexture.id`.
+     */
     textureId: String;
     content: Quad;
-    /** If provided, visuals in content will react to hit tests
-        and touch events as if they were inside this hit visual.
-        By default, `hitVisual` is the `Filter` instance itself. */
+    /**
+     * If provided, visuals in content will react to hit tests
+     * and touch events as if they were inside this hit visual.
+     * By default, `hitVisual` is the `Filter` instance itself.
+     */
     hitVisual: Visual;
-    /** If `enabled` is set to `false`, no render texture will be used.
-        The children will be displayed on screen directly.
-        Useful to toggle a filter without touching visuals hierarchy. */
+    /**
+     * If `enabled` is set to `false`, no render texture will be used.
+     * The children will be displayed on screen directly.
+     * Useful to toggle a filter without touching visuals hierarchy.
+     */
     enabled: Bool;
-    /** Texture filter */
+    /**
+     * Texture filter
+     */
     textureFilter: TextureFilter;
-    /** Auto render? */
+    /**
+     * Auto render?
+     */
     autoRender: Bool;
-    /** If set to true, this filter will not render automatically its children.
-        It will instead set their `active` state to `false` unless explicitly rendered.
-        Note that when using explicit render, `active` property on children is managed
-        by this filter. */
+    /**
+     * If set to true, this filter will not render automatically its children.
+     * It will instead set their `active` state to `false` unless explicitly rendered.
+     * Note that when using explicit render, `active` property on children is managed
+     * by this filter.
+     */
     explicitRender: Bool;
     textureTilePacker: TextureTilePacker;
     textureTile: TextureTile;
@@ -3837,11 +5095,15 @@ class Filter extends Layer implements Observable {
     unbindEvents(): Void;
 }
 
-/** Filesystem-related utilities. Only work on sys targets and/or nodejs depending on the methods */
+/**
+ * Filesystem-related utilities. Only work on sys targets and/or nodejs depending on the methods
+ */
 class Files {
     static haveSameContent(filePath1: String, filePath2: String): Bool;
     static haveSameLastModified(filePath1: String, filePath2: String): Bool;
-    /** Only works in nodejs for now. */
+    /**
+     * Only works in nodejs for now.
+     */
     static setToSameLastModified(srcFilePath: String, dstFilePath: String): Void;
     static getFlatDirectory(dir: String, excludeSystemFiles?: Bool, subCall?: Bool): Array<String>;
     /**
@@ -3863,7 +5125,9 @@ class Files {
     static isDirectory(path: String): Bool;
 }
 
-/** A file watcher for ceramic compatible with `interpret.Watcher`. */
+/**
+ * A file watcher for ceramic compatible with `interpret.Watcher`.
+ */
 class FileWatcher extends Entity {
     constructor();
     static UPDATE_INTERVAL: Float;
@@ -3883,27 +5147,37 @@ class FieldInfo {
     static editableFieldInfo(targetClass: String, recursive?: Bool): haxe.ds.Map<K, V>;
 }
 
-/** A bunch of static extensions to make life easier. */
+/**
+ * A bunch of static extensions to make life easier.
+ */
 class Extensions<T> {
     static unsafeGet<T>(array: Array<T>, index: Int): T;
     static unsafeSet<T>(array: Array<T>, index: Int, value: T): Void;
     static setArrayLength<T>(array: Array<T>, length: Int): Void;
-    /** Return a random element contained in the given array */
+    /**
+     * Return a random element contained in the given array
+     */
     static randomElement<T>(array: Array<T>): T;
-    /** Return a random element contained in the given array that is not equal to the `except` arg.
-        @param array  The array in which we extract the element from
-        @param except The element we don't want
-        @param unsafe If set to `true`, will prevent allocating a new array (and may be faster) but will loop forever if there is no element except the one we don't want
-        @return The random element or `null` if nothing was found */
+    /**
+     * Return a random element contained in the given array that is not equal to the `except` arg.
+     * @param array  The array in which we extract the element from
+     * @param except The element we don't want
+     * @param unsafe If set to `true`, will prevent allocating a new array (and may be faster) but will loop forever if there is no element except the one we don't want
+     * @return The random element or `null` if nothing was found
+     */
     static randomElementExcept<T>(array: Array<T>, except: T, unsafe?: Bool): T;
-    /** Return a random element contained in the given array that is validated by the provided validator.
-        If no item is valid, returns null.
-        @param array  The array in which we extract the element from
-        @param validator A function that returns true if the item is valid, false if not
-        @return The random element or `null` if nothing was found */
+    /**
+     * Return a random element contained in the given array that is validated by the provided validator.
+     * If no item is valid, returns null.
+     * @param array  The array in which we extract the element from
+     * @param validator A function that returns true if the item is valid, false if not
+     * @return The random element or `null` if nothing was found
+     */
     static randomElementMatchingValidator<T>(array: Array<T>, validator: ((arg1: T) => Bool)): T;
-    /** Shuffle an Array. This operation affects the array in place.
-        The shuffle algorithm used is a variation of the [Fisher Yates Shuffle](http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle) */
+    /**
+     * Shuffle an Array. This operation affects the array in place.
+     * The shuffle algorithm used is a variation of the [Fisher Yates Shuffle](http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle)
+     */
     static shuffle<T>(arr: Array<T>): Void;
     static swapElements<T>(arr: Array<T>, index0: Int, index1: Int): Void;
 }
@@ -3915,12 +5189,13 @@ class Enums {
 }
 
 class Entity implements Lazy, Events {
-    /** Create a new entity */
+    /**
+     * Create a new entity
+     */
     constructor();
+    hasData: Bool;
     data: Dynamic;
     id: String;
-    scriptContent: String;
-    script: Script;
     events: DynamicEvents<String>;
     destroyed: Bool;
     disposed: Bool;
@@ -3940,38 +5215,48 @@ class Entity implements Lazy, Events {
     offDestroy(handleEntity?: ((entity: Entity) => Void)?): Void;
     /**Does it listen to destroy event*/
     listensDestroy(): Bool;
-    /** Destroy this entity. This method is automatically protected from duplicate calls. That means
-        calling multiple times an entity's `destroy()` method will run the destroy code only one time.
-        As soon as `destroy()` is called, the entity is marked `destroyed=true`, even when calling `destroy()`
-        method on a subclass (a macro is inserting a code to marke the object
-        as destroyed at the beginning of every `destroy()` override function. */
+    /**
+     * Destroy this entity. This method is automatically protected from duplicate calls. That means
+     * calling multiple times an entity's `destroy()` method will run the destroy code only one time.
+     * As soon as `destroy()` is called, the entity is marked `destroyed=true`, even when calling `destroy()`
+     * method on a subclass (a macro is inserting a code to marke the object
+     * as destroyed at the beginning of every `destroy()` override function.
+     */
     destroy(): Void;
     /**
      * Schedules destroy, at the end of the current frame.
      */
     dispose(): Void;
-    /** Remove all events handlers from this entity. */
+    /**
+     * Remove all events handlers from this entity.
+     */
     unbindEvents(): Void;
     autoruns: Array<Autorun>;
-    /** Creates a new `Autorun` instance with the given callback associated with the current entity.
-        @param run The run callback
-        @return The autorun instance */
+    /**
+     * Creates a new `Autorun` instance with the given callback associated with the current entity.
+     * @param run The run callback
+     * @return The autorun instance
+     */
     autorun(run: (() => Void), afterRun?: (() => Void)?): Autorun;
     tween(easing?: Easing?, duration: Float, fromValue: Float, toValue: Float, update: ((arg1: Float, arg2: Float) => Void)): Tween;
     className(): String;
     clearComponents(): Void;
-    /** Public components mapping. Contain components
-        created separately with `component()` or macro-based components as well. */
+    /**
+     * Public components mapping. Contain components
+     * created separately with `component()` or macro-based components as well.
+     */
     components: Map<String, Component>;
     component(name?: String?, component?: Component?): Component;
     hasComponent(name: String): Bool;
     removeComponent(name: String): Void;
-    /** If set to true, that means this entity is managed by editor. */
+    /**
+     * If set to true, that means this entity is managed by editor.
+     */
     edited: Bool;
 }
 
 class EditText extends Entity implements TextInputDelegate, Component {
-    constructor(selectionColor: Color, textCursorColor: Color);
+    constructor(selectionColor: Color, textCursorColor: Color, textCursorOffsetX?: Float, textCursorOffsetY?: Float, textCursorHeightFactor?: Float);
     /**update event*/
     onUpdate(owner: Entity?, handleContent: ((content: String) => Void)): Void;
     /**update event*/
@@ -3998,11 +5283,22 @@ class EditText extends Entity implements TextInputDelegate, Component {
     listensStop(): Bool;
     entity: Text;
     multiline: Bool;
+    editing: Bool;
     selectionColor: Color;
     textCursorColor: Color;
+    textCursorOffsetX: Float;
+    textCursorOffsetY: Float;
+    textCursorHeightFactor: Float;
     disabled: Bool;
-    /** Optional container on which pointer events are bound */
+    /**
+     * Optional container on which pointer events are bound
+     */
     container: Visual;
+    /**
+     * SelectText instance used internally to manage text selection.
+     * Will be defined after component has been assigned to an entity.
+     */
+    selectText: SelectText;
     startInput(selectionStart?: Int, selectionEnd?: Int): Void;
     stopInput(): Void;
     updateText(text: String): Void;
@@ -4072,9 +5368,11 @@ class DoubleClick extends Entity implements Component {
     unbindEvents(): Void;
 }
 
-/** Decomposed transform holds rotation, translation, scale, skew and pivot informations.
-    Provided by Transform.decompose() method.
-    Angles are in radians. */
+/**
+ * Decomposed transform holds rotation, translation, scale, skew and pivot informations.
+ * Provided by Transform.decompose() method.
+ * Angles are in radians.
+ */
 class DecomposedTransform {
     constructor();
     pivotX: Float;
@@ -4114,7 +5412,9 @@ class CustomAssetKind {
     types: Array<String>;
 }
 
-/** Utilities to parse CSV and related */
+/**
+ * Utilities to parse CSV and related
+ */
 class Csv {
     static parse(csv: String): Array<haxe.DynamicAccess<String>>;
     static stringify(items: Array<Dynamic>, fields?: Array<String>?): String;
@@ -4122,42 +5422,48 @@ class Csv {
 
 class ConvertTexture implements ConvertField {
     constructor();
-    basicToField(assets: Assets, basic: String, done: ((arg1: Texture) => Void)): Void;
-    fieldToBasic(value: Texture): String;
+    basicToField(instance: Entity, field: String, assets: Assets, basic: String, done: ((arg1: Texture) => Void)): Void;
+    fieldToBasic(instance: Entity, field: String, value: Texture): String;
 }
 
 class ConvertMap<T> implements ConvertField {
     constructor();
-    basicToField(assets: Assets, basic: haxe.DynamicAccess<T>, done: ((arg1: haxe.ds.Map<K, V>) => Void)): Void;
-    fieldToBasic(value: haxe.ds.Map<K, V>): haxe.DynamicAccess<T>;
+    basicToField(instance: Entity, field: String, assets: Assets, basic: haxe.DynamicAccess<T>, done: ((arg1: haxe.ds.Map<K, V>) => Void)): Void;
+    fieldToBasic(instance: Entity, field: String, value: haxe.ds.Map<K, V>): haxe.DynamicAccess<T>;
 }
 
 class ConvertFragmentData implements ConvertField {
     constructor();
-    basicToField(assets: Assets, basic: Dynamic, done: ((arg1: TAnonymous) => Void)): Void;
-    fieldToBasic(value: TAnonymous): Dynamic;
+    basicToField(instance: Entity, field: String, assets: Assets, basic: Dynamic, done: ((arg1: TAnonymous) => Void)): Void;
+    fieldToBasic(instance: Entity, field: String, value: TAnonymous): Dynamic;
 }
 
 class ConvertFont implements ConvertField {
     constructor();
-    basicToField(assets: Assets, basic: String, done: ((arg1: BitmapFont) => Void)): Void;
-    fieldToBasic(value: BitmapFont): String;
+    basicToField(instance: Entity, field: String, assets: Assets, basic: String, done: ((arg1: BitmapFont) => Void)): Void;
+    fieldToBasic(instance: Entity, field: String, value: BitmapFont): String;
 }
 
-/** Interface to convert basic type `T` to field type `U` and vice versa. */
+/**
+ * Interface to convert basic type `T` to field type `U` and vice versa.
+ */
 interface ConvertField<T, U> {
-    /** Get field value from basic type. As this may require loading assets,
-        A usable `Assets` instance must be provided and the result will only be
-        provided asynchronously by calling `done` callback. */
-    basicToField(assets: Assets, basic: T, done: ((arg1: U) => Void)): Void;
-    /** Get a basic type from the field value. */
-    fieldToBasic(value: U): T;
+    /**
+     * Get field value from basic type. As this may require loading assets,
+     * A usable `Assets` instance must be provided and the result will only be
+     * provided asynchronously by calling `done` callback.
+     */
+    basicToField(instance: Entity, field: String, assets: Assets, basic: T, done: ((arg1: U) => Void)): Void;
+    /**
+     * Get a basic type from the field value.
+     */
+    fieldToBasic(instance: Entity, field: String, value: U): T;
 }
 
 class ConvertComponentMap implements ConvertField {
     constructor();
-    basicToField(assets: Assets, basic: haxe.DynamicAccess<String>, done: ((arg1: haxe.ds.Map<K, V>) => Void)): Void;
-    fieldToBasic(value: haxe.ds.Map<K, V>): haxe.DynamicAccess<String>;
+    basicToField(instance: Entity, field: String, assets: Assets, basic: haxe.DynamicAccess<String>, done: ((arg1: haxe.ds.Map<K, V>) => Void)): Void;
+    fieldToBasic(instance: Entity, field: String, value: haxe.ds.Map<K, V>): haxe.DynamicAccess<String>;
 }
 
 class ComputeFps {
@@ -4166,36 +5472,48 @@ class ComputeFps {
     addFrame(delta: Float): Void;
 }
 
-/** A Component is and Entity that can be bound to another Entity.
-    Any Entity can be used as a Component, given that it implement Component interface.
-    A Component must be an Entity subclass. */
+/**
+ * A Component is and Entity that can be bound to another Entity.
+ * Any Entity can be used as a Component, given that it implement Component interface.
+ * A Component must be an Entity subclass.
+ */
 interface Component {
-    /** If this component was created from an initializer,
-        its initializer name is provided to retrieve the
-        initializer from the component.
-        This field is automatically added to implementing class by ComponentMacro */
+    /**
+     * If this component was created from an initializer,
+     * its initializer name is provided to retrieve the
+     * initializer from the component.
+     * This field is automatically added to implementing class by ComponentMacro
+     */
     initializerName: String;
 }
 
 class CollectionEntry {
-    /** Constructor */
+    /**
+     * Constructor
+     */
     constructor(id?: String?, name?: String?);
     id: String;
     name: String;
-    /** A unique index for this collection entry instance.
-        Warning:
-            this index is in no way predictable and may vary
-            for each entry between each run of the app!
-            This is intended to be used as a fast integer-typed runtime identifier,
-            but do not use this to identify entries when persisting data to disk etc... */
+    /**
+     * A unique index for this collection entry instance.
+     * Warning:
+     *     this index is in no way predictable and may vary
+     *     for each entry between each run of the app!
+     *     This is intended to be used as a fast integer-typed runtime identifier,
+     *     but do not use this to identify entries when persisting data to disk etc...
+     */
     index: Int;
-    /** Set entry fields from given raw data.
-        Takes care of converting types when needed, and possible.
-        It's ok if raw field are strings, like when stored in CSV files.
-        Raw types can be converted to: `Bool`, `Int`, `Float`, `Color` (`Int`), `String` and `enum` types */
+    /**
+     * Set entry fields from given raw data.
+     * Takes care of converting types when needed, and possible.
+     * It's ok if raw field are strings, like when stored in CSV files.
+     * Raw types can be converted to: `Bool`, `Int`, `Float`, `Color` (`Int`), `String` and `enum` types
+     */
     setRawData(data: Dynamic): Void;
-    /** Override this method to perform custom deserialisation on a specific field. If the overrided method
-        returns `true`, default behavior will be skipped for the related field.*/
+    /**
+     * Override this method to perform custom deserialisation on a specific field. If the overrided method
+     * returns `true`, default behavior will be skipped for the related field.
+     */
     setRawField(name: String, rawValue: Dynamic): Bool;
     getEditableData(): TAnonymous;
 }
@@ -4243,7 +5561,9 @@ enum BorderPosition {
     INSIDE
 }
 
-/** A rectangle visual that display a border */
+/**
+ * A rectangle visual that display a border
+ */
 class Border extends Mesh {
     constructor();
     borderPosition: BorderPosition;
@@ -4297,7 +5617,9 @@ class BitmapFontCharacter {
 
 class BitmapFont extends Entity {
     constructor(fontData: BitmapFontData, pages: haxe.ds.Map<K, V>);
-    /** The map of font texture pages to their id. */
+    /**
+     * The map of font texture pages to their id.
+     */
     pages: haxe.ds.Map<K, V>;
     face: String;
     pointSize: Float;
@@ -4307,7 +5629,9 @@ class BitmapFont extends Entity {
     lineHeight: Float;
     kernings: haxe.ds.Map<K, V>;
     msdf: Bool;
-    /** Cached reference of the ' '(32) character, for sizing on tabs/spaces */
+    /**
+     * Cached reference of the ' '(32) character, for sizing on tabs/spaces
+     */
     spaceChar: BitmapFontCharacter;
     /**
      * Shaders used to render the characters. If null, uses default shader.
@@ -4325,37 +5649,51 @@ class BitmapFont extends Entity {
     destroy(): Void;
     needsToPreRenderAtSize(pixelSize: Int): Bool;
     preRenderAtSize(pixelSize: Int, done: (() => Void)): Void;
-    /** Returns the kerning between two glyphs, or 0 if none.
-        A glyph int id is the value from 'c'.charCodeAt(0) */
+    /**
+     * Returns the kerning between two glyphs, or 0 if none.
+     * A glyph int id is the value from 'c'.charCodeAt(0)
+     */
     kerning(first: Int, second: Int): Float?;
 }
 
-/** Bezier curve easing, ported from https://github.com/gre/bezier-easing
-    then extended to work with both cubic and quadratic settings */
+/**
+ * Bezier curve easing, ported from https://github.com/gre/bezier-easing
+ * then extended to work with both cubic and quadratic settings
+ */
 class BezierEasing {
-    /** Create a new instance with the given arguments.
-        If only `x1` and `y1` are provided, the curve is treated as quadratic.
-        If all four values `x1`, `y1`, `x2`, `y2` are provided,
-        the curve is treated as cubic. */
+    /**
+     * Create a new instance with the given arguments.
+     * If only `x1` and `y1` are provided, the curve is treated as quadratic.
+     * If all four values `x1`, `y1`, `x2`, `y2` are provided,
+     * the curve is treated as cubic.
+     */
     constructor(x1: Float, y1: Float, x2?: Float?, y2?: Float?);
     static clearCache(): Void;
-    /** Get or create a `BezierEasing` instance with the given parameters.
-        Created instances are cached and reused. */
+    /**
+     * Get or create a `BezierEasing` instance with the given parameters.
+     * Created instances are cached and reused.
+     */
     static get(x1: Float, y1: Float, x2?: Float?, y2?: Float?): BezierEasing;
-    /** Configure the instance with the given arguments.
-        If only `x1` and `y1` are provided, the curve is treated as quadratic.
-        If all four values `x1`, `y1`, `x2`, `y2` are provided,
-        the curve is treated as cubic. */
+    /**
+     * Configure the instance with the given arguments.
+     * If only `x1` and `y1` are provided, the curve is treated as quadratic.
+     * If all four values `x1`, `y1`, `x2`, `y2` are provided,
+     * the curve is treated as cubic.
+     */
     configure(x1: Float, y1: Float, x2?: Float?, y2?: Float?): Void;
     ease(x: Float): Float;
 }
 
-/** An utility to enqueue functions and execute them in bbackground, in a serialized way,
-    meaning it is garanteed that no function in this queue will be run in parallel. An enqueued
-    function will always be started after every previous function has finished executing. */
+/**
+ * An utility to enqueue functions and execute them in bbackground, in a serialized way,
+ * meaning it is garanteed that no function in this queue will be run in parallel. An enqueued
+ * function will always be started after every previous function has finished executing.
+ */
 class BackgroundQueue extends Entity {
     constructor(checkInterval?: Float);
-    /** Time interval between each checks to see if there is something to run. */
+    /**
+     * Time interval between each checks to see if there is something to run.
+     */
     checkInterval: Float;
     schedule(fn: (() => Void)): Void;
     destroy(): Void;
@@ -4418,7 +5756,9 @@ class Assets extends Entity {
     offAssetFilesChange(handleNewFilesPreviousFiles?: ((newFiles: Map<String, Float>, previousFiles: Map<String, Float>) => Void)?): Void;
     /**Does it listen to assetFilesChange event*/
     listensAssetFilesChange(): Bool;
-    /** If set, will be provided to each added asset in this `Assets` instance. */
+    /**
+     * If set, will be provided to each added asset in this `Assets` instance.
+     */
     runtimeAssets: RuntimeAssets;
     defaultImageOptions: Dynamic;
     /**
@@ -4426,8 +5766,15 @@ class Assets extends Entity {
      * This is useful when we need to update screen during asset loading
      */
     nonBlocking: Bool;
+    /**
+     * If provided, when requesting an asset, it will also check if the parent `Assets`
+     * instance has it and return it if that's the case.
+     */
+    parent: Assets;
     destroy(): Void;
-    /** Destroy assets that have their refCount at `0`. */
+    /**
+     * Destroy assets that have their refCount at `0`.
+     */
     flush(): Void;
     add(id: AssetId<Dynamic>, options?: Dynamic?): Void;
     /**
@@ -4438,19 +5785,36 @@ class Assets extends Entity {
     addImage(name: String, options?: Dynamic?): Void;
     addFont(name: String, options?: Dynamic?): Void;
     addText(name: String, options?: Dynamic?): Void;
+    addBinary(name: String, options?: Dynamic?): Void;
     addSound(name: String, options?: Dynamic?): Void;
     addDatabase(name: String, options?: Dynamic?): Void;
     addFragments(name: String, options?: Dynamic?): Void;
     addShader(name: String, options?: Dynamic?): Void;
-    /** Add the given asset. If a previous asset was replaced, return it. */
+    /**
+     * Add the given asset. If a previous asset was replaced, return it.
+     */
     addAsset(asset: Asset): Asset;
+    imageAsset(name: ceramic.Either<String, AssetId<String>>): ImageAsset;
+    fontAsset(name: ceramic.Either<String, AssetId<String>>): FontAsset;
+    textAsset(name: ceramic.Either<String, AssetId<String>>): TextAsset;
+    soundAsset(name: ceramic.Either<String, AssetId<String>>): SoundAsset;
+    databaseAsset(name: ceramic.Either<String, AssetId<String>>): DatabaseAsset;
+    fragmentsAsset(name: ceramic.Either<String, AssetId<String>>): FragmentsAsset;
+    shaderAsset(name: ceramic.Either<String, AssetId<String>>): ShaderAsset;
     asset(idOrName: Dynamic, kind?: String?): Asset;
     removeAsset(asset: Asset): Void;
-    load(): Void;
-    /** Ensures and asset is loaded and return it on the callback.
-        This will check if the requested asset is currently being loaded,
-        already loaded or should be added and loaded. In all cases, it will try
-        its best to deliver the requested asset or `null` if something went wrong. */
+    /**
+     * Returns `true` if there are assets that should be loaded
+     * @return Bool
+     */
+    hasAnythingToLoad(): Bool;
+    load(warnIfNothingToLoad?: Bool, pos?: TAnonymous?): Void;
+    /**
+     * Ensures and asset is loaded and return it on the callback.
+     * This will check if the requested asset is currently being loaded,
+     * already loaded or should be added and loaded. In all cases, it will try
+     * its best to deliver the requested asset or `null` if something went wrong.
+     */
     ensure(id: AssetId<Dynamic>, options?: Dynamic?, done: ((arg1: Asset) => Void)): Void;
     ensureImage(name: ceramic.Either<String, AssetId<String>>, options?: Dynamic?, done: ((arg1: ImageAsset) => Void)): Void;
     ensureFont(name: ceramic.Either<String, AssetId<String>>, options?: Dynamic?, done: ((arg1: FontAsset) => Void)): Void;
@@ -4462,6 +5826,7 @@ class Assets extends Entity {
     font(name: ceramic.Either<String, AssetId<String>>): BitmapFont;
     sound(name: ceramic.Either<String, AssetId<String>>): Sound;
     text(name: ceramic.Either<String, AssetId<String>>): String;
+    bytes(name: ceramic.Either<String, AssetId<String>>): Bytes;
     shader(name: ceramic.Either<String, AssetId<String>>): Shader;
     database(name: ceramic.Either<String, AssetId<String>>): Array<haxe.DynamicAccess<String>>;
     fragments(name: ceramic.Either<String, AssetId<String>>): haxe.DynamicAccess<TAnonymous>;
@@ -4479,12 +5844,12 @@ class Assets extends Entity {
      * When using web target via electron, be sure to add `ceramic_use_electron` define.
      * @param path
      *     The assets path to watch. You could use `ceramic.macros.DefinesMacro.getDefine('assets_path')`
-     *     to watch default asset path in project.
+     *     to watch default asset path in project. It's the path that will be used if none is provided
      * @param hotReload 
      *     `true` by default. Will enable hot reload of assets when related file changes on disk
      * @return WatchDirectory instance used internally
      */
-    watchDirectory(path: String, hotReload?: Bool): WatchDirectory;
+    watchDirectory(path?: String?, hotReload?: Bool): WatchDirectory;
     unbindEvents(): Void;
 }
 
@@ -4495,12 +5860,34 @@ enum AssetStatus {
     BROKEN
 }
 
+/**
+ * Information extracted from a raw asset path
+ */
 class AssetPathInfo {
     constructor(path: String);
+    /**
+     * Density value resolved from file name.
+     * Example: If file is named `someImage@2x.png`, density will be `2`.
+     * Default density is `1`
+     */
     density: Float;
+    /**
+     * File extension (always converted to lowercase for convenience)
+     */
     extension: String;
+    /**
+     * Normalized asset name (includes subdirectories relative to asset root).
+     * Example: both `someImage.png` and `someImage@2x.png` will resolve to a same asset name `someImage`
+     */
     name: String;
+    /**
+     * Original path used to generated path info
+     */
     path: String;
+    /**
+     * Flags are extracted from file path.
+     * Example: file `someFile+myTag.txt` will generate `myTag` flag.
+     */
     flags: haxe.ds.Map<K, V>;
 }
 
@@ -4526,27 +5913,45 @@ class Asset extends Entity implements Observable {
     offComplete(handleSuccess?: ((success: Bool) => Void)?): Void;
     /**Does it listen to complete event*/
     listensComplete(): Bool;
-    /** Asset kind */
+    /**
+     * Asset kind
+     */
     kind: String;
-    /** Asset name */
+    /**
+     * Asset name
+     */
     name: String;
-    /** Asset path */
+    /**
+     * Asset path
+     */
     path: String;
-    /** Asset target density. Some assets depend on current screen density,
-        like bitmap fonts, textures. Default is 1.0 */
+    /**
+     * Asset target density. Some assets depend on current screen density,
+     * like bitmap fonts, textures. Default is 1.0
+     */
     density: Float;
-    /** Asset owner. The owner is a group of assets (Assets instance). When the owner gets
-        destroyed, every asset it owns get destroyed as well. */
+    /**
+     * Asset owner. The owner is a group of assets (Assets instance). When the owner gets
+     * destroyed, every asset it owns get destroyed as well.
+     */
     owner: Assets;
-    /** Optional runtime assets, used to compute path. */
+    /**
+     * Optional runtime assets, used to compute path.
+     */
     runtimeAssets: RuntimeAssets;
-    /** Asset options. Depends on asset kind and even backend in some cases. */
+    /**
+     * Asset options. Depends on asset kind and even backend in some cases.
+     */
     options: Dynamic;
-    /** Sub assets-list. Defaults to null but some kind of assets (like bitmap fonts) instanciate it to load sub-assets it depends on. */
+    /**
+     * Sub assets-list. Defaults to null but some kind of assets (like bitmap fonts) instanciate it to load sub-assets it depends on.
+     */
     assets: Assets;
-    /** Manage asset retain count. Increase it by calling `retain()` and decrease it by calling `release()`.
-        This can be used when mutliple objects are using the same assets
-        without knowing in advance when they will be needed. */
+    /**
+     * Manage asset retain count. Increase it by calling `retain()` and decrease it by calling `release()`.
+     * This can be used when mutliple objects are using the same assets
+     * without knowing in advance when they will be needed.
+     */
     refCount: Int;
     status: AssetStatus;
     invalidateStatus(): Void;
@@ -4577,21 +5982,50 @@ class ArcadeWorld extends World {
     sortCeramicGroup(group: Group<Visual>, sortDirection?: SortDirection): Void;
 }
 
-class ArcadePhysics extends Entity {
+class ArcadeSystem extends ceramic.System {
     constructor();
+    /**
+     * When this event is fired, it's the right time to make your bodies collide/overlap
+     * @param delta 
+     */
+    onUpdate(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
+    /**
+     * When this event is fired, it's the right time to make your bodies collide/overlap
+     * @param delta 
+     */
+    onceUpdate(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
+    /**
+     * When this event is fired, it's the right time to make your bodies collide/overlap
+     * @param delta 
+     */
+    offUpdate(handleDelta?: ((delta: Float) => Void)?): Void;
+    /**
+     * When this event is fired, it's the right time to make your bodies collide/overlap
+     * @param delta 
+     */
+    listensUpdate(): Bool;
     items: Array<VisualArcadePhysics>;
-    /** All worlds used with arcade physics */
+    /**
+     * All worlds used with arcade physics
+     */
     worlds: Array<ArcadeWorld>;
-    /** Default world used for arcade physics */
+    /**
+     * Default world used for arcade physics
+     */
     world: ArcadeWorld;
-    /** Groups by id */
+    /**
+     * Groups by id
+     */
     groups: haxe.ds.Map<K, V>;
-    /** If `true`, default world (`world`) bounds will be
-        updated automatically to match screen size. */
+    /**
+     * If `true`, default world (`world`) bounds will be
+     * updated automatically to match screen size.
+     */
     autoUpdateWorldBounds: Bool;
     createWorld(autoAdd?: Bool): ArcadeWorld;
     addWorld(world: ArcadeWorld): Void;
     removeWorld(world: ArcadeWorld): Void;
+    unbindEvents(): Void;
 }
 
 /**
@@ -4624,7 +6058,7 @@ class Arc extends Mesh {
 }
 
 /**
- * `App` class is the starting point of any ceramic app.
+ * `App` class is the root instance of any ceramic app.
  */
 class App extends Entity {
     constructor();
@@ -4632,34 +6066,28 @@ class App extends Entity {
      * Shared `App` instance singleton.
      */
     static app: App;
-    static init(): InitSettings;
     /**
-     * @event ready
-     * Ready event is triggered when the app is ready
+     * Fired when the app is ready
      * and the game logic can be started.
      */
     onReady(owner: Entity?, handle: (() => Void)): Void;
     /**
-     * @event ready
-     * Ready event is triggered when the app is ready
+     * Fired when the app is ready
      * and the game logic can be started.
      */
     onceReady(owner: Entity?, handle: (() => Void)): Void;
     /**
-     * @event ready
-     * Ready event is triggered when the app is ready
+     * Fired when the app is ready
      * and the game logic can be started.
      */
     offReady(handle?: (() => Void)?): Void;
     /**
-     * @event ready
-     * Ready event is triggered when the app is ready
+     * Fired when the app is ready
      * and the game logic can be started.
      */
     listensReady(): Bool;
     /**
-     * @event update
-     * Update event is triggered as many times as there are frames per seconds.
+     * Fired as many times as there are frames per seconds.
      * It is in sync with screen FPS but used for everything that needs
      * to get updated depending on time (ceramic.Timer relies on it).
      * Use this event to update your contents before they get drawn again.
@@ -4667,8 +6095,7 @@ class App extends Entity {
      */
     onUpdate(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
     /**
-     * @event update
-     * Update event is triggered as many times as there are frames per seconds.
+     * Fired as many times as there are frames per seconds.
      * It is in sync with screen FPS but used for everything that needs
      * to get updated depending on time (ceramic.Timer relies on it).
      * Use this event to update your contents before they get drawn again.
@@ -4676,8 +6103,7 @@ class App extends Entity {
      */
     onceUpdate(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
     /**
-     * @event update
-     * Update event is triggered as many times as there are frames per seconds.
+     * Fired as many times as there are frames per seconds.
      * It is in sync with screen FPS but used for everything that needs
      * to get updated depending on time (ceramic.Timer relies on it).
      * Use this event to update your contents before they get drawn again.
@@ -4685,8 +6111,7 @@ class App extends Entity {
      */
     offUpdate(handleDelta?: ((delta: Float) => Void)?): Void;
     /**
-     * @event update
-     * Update event is triggered as many times as there are frames per seconds.
+     * Fired as many times as there are frames per seconds.
      * It is in sync with screen FPS but used for everything that needs
      * to get updated depending on time (ceramic.Timer relies on it).
      * Use this event to update your contents before they get drawn again.
@@ -4694,194 +6119,358 @@ class App extends Entity {
      */
     listensUpdate(): Bool;
     /**
-     * @event preUpdate
-     * Pre-update event is triggered right before update event and
+     * Fired right before update event and
      * can be used when you want to run garantee your code
      * will be run before regular update event.
      * @param delta The elapsed delta time since last frame
      */
     onPreUpdate(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
     /**
-     * @event preUpdate
-     * Pre-update event is triggered right before update event and
+     * Fired right before update event and
      * can be used when you want to run garantee your code
      * will be run before regular update event.
      * @param delta The elapsed delta time since last frame
      */
     oncePreUpdate(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
     /**
-     * @event preUpdate
-     * Pre-update event is triggered right before update event and
+     * Fired right before update event and
      * can be used when you want to run garantee your code
      * will be run before regular update event.
      * @param delta The elapsed delta time since last frame
      */
     offPreUpdate(handleDelta?: ((delta: Float) => Void)?): Void;
     /**
-     * @event preUpdate
-     * Pre-update event is triggered right before update event and
+     * Fired right before update event and
      * can be used when you want to run garantee your code
      * will be run before regular update event.
      * @param delta The elapsed delta time since last frame
      */
     listensPreUpdate(): Bool;
     /**
-     * @event postUpdate
-     * Post-update event is triggered right after update event and
+     * Fired right after update event and
      * can be used when you want to run garantee your code
      * will be run after regular update event.
      * @param delta The elapsed delta time since last frame
      */
     onPostUpdate(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
     /**
-     * @event postUpdate
-     * Post-update event is triggered right after update event and
+     * Fired right after update event and
      * can be used when you want to run garantee your code
      * will be run after regular update event.
      * @param delta The elapsed delta time since last frame
      */
     oncePostUpdate(owner: Entity?, handleDelta: ((delta: Float) => Void)): Void;
     /**
-     * @event postUpdate
-     * Post-update event is triggered right after update event and
+     * Fired right after update event and
      * can be used when you want to run garantee your code
      * will be run after regular update event.
      * @param delta The elapsed delta time since last frame
      */
     offPostUpdate(handleDelta?: ((delta: Float) => Void)?): Void;
     /**
-     * @event postUpdate
-     * Post-update event is triggered right after update event and
+     * Fired right after update event and
      * can be used when you want to run garantee your code
      * will be run after regular update event.
      * @param delta The elapsed delta time since last frame
      */
     listensPostUpdate(): Bool;
-    /** Assets events */
+    /**
+     * Fired right before default assets are being loaded.
+     * @param assets
+     *      The `Assets` instance used to load default assets.
+     *      If you add custom assets to this instance, they will be loaded as well.
+     */
     onDefaultAssetsLoad(owner: Entity?, handleAssets: ((assets: Assets) => Void)): Void;
-    /** Assets events */
+    /**
+     * Fired right before default assets are being loaded.
+     * @param assets
+     *      The `Assets` instance used to load default assets.
+     *      If you add custom assets to this instance, they will be loaded as well.
+     */
     onceDefaultAssetsLoad(owner: Entity?, handleAssets: ((assets: Assets) => Void)): Void;
-    /** Assets events */
+    /**
+     * Fired right before default assets are being loaded.
+     * @param assets
+     *      The `Assets` instance used to load default assets.
+     *      If you add custom assets to this instance, they will be loaded as well.
+     */
     offDefaultAssetsLoad(handleAssets?: ((assets: Assets) => Void)?): Void;
-    /** Assets events */
+    /**
+     * Fired right before default assets are being loaded.
+     * @param assets
+     *      The `Assets` instance used to load default assets.
+     *      If you add custom assets to this instance, they will be loaded as well.
+     */
     listensDefaultAssetsLoad(): Bool;
-    /** Fired when the app hits an critical (uncaught) error. Can be used to perform custom crash reporting.
-        If this even is handled, app exit should be performed by the event handler. */
+    /**
+     * Fired when the app hits an critical (uncaught) error.
+     * Can be used to perform custom crash reporting.
+     * If this even is handled, app exit should be performed by the event handler.
+     * @param error The error
+     * @param stack The stack trace of the error
+     */
     onCriticalError(owner: Entity?, handleErrorStack: ((error: Dynamic, stack: Array<haxe.StackItem>) => Void)): Void;
-    /** Fired when the app hits an critical (uncaught) error. Can be used to perform custom crash reporting.
-        If this even is handled, app exit should be performed by the event handler. */
+    /**
+     * Fired when the app hits an critical (uncaught) error.
+     * Can be used to perform custom crash reporting.
+     * If this even is handled, app exit should be performed by the event handler.
+     * @param error The error
+     * @param stack The stack trace of the error
+     */
     onceCriticalError(owner: Entity?, handleErrorStack: ((error: Dynamic, stack: Array<haxe.StackItem>) => Void)): Void;
-    /** Fired when the app hits an critical (uncaught) error. Can be used to perform custom crash reporting.
-        If this even is handled, app exit should be performed by the event handler. */
+    /**
+     * Fired when the app hits an critical (uncaught) error.
+     * Can be used to perform custom crash reporting.
+     * If this even is handled, app exit should be performed by the event handler.
+     * @param error The error
+     * @param stack The stack trace of the error
+     */
     offCriticalError(handleErrorStack?: ((error: Dynamic, stack: Array<haxe.StackItem>) => Void)?): Void;
-    /** Fired when the app hits an critical (uncaught) error. Can be used to perform custom crash reporting.
-        If this even is handled, app exit should be performed by the event handler. */
+    /**
+     * Fired when the app hits an critical (uncaught) error.
+     * Can be used to perform custom crash reporting.
+     * If this even is handled, app exit should be performed by the event handler.
+     * @param error The error
+     * @param stack The stack trace of the error
+     */
     listensCriticalError(): Bool;
-    /**beginEnterBackground event*/
+    /**
+     * Fired when the app will enter background state.
+     */
     onBeginEnterBackground(owner: Entity?, handle: (() => Void)): Void;
-    /**beginEnterBackground event*/
+    /**
+     * Fired when the app will enter background state.
+     */
     onceBeginEnterBackground(owner: Entity?, handle: (() => Void)): Void;
-    /**beginEnterBackground event*/
+    /**
+     * Fired when the app will enter background state.
+     */
     offBeginEnterBackground(handle?: (() => Void)?): Void;
-    /**Does it listen to beginEnterBackground event*/
+    /**
+     * Fired when the app will enter background state.
+     */
     listensBeginEnterBackground(): Bool;
-    /**finishEnterBackground event*/
+    /**
+     * Fired when the app did finish entering background state.
+     */
     onFinishEnterBackground(owner: Entity?, handle: (() => Void)): Void;
-    /**finishEnterBackground event*/
+    /**
+     * Fired when the app did finish entering background state.
+     */
     onceFinishEnterBackground(owner: Entity?, handle: (() => Void)): Void;
-    /**finishEnterBackground event*/
+    /**
+     * Fired when the app did finish entering background state.
+     */
     offFinishEnterBackground(handle?: (() => Void)?): Void;
-    /**Does it listen to finishEnterBackground event*/
+    /**
+     * Fired when the app did finish entering background state.
+     */
     listensFinishEnterBackground(): Bool;
-    /**beginEnterForeground event*/
+    /**
+     * Fired when the app will enter foreground state.
+     */
     onBeginEnterForeground(owner: Entity?, handle: (() => Void)): Void;
-    /**beginEnterForeground event*/
+    /**
+     * Fired when the app will enter foreground state.
+     */
     onceBeginEnterForeground(owner: Entity?, handle: (() => Void)): Void;
-    /**beginEnterForeground event*/
+    /**
+     * Fired when the app will enter foreground state.
+     */
     offBeginEnterForeground(handle?: (() => Void)?): Void;
-    /**Does it listen to beginEnterForeground event*/
+    /**
+     * Fired when the app will enter foreground state.
+     */
     listensBeginEnterForeground(): Bool;
-    /**finishEnterForeground event*/
+    /**
+     * Fired when the app did finish entering foreground state.
+     */
     onFinishEnterForeground(owner: Entity?, handle: (() => Void)): Void;
-    /**finishEnterForeground event*/
+    /**
+     * Fired when the app did finish entering foreground state.
+     */
     onceFinishEnterForeground(owner: Entity?, handle: (() => Void)): Void;
-    /**finishEnterForeground event*/
+    /**
+     * Fired when the app did finish entering foreground state.
+     */
     offFinishEnterForeground(handle?: (() => Void)?): Void;
-    /**Does it listen to finishEnterForeground event*/
+    /**
+     * Fired when the app did finish entering foreground state.
+     */
     listensFinishEnterForeground(): Bool;
-    /**beginSortVisuals event*/
+    /**
+     * Fired right before sorting all visuals.
+     * Visual are sorted at each frame depending on their properties:
+     * depth, texture, blending, shader...
+     */
     onBeginSortVisuals(owner: Entity?, handle: (() => Void)): Void;
-    /**beginSortVisuals event*/
+    /**
+     * Fired right before sorting all visuals.
+     * Visual are sorted at each frame depending on their properties:
+     * depth, texture, blending, shader...
+     */
     onceBeginSortVisuals(owner: Entity?, handle: (() => Void)): Void;
-    /**beginSortVisuals event*/
+    /**
+     * Fired right before sorting all visuals.
+     * Visual are sorted at each frame depending on their properties:
+     * depth, texture, blending, shader...
+     */
     offBeginSortVisuals(handle?: (() => Void)?): Void;
-    /**Does it listen to beginSortVisuals event*/
+    /**
+     * Fired right before sorting all visuals.
+     * Visual are sorted at each frame depending on their properties:
+     * depth, texture, blending, shader...
+     */
     listensBeginSortVisuals(): Bool;
-    /**finishSortVisuals event*/
+    /**
+     * Fired right after all visuals have been sort.
+     */
     onFinishSortVisuals(owner: Entity?, handle: (() => Void)): Void;
-    /**finishSortVisuals event*/
+    /**
+     * Fired right after all visuals have been sort.
+     */
     onceFinishSortVisuals(owner: Entity?, handle: (() => Void)): Void;
-    /**finishSortVisuals event*/
+    /**
+     * Fired right after all visuals have been sort.
+     */
     offFinishSortVisuals(handle?: (() => Void)?): Void;
-    /**Does it listen to finishSortVisuals event*/
+    /**
+     * Fired right after all visuals have been sort.
+     */
     listensFinishSortVisuals(): Bool;
-    /**beginDraw event*/
+    /**
+     * Fired right before drawing phase of visuals.
+     */
     onBeginDraw(owner: Entity?, handle: (() => Void)): Void;
-    /**beginDraw event*/
+    /**
+     * Fired right before drawing phase of visuals.
+     */
     onceBeginDraw(owner: Entity?, handle: (() => Void)): Void;
-    /**beginDraw event*/
+    /**
+     * Fired right before drawing phase of visuals.
+     */
     offBeginDraw(handle?: (() => Void)?): Void;
-    /**Does it listen to beginDraw event*/
+    /**
+     * Fired right before drawing phase of visuals.
+     */
     listensBeginDraw(): Bool;
-    /**finishDraw event*/
+    /**
+     * Fired right after drawing phase of visuals.
+     */
     onFinishDraw(owner: Entity?, handle: (() => Void)): Void;
-    /**finishDraw event*/
+    /**
+     * Fired right after drawing phase of visuals.
+     */
     onceFinishDraw(owner: Entity?, handle: (() => Void)): Void;
-    /**finishDraw event*/
+    /**
+     * Fired right after drawing phase of visuals.
+     */
     offFinishDraw(handle?: (() => Void)?): Void;
-    /**Does it listen to finishDraw event*/
+    /**
+     * Fired right after drawing phase of visuals.
+     */
     listensFinishDraw(): Bool;
-    /**lowMemory event*/
+    /**
+     * Fired if the app is running low on memory.
+     * (not be implemented by all platforms/targets).
+     */
     onLowMemory(owner: Entity?, handle: (() => Void)): Void;
-    /**lowMemory event*/
+    /**
+     * Fired if the app is running low on memory.
+     * (not be implemented by all platforms/targets).
+     */
     onceLowMemory(owner: Entity?, handle: (() => Void)): Void;
-    /**lowMemory event*/
+    /**
+     * Fired if the app is running low on memory.
+     * (not be implemented by all platforms/targets).
+     */
     offLowMemory(handle?: (() => Void)?): Void;
-    /**Does it listen to lowMemory event*/
+    /**
+     * Fired if the app is running low on memory.
+     * (not be implemented by all platforms/targets).
+     */
     listensLowMemory(): Bool;
-    /**terminate event*/
+    /**
+     * Fired when the app terminates.
+     */
     onTerminate(owner: Entity?, handle: (() => Void)): Void;
-    /**terminate event*/
+    /**
+     * Fired when the app terminates.
+     */
     onceTerminate(owner: Entity?, handle: (() => Void)): Void;
-    /**terminate event*/
+    /**
+     * Fired when the app terminates.
+     */
     offTerminate(handle?: (() => Void)?): Void;
-    /**Does it listen to terminate event*/
+    /**
+     * Fired when the app terminates.
+     */
     listensTerminate(): Bool;
-    /** Schedule immediate callback that is garanteed to be executed before the next time frame
-        (before elements are drawn onto screen) */
+    /**
+     * Schedule immediate callback that is garanteed to be executed before the next time frame
+     * (before elements are drawn onto screen)
+     * @param handleImmediate The callback to execute
+     */
     onceImmediate(handleImmediate: (() => Void)): Void;
-    /** Schedule callback that is garanteed to be executed when no immediate callback are pending anymore.
-        @param defer if `true` (default), will box this call into an immediate callback */
+    /**
+     * Schedule callback that is garanteed to be executed when no immediate callback are pending anymore.
+     * @param handlePostFlushImmediate The callback to execute
+     * @param defer if `true` (default), will box this call into an immediate callback
+     */
     oncePostFlushImmediate(handlePostFlushImmediate: (() => Void), defer?: Bool): Void;
-    /** Execute and flush every awaiting immediate callback, including the ones that
-        could have been added with `onceImmediate()` after executing the existing callbacks. */
+    /**
+     * Execute and flush every awaiting immediate callback, including the ones that
+     * could have been added with `onceImmediate()` after executing the existing callbacks.
+     * @return `true` if anything was flushed
+     */
     flushImmediate(): Bool;
+    /**
+     * `true` if the app is currently running its update phase.
+     */
     inUpdate: Bool;
+    /**
+     * This method can be called if you want to ensure a full update + draw will be performed in frame
+     * starting from now. Beware that this can be an expensive call as it may double the work
+     * on the current frame in some situations.
+     * This should not be used unless you really know what you are doing for some specific edge case.
+     */
     requestFullUpdateAndDrawInFrame(): Void;
-    /** Computed fps of the app. Read only.
-        Value is automatically computed from last second of frame updates. */
+    /**
+     * Computed fps of the app. Read only.
+     * Value is automatically computed from last second of frame updates.
+     */
     computedFps: Int;
-    /** Current frame delta time */
+    /**
+     * Current frame delta time (never above `settings.maxDelta`)
+     */
     delta: Float;
-    /** Backend instance */
+    /**
+     * Current frame real delta time (the actual elapsed time since last frame update)
+     */
+    realDelta: Float;
+    /**
+     * Backend instance
+     */
     backend: backend.Backend;
-    /** Screen instance */
+    /**
+     * Screen instance
+     */
     screen: Screen;
-    /** Audio instance */
+    /**
+     * Audio instance
+     */
     audio: Audio;
-    /** App settings */
+    /**
+     * App settings
+     */
     settings: Settings;
-    /** Logger. Used by log.info() shortcut */
+    /**
+     * Systems are objects to structure app work/phases and update cycle
+     */
+    systems: ceramic.Systems;
+    /**
+     * Logger. Used by log shortcut
+     */
     logger: Logger;
     /**
      * Visuals (ordered)
@@ -4901,29 +6490,84 @@ class App extends Entity {
      * but were not removed to the `visual` list yet
      */
     destroyedVisuals: Array<Visual>;
-    /** Groups */
+    /**
+     * All groups of entities in this app
+     */
     groups: Array<Group<Entity>>;
-    /** Input */
+    /**
+     * Shared instance of `Input`
+     */
     input: ceramic.Input;
-    /** Render Textures */
+    /**
+     * All active render textures in this app
+     */
     renderTextures: Array<RenderTexture>;
-    /** App level assets. Used to load default bitmap font */
+    /**
+     * App level assets. Used to load default assets (font, texture, shader)
+     * required to make ceramic work properly.
+     */
     assets: Assets;
-    /** Default textured shader */
+    /**
+     * Default textured shader.
+     * This is the shader used for any visual (quad or mesh) that don't have a custom shader assigned.
+     */
     defaultTexturedShader: Shader;
-    /** Default white texture */
+    /**
+     * Default white texture.
+     * When a quad or mesh doesn't have a texture assigned, it will use the default white texture
+     * instead to render as plain flat coloured object. This means that the same default shader
+     * is used and everything can be batched together (textured & non-textured in the same batch).
+     */
     defaultWhiteTexture: Texture;
-    /** Default font */
+    /**
+     * Default font used by `Text` instances.
+     */
     defaultFont: BitmapFont;
-    /** Project directory. May be null depending on the platform. */
+    /**
+     * Project directory. May be null depending on the platform.
+     */
     projectDir: String;
-    /** App level persistent data */
+    /**
+     * App level persistent data.
+     * This is a simple key-value store ready to be used.
+     * Don't forget to call `persistent.save()` to apply changes permanently.
+     */
     persistent: PersistentData;
-    /** Text input manager */
+    /**
+     * Shared text input manager. Usually not used directly as is.
+     * You might want to use `EditText` component instead.
+     */
     textInput: TextInput;
+    /**
+     * Converters are used to transform field data in `Fragment` instances.
+     * This map is matching a type (as string, like `"Array<Float>"`) with an instance
+     * of a `ConvertField` subclass.
+     */
     converters: haxe.ds.Map<K, V>;
+    /**
+     * All active timelines in this app.
+     */
     timelines: ceramic.Timelines;
-    arcade: ArcadePhysics;
+    /**
+     * Shared arcade system.
+     * (arcade plugin)
+     */
+    arcade: ArcadeSystem;
+    /**
+     * Shared nape system.
+     * (nape plugin)
+     */
+    nape: NapeSystem;
+    /**
+     * Shared scene system.
+     */
+    scenes: ceramic.SceneSystem;
+    /**
+     * Get a group with the given id.
+     * @param id The id of the group
+     * @param createIfNeeded `true` (default) to create a group if not created already for this id
+     * @return the group or null if no group was found and none created.
+     */
     group(id: String, createIfNeeded?: Bool): Group<Entity>;
     unbindEvents(): Void;
     /**App info extracted from `ceramic.yml`*/
@@ -5022,6 +6666,10 @@ class World {
     isPaused: Bool;
     /** The world QuadTree. */
     quadTree: arcade.QuadTree;
+    /**
+    * @property {number} tileBias - A value added to the delta values during collision with tiles. Adjust this if you get tunneling.
+    */
+    tileBias: Float;
     /** Elapsed time since last tick. */
     elapsed: Float;
     elapsedMS: Float;
@@ -5121,9 +6769,9 @@ class World {
      * @param {function} [callback] - A callback function that is called if the object overlaps the coordinates. The callback will be sent two parameters: the callbackArg and the Object that overlapped the location.
      * @param {object} [callbackContext] - The context in which to run the callback.
      * @param {object} [callbackArg] - An argument to pass to the callback.
-     * @return {PIXI.DisplayObject[]} An array of the Sprites from the Group that overlapped the coordinates.
+     * @return An array of the Sprites from the Group that overlapped the coordinates.
      */
-    getObjectsAtLocation<T>(x: Float, y: Float, group: arcade.Group, callback?: ((arg1: T, arg2: Body) => Void)?, callbackArg?: T?): Array<Body>;
+    getObjectsAtLocation<T>(x: Float, y: Float, group: arcade.Group, callback?: ((arg1: T, arg2: Body) => Void)?, callbackArg?: T?, output?: Array<Body>?): Array<Body>;
     /**
      * Move the given display object towards the destination object at a steady velocity.
      * If you specify a maxTime then it will adjust the speed (overwriting what you set) so it arrives at the destination in that number of seconds.
@@ -5332,10 +6980,12 @@ interface Collidable {
 * @copyright    2016 Photon Storm Ltd.
 * @license      {@link https://github.com/photonstorm/phaser/blob/master/license.txt|MIT License}
 */
-class Body {
+class Body implements Collidable {
     constructor(x: Float, y: Float, width: Float, height: Float, rotation?: Float);
-    /** A property to hold any data related to this body. Can be useful if building a system on top if this one. */
+    /** A property to hold any data related to this body. Can be useful if building a larger system on top of this one. */
     data: Dynamic;
+    /** A property to hold any index value related to this body. Can be useful if building a larger system on top of this one. */
+    index: Int;
     /** The list of groups that contain this body (can be null if there are no groups). */
     groups: Array<arcade.Group>;
     /** A "main" group associated with this body. */
@@ -5345,6 +6995,10 @@ class Body {
     * @default
     */
     enable: Bool;
+    /**
+    * If `true` World.separate will always separate on the X axis before Y when this body is involved. Otherwise it will check gravity totals first.
+    */
+    forceX: Bool;
     /**
     * If `true` this Body is using circular collision detection. If `false` it is using rectangular.
     * Use `Body.setCircle` to control the collision shape this Body uses.
@@ -5649,8 +7303,9 @@ class Body {
     onMoveComplete: ((arg1: Body, arg2: Bool) => Void);
     /**
     * @property {function} movementCallback - Optional callback. If set, invoked during the running of `moveTo` or `moveFrom` events.
+    * Note: this is not an event (emit{X}) because we are expecting a boolean return value.
     */
-    movementCallback: ((arg1: Body, arg2: Float, arg3: Float, arg4: Float) => Bool);
+    movementCallback: ((body: Body, velocityX: Float, velocityY: Float, percent: Float) => Bool);
     updateHalfSize(): Void;
     /**
     * Update the Body's center from its position.
@@ -6003,19 +7658,6 @@ class StringTools {
 	*/
     static trim(s: String): String;
     /**
-		Appends `c` to `s` until `s.length` is at least `l`.
-
-		If `c` is the empty String `""` or if `l` does not exceed `s.length`,
-		`s` is returned unchanged.
-
-		If `c.length` is 1, the resulting String length is exactly `l`.
-
-		Otherwise the length may exceed `l`.
-
-		If `c` is null, the result is unspecified.
-	*/
-    static rpad(s: String, c: String, l: Int): String;
-    /**
 		Replace all occurrences of the String `sub` in the String `s` by the
 		String `by`.
 
@@ -6080,12 +7722,6 @@ class Std {
 		If `x` cannot be parsed as integer, the result is `null`.
 	*/
     static parseInt(x: String): Int?;
-    /**
-		Return a random integer between 0 included and `x` excluded.
-
-		If `x <= 1`, the result is always 0.
-	*/
-    static random(x: Int): Int;
 }
 
 class Math {
@@ -6093,13 +7729,11 @@ class Math {
     static abs(v: Float): Float;
     static acos(v: Float): Float;
     static asin(v: Float): Float;
-    static atan(v: Float): Float;
     static atan2(y: Float, x: Float): Float;
     static ceil(v: Float): Int;
     static cos(v: Float): Float;
     static exp(v: Float): Float;
     static floor(v: Float): Int;
-    static log(v: Float): Float;
     static max(a: Float, b: Float): Float;
     static min(a: Float, b: Float): Float;
     static pow(v: Float, exp: Float): Float;
@@ -6107,7 +7741,6 @@ class Math {
     static round(v: Float): Int;
     static sin(v: Float): Float;
     static sqrt(v: Float): Float;
-    static tan(v: Float): Float;
 }
 
 interface Array<T> {

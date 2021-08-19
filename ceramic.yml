@@ -6,15 +6,17 @@ app:
     version: '1.0'
 
     libs:
-        - arcade
-    
+
     paths:
         - src-project
-    
+
     #spine: true
     plugins:
         - dialogs
-    
+        - ui
+        - arcade
+        - nape
+
     hxml: |
         --macro ceramic.macros.ExportApi.export()
 
