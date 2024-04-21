@@ -1,0 +1,19 @@
+app:
+    package: ceramic.editor
+    name: ceramiceditor
+    displayName: Ceramic Editor
+    author: Jeremy Faivre
+    version: '1.0'
+
+    plugins:
+        - dialogs
+        - ui
+        - elements
+        - electron
+
+    defines:
+        - ceramic_no_skip
+        - ceramic_scene_ui
+        - js-source-map
+        - ceramic_debug_draw
+
