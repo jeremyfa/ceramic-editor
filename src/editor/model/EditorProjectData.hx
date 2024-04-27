@@ -3,6 +3,7 @@ package editor.model;
 import ceramic.ReadOnlyArray;
 import editor.model.fragment.EditorFragmentData;
 import editor.ui.EditorFragmentListItem;
+import editor.ui.EditorSidebarTab;
 import tracker.History;
 import tracker.Model;
 
@@ -22,6 +23,8 @@ class EditorProjectData extends Model {
     @serialize public var fragments:ReadOnlyArray<EditorFragmentData> = [];
 
     @serialize public var selectedFragmentIndex:Int = -1;
+
+    @serialize public var sidebarTab:EditorSidebarTab = NONE;
 
     @compute public function selectedFragment():EditorFragmentData {
         final selectedFragmentIndex = this.selectedFragmentIndex;

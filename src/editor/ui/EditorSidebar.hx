@@ -5,20 +5,12 @@ import ceramic.Entity;
 import ceramic.Quad;
 import editor.model.EditorData;
 import editor.model.fragment.EditorFragmentData;
+import editor.model.fragment.EditorVisualData;
 import elements.Im;
 import tracker.Observable;
 
 using StringTools;
-
-enum abstract EditorSidebarTab(Int) {
-
-    var NONE;
-
-    var PROJECT;
-
-    var EDITION;
-
-}
+using editor.ui.EditorImExtensions;
 
 @:allow(editor.Editor)
 @stateMachine({ checkFields: false })
@@ -35,23 +27,47 @@ class EditorSidebar extends Entity implements Component implements Observable {
         return 'Fragments: ${model.project.displayName ?? model.project.name}${model.projectUnsavedChanges ? '*' : ''}';
     }
 
+    @compute function visualsTitle():String {
+        var selectedFragment = model.project.selectedFragment;
+        if (selectedFragment != null) {
+            return 'Visuals (' + selectedFragment.fragmentId + ')';
+        }
+        else {
+            return 'Visuals';
+        }
+    }
+
     @compute function fragmentsList():Array<EditorFragmentListItem> {
         return model.project.fragments.original.map(fragment -> fragment.listItem);
     }
 
+    @compute function visualsList():Array<EditorVisualListItem> {
+        var selectedFragment = model.project.selectedFragment;
+        if (selectedFragment != null) {
+            return selectedFragment.visuals.original.map(visual -> visual.listItem);
+        }
+        else {
+            return [];
+        }
+    }
+
     var sidebarWidth:Int = 300;
+
+    var sidebarTopHeight:Int = 96;
 
     function bindAsComponent() {
 
         final sidebarBackground = new Quad();
         sidebarBackground.color = editor.theme.windowBackgroundColor;
         sidebarBackground.pos(0, 0);
+        sidebarBackground.depth = 100;
         editor.nativeLayer.add(sidebarBackground);
 
         final sidebarRightBorder = new Quad();
         sidebarRightBorder.pos(sidebarWidth, 0);
-        sidebarRightBorder.color = editor.theme.windowBorderColor;
+        sidebarRightBorder.color = 0x404040;
         sidebarRightBorder.alpha = Im.defaultTheme.windowBorderAlpha;
+        sidebarRightBorder.depth = 100;
         editor.nativeLayer.add(sidebarRightBorder);
 
         function layout(nativeWidth:Float, nativeHeight:Float) {
@@ -65,6 +81,8 @@ class EditorSidebar extends Entity implements Component implements Observable {
     }
 
     function DEFAULT_update(delta:Float) {
+
+        var selectedFragment = model.project.selectedFragment;
 
         Im.theme(editor.theme);
 
@@ -92,7 +110,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
                 model.openProject();
             }
         }
-        if (input.scanPressed(LSHIFT, window) || input.scanPressed(RSHIFT, window)) {
+        if ((input.scanPressed(LSHIFT, window) || input.scanPressed(RSHIFT, window)) && window.hits(screen.pointerX, screen.pointerY)) {
             if (Im.button('Save as')) {
                 model.saveProjectAs();
             }
@@ -120,37 +138,87 @@ class EditorSidebar extends Entity implements Component implements Observable {
         Im.endRow();
 
         Im.space(0);
-        Im.beginTabs(Im.string());
+        Im.beginTabs(Im.string(model.project.sidebarTab));
 
-        var tab:EditorSidebarTab = NONE;
+        Im.tab(EditorSidebarTab.PROJECT);
 
-        if (Im.tab('Project')) tab = PROJECT;
-        if (Im.tab('Edition')) tab = EDITION;
+        Im.disabled(selectedFragment == null);
+        Im.tab(EditorSidebarTab.VISUALS);
+        Im.disabled(false);
 
         Im.endTabs();
 
         Im.end();
 
-        Im.begin('Fragments_Content', sidebarWidth, screen.nativeHeight - 96);
+        if (model.project.sidebarTab == PROJECT) {
 
-        Im.header(false);
-        Im.expanded();
-        Im.position(0, 96);
+            Im.begin('Fragments_Project', sidebarWidth, screen.nativeHeight - sidebarTopHeight);
 
-        if (tab == PROJECT) {
+            Im.header(false);
+            Im.expanded();
+            Im.position(0, sidebarTopHeight);
 
             // Project display name
             var displayName = model.project.displayName;
-            Im.editText('Name', Im.string(displayName), false, model.project.name);
+            Im.editText('Project Name', Im.string(displayName), false, model.project.name);
             model.project.displayName = displayName != null && displayName.trim().length > 0 ? displayName : null;
 
-            Im.space(0);
+            Im.separator();
+
+            var fragmentsList = this.fragmentsList;
+
+            if (fragmentsList.length > 0) {
+
+                Im.disabled(selectedFragment == null);
+
+                Im.bold(true);
+                Im.text('Current Fragment');
+                Im.bold(false);
+
+                if (selectedFragment == null) {
+                    Im.editText('Name', Im.string(), 'Select a fragment in list');
+
+                    Im.beginTwoFieldsRow();
+                    Im.editText(Im.string());
+                    Im.betweenTwoFieldsCross();
+                    Im.editText(Im.string());
+                    Im.endTwoFieldsRow('Size');
+
+                    var transparent = false;
+                    Im.check('Transparent', Im.bool(transparent));
+                    Im.editText('Color', Im.string());
+                }
+                else {
+                    final status = Im.editText('Name', Im.string(selectedFragment.edit_fragmentId));
+                    if (status.blurred || status.submitted) {
+                        // Assigning will ensure the fragment id doesn't collide with any existing one,
+                        // and it will also ensure only allowed characters are accepted
+                        selectedFragment.changeFragmentId(selectedFragment.edit_fragmentId);
+                        selectedFragment.edit_fragmentId = selectedFragment.fragmentId;
+                    }
+
+                    Im.beginTwoFieldsRow();
+                    Im.editInt(Im.int(selectedFragment.width));
+                    Im.betweenTwoFieldsCross();
+                    Im.editInt(Im.int(selectedFragment.height));
+                    Im.endTwoFieldsRow('Size');
+
+                    Im.check('Transparent', Im.bool(selectedFragment.transparent));
+
+                    Im.disabled(selectedFragment.transparent);
+                    Im.editColor('Color', Im.color(selectedFragment.color));
+                    Im.disabled(false);
+                }
+
+                Im.disabled(false);
+
+                Im.separator();
+            }
 
             Im.bold(true);
             Im.text('Fragments');
             Im.bold(false);
 
-            var fragmentsList = this.fragmentsList;
             if (fragmentsList.length > 0) {
                 final status = Im.list(Im.array(fragmentsList), Im.int(model.project.selectedFragmentIndex), true, true, true, true);
                 final lockedItems = status.lockedItems;
@@ -187,10 +255,131 @@ class EditorSidebar extends Entity implements Component implements Observable {
                 });
             }
 
+            Im.space(0);
+            Im.end();
         }
 
-        Im.space(0);
-        Im.end();
+        if (model.project.sidebarTab == VISUALS && selectedFragment != null) {
+
+            Im.begin('Fragments_Visuals', sidebarWidth, screen.nativeHeight - sidebarTopHeight);
+
+            Im.header(false);
+            Im.expanded();
+            Im.position(0, sidebarTopHeight);
+
+            Im.bold(true);
+            Im.text(visualsTitle);
+            Im.bold(false);
+
+            var visualsList = this.visualsList;
+            var selectedVisual = selectedFragment.selectedVisual;
+
+            if (visualsList.length > 0) {
+                final status = Im.list(Im.array(visualsList), Im.int(selectedFragment.selectedVisualIndex), true, true, true, true);
+                final lockedItems = status.lockedItems;
+                final unlockedItems = status.unlockedItems;
+                final duplicateItems = status.duplicateItems;
+                for (i in 0...lockedItems.length) {
+                    final item:EditorVisualListItem = lockedItems[i];
+                    item.visual.locked = true;
+                }
+                for (i in 0...unlockedItems.length) {
+                    final item:EditorVisualListItem = unlockedItems[i];
+                    item.visual.locked = false;
+                }
+                for (i in 0...duplicateItems.length) {
+                    final item:EditorVisualListItem = duplicateItems[i];
+                    final visual = item.visual;
+                    ((visual:EditorVisualData) -> {
+                        app.onceImmediate(this, () -> {
+                            // TODO clone
+                            // final newFragment = model.project.addFragment();
+                            // fragment.clone(newFragment);
+                            // model.project.selectedFragmentIndex = model.project.fragments.length - 1;
+                        });
+                    })(visual);
+                }
+                if (visualsList != this.visualsList) {
+                    selectedFragment.syncFromVisualsList(visualsList);
+                }
+            }
+
+            if (Im.button('Add Visual')) {
+                app.onceImmediate(this, () -> {
+                    selectedFragment.addVisual();
+                    selectedFragment.selectedVisualIndex = selectedFragment.visuals.length - 1;
+                });
+            }
+
+            if (visualsList.length > 0) {
+
+                Im.separator();
+
+                Im.disabled(selectedVisual == null);
+
+                Im.bold(true);
+                Im.text('Current Visual');
+                Im.bold(false);
+
+                Im.space();
+
+                if (selectedVisual == null) {
+                    Im.editText('Name', Im.string(), 'Select a visual in list');
+
+                    Im.beginTwoFieldsRow();
+                    Im.editText(Im.string());
+                    Im.betweenTwoFieldsCross();
+                    Im.editText(Im.string());
+                    Im.endTwoFieldsRow('Size');
+                }
+                else {
+                    final status = Im.editText('Name', Im.string(selectedVisual.edit_entityId));
+                    if (status.blurred || status.submitted) {
+                        // Assigning will ensure the fragment id doesn't collide with any existing one,
+                        // and it will also ensure only allowed characters are accepted
+                        selectedVisual.changeEntityId(selectedVisual.edit_entityId);
+                        selectedVisual.edit_entityId = selectedVisual.entityId;
+                    }
+
+                    Im.beginTwoFieldsRow();
+                    Im.editFloat(Im.float(selectedVisual.width), null, null, null, 100);
+                    Im.betweenTwoFieldsCross();
+                    Im.editFloat(Im.float(selectedVisual.height), null, null, null, 100);
+                    Im.endTwoFieldsRow('Size');
+
+                    Im.text('Position');
+
+                    Im.beginTwoFieldsRow();
+                    Im.labelPosition(LEFT);
+                    Im.labelWidth(5);
+                    Im.editFloat('x', Im.float(selectedVisual.x), null, null, null, 100);
+                    Im.betweenTwoFieldsRow('');
+                    Im.editFloat('y', Im.float(selectedVisual.y), null, null, null, 100);
+                    Im.labelPosition();
+                    Im.labelWidth();
+                    Im.endTwoFieldsRow();
+
+                    Im.text('Anchor');
+
+                    Im.beginTwoFieldsRow();
+                    Im.labelPosition(LEFT);
+                    Im.labelWidth(5);
+                    Im.editFloat('x', Im.float(selectedVisual.anchorX), null, null, null, 100);
+                    Im.betweenTwoFieldsRow('');
+                    Im.editFloat('y', Im.float(selectedVisual.anchorY), null, null, null, 100);
+                    Im.labelPosition();
+                    Im.labelWidth();
+                    Im.endTwoFieldsRow();
+                }
+
+                Im.disabled(false);
+            }
+
+            Im.space(0);
+            Im.end();
+
+        }
+
         Im.theme(null);
 
     }

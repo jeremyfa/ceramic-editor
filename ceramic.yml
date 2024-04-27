@@ -15,5 +15,5 @@ app:
         - ceramic_no_skip
         - ceramic_scene_ui
         - js-source-map
-        - ceramic_debug_draw
+        #- ceramic_debug_draw
 

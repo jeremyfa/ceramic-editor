@@ -2,3 +2,5 @@
 .haxelib
 /out
 /completion.hxml
+project/web/ceramiceditor.js
+project/web/ceramiceditor.js.map

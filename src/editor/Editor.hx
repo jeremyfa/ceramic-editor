@@ -8,9 +8,9 @@ import ceramic.Scene;
 import ceramic.StateMachine;
 import ceramic.Timer;
 import editor.model.EditorData;
-import editor.model.fragment.EditorEntityData;
 import editor.model.fragment.EditorFragmentData;
 import editor.ui.EditorFragmentListItem;
+import editor.ui.EditorFragmentView;
 import editor.ui.EditorSidebar;
 import elements.Im;
 import elements.Theme;
@@ -21,11 +21,12 @@ enum EditorState {
 
     DEFAULT;
 
-    EDIT_ENTITY(entity:EditorEntityData);
+    EDIT_VISUAL;
 
 }
 
 @:allow(editor.ui.EditorSidebar)
+@:allow(editor.ui.EditorFragmentView)
 class Editor extends Scene {
 
     public var model:EditorData;
@@ -38,7 +39,9 @@ class Editor extends Scene {
 
     @component var sidebar:EditorSidebar;
 
-    var nativeLayer:Layer;
+    @component public var fragmentView:EditorFragmentView;
+
+    @owner var nativeLayer:Layer;
 
     override function preload() {
 
@@ -65,11 +68,15 @@ class Editor extends Scene {
         machine.autoUpdate = false;
         machine.state = DEFAULT;
 
+        autorun(updateFromSelectedFragment);
+
     }
 
     function initComponents() {
 
         sidebar = new EditorSidebar();
+
+        fragmentView = new EditorFragmentView();
 
     }
 
@@ -78,6 +85,35 @@ class Editor extends Scene {
         nativeLayer = new Layer();
         nativeLayer.depth = 10;
         nativeLayer.bindToNativeScreenSize();
+
+    }
+
+    override function layout() {
+        super.layout();
+
+        if (fragmentView != null) {
+            fragmentView.pos(
+                sidebar.sidebarWidth,
+                0
+            );
+            fragmentView.size(
+                screen.nativeWidth - sidebar.sidebarWidth,
+                screen.nativeHeight
+            );
+        }
+    }
+
+    function updateFromSelectedFragment() {
+
+        final selectedFragment = model.project.selectedFragment;
+        if (selectedFragment != null) {
+            unobserve();
+            fragmentView.active = true;
+        }
+        else {
+            unobserve();
+            fragmentView.active = false;
+        }
 
     }
 
