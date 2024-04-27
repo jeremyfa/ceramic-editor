@@ -1,8 +1,10 @@
 package editor.ui;
 
+import ceramic.Color;
 import ceramic.Component;
 import ceramic.Entity;
 import ceramic.Quad;
+import ceramic.ReadOnlyArray;
 import editor.model.EditorData;
 import editor.model.fragment.EditorFragmentData;
 import editor.model.fragment.EditorVisualData;
@@ -20,6 +22,8 @@ class EditorSidebar extends Entity implements Component implements Observable {
     inline function get_model():EditorData {
         return editor.model;
     }
+
+    var visualTypeList:ReadOnlyArray<String> = ['Visual', 'Quad', 'Text'];
 
     @entity var editor:Editor;
 
@@ -171,9 +175,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
 
                 Im.disabled(selectedFragment == null);
 
-                Im.bold(true);
-                Im.text('Current Fragment');
-                Im.bold(false);
+                Im.sectionTitle('Current Fragment');
 
                 if (selectedFragment == null) {
                     Im.editText('Name', Im.string(), 'Select a fragment in list');
@@ -215,9 +217,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
                 Im.separator();
             }
 
-            Im.bold(true);
-            Im.text('Fragments');
-            Im.bold(false);
+            Im.sectionTitle('Fragments');
 
             if (fragmentsList.length > 0) {
                 final status = Im.list(Im.array(fragmentsList), Im.int(model.project.selectedFragmentIndex), true, true, true, true);
@@ -267,15 +267,13 @@ class EditorSidebar extends Entity implements Component implements Observable {
             Im.expanded();
             Im.position(0, sidebarTopHeight);
 
-            Im.bold(true);
-            Im.text(visualsTitle);
-            Im.bold(false);
+            Im.sectionTitle(visualsTitle);
 
             var visualsList = this.visualsList;
             var selectedVisual = selectedFragment.selectedVisual;
 
             if (visualsList.length > 0) {
-                final status = Im.list(Im.array(visualsList), Im.int(selectedFragment.selectedVisualIndex), true, true, true, true);
+                final status = Im.list(Im.array(visualsList), Im.int(selectedFragment.selectedVisualIndex), true, true, true, false /* TODO */);
                 final lockedItems = status.lockedItems;
                 final unlockedItems = status.unlockedItems;
                 final duplicateItems = status.duplicateItems;
@@ -305,10 +303,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
             }
 
             if (Im.button('Add Visual')) {
-                app.onceImmediate(this, () -> {
-                    selectedFragment.addVisual();
-                    selectedFragment.selectedVisualIndex = selectedFragment.visuals.length - 1;
-                });
+                app.onceImmediate(this, addVisualChoice);
             }
 
             if (visualsList.length > 0) {
@@ -317,11 +312,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
 
                 Im.disabled(selectedVisual == null);
 
-                Im.bold(true);
-                Im.text('Current Visual');
-                Im.bold(false);
-
-                Im.space();
+                Im.sectionTitle('Current Visual');
 
                 if (selectedVisual == null) {
                     Im.editText('Name', Im.string(), 'Select a visual in list');
@@ -333,6 +324,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
                     Im.endTwoFieldsRow('Size');
                 }
                 else {
+
                     final status = Im.editText('Name', Im.string(selectedVisual.edit_entityId));
                     if (status.blurred || status.submitted) {
                         // Assigning will ensure the fragment id doesn't collide with any existing one,
@@ -381,6 +373,24 @@ class EditorSidebar extends Entity implements Component implements Observable {
         }
 
         Im.theme(null);
+
+    }
+
+    function addVisualChoice() {
+
+        var selectedFragment = model.project.selectedFragment;
+        if (selectedFragment == null)
+            return;
+
+        Im.choice('Add Visual', 'Choose the type of visual to add:', true, visualTypeList.original, (index, text) -> {
+            switch text {
+                case 'Visual': selectedFragment.addVisual();
+                case 'Quad': selectedFragment.addQuad();
+                case 'Text': selectedFragment.addText();
+                case _:
+            }
+            selectedFragment.selectedVisualIndex = selectedFragment.visuals.length - 1;
+        });
 
     }
 

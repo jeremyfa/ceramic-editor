@@ -43,6 +43,18 @@ class EditorImExtensions {
 
     }
 
+    public static function sectionTitle(im:Class<Im>, title:String):Void {
+
+        Im.space(-5);
+        Im.pointSize(13);
+        Im.bold(true);
+        Im.text(title, CENTER);
+        Im.bold(false);
+        Im.pointSize();
+        Im.space(-1);
+
+    }
+
     public static function betweenTwoFieldsCross(im:Class<Im>):Void {
 
         Im.flex(40);

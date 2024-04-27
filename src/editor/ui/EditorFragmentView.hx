@@ -3,6 +3,7 @@ package editor.ui;
 import ceramic.Color;
 import ceramic.Component;
 import ceramic.DecomposedTransform;
+import ceramic.MouseButton;
 import ceramic.Point;
 import ceramic.Quad;
 import ceramic.TouchInfo;
@@ -165,7 +166,7 @@ class EditorFragmentView extends View implements Component implements Observable
 
     function handlePointerDown(info:TouchInfo) {
 
-        if (info.buttonId == 2) {
+        if (info.buttonId == MouseButton.RIGHT) {
             // Right click
             draggingFragment = true;
             screenToVisual(info.x, info.y, _point);
@@ -176,7 +177,7 @@ class EditorFragmentView extends View implements Component implements Observable
                 draggingFragment = false;
             });
         }
-        else if (info.buttonId == 1) {
+        else if (info.buttonId == MouseButton.MIDDLE) {
             // Middle click
             fragmentTransform.identity();
         }
@@ -250,6 +251,23 @@ class EditorFragmentView extends View implements Component implements Observable
         fragmentTransform.tx = fragmentDragStartTransform.tx + dragX - dragStartX;
         fragmentTransform.ty = fragmentDragStartTransform.ty + dragY - dragStartY;
         fragmentTransform.changedDirty = true;
+
+    }
+
+    override function interceptPointerDown(hittingVisual:Visual, x:Float, y:Float, touchIndex:Int, buttonId:Int):Bool {
+
+        if (buttonId == MouseButton.RIGHT || buttonId == MouseButton.MIDDLE) {
+            if (hittingVisual == this) {
+                // Handle right or middle click
+                return false;
+            }
+            else {
+                // Forbid right or middle click on this hitting visual
+                return true;
+            }
+        }
+
+        return false;
 
     }
 

@@ -33,6 +33,8 @@ class Editor extends Scene {
 
     var theme:Theme;
 
+    var themeWithBackground:Theme;
+
     @component var machine = new StateMachine<EditorState>();
 
     @component var keyBindings:KeyBindings;
@@ -59,6 +61,9 @@ class Editor extends Scene {
         theme.tabsMarginY = 6;
         theme.formPadding = 12;
         theme.customBoldFont = assets.font(Fonts.ROBOTO_BOLD);
+
+        themeWithBackground = theme.clone();
+        themeWithBackground.windowBackgroundAlpha = 1;
 
         model = new EditorData();
 

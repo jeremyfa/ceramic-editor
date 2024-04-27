@@ -21,6 +21,7 @@ class EditorVisualDataView extends View implements Component {
         editable = new Editable();
 
         editable.onSelect(this, handleEditableSelect);
+        editable.onChange(this, handleEditableChange);
         visualData.fragment.onSelectedVisualChange(this, handleSelectedVisualChange);
         if (visualData.fragment.selectedVisual == visualData) {
             editable.select();
@@ -41,6 +42,15 @@ class EditorVisualDataView extends View implements Component {
 
         if (fromPointer)
             visualData.fragment.project.sidebarTab = VISUALS;
+
+    }
+
+    function handleEditableChange(visual:Visual, changes:Dynamic) {
+
+        for (key in Reflect.fields(changes)) {
+            final value = Reflect.field(changes, key);
+            Reflect.setProperty(visualData, key, value);
+        }
 
     }
 

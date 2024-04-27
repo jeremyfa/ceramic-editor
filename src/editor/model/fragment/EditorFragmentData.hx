@@ -198,6 +198,44 @@ class EditorFragmentData extends EditorBaseModel {
 
     }
 
+    public function addQuad() {
+
+        var visual = new EditorQuadData(this);
+        var i = 0;
+        while (getVisual('QUAD_$i') != null) {
+            i++;
+        }
+        visual.entityId = 'QUAD_$i';
+
+        var newVisuals = [].concat(this.visuals.original);
+        newVisuals.push(visual);
+        this.visuals = newVisuals;
+
+        return visual;
+
+    }
+
+    public function addText() {
+
+        // TODO
+        /*
+        var visual = new EditorQuadData(this);
+        var i = 0;
+        while (getVisual('QUAD_$i') != null) {
+            i++;
+        }
+        visual.entityId = 'QUAD_$i';
+
+        var newVisuals = [].concat(this.visuals.original);
+        newVisuals.push(visual);
+        this.visuals = newVisuals;
+
+        return visual;
+        */
+        return null;
+
+    }
+
     public function changeFragmentId(newFragmentId:String) {
         final prevFragmentId = this.unobservedFragmentId;
         if (prevFragmentId != newFragmentId) {

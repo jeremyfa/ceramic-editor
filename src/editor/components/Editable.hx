@@ -366,7 +366,6 @@ class Editable extends Entity implements Component implements Observable {
         }
 
         function onPointerMove(info:TouchInfo) {
-            //editor.render();
 
             if (xKeyPressed) {
                 // Skew
