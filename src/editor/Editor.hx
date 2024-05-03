@@ -29,6 +29,8 @@ enum EditorState {
 @:allow(editor.ui.EditorFragmentView)
 class Editor extends Scene {
 
+    public static final VERSION:Int = 1;
+
     public var model:EditorData;
 
     var theme:Theme;

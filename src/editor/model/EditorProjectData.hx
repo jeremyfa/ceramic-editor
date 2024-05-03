@@ -2,10 +2,10 @@ package editor.model;
 
 import ceramic.Assets;
 import ceramic.Equal;
+import ceramic.Files;
 import ceramic.Path;
 import ceramic.ReadOnlyArray;
 import ceramic.ReadOnlyMap;
-import ceramic.RuntimeAssets;
 import ceramic.Texture;
 import editor.model.fragment.EditorFragmentData;
 import editor.ui.EditorFragmentListItem;
@@ -64,6 +64,12 @@ class EditorProjectData extends Model {
         if (this.unobservedAssets != null) {
             final prevAssets = this.unobservedAssets;
             app.onceImmediate(prevAssets, prevAssets.destroy);
+        }
+
+        // Check that assets directory exists
+        if (!Files.exists(assetsDirectory) || !Files.isDirectory(assetsDirectory)) {
+            log.warning('Not a valid assets directory: ' + assetsDirectory);
+            return null;
         }
 
         // Create new assets
@@ -266,7 +272,7 @@ class EditorProjectData extends Model {
 
     public function fromJson(json:Dynamic):Void {
 
-        if (json.version != "1.0") {
+        if (!Validate.int(json.version) || json.version > Editor.VERSION) {
             throw "Unsupported fragments file version: " + json.version;
         }
 
@@ -274,7 +280,7 @@ class EditorProjectData extends Model {
             throw 'Invalid project name: ' + json.name;
         this.name = json.name;
 
-        if (Reflect.hasField(json, 'displayName')) {
+        if (json.displayName != null) {
             if (!Validate.nonEmptyString(json.displayName))
                 throw 'Invalid project display name: ' + json.displayName;
             this.displayName = json.displayName;
@@ -317,9 +323,11 @@ class EditorProjectData extends Model {
     public function toJson():Dynamic {
         var json:Dynamic = {};
 
-        json.version = "1.0";
+        json.version = Editor.VERSION;
         json.name = this.name;
-        json.displayName = this.displayName;
+        if (this.displayName != null) {
+            json.displayName = this.displayName;
+        }
         json.fragments = this.fragments.map(fragment -> fragment.toJson());
         json.selectedFragment = this.selectedFragmentIndex;
         json.selectedTab = this.selectedTab;

@@ -24,6 +24,9 @@ class EditorEntityData extends EditorBaseFragmentModel {
             if (result.endsWith('Data')) {
                 result = result.substr(0, result.length - 4);
             }
+            if (result.length > 0) {
+                result = result.charAt(0).toLowerCase() + result.substr(1);
+            }
             this.kind = result;
         }
         return this.kind;

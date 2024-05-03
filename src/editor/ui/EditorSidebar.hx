@@ -24,7 +24,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
         return editor.model;
     }
 
-    var visualTypeList:ReadOnlyArray<String> = ['Visual', 'Quad', 'Text'];
+    var visualTypeList:ReadOnlyArray<String> = ['Visual', 'Quad'/*, 'Text'*/];
 
     @entity var editor:Editor;
 

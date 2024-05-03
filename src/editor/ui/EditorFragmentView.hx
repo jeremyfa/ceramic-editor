@@ -45,6 +45,8 @@ class EditorFragmentView extends View implements Component implements Observable
 
     var fragmentDragStartTransform:Transform = new Transform();
 
+    var shouldResetPosition:Bool = false;
+
     function bindAsComponent() {
 
         editor.nativeLayer.add(this);
@@ -55,6 +57,7 @@ class EditorFragmentView extends View implements Component implements Observable
         content = new Quad();
         content.transform = fragmentTransform;
         content.depth = 1;
+        content.clip = content;
         add(content);
 
         overlay = new Visual();
@@ -70,6 +73,14 @@ class EditorFragmentView extends View implements Component implements Observable
         autorun(updateContentSize);
         autorun(updateVisuals);
 
+        onFragmentDataChange(this, (fragmentData, _) -> {
+            shouldResetPosition = true;
+            layoutDirty = true;
+        });
+
+        shouldResetPosition = true;
+        layoutDirty = true;
+
     }
 
     override function layout() {
@@ -79,6 +90,24 @@ class EditorFragmentView extends View implements Component implements Observable
             content.anchor(0.5, 0.5);
             content.pos(width * 0.5, height * 0.5);
         }
+
+        if (editor != null && shouldResetPosition) {
+            shouldResetPosition = false;
+            resetPosition();
+        }
+    }
+
+    function resetPosition() {
+
+        final scaleFactor = model.fragmentZoom;
+        fragmentTransform.identity();
+        fragmentTransform.translate(-width * 0.5, -height * 0.5);
+        fragmentTransform.scale(
+            scaleFactor,
+            scaleFactor
+        );
+        fragmentTransform.translate(width * 0.5, height * 0.5);
+
     }
 
     function updateColor() {
@@ -179,7 +208,12 @@ class EditorFragmentView extends View implements Component implements Observable
         }
         else if (info.buttonId == MouseButton.MIDDLE) {
             // Middle click
-            fragmentTransform.identity();
+            if (input.keyPressed(LSHIFT) || input.keyPressed(RSHIFT)) {
+                fragmentTransform.identity();
+            }
+            else {
+                resetPosition();
+            }
         }
         else {
             deselectVisuals();
@@ -234,6 +268,8 @@ class EditorFragmentView extends View implements Component implements Observable
                 );
 
                 fragmentTransform.translate(tx, ty);
+
+                model.fragmentZoom = newScale;
             }
         }
 

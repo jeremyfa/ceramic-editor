@@ -18,6 +18,8 @@ class EditorData extends Model {
 
     @serialize public var project:EditorProjectData;
 
+    @serialize public var fragmentZoom:Float = 1.0;
+
     @observe public var numUndo(default,null):Int = 0;
 
     @observe public var numRedo(default,null):Int = 0;
