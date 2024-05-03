@@ -18,10 +18,6 @@ class EditorData extends Model {
 
     @serialize public var project:EditorProjectData;
 
-    @serialize public var projectUnsavedChanges:Bool = false;
-
-    @serialize public var projectFilePath:String = null;
-
     @observe public var numUndo(default,null):Int = 0;
 
     @observe public var numRedo(default,null):Int = 0;
@@ -46,7 +42,7 @@ class EditorData extends Model {
 
         serializer.onChangeset(this, changeset -> {
             if (ignoreChanges == 0)
-                projectUnsavedChanges = true;
+                project.unsavedChanges = true;
         });
 
     }
@@ -76,7 +72,7 @@ class EditorData extends Model {
     function markChangesClean() {
 
         ignoreChanges++;
-        projectUnsavedChanges = false;
+        project.unsavedChanges = false;
         Timer.delay(this, serializer.checkInterval + 0.5, () -> {
             ignoreChanges--;
         });
@@ -117,7 +113,7 @@ class EditorData extends Model {
             project = newProject;
             prevProject?.destroy();
 
-            projectFilePath = file;
+            project.filePath = file;
 
             markChangesClean();
         }
@@ -136,12 +132,12 @@ class EditorData extends Model {
 
     public function saveProject(forceChooseFile:Bool = false) {
 
-        if (projectFilePath == null || forceChooseFile) {
+        if (project.filePath == null || forceChooseFile) {
             Dialogs.saveFile('Save fragments file', [{
                 name: 'Fragments file', extensions: ['fragments']
             }], file -> {
                 if (file != null) {
-                    projectFilePath = file;
+                    project.filePath = file;
                     project.name = Path.withoutDirectory(Path.withoutExtension(file));
                     saveProject();
                 }
@@ -152,8 +148,8 @@ class EditorData extends Model {
 
         app.oncePostFlushImmediate(this, () -> {
             var data = haxe.Json.stringify(project.toJson(), null, '  ');
-            log.info('Save fragments project at path: ${projectFilePath}');
-            Files.saveContent(projectFilePath, data);
+            log.info('Save fragments project at path: ${project.filePath}');
+            Files.saveContent(project.filePath, data);
             markChangesClean();
         });
 
@@ -167,7 +163,7 @@ class EditorData extends Model {
         project = newProject;
         prevProject?.destroy();
 
-        projectFilePath = null;
+        project.filePath = null;
 
     }
 

@@ -14,6 +14,8 @@ app:
     defines:
         - ceramic_no_skip
         - ceramic_scene_ui
+        #- ceramic_debug_layout_dirty
         - js-source-map
+        - HXCPP_DEBUG_LINK
         #- ceramic_debug_draw
 

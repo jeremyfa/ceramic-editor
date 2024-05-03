@@ -141,21 +141,21 @@ class EditorFragmentView extends View implements Component implements Observable
         }
 
         // Remove views that are not needed anymore
-        var toRemove:Array<EditorVisualDataView> = null;
+        var toMaybeRemove:Array<EditorVisualDataView> = null;
         if (content.children != null) {
             for (child in content.children) {
                 if (child is EditorVisualDataView) {
-                    if (toRemove == null) {
-                        toRemove = [];
+                    if (toMaybeRemove == null) {
+                        toMaybeRemove = [];
                     }
-                    toRemove.push(cast child);
+                    toMaybeRemove.push(cast child);
                 }
             }
         }
-        if (toRemove != null) {
-            for (view in toRemove) {
+        if (toMaybeRemove != null) {
+            for (view in toMaybeRemove) {
                 final visualData = view.visualData;
-                if (visualData.fragment != fragmentData) {
+                if (visualData.destroyed || visualData.fragment != fragmentData) {
                     log.debug('destroy view for fragment visual: ' + visualData.entityId + ' (' + visualData.fragment.fragmentId + ')');
                     view.destroy();
                 }

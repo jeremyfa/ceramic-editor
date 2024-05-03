@@ -29,7 +29,19 @@ class Editable extends Entity implements Component implements Observable {
 
     var entity:Visual;
 
-    var entityOptions:EditableOptions = {}; // TODO
+    public var highlightPoints:String = null;
+
+    public var highlightMinPoints:Int = -1;
+
+    public var highlightMaxPoints:Int = -1;
+
+    public var highlightMovePointsToZero:Bool = false;
+
+    public var highlightResizeInsteadOfScale:Bool = true;
+
+    public var highlightResizeInsteadOfScaleIfNull:String = null;
+
+    public var highlightResizeInsteadOfScaleIfTrue:String = null;
 
     var point:Point = { x: 0, y: 0 };
 
@@ -101,7 +113,7 @@ class Editable extends Entity implements Component implements Observable {
             highlight = null;
         });
 
-        if (entityOptions.highlightMaxPoints != entityOptions.highlightMinPoints) {
+        if (highlightMaxPoints != highlightMinPoints) {
             highlight.needsPointSegments = true;
         }
 
@@ -112,7 +124,7 @@ class Editable extends Entity implements Component implements Observable {
 
         highlight.onCornerDown(this, handleCornerDown);
 
-        if (entityOptions.highlightPoints != null) {
+        if (highlightPoints != null) {
             highlight.bordersActive = false;
             highlight.cornersActive = false;
 
@@ -346,14 +358,8 @@ class Editable extends Entity implements Component implements Observable {
         var startHeight = entity.height;
 
         var resizeInsteadOfScale = false;
-        if (entityOptions.highlightResizeInsteadOfScale) {
+        if (highlightResizeInsteadOfScale) {
             resizeInsteadOfScale = true;
-        }
-        else if (entityOptions.highlightResizeInsteadOfScaleIfNull != null) {
-            resizeInsteadOfScale = Reflect.getProperty(entity, entityOptions.highlightResizeInsteadOfScaleIfNull) == null;
-        }
-        else if (entityOptions.highlightResizeInsteadOfScaleIfTrue != null) {
-            resizeInsteadOfScale = Reflect.getProperty(entity, entityOptions.highlightResizeInsteadOfScaleIfTrue) == true;
         }
 
         entity.anchorKeepPosition(tmpAnchorX, tmpAnchorY);
@@ -841,7 +847,7 @@ class Editable extends Entity implements Component implements Observable {
             var rotation = entity.rotation;
             while (rotation <= -360) rotation += 360;
             while (rotation >= 360) rotation -= 360;
-            entity.rotation = Math.round(rotation * 100) / 100.0;
+            entity.rotation = Math.round(rotation);
 
             if (resizeInsteadOfScale) {
                 emitChange(entity, {
@@ -874,11 +880,8 @@ class Editable extends Entity implements Component implements Observable {
 
         var points:Array<Float> = null;
 
-        var options = entityOptions;
-        if (options != null) {
-            if (options.highlightPoints != null) {
-                points = entity.getProperty(options.highlightPoints);
-            }
+        if (highlightPoints != null) {
+            points = entity.getProperty(highlightPoints);
         }
 
         if (points == null) {
@@ -900,20 +903,18 @@ class Editable extends Entity implements Component implements Observable {
         ];
 
         if (shiftPressed) {
-            if (options != null) {
-                if (options.highlightMinPoints >= 0) {
-                    points = entity.getProperty(options.highlightPoints);
+            if (highlightMinPoints >= 0) {
+                points = entity.getProperty(highlightPoints);
 
-                    // Reached min number of points?
-                    if (points.length <= 0 || points.length <= options.highlightMinPoints * 2) {
-                        log.warning('Cannot remove point!');
-                    }
-                    else {
-                        var copy = [].concat(points);
-                        copy.splice(index * 2, 2);
-                        entity.setProperty(options.highlightPoints, copy);
-                        applyPointChanges();
-                    }
+                // Reached min number of points?
+                if (points.length <= 0 || points.length <= highlightMinPoints * 2) {
+                    log.warning('Cannot remove point!');
+                }
+                else {
+                    var copy = [].concat(points);
+                    copy.splice(index * 2, 2);
+                    entity.setProperty(highlightPoints, copy);
+                    applyPointChanges();
                 }
             }
             return;
@@ -941,12 +942,12 @@ class Editable extends Entity implements Component implements Observable {
 
         function onPointerMove(info:TouchInfo) {
 
-            points = entity.getProperty(options.highlightPoints);
+            points = entity.getProperty(highlightPoints);
 
             if (!didChangePoints) {
                 didChangePoints = true;
                 points = [].concat(points);
-                entity.setProperty(options.highlightPoints, points);
+                entity.setProperty(highlightPoints, points);
             }
 
             canSkipRender = true;
@@ -1016,7 +1017,7 @@ class Editable extends Entity implements Component implements Observable {
 
         screen.onPointerMove(this, onPointerMove);
         screen.oncePointerUp(this, function(info) {
-            points = entity.getProperty(options.highlightPoints);
+            points = entity.getProperty(highlightPoints);
 
             screen.offPointerMove(onPointerMove);
 
@@ -1029,11 +1030,8 @@ class Editable extends Entity implements Component implements Observable {
 
         var points:Array<Float> = null;
 
-        var options = entityOptions;
-        if (options != null) {
-            if (options.highlightPoints != null) {
-                points = entity.getProperty(options.highlightPoints);
-            }
+        if (highlightPoints != null) {
+            points = entity.getProperty(highlightPoints);
         }
 
         if (points == null) {
@@ -1042,7 +1040,7 @@ class Editable extends Entity implements Component implements Observable {
         }
 
         // Adjust points?
-        if (options.highlightMovePointsToZero) {
+        if (highlightMovePointsToZero) {
             var minX = 999999999.0;
             var minY = 999999999.0;
             var i = 0;
@@ -1078,7 +1076,7 @@ class Editable extends Entity implements Component implements Observable {
             }
         }
 
-        entity.setProperty(options.highlightPoints, [].concat(entity.getProperty(options.highlightPoints)));
+        entity.setProperty(highlightPoints, [].concat(entity.getProperty(highlightPoints)));
         entity.contentDirty = true;
         entity.computeContent();
         wrapVisual(entity);
@@ -1089,7 +1087,7 @@ class Editable extends Entity implements Component implements Observable {
             width: entity.width,
             height: entity.height
         };
-        Reflect.setField(changes, options.highlightPoints, entity.getProperty(options.highlightPoints));
+        Reflect.setField(changes, highlightPoints, entity.getProperty(highlightPoints));
 
         //log.debug('EMIT CHANGES ${entity.getProperty(options.highlightPoints).length}');
         emitChange(entity, changes);
@@ -1127,11 +1125,8 @@ class Editable extends Entity implements Component implements Observable {
     function handlePendingPointHandleDown(info:TouchInfo) {
 
         var points:Array<Float> = null;
-        var options = entityOptions;
-        if (options != null) {
-            if (options.highlightPoints != null) {
-                points = entity.getProperty(options.highlightPoints);
-            }
+        if (highlightPoints != null) {
+            points = entity.getProperty(highlightPoints);
         }
 
         if (points == null) {
@@ -1157,7 +1152,7 @@ class Editable extends Entity implements Component implements Observable {
                 n++;
             }
 
-            entity.setProperty(options.highlightPoints, copy);
+            entity.setProperty(highlightPoints, copy);
             applyPointChanges();
         }
 
@@ -1181,26 +1176,21 @@ class Editable extends Entity implements Component implements Observable {
         if (highlight == null)
             return;
 
-        var options = entityOptions;
-        if (options != null) {
-            if (options.highlightMaxPoints >= 0) {
-                var points:Array<Float> = entity.getProperty(options.highlightPoints);
-                if (points == null) {
-                    log.error('Invalid points property!');
-                    return;
-                }
+        if (highlightMaxPoints >= 0) {
+            var points:Array<Float> = entity.getProperty(highlightPoints);
+            if (points == null) {
+                log.error('Invalid points property!');
+                return;
+            }
 
-                // Reached max number of points?
-                if (points.length >= options.highlightMaxPoints * 2)
-                    doHighlight = false;
-            }
-            else {
-                // Adding points is forbidden
+            // Reached max number of points?
+            if (points.length >= highlightMaxPoints * 2)
                 doHighlight = false;
-            }
         }
-        else
-            return;
+        else {
+            // Adding points is forbidden
+            doHighlight = false;
+        }
 
         // Source: https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
         inline function sqr(x:Float):Float {
@@ -1260,14 +1250,11 @@ class Editable extends Entity implements Component implements Observable {
         if (highlight != null) {
             highlight.wrapVisual(visual);
 
-            var options = entityOptions;
-            if (options != null) {
-                if (options.highlightPoints != null) {
-                    var points:Array<Float> = visual.getProperty(options.highlightPoints);
-                    highlight.wrapPoints(points);
-                    if (highlight.pointSegments != null) {
-                        highlight.pointSegments.touchable = shiftPressed;
-                    }
+            if (highlightPoints != null) {
+                var points:Array<Float> = visual.getProperty(highlightPoints);
+                highlight.wrapPoints(points);
+                if (highlight.pointSegments != null) {
+                    highlight.pointSegments.touchable = shiftPressed;
                 }
             }
         }

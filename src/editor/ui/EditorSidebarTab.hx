@@ -8,4 +8,6 @@ enum abstract EditorSidebarTab(String) from String to String {
 
     var VISUALS = 'Visuals';
 
+    var ASSETS = 'Assets';
+
 }

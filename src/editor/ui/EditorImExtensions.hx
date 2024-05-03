@@ -27,7 +27,7 @@ class EditorImExtensions {
 
     }
 
-    public static function crossX(im:Class<Im>, internalScale:Float = 1):Void {
+    public static function crossX(im:Class<Im>, internalScale:Float = 1, disabled:Bool = false):Void {
 
         var crossX = crossXPool.get();
         if (crossX == null) {
@@ -35,6 +35,7 @@ class EditorImExtensions {
         }
         crossX.active = true;
         crossX.internalScale = internalScale;
+        crossX.color = disabled ? Im.currentTheme.darkTextColor : Im.currentTheme.lightTextColor;
         Im.visual(crossX, true, false, false);
         app.onceFinishDraw(crossX, () -> {
             crossX.active = false;
@@ -55,11 +56,11 @@ class EditorImExtensions {
 
     }
 
-    public static function betweenTwoFieldsCross(im:Class<Im>):Void {
+    public static function betweenTwoFieldsCross(im:Class<Im>, disabled:Bool = false):Void {
 
         Im.flex(40);
         final crossScale = 1.0 / 0.37941176470588234;
-        crossX(im, crossScale * 0.75);
+        crossX(im, crossScale * 0.75, disabled);
         Im.flex(510);
 
     }

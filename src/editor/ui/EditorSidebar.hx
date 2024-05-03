@@ -7,6 +7,7 @@ import ceramic.Quad;
 import ceramic.ReadOnlyArray;
 import editor.model.EditorData;
 import editor.model.fragment.EditorFragmentData;
+import editor.model.fragment.EditorQuadData;
 import editor.model.fragment.EditorVisualData;
 import elements.Im;
 import tracker.Observable;
@@ -28,7 +29,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
     @entity var editor:Editor;
 
     @compute function sidebarTitle():String {
-        return 'Fragments: ${model.project.displayName ?? model.project.name}${model.projectUnsavedChanges ? '*' : ''}';
+        return 'Fragments: ${model.project.displayName ?? model.project.name}${model.project.unsavedChanges ? '*' : ''}';
     }
 
     @compute function visualsTitle():String {
@@ -53,6 +54,10 @@ class EditorSidebar extends Entity implements Component implements Observable {
         else {
             return [];
         }
+    }
+
+    @compute function imagesList():Array<String> {
+        return model.project.images.map(image -> image.name);
     }
 
     var sidebarWidth:Int = 300;
@@ -101,7 +106,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
         Im.beginRow();
 
         if (Im.button('Open')) {
-            if (model.projectUnsavedChanges) {
+            if (model.project.unsavedChanges) {
                 app.onceImmediate(this, () -> {
                     Im.confirm(
                         'Unsaved changes', 'You have unsaved changes that will be lost if you continue.',
@@ -125,7 +130,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
             }
         }
         if (Im.button('New')) {
-            if (model.projectUnsavedChanges) {
+            if (model.project.unsavedChanges) {
                 app.onceImmediate(this, () -> {
                     Im.confirm(
                         'Unsaved changes', 'You have unsaved changes that will be lost if you continue.',
@@ -142,7 +147,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
         Im.endRow();
 
         Im.space(0);
-        Im.beginTabs(Im.string(model.project.sidebarTab));
+        Im.beginTabs(Im.string(model.project.selectedTab));
 
         Im.tab(EditorSidebarTab.PROJECT);
 
@@ -154,7 +159,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
 
         Im.end();
 
-        if (model.project.sidebarTab == PROJECT) {
+        if (model.project.selectedTab == PROJECT) {
 
             Im.begin('Fragments_Project', sidebarWidth, screen.nativeHeight - sidebarTopHeight);
 
@@ -200,9 +205,9 @@ class EditorSidebar extends Entity implements Component implements Observable {
                     }
 
                     Im.beginTwoFieldsRow();
-                    Im.editInt(Im.int(selectedFragment.width));
+                    Im.editInt(Im.int(selectedFragment.width), null, 0, 999999999);
                     Im.betweenTwoFieldsCross();
-                    Im.editInt(Im.int(selectedFragment.height));
+                    Im.editInt(Im.int(selectedFragment.height), null, 0, 999999999);
                     Im.endTwoFieldsRow('Size');
 
                     Im.check('Transparent', Im.bool(selectedFragment.transparent));
@@ -259,7 +264,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
             Im.end();
         }
 
-        if (model.project.sidebarTab == VISUALS && selectedFragment != null) {
+        if (model.project.selectedTab == VISUALS && selectedFragment != null) {
 
             Im.begin('Fragments_Visuals', sidebarWidth, screen.nativeHeight - sidebarTopHeight);
 
@@ -267,13 +272,15 @@ class EditorSidebar extends Entity implements Component implements Observable {
             Im.expanded();
             Im.position(0, sidebarTopHeight);
 
+            Im.scrollbar(AUTO_ADD_STAY);
+
             Im.sectionTitle(visualsTitle);
 
             var visualsList = this.visualsList;
             var selectedVisual = selectedFragment.selectedVisual;
 
             if (visualsList.length > 0) {
-                final status = Im.list(Im.array(visualsList), Im.int(selectedFragment.selectedVisualIndex), true, true, true, false /* TODO */);
+                final status = Im.list(Im.array(visualsList), Im.int(selectedFragment.selectedVisualIndex), true, true, true, true);
                 final lockedItems = status.lockedItems;
                 final unlockedItems = status.unlockedItems;
                 final duplicateItems = status.duplicateItems;
@@ -290,10 +297,9 @@ class EditorSidebar extends Entity implements Component implements Observable {
                     final visual = item.visual;
                     ((visual:EditorVisualData) -> {
                         app.onceImmediate(this, () -> {
-                            // TODO clone
-                            // final newFragment = model.project.addFragment();
-                            // fragment.clone(newFragment);
-                            // model.project.selectedFragmentIndex = model.project.fragments.length - 1;
+                            final newVisual = selectedFragment.addVisual(Type.getClass(visual));
+                            visual.clone(newVisual);
+                            selectedFragment.selectedVisualIndex = selectedFragment.visuals.length - 1;
                         });
                     })(visual);
                 }
@@ -312,16 +318,82 @@ class EditorSidebar extends Entity implements Component implements Observable {
 
                 Im.disabled(selectedVisual == null);
 
-                Im.sectionTitle('Current Visual');
+                if (selectedVisual != null) {
+                    switch Type.getClass(selectedVisual) {
+                        case EditorVisualData:
+                            Im.sectionTitle('Current Visual');
+                        case EditorQuadData:
+                            Im.sectionTitle('Current Quad');
+                    }
+                }
+                else {
+                    Im.sectionTitle('Current Visual');
+                }
 
                 if (selectedVisual == null) {
                     Im.editText('Name', Im.string(), 'Select a visual in list');
 
                     Im.beginTwoFieldsRow();
                     Im.editText(Im.string());
-                    Im.betweenTwoFieldsCross();
+                    Im.betweenTwoFieldsCross(true);
                     Im.editText(Im.string());
                     Im.endTwoFieldsRow('Size');
+
+                    Im.text('Position');
+
+                    Im.beginTwoFieldsRow();
+                    Im.labelPosition(LEFT);
+                    Im.labelWidth(5);
+                    Im.editText('x', Im.string());
+                    Im.betweenTwoFieldsRow('');
+                    Im.editText('y', Im.string());
+                    Im.labelPosition();
+                    Im.labelWidth();
+                    Im.endTwoFieldsRow();
+
+                    Im.text('Scale');
+
+                    Im.beginTwoFieldsRow();
+                    Im.labelPosition(LEFT);
+                    Im.labelWidth(5);
+                    Im.editText('x', Im.string());
+                    Im.betweenTwoFieldsRow('');
+                    Im.editText('y', Im.string());
+                    Im.labelPosition();
+                    Im.labelWidth();
+                    Im.endTwoFieldsRow();
+
+                    Im.text('Anchor');
+
+                    Im.beginTwoFieldsRow();
+                    Im.labelPosition(LEFT);
+                    Im.labelWidth(5);
+                    Im.editText('x', Im.string());
+                    Im.betweenTwoFieldsRow('');
+                    Im.editText('y', Im.string());
+                    Im.labelPosition();
+                    Im.labelWidth();
+                    Im.endTwoFieldsRow();
+
+                    Im.text('Skew');
+
+                    Im.beginTwoFieldsRow();
+                    Im.labelPosition(LEFT);
+                    Im.labelWidth(5);
+                    Im.editText('x', Im.string());
+                    Im.betweenTwoFieldsRow('');
+                    Im.editText('y', Im.string());
+                    Im.labelPosition();
+                    Im.labelWidth();
+                    Im.endTwoFieldsRow();
+
+                    Im.text('Rotation');
+
+                    Im.editText(Im.string());
+
+                    Im.text('Alpha');
+
+                    Im.editText(Im.string());
                 }
                 else {
 
@@ -333,20 +405,36 @@ class EditorSidebar extends Entity implements Component implements Observable {
                         selectedVisual.edit_entityId = selectedVisual.entityId;
                     }
 
+                    Im.disabled(!selectedVisual.resizeInsteadOfScale);
+
                     Im.beginTwoFieldsRow();
-                    Im.editFloat(Im.float(selectedVisual.width), null, null, null, 100);
+                    Im.editFloat(Im.float(selectedVisual.width), null, 0, 999999999, 100);
                     Im.betweenTwoFieldsCross();
-                    Im.editFloat(Im.float(selectedVisual.height), null, null, null, 100);
+                    Im.editFloat(Im.float(selectedVisual.height), null, 0, 999999999, 100);
                     Im.endTwoFieldsRow('Size');
+
+                    Im.disabled(false);
 
                     Im.text('Position');
 
                     Im.beginTwoFieldsRow();
                     Im.labelPosition(LEFT);
                     Im.labelWidth(5);
-                    Im.editFloat('x', Im.float(selectedVisual.x), null, null, null, 100);
+                    Im.editFloat('x', Im.float(selectedVisual.x), null, -999999999, 999999999, 100);
                     Im.betweenTwoFieldsRow('');
-                    Im.editFloat('y', Im.float(selectedVisual.y), null, null, null, 100);
+                    Im.editFloat('y', Im.float(selectedVisual.y), null, -999999999, 999999999, 100);
+                    Im.labelPosition();
+                    Im.labelWidth();
+                    Im.endTwoFieldsRow();
+
+                    Im.text('Scale');
+
+                    Im.beginTwoFieldsRow();
+                    Im.labelPosition(LEFT);
+                    Im.labelWidth(5);
+                    Im.editFloat('x', Im.float(selectedVisual.scaleX), null, -1, 1, 100);
+                    Im.betweenTwoFieldsRow('');
+                    Im.editFloat('y', Im.float(selectedVisual.scaleY), null, -1, 1, 100);
                     Im.labelPosition();
                     Im.labelWidth();
                     Im.endTwoFieldsRow();
@@ -356,12 +444,49 @@ class EditorSidebar extends Entity implements Component implements Observable {
                     Im.beginTwoFieldsRow();
                     Im.labelPosition(LEFT);
                     Im.labelWidth(5);
-                    Im.editFloat('x', Im.float(selectedVisual.anchorX), null, null, null, 100);
+                    Im.editFloat('x', Im.float(selectedVisual.anchorX), null, -1, 1, 100);
                     Im.betweenTwoFieldsRow('');
-                    Im.editFloat('y', Im.float(selectedVisual.anchorY), null, null, null, 100);
+                    Im.editFloat('y', Im.float(selectedVisual.anchorY), null, -1, 1, 100);
                     Im.labelPosition();
                     Im.labelWidth();
                     Im.endTwoFieldsRow();
+
+                    Im.text('Skew');
+
+                    Im.beginTwoFieldsRow();
+                    Im.labelPosition(LEFT);
+                    Im.labelWidth(5);
+                    Im.editFloat('x', Im.float(selectedVisual.skewX), null, -360, 360, 100);
+                    Im.betweenTwoFieldsRow('');
+                    Im.editFloat('y', Im.float(selectedVisual.skewY), null, -360, 360, 100);
+                    Im.labelPosition();
+                    Im.labelWidth();
+                    Im.endTwoFieldsRow();
+
+                    Im.text('Rotation');
+
+                    Im.slideFloat(Im.float(selectedVisual.rotation), -360, 360, 1);
+
+                    Im.text('Alpha');
+
+                    Im.slideFloat(Im.float(selectedVisual.alpha), 0, 1, 100);
+
+
+                    switch Type.getClass(selectedVisual) {
+
+                        case EditorQuadData:
+                            final selectedQuad:EditorQuadData = cast selectedVisual;
+
+                            Im.separator();
+                            Im.sectionTitle('Quad settings');
+
+                            Im.editColor('Color', Im.color(selectedQuad.color));
+                            Im.check('Transparent', Im.bool(selectedQuad.transparent));
+
+                            Im.text('Texture');
+                            Im.editText(Im.string(selectedQuad.texture), false, null, imagesList);
+
+                    }
                 }
 
                 Im.disabled(false);
@@ -383,11 +508,15 @@ class EditorSidebar extends Entity implements Component implements Observable {
             return;
 
         Im.choice('Add Visual', 'Choose the type of visual to add:', true, visualTypeList.original, (index, text) -> {
-            switch text {
+            final added:EditorVisualData = switch text {
                 case 'Visual': selectedFragment.addVisual();
                 case 'Quad': selectedFragment.addQuad();
                 case 'Text': selectedFragment.addText();
-                case _:
+                case _: null;
+            }
+            if (added != null) {
+                added.x = selectedFragment.width * 0.5;
+                added.y = selectedFragment.height * 0.5;
             }
             selectedFragment.selectedVisualIndex = selectedFragment.visuals.length - 1;
         });
