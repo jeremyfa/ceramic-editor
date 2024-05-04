@@ -286,4 +286,31 @@ class EditorVisualData extends EditorEntityData {
         return json;
     }
 
+    override function schema():Dynamic {
+        var schema = super.schema();
+
+        schema.x = 'Float';
+        schema.y = 'Float';
+        schema.width = 'Float';
+        schema.height = 'Float';
+        schema.scaleX = 'Float';
+        schema.scaleY = 'Float';
+        schema.anchorX = 'Float';
+        schema.anchorY = 'Float';
+        schema.rotation = 'Float';
+        schema.skewX = 'Float';
+        schema.skewY = 'Float';
+        schema.roundTranslation = 'Int';
+        schema.depth = 'Float';
+        schema.depthRange = 'Float';
+        schema.alpha = 'Float';
+        schema.visible = 'Bool';
+        schema.touchable = 'Bool';
+        schema.translateX = 'Float';
+        schema.translateY = 'Float';
+        schema.shader = 'ceramic.Shader';
+
+        return schema;
+    }
+
 }

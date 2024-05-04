@@ -332,6 +332,33 @@ class EditorProjectData extends Model {
         json.selectedFragment = this.selectedFragmentIndex;
         json.selectedTab = this.selectedTab;
 
+        json.schema = {};
+        var usedEntityClasses = new Map<String,Bool>();
+        for (fragment in this.fragments) {
+
+            for (visual in fragment.visuals) {
+                final entityClass = visual.entityClass;
+                if (!usedEntityClasses.exists(entityClass)) {
+                    usedEntityClasses.set(entityClass, true);
+                    Reflect.setField(
+                        json.schema, entityClass,
+                        visual.schema()
+                    );
+                }
+            }
+
+            for (entity in fragment.entities) {
+                final entityClass = entity.entityClass;
+                if (!usedEntityClasses.exists(entityClass)) {
+                    usedEntityClasses.set(entityClass, true);
+                    Reflect.setField(
+                        json.schema, entityClass,
+                        entity.schema()
+                    );
+                }
+            }
+        }
+
         return json;
     }
 

@@ -88,4 +88,14 @@ class EditorQuadData extends EditorVisualData {
         return json;
     }
 
+    override function schema():Dynamic {
+        var schema = super.schema();
+
+        schema.color = 'ceramic.Color';
+        schema.transparent = 'Bool';
+        schema.texture = 'ceramic.Texture';
+
+        return schema;
+    }
+
 }

@@ -131,4 +131,12 @@ class EditorEntityData extends EditorBaseFragmentModel {
         return json;
     }
 
+    public function schema():Dynamic {
+        var schema:Dynamic = {};
+
+        // Override in subclasses
+
+        return schema;
+    }
+
 }
