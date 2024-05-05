@@ -134,7 +134,8 @@ class EditorEntityData extends EditorBaseFragmentModel {
     public function schema():Dynamic {
         var schema:Dynamic = {};
 
-        // Override in subclasses
+        schema.id = 'String';
+        schema.components = 'Map<String,ceramic.Component>';
 
         return schema;
     }

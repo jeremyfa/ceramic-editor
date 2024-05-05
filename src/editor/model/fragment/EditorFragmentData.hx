@@ -439,7 +439,6 @@ class EditorFragmentData extends EditorBaseModel {
     public function toJson():Dynamic {
         var json:Dynamic = {};
 
-        json.kind = 'fragment';
         json.id = fragmentId;
         json.locked = (this.locked == true);
         json.width = this.width;
