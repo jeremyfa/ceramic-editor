@@ -38,6 +38,8 @@ class EditorQuadData extends EditorVisualData {
 
         toEntity.fromJson(toJson());
 
+        historyStep();
+
     }
 
     override function clear() {

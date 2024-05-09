@@ -80,6 +80,8 @@ class EditorEntityData extends EditorBaseFragmentModel {
 
         toEntity.fromJson(toJson());
 
+        historyStep();
+
     }
 
     public function clear():Void {

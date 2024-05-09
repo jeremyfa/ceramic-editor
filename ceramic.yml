@@ -12,6 +12,7 @@ app:
         - electron
 
     defines:
+        - tracker_debug_history
         - ceramic_no_skip
         - ceramic_scene_ui
         #- ceramic_debug_layout_dirty

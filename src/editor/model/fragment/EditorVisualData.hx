@@ -61,6 +61,17 @@ class EditorVisualData extends EditorEntityData {
         return shouldResizeInsteadOfScale();
     }
 
+    public static function create(fragment:EditorFragmentData, kind:String):EditorVisualData {
+
+        return switch kind {
+            case 'visual': new EditorVisualData(fragment);
+            case 'quad': new EditorQuadData(fragment);
+            case _:
+                throw 'Unknown fragment visual kind: ' + kind;
+        }
+
+    }
+
     public function new(fragment:EditorFragmentData) {
         super(fragment);
         entityClass = 'ceramic.Visual';
@@ -89,6 +100,8 @@ class EditorVisualData extends EditorEntityData {
             throw "Cannot clone to " + Type.getClass(toEntity);
 
         toEntity.fromJson(toJson());
+
+        historyStep();
 
     }
 

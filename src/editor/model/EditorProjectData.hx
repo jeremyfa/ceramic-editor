@@ -14,13 +14,13 @@ import editor.utils.Validate;
 import tracker.History;
 import tracker.Model;
 
-class EditorProjectData extends Model {
+class EditorProjectData extends EditorBaseModel {
 
-    var editorData(default, null):EditorData;
+    public var editorData:EditorData;
 
     public var history(get,never):History;
     function get_history():History {
-        return editorData.history;
+        return editorData?.history;
     }
 
     @serialize public var name:String;
@@ -204,6 +204,7 @@ class EditorProjectData extends Model {
     }
 
     public function syncFromFragmentsList(fragmentsList:Array<EditorFragmentListItem>):Void {
+
         var result = [];
         for (fragmentItem in fragmentsList) {
             var fragment = getFragment(fragmentItem.fragment.fragmentId);
@@ -216,6 +217,9 @@ class EditorProjectData extends Model {
                 fragment.destroy();
             }
         }
+
+        historyStep();
+
     }
 
     public function getFragment(fragmentId:String) {
@@ -241,6 +245,8 @@ class EditorProjectData extends Model {
         newFragments.push(fragment);
         this.fragments = newFragments;
 
+        historyStep();
+
         return fragment;
 
     }
@@ -251,6 +257,7 @@ class EditorProjectData extends Model {
             toProject = new EditorProjectData(editorData);
 
         toProject.fromJson(toJson());
+        toProject.editorData = editorData;
 
     }
 

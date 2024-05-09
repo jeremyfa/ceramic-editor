@@ -9,11 +9,14 @@ import ceramic.StateMachine;
 import ceramic.Timer;
 import editor.model.EditorData;
 import editor.model.fragment.EditorFragmentData;
+import editor.model.fragment.EditorVisualData;
 import editor.ui.EditorFragmentListItem;
 import editor.ui.EditorFragmentView;
 import editor.ui.EditorSidebar;
+import elements.FieldSystem;
 import elements.Im;
 import elements.Theme;
+import haxe.Json;
 
 using StringTools;
 
@@ -77,6 +80,8 @@ class Editor extends Scene {
 
         autorun(updateFromSelectedFragment);
 
+        bindKeyBindings();
+
     }
 
     function initComponents() {
@@ -127,6 +132,61 @@ class Editor extends Scene {
     override function update(delta:Float) {
 
         machine.update(delta);
+
+    }
+
+    function bindKeyBindings() {
+
+        keyBindings = new KeyBindings();
+
+        keyBindings.bind([CMD_OR_CTRL, KEY(KEY_Z)], function() {
+            model.history.undo();
+        });
+
+        keyBindings.bind([CMD_OR_CTRL, SHIFT, KEY(KEY_Z)], function() {
+            model.history.redo();
+        });
+
+        keyBindings.bind([CMD_OR_CTRL, KEY(KEY_C)], function() {
+            if (FieldSystem.shared.focusedField == null && screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentView)) {
+                final selectedFragment = model.project.selectedFragment;
+                if (selectedFragment != null) {
+                    final selectedVisual = selectedFragment.selectedVisual;
+                    if (selectedVisual != null) {
+                        log.debug('Copy to clipboard: visual "${selectedVisual.entityId}"');
+                        app.backend.clipboard.setText('{"ceramic-editor":{"visual":' + Json.stringify(selectedVisual.toJson()) + '}}');
+                    }
+                }
+            }
+        });
+
+        keyBindings.bind([CMD_OR_CTRL, KEY(KEY_V)], function() {
+            if (FieldSystem.shared.focusedField == null) {
+                final clipboardText = app.backend.clipboard.getText();
+                if (clipboardText != null && clipboardText.startsWith('{"ceramic-editor":')) {
+                    final selectedFragment = model.project.selectedFragment;
+                    if (selectedFragment != null) {
+                        try {
+                            final parsed:Dynamic = Reflect.field(Json.parse(clipboardText), 'ceramic-editor');
+                            if (parsed.visual != null) {
+                                // Paste visual
+                                final visual = EditorVisualData.create(selectedFragment, parsed.visual.kind);
+                                selectedFragment.add(visual);
+                                visual.fromJson(parsed.visual);
+                                visual.x += 25;
+                                visual.y += 25;
+                                selectedFragment.selectVisual(visual);
+
+                                model.history.step();
+                            }
+                        }
+                        catch (e:Dynamic) {
+                            log.error('Failed to parse clipboard text: $e');
+                        }
+                    }
+                }
+            }
+        });
 
     }
 

@@ -232,10 +232,12 @@ class EditorSidebar extends Entity implements Component implements Observable {
                 for (i in 0...lockedItems.length) {
                     final item:EditorFragmentListItem = lockedItems[i];
                     item.fragment.locked = true;
+                    model.history.step();
                 }
                 for (i in 0...unlockedItems.length) {
                     final item:EditorFragmentListItem = unlockedItems[i];
                     item.fragment.locked = false;
+                    model.history.step();
                 }
                 for (i in 0...duplicateItems.length) {
                     final item:EditorFragmentListItem = duplicateItems[i];
@@ -247,6 +249,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
                             model.project.selectedFragmentIndex = model.project.fragments.length - 1;
                         });
                     })(fragment);
+                    model.history.step();
                 }
                 if (fragmentsList != this.fragmentsList) {
                     model.project.syncFromFragmentsList(fragmentsList);
@@ -287,10 +290,12 @@ class EditorSidebar extends Entity implements Component implements Observable {
                 for (i in 0...lockedItems.length) {
                     final item:EditorVisualListItem = lockedItems[i];
                     item.visual.locked = true;
+                    model.history.step();
                 }
                 for (i in 0...unlockedItems.length) {
                     final item:EditorVisualListItem = unlockedItems[i];
                     item.visual.locked = false;
+                    model.history.step();
                 }
                 for (i in 0...duplicateItems.length) {
                     final item:EditorVisualListItem = duplicateItems[i];
@@ -299,9 +304,12 @@ class EditorSidebar extends Entity implements Component implements Observable {
                         app.onceImmediate(this, () -> {
                             final newVisual = selectedFragment.addVisual(Type.getClass(visual));
                             visual.clone(newVisual);
+                            newVisual.x += 25;
+                            newVisual.y += 25;
                             selectedFragment.selectedVisualIndex = selectedFragment.visuals.length - 1;
                         });
                     })(visual);
+                    model.history.step();
                 }
                 if (visualsList != this.visualsList) {
                     selectedFragment.syncFromVisualsList(visualsList);

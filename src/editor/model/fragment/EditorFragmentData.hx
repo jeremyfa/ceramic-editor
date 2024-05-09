@@ -129,6 +129,8 @@ class EditorFragmentData extends EditorBaseModel {
             this.deselectVisual();
         }
 
+        historyStep();
+
     }
 
     function autoUpdateVisualsDepth() {
@@ -136,15 +138,18 @@ class EditorFragmentData extends EditorBaseModel {
         final visuals = this.visuals;
         unobserve();
 
-        var depth = visuals.length;
+        var depth = 1;
         for (i in 0...visuals.length) {
             final visual = visuals[i];
-            visual.depth = depth--;
+            visual.depth = depth++;
         }
+
+        historyStep();
 
     }
 
     public function syncFromVisualsList(visualsList:Array<EditorVisualListItem>):Void {
+
         var result = [];
         for (visualItem in visualsList) {
             var visual = getVisual(visualItem.visual.entityId);
@@ -157,6 +162,9 @@ class EditorFragmentData extends EditorBaseModel {
                 visual.destroy();
             }
         }
+
+        historyStep();
+
     }
 
     public function getVisual(entityId:String) {
@@ -187,6 +195,31 @@ class EditorFragmentData extends EditorBaseModel {
         return result;
     }
 
+    public function add(entity:EditorEntityData) {
+
+        final prefix = Utils.camelCaseToUpperCase(entity.kind);
+
+        var i = 0;
+        while (getVisual(prefix + '_' + i) != null) {
+            i++;
+        }
+        entity.entityId = prefix + '_' + i;
+
+        if (entity is EditorVisualData) {
+            var newVisuals = [].concat(this.visuals.original);
+            newVisuals.push(cast entity);
+            this.visuals = newVisuals;
+        }
+        else {
+            var newEntities = [].concat(this.entities.original);
+            newEntities.push(entity);
+            this.entities = newEntities;
+        }
+
+        return entity;
+
+    }
+
     public function addVisual(?visualClass:Class<EditorVisualData>) {
 
         var visual:EditorVisualData = if (visualClass != null) {
@@ -208,6 +241,8 @@ class EditorFragmentData extends EditorBaseModel {
         newVisuals.push(visual);
         this.visuals = newVisuals;
 
+        historyStep();
+
         return visual;
 
     }
@@ -224,6 +259,8 @@ class EditorFragmentData extends EditorBaseModel {
         var newVisuals = [].concat(this.visuals.original);
         newVisuals.push(visual);
         this.visuals = newVisuals;
+
+        historyStep();
 
         return visual;
 
@@ -271,6 +308,9 @@ class EditorFragmentData extends EditorBaseModel {
                 this.fragmentId = newFragmentId;
             }
         }
+
+        historyStep();
+
         return newFragmentId;
     }
 
@@ -280,6 +320,8 @@ class EditorFragmentData extends EditorBaseModel {
             toFragment = new EditorFragmentData(project);
 
         toFragment.fromJson(toJson());
+
+        historyStep();
 
     }
 
@@ -381,12 +423,7 @@ class EditorFragmentData extends EditorBaseModel {
                 if (jsonVisual == null || jsonVisual.kind == null) {
                     throw 'Invalid fragment visual';
                 }
-                var visual = switch jsonVisual.kind {
-                    case 'visual': new EditorVisualData(this);
-                    case 'quad': new EditorQuadData(this);
-                    case _:
-                        throw 'Unknown fragment visual kind: ' + jsonVisual.kind;
-                }
+                var visual = EditorVisualData.create(this, jsonVisual.kind);
                 visual.fromJson(jsonVisual);
                 parsedVisuals.push(visual);
             }

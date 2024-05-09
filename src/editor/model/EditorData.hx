@@ -37,6 +37,8 @@ class EditorData extends Model {
         this.loadFromKey('ceramic-fragments-editor');
         this.autoSaveAsKey('ceramic-fragments-editor');
 
+        project.editorData = this;
+
         history = new History();
         history.step();
         history.onUndo(this, handleHistoryUndo);
