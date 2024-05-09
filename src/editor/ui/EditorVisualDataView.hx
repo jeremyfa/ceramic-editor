@@ -106,6 +106,8 @@ class EditorVisualDataView extends View implements Component {
             Reflect.setProperty(visualData, key, value);
         }
 
+        visualData.historyStep();
+
     }
 
     function handleSelectedVisualChange(visual:EditorVisualData, prevVisual:EditorVisualData) {

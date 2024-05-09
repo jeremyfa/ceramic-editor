@@ -206,13 +206,42 @@ class EditorFragmentData extends EditorBaseModel {
         entity.entityId = prefix + '_' + i;
 
         if (entity is EditorVisualData) {
+            final visual:EditorVisualData = cast entity;
             var newVisuals = [].concat(this.visuals.original);
-            newVisuals.push(cast entity);
+            var didAdd = false;
+            for (i in 0...newVisuals.length) {
+                if (newVisuals[i].depth > visual.depth) {
+                    didAdd = true;
+                    newVisuals.insert(i, visual);
+                    break;
+                }
+            }
+            if (!didAdd) {
+                newVisuals.push(visual);
+            }
             this.visuals = newVisuals;
         }
         else {
             var newEntities = [].concat(this.entities.original);
             newEntities.push(entity);
+            this.entities = newEntities;
+        }
+
+        return entity;
+
+    }
+
+    public function remove(entity:EditorEntityData) {
+
+        if (entity is EditorVisualData) {
+            var newVisuals = [].concat(this.visuals.original);
+            var visual:EditorVisualData = cast entity;
+            newVisuals.remove(visual);
+            this.visuals = newVisuals;
+        }
+        else {
+            var newEntities = [].concat(this.entities.original);
+            newEntities.remove(entity);
             this.entities = newEntities;
         }
 

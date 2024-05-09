@@ -11,7 +11,7 @@ class EditorBaseModel extends Model {
         super();
     }
 
-    function historyStep(tryDelayed:Bool = true):Void {
+    public function historyStep(tryDelayed:Bool = true):Void {
         unobserve();
 
         var history:History = null;

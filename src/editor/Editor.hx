@@ -1,9 +1,11 @@
 package editor;
 
 import ceramic.Color;
+import ceramic.Key;
 import ceramic.KeyBindings;
 import ceramic.Layer;
 import ceramic.Quad;
+import ceramic.ScanCode;
 import ceramic.Scene;
 import ceramic.StateMachine;
 import ceramic.Timer;
@@ -13,6 +15,7 @@ import editor.model.fragment.EditorVisualData;
 import editor.ui.EditorFragmentListItem;
 import editor.ui.EditorFragmentView;
 import editor.ui.EditorSidebar;
+import editor.utils.Validate;
 import elements.FieldSystem;
 import elements.Im;
 import elements.Theme;
@@ -39,6 +42,10 @@ class Editor extends Scene {
     var theme:Theme;
 
     var themeWithBackground:Theme;
+
+    var lastPastedDepth:Float = -1;
+
+    var lastPastedClipboardText:String = null;
 
     @component var machine = new StateMachine<EditorState>();
 
@@ -137,6 +144,8 @@ class Editor extends Scene {
 
     function bindKeyBindings() {
 
+        input.onKeyDown(this, handleKeyDown);
+
         keyBindings = new KeyBindings();
 
         keyBindings.bind([CMD_OR_CTRL, KEY(KEY_Z)], function() {
@@ -163,6 +172,7 @@ class Editor extends Scene {
         keyBindings.bind([CMD_OR_CTRL, KEY(KEY_V)], function() {
             if (FieldSystem.shared.focusedField == null) {
                 final clipboardText = app.backend.clipboard.getText();
+                final isSameClipboardText = (clipboardText != null && lastPastedClipboardText == clipboardText);
                 if (clipboardText != null && clipboardText.startsWith('{"ceramic-editor":')) {
                     final selectedFragment = model.project.selectedFragment;
                     if (selectedFragment != null) {
@@ -171,6 +181,14 @@ class Editor extends Scene {
                             if (parsed.visual != null) {
                                 // Paste visual
                                 final visual = EditorVisualData.create(selectedFragment, parsed.visual.kind);
+                                if (parsed.visual.depth != null && Validate.float(parsed.visual.depth)) {
+                                    if (isSameClipboardText) {
+                                        visual.depth = lastPastedDepth;
+                                    }
+                                    else {
+                                        visual.depth = parsed.visual.depth;
+                                    }
+                                }
                                 selectedFragment.add(visual);
                                 visual.fromJson(parsed.visual);
                                 visual.x += 25;
@@ -178,6 +196,10 @@ class Editor extends Scene {
                                 selectedFragment.selectVisual(visual);
 
                                 model.history.step();
+                                app.oncePostFlushImmediate(this, () -> {
+                                    lastPastedClipboardText = clipboardText;
+                                    lastPastedDepth = visual.depth;
+                                });
                             }
                         }
                         catch (e:Dynamic) {
@@ -187,6 +209,27 @@ class Editor extends Scene {
                 }
             }
         });
+
+    }
+
+    function handleKeyDown(key:Key) {
+
+        if (key.scanCode == ScanCode.BACKSPACE) {
+            if (FieldSystem.shared.focusedField == null && screen.focusedVisual != null && screen.focusedVisual.hasIndirectParent(fragmentView)) {
+                final selectedFragment = model.project.selectedFragment;
+                if (selectedFragment != null) {
+                    final selectedVisual = selectedFragment.selectedVisual;
+                    if (selectedVisual != null) {
+                        // Remove visual
+                        selectedFragment.selectedVisualIndex = -1;
+                        selectedFragment.remove(selectedVisual);
+                        selectedVisual.destroy();
+
+                        model.history.step();
+                    }
+                }
+            }
+        }
 
     }
 
