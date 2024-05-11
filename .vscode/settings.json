@@ -1,5 +1,5 @@
 {
-    "window.title": "${activeEditorShort} — ceramic-editor",
+    "window.title": "${activeEditorShort} — Ceramic Editor",
     "search.exclude": {
         "**/.git": true,
         "**/node_modules": true,
