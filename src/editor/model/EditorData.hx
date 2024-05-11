@@ -85,6 +85,12 @@ class EditorData extends Model {
 
 /// Open / Save / New
 
+    public function openProjectWithPath(filePath:String) {
+
+        _openProject(filePath);
+
+    }
+
     public function openProject() {
 
         Dialogs.openFile('Open fragments file', [{

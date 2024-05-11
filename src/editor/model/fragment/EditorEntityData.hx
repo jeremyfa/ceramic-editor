@@ -66,8 +66,10 @@ class EditorEntityData extends EditorBaseFragmentModel {
                         i++;
                         existing = fragment.getVisualOrEntity(newEntityId);
                     }
-                    this.entityId = newEntityId;
                 }
+                this.entityId = newEntityId;
+
+                historyStep();
             }
         }
         return newEntityId;

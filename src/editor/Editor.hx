@@ -57,6 +57,13 @@ class Editor extends Scene {
 
     @owner var nativeLayer:Layer;
 
+    var pendingOpenFilePath:String = null;
+
+    public function new() {
+        super();
+        checkOpenWithPath();
+    }
+
     override function preload() {
 
         assets.add(Fonts.ROBOTO_BOLD);
@@ -88,6 +95,51 @@ class Editor extends Scene {
         autorun(updateFromSelectedFragment);
 
         bindKeyBindings();
+
+        if (pendingOpenFilePath != null) {
+            model.openProjectWithPath(pendingOpenFilePath);
+            pendingOpenFilePath = null;
+        }
+
+    }
+
+    function checkOpenWithPath() {
+
+        var projectFilePath:String = null;
+
+        #if cpp
+
+        final argv = Sys.args();
+        if (argv.length > 1 && sys.FileSystem.exists(argv[1])) {
+            projectFilePath = argv[1];
+        }
+
+        #if linc_sdl
+        app.backend.onSdlEvent(this, sdlEvent -> {
+            if (sdlEvent.type == SDL_DROPFILE) {
+                var filePath:String = sdlEvent.drop.file;
+                if (sys.FileSystem.exists(filePath)) {
+                    if (status == READY) {
+                        model.openProjectWithPath(filePath);
+                    }
+                    else {
+                        pendingOpenFilePath = filePath;
+                    }
+                }
+            }
+        });
+        #end
+
+        #end
+
+        if (projectFilePath != null) {
+            if (status == READY) {
+                model.openProjectWithPath(projectFilePath);
+            }
+            else {
+                pendingOpenFilePath = projectFilePath;
+            }
+        }
 
     }
 

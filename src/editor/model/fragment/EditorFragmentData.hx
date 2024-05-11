@@ -336,9 +336,9 @@ class EditorFragmentData extends EditorBaseModel {
                 }
                 this.fragmentId = newFragmentId;
             }
-        }
 
-        historyStep();
+            historyStep();
+        }
 
         return newFragmentId;
     }

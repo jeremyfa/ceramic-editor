@@ -64,6 +64,10 @@ class EditorSidebar extends Entity implements Component implements Observable {
 
     var sidebarTopHeight:Int = 96;
 
+    var prevSelectedFragment:EditorFragmentData = null;
+
+    var prevSelectedVisual:EditorVisualData = null;
+
     function bindAsComponent() {
 
         final sidebarBackground = new Quad();
@@ -92,6 +96,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
     function DEFAULT_update(delta:Float) {
 
         var selectedFragment = model.project.selectedFragment;
+        var selectedVisual = null;
 
         Im.theme(editor.theme);
 
@@ -280,7 +285,7 @@ class EditorSidebar extends Entity implements Component implements Observable {
             Im.sectionTitle(visualsTitle);
 
             var visualsList = this.visualsList;
-            var selectedVisual = selectedFragment.selectedVisual;
+            selectedVisual = selectedFragment.selectedVisual;
 
             if (visualsList.length > 0) {
                 final status = Im.list(Im.array(visualsList), Im.int(selectedFragment.selectedVisualIndex), true, true, true, true);
@@ -506,6 +511,25 @@ class EditorSidebar extends Entity implements Component implements Observable {
         }
 
         Im.theme(null);
+
+        // Ensure we don't loose edited fragment name
+        if (prevSelectedFragment != selectedFragment && prevSelectedFragment != null && !prevSelectedFragment.destroyed) {
+            if (prevSelectedFragment.edit_fragmentId != prevSelectedFragment.fragmentId) {
+                prevSelectedFragment.changeFragmentId(prevSelectedFragment.edit_fragmentId);
+                prevSelectedFragment.edit_fragmentId = prevSelectedFragment.fragmentId;
+            }
+        }
+
+        // Ensure we don't loose edited visual name
+        if (prevSelectedVisual != selectedVisual && prevSelectedVisual != null && !prevSelectedVisual.destroyed) {
+            if (prevSelectedVisual.edit_entityId != prevSelectedVisual.entityId) {
+                prevSelectedVisual.changeEntityId(prevSelectedVisual.edit_entityId);
+                prevSelectedVisual.edit_entityId = prevSelectedVisual.entityId;
+            }
+        }
+
+        prevSelectedFragment = selectedFragment;
+        prevSelectedVisual = selectedVisual;
 
     }
 
