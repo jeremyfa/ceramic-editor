@@ -7,5 +7,6 @@
         "**/out": true
     },
     "haxe.executable": "../ceramic/tools/haxe",
-    "haxelib.executable": "../ceramic/tools/haxelib"
+    "haxelib.executable": "../ceramic/tools/haxelib",
+    "git.ignoreLimitWarning": true
 }
