@@ -1,8 +1,5 @@
 name: Build Editor
-on:
-  push:
-    branches:
-      - develop
+on: [push, pull_request]
 
 jobs:
 
