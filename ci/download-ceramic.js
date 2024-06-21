@@ -8,7 +8,7 @@ const path = require('path');
 
 process.chdir(path.join(__dirname, '..'));
 
-const platform = process.platform == 'darwin' ? 'mac' : 'linux';
+const platform = process.platform === 'darwin' ? 'mac' : (process.platform === 'win32' ? 'windows' : 'linux');
 
 function fail(message) {
     console.error(message);
@@ -25,7 +25,7 @@ async function resolveLatestRelease() {
         if (release.assets != null) {
             var assets = release.assets;
             for (var asset of assets) {
-                if (asset.name == 'ceramic-'+platform+'.zip') {
+                if (asset.name == 'ceramic-' + platform + '.zip') {
                     return release;
                 }
             }
@@ -39,13 +39,22 @@ async function resolveLatestRelease() {
 
 function cleanup() {
     if (fs.existsSync('ceramic.zip'))
-        childProcess.execFileSync('rm', ['ceramic.zip']);
-    if (fs.existsSync('ceramic'))
-        childProcess.execFileSync('rm', ['-rf', 'ceramic']);
+        fs.unlinkSync('ceramic.zip');
+    if (fs.existsSync('ceramic')) {
+        if (platform === 'windows') {
+            childProcess.execSync('rmdir /S /Q ceramic', { stdio: 'inherit' });
+        } else {
+            childProcess.execFileSync('rm', ['-rf', 'ceramic']);
+        }
+    }
 }
 
 function unzipFile(source, targetPath) {
-    childProcess.execFileSync('unzip', ['-q', source, '-d', targetPath]);
+    if (platform === 'windows') {
+        childProcess.execSync(`powershell -Command "Expand-Archive -Path '${source}' -DestinationPath '${targetPath}'"`, { stdio: 'inherit' });
+    } else {
+        childProcess.execFileSync('unzip', ['-q', source, '-d', targetPath]);
+    }
 }
 
 cleanup();
@@ -56,7 +65,7 @@ cleanup();
     var releaseInfo = await resolveLatestRelease();
     var targetTag = releaseInfo.tag_name;
     var ceramicZipPath = 'ceramic.zip';
-    var ceramicArchiveUrl = 'https://github.com/ceramic-engine/ceramic/releases/download/'+targetTag+'/ceramic-'+platform+'.zip';
+    var ceramicArchiveUrl = 'https://github.com/ceramic-engine/ceramic/releases/download/' + targetTag + '/ceramic-' + platform + '.zip';
 
     console.log('Download ceramic archive: ' + ceramicArchiveUrl);
     fs.writeFileSync(ceramicZipPath, await download(ceramicArchiveUrl));
