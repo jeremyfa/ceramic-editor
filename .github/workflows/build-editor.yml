@@ -186,7 +186,7 @@ jobs:
       - name: Build editor
         working-directory: .
         run: |
-          ceramic clay build windows --setup --assets
+          ./ceramic clay build windows --setup --assets
           cd project/windows
           find . -type f -print | zip ../../editor-windows.zip -@
 
