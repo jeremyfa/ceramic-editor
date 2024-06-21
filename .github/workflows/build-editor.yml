@@ -1,0 +1,81 @@
+name: Build Editor
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+
+  editor-linux:
+    runs-on: ubuntu-22.04
+    step:
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '14.19.1'
+
+      - name: Setup NPM
+        working-directory: .
+        run: |
+          sudo npm install -g npm@8.12.1
+
+      - name: Install packages
+        working-directory: ci
+        run: |
+          npm install
+
+      - name: Download Ceramic
+        working-directory:
+        run: |
+          node ci/download-ceramic.js
+
+      - name: Setup Haxe
+        working-directory: .
+        run: |
+          export NEKOPATH=$PWD'/ceramic/git/haxe-binary/linux/neko'
+          export HAXEPATH=$PWD'/ceramic/git/haxe-binary/linux/haxe'
+          echo 'neko path: '$NEKOPATH
+          echo 'haxe path: '$HAXEPATH
+          sudo mkdir -p /usr/local/bin
+          sudo mkdir -p /usr/local/lib
+          sudo mkdir -p /usr/local/share/haxe
+          sudo ln -s $HAXEPATH/haxe                 /usr/local/bin/haxe
+          sudo ln -s $HAXEPATH/haxelib              /usr/local/bin/haxelib
+          sudo ln -s $HAXEPATH/haxe-bin             /usr/local/bin/haxe-bin
+          sudo ln -s $HAXEPATH/haxelib-bin          /usr/local/bin/haxelib-bin
+          sudo ln -s $HAXEPATH/std                  /usr/local/share/haxe/std
+          sudo ln -s $NEKOPATH/neko                 /usr/local/bin/neko
+          sudo ln -s $NEKOPATH/nekoc                /usr/local/bin/nekoc
+          sudo ln -s $NEKOPATH/nekoml               /usr/local/bin/nekoml
+          sudo ln -s $NEKOPATH/nekotools            /usr/local/bin/nekotools
+          sudo ln -s $NEKOPATH                      /usr/local/lib/neko
+          sudo ln -s $NEKOPATH/libneko.so           /usr/local/lib/libneko.so
+          sudo ln -s $NEKOPATH/libneko.so.2.3.0     /usr/local/lib/libneko.so.2.3.0
+          sudo ln -s $NEKOPATH/libneko.so.2         /usr/local/lib/libneko.so.2
+          sudo ldconfig
+          sudo ldconfig /usr/local/lib
+          echo 'neko: '$(neko -version)
+          echo 'haxe: '$(haxe --version)
+
+      - name: Install Ceramic
+        working-directory: ceramic/tools
+        run: |
+          ./ceramic link
+
+      - name: Build editor
+        working-directory: .
+        run: |
+          ceramic clay build linux --setup --assets
+          cd project/linux
+          find . -type f -print | zip ../../editor-linux.zip -@
+
+      - name: Upload Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: editor-linux.zip
+          path: editor-linux.zip
