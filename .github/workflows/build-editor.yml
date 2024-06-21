@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
 
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
           submodules: true
 
@@ -73,7 +74,6 @@ jobs:
           ceramic clay build linux --setup --assets
           cd project/linux
           find . -type f -print | zip ../../editor-linux.zip -@
-
 
       - name: Upload Files
         uses: actions/upload-artifact@v4
