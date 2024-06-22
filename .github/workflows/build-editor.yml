@@ -148,7 +148,7 @@ jobs:
       - name: Upload Files
         uses: actions/upload-artifact@v4
         with:
-          name: editor-mac.zip
+          name: editor-mac
           path: project/mac
 
   editor-windows:
@@ -188,5 +188,5 @@ jobs:
       - name: Upload Files
         uses: actions/upload-artifact@v4
         with:
-          name: editor-windows.zip
+          name: editor-windows
           path: project/windows
