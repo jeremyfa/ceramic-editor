@@ -190,3 +190,68 @@ jobs:
         with:
           name: editor-windows
           path: project/windows
+
+  create-release:
+    needs: [editor-mac, editor-windows]
+    runs-on: ubuntu-22.04
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: editor-*
+          merge-multiple: false
+
+      - name: Create archives
+        working-directory: .
+        run: |
+          cd editor-windows
+          zip --symlinks -9 -r ../editor-windows.zip .
+          cd ..
+          cd editor-mac
+          zip --symlinks -9 -r ../editor-mac.zip .
+          cd ..
+
+      - name: Extract tag name
+        id: extract_tag
+        run: echo "TAG_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ env.TAG_NAME }}
+          body: |
+            Ceramic Editor ${{ env.TAG_NAME }}
+          draft: false
+          prerelease: false
+
+      - name: Upload editor-windows.zip
+        id: upload_editor_windows
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./editor-windows.zip
+          asset_name: editor-windows.zip
+          asset_content_type: application/zip
+
+      - name: Upload editor-mac.zip
+        id: upload_editor_mac
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./editor-mac.zip
+          asset_name: editor-mac.zip
+          asset_content_type: application/zip
