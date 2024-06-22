@@ -13,8 +13,8 @@ class Project extends Entity {
         settings.title = 'Ceramic Editor';
         settings.antialiasing = 2;
         settings.background = 0x252525;
-        settings.targetWidth = 1800;
-        settings.targetHeight = 1200;
+        settings.targetWidth = 800;
+        settings.targetHeight = 600;
         settings.scaling = RESIZE;
         settings.resizable = true;
 
