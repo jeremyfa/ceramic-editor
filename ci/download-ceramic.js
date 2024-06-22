@@ -50,11 +50,7 @@ function cleanup() {
 }
 
 function unzipFile(source, targetPath) {
-    // if (platform === 'windows') {
-    //     childProcess.execSync(`powershell -Command "Expand-Archive -Path '${source}' -DestinationPath '${targetPath}'"`, { stdio: 'inherit' });
-    // } else {
-        childProcess.execFileSync('unzip', ['-q', source, '-d', targetPath]);
-    // }
+    childProcess.execFileSync('unzip', ['-q', source, '-d', targetPath]);
 }
 
 cleanup();
